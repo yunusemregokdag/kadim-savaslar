@@ -2,6 +2,10 @@
     "version": 2,
     "builds": [
         {
+            "src": "server/index.js",
+            "use": "@vercel/node"
+        },
+        {
             "src": "package.json",
             "use": "@vercel/static-build",
             "config": {
@@ -11,8 +15,15 @@
     ],
     "routes": [
         {
+            "src": "/api/(.*)",
+            "dest": "/server/index.js"
+        },
+        {
             "src": "/(.*)",
-            "dest": "/$1"
+            "dest": "/index.html"
         }
-    ]
+    ],
+    "env": {
+        "MONGODB_URI": "mongodb+srv://yunusemregokdag_db_user:cmhmshp2gyegg@cluster0.lpw3x3g.mongodb.net/kadim-savaslar?retryWrites=true&w=majority"
+    }
 }

@@ -442,8 +442,18 @@ io.on('connection', (socket) => {
 // ============================================
 // SERVER START
 // ============================================
+// ============================================
+// SERVER START
+// ============================================
 const PORT = process.env.PORT || 3001;
-server.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Oyun Sunucusu Çalışıyor: http://0.0.0.0:${PORT}`);
-    console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+
+// Vercel ortamında değilsek veya local geliştirme yapıyorsak dinle
+if (!process.env.VERCEL) {
+    server.listen(PORT, '0.0.0.0', () => {
+        console.log(`🚀 Oyun Sunucusu Çalışıyor: http://0.0.0.0:${PORT}`);
+        console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+    });
+}
+
+// Vercel için Express uygulamasını dışa aktar
+module.exports = app;

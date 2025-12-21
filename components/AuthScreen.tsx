@@ -13,8 +13,11 @@ type AuthMode = 'welcome' | 'login' | 'register';
 const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onAdminLogin }) => {
   const { login, register, loading: authLoading } = useAuth(); // Use hook
   const [mode, setMode] = useState<AuthMode>('welcome');
-  const [email, setEmail] = useState('test@example.com');
-  const [password, setPassword] = useState('test123456');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showDevLogin, setShowDevLogin] = useState(false);
+  const [devUsername, setDevUsername] = useState('');
+  const [devPassword, setDevPassword] = useState('');
   const [username, setUsername] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [localLoading, setLocalLoading] = useState(false);
@@ -116,14 +119,51 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onAdminLogin }) => {
               Misafir Olarak Devam Et
             </button>
 
-            {onAdminLogin && (
+            {onAdminLogin && !showDevLogin && (
               <button
-                onClick={onAdminLogin}
+                onClick={() => setShowDevLogin(true)}
                 className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-red-900/30 text-red-400 border border-red-800/50 rounded-lg font-bold hover:bg-red-900/50 transition-all mt-4"
               >
                 <Code size={20} />
                 Geliştirici Girişi
               </button>
+            )}
+
+            {showDevLogin && (
+              <div className="mt-4 p-4 bg-red-900/20 border border-red-800/50 rounded-lg space-y-3">
+                <input
+                  type="text"
+                  placeholder="Kullanıcı Adı"
+                  value={devUsername}
+                  onChange={(e) => setDevUsername(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded text-white placeholder-slate-500"
+                />
+                <input
+                  type="password"
+                  placeholder="Şifre"
+                  value={devPassword}
+                  onChange={(e) => setDevPassword(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded text-white placeholder-slate-500"
+                />
+                <button
+                  onClick={() => {
+                    if (devUsername === 'yunusemregokdag' && devPassword === 'cmhmshp2gyegg') {
+                      onAdminLogin();
+                    } else {
+                      alert('Geliştirici bilgileri yanlış!');
+                    }
+                  }}
+                  className="w-full py-2 bg-red-600 text-white rounded font-bold hover:bg-red-500"
+                >
+                  Giriş
+                </button>
+                <button
+                  onClick={() => setShowDevLogin(false)}
+                  className="w-full py-2 text-slate-400 text-sm hover:text-white"
+                >
+                  İptal
+                </button>
+              </div>
             )}
           </div>
 

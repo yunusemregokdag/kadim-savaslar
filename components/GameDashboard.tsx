@@ -162,9 +162,9 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
     useEffect(() => {
         if (!socketRef.current) {
             console.log("Initializing Global Socket...");
-            // Production'da VITE_SOCKET_URL kullan, yoksa proxy üzerinden bağlan
+            // Production'da VITE_SOCKET_URL veya VITE_API_URL kullan, yoksa proxy üzerinden bağlan
             // @ts-ignore - Vite environment variable
-            const socketUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SOCKET_URL) || undefined;
+            const socketUrl = (typeof import.meta !== 'undefined' && (import.meta.env?.VITE_SOCKET_URL || import.meta.env?.VITE_API_URL)) || undefined;
             socketRef.current = io(socketUrl, {
                 transports: ['websocket', 'polling']
             });

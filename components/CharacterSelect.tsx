@@ -192,14 +192,25 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
         }
     }
 
+    // ============================================
+    // RENDER LOGIC - TEK BİR RETURN KULLANARAK
+    // (React Hook #310 hatasını önlemek için)
+    // ============================================
+
+    // Loading durumu
+    const loadingScreen = (
+        <div className="fixed inset-0 bg-slate-900 flex items-center justify-center text-white">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-500"></div>
+        </div>
+    );
+
+    // Hangi ekranı göstereceğimizi belirle
     if (loading && characters.length === 0 && mode === 'list') {
-        return (
-            <div className="fixed inset-0 bg-slate-900 flex items-center justify-center text-white">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-500"></div>
-            </div>
-        );
+        return loadingScreen;
     }
 
+    // Karakter listesi varsa - bu ayrı bir component olarak çıkarılmalı
+    // Şimdilik aynı yapıyı koruyoruz
     if (mode === 'list' && characters.length > 0) {
         const selectedChar = characters.find(c => c._id === selectedCharId) || characters[0];
         const activeClassData = CLASSES[selectedChar.class] || CLASSES.warrior;

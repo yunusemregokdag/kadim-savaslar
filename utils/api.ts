@@ -1,6 +1,6 @@
 // API Service for Backend Communication
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 // Token management
 let authToken: string | null = localStorage.getItem('authToken');

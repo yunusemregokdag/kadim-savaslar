@@ -1,0 +1,726 @@
+
+#########################################################
+## Developed by Little Room, patreon.com/littleroomdev ##
+#########################################################
+
+  
+#### UTILITY STUFF ####
+
+NPCvol4greetfx:
+  Skills:
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.greetings;v=1;sc=HOSTILE} @self
+  - delay 60
+  - remove @self
+
+NPCvol4playercheck:
+  Conditions:
+  - playerwithin{d=5} false
+  Skills:
+  - setstance{stance=alone} @self
+
+ 
+NPC4hitboxinteract:
+  Skills:
+  - signal{s=INTERACT} @LivingEntitiesInRadius{r=5}
+
+NPC4hitboxSPAWN:
+  Skills:
+  - delay 1
+  - summon{t=NPC4_HITBOX} @self
+  - delay 1
+  - mountmodel{driver=false;mode=force;pbone=topbox} @children{ignore=samefaction}
+  
+
+npcpack4_face_east:
+  Skills:
+  - delay 1
+  - setrotation{relative=false;yaw=-90;pitch=0} @Self
+  
+npcpack4_face_west:
+  Skills:
+  - delay 1
+  - setrotation{relative=false;yaw=90;pitch=0} @Self
+  
+npcpack4_face_south:
+  Skills:
+  - delay 1
+  - setrotation{relative=false;yaw=180;pitch=0} @Self
+  
+  
+  
+  
+  
+  
+  
+  
+  
+### assassin ###
+
+
+assassinNPCAlone:
+  Conditions:
+  - stance{s=alone;str=true} true
+  Skills:
+  - setstance{stance=idle_alone} @self
+  - state{s=alone} @self
+
+assassinNPCGreet:
+  Cooldown: 5
+  Conditions:
+  - stance{s=idle_alone} true
+  - playerwithin{d=5} true
+  Skills:
+  - state{s=alone;r=true} @self
+  - gcd{ticks=30}
+  - defaultstate{m=lr_assassin;t=idle;s=idle} @self
+  - summon{t=NPCVOL4GREETFX} @Forward{f=0;y=1.75}
+  - setstance{stance=player} @self
+  - state{s=greet} @self
+  - randomskill{skills=assassinspeech1,assassinspeech2,assassinspeech3} @self
+  
+assassinspeech1:
+  Skills:
+  - actionmessage{m="☥💨    &0Make it quick!        "} @NearestPlayer{r=6}
+  
+assassinspeech2:
+  Skills:
+  - actionmessage{m="☥💨    &0In the shadows...     "} @NearestPlayer{r=6}
+  
+assassinspeech3:
+  Skills:
+  - actionmessage{m="☥💨    &0Silent but Dangerous  "} @NearestPlayer{r=6}
+
+  
+assassinNPCInteract:
+  Skills:
+  - actionmessage{m="☥&0💨    &CI still need to be set up!"} @trigger
+  #- jsonmessage{m="[{'text':'<&nl>                   &CI still need to be set up!<&nl><&nl>&f     ☥    <&nl>         &0💨<&nl><&nl>'}]"} @NearestPlayer{r=6}
+  
+assassinNPCInteract2ndbox:
+  Conditions:
+  - LastHitbox{h=topbox} true
+  Skills:
+  - actionmessage{m="☥&0💨    &CI still need to be set up!"} @trigger
+  #- jsonmessage{m="[{'text':'<&nl>                   &CI still need to be set up!<&nl><&nl>&f     ☥    <&nl>         &0💨<&nl><&nl>'}]"} @NearestPlayer{r=6}
+  
+  
+assassinNPCfidget:
+  Conditions:
+  - stance{s=player} true
+  - offgcd
+  Skills:
+  - state{s=fidget} @self
+  - delay 15
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.assassin_poof;v=1;sc=HOSTILE} @self
+  - effect:particles{particle=flash;amount=1;hS=0;vS=0;speed=0} @forward{f=.5}
+  - effect:particles{particle=large_smoke;amount=50;hS=.5;vS=0;speed=0.01;d=true;dir=0,1,0;repeat=5;repeatInterval=2} @self
+  - changepart{m=lr_assassin;pid=torso;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=left_leg;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=left_foot;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=right_leg;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=right_foot;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=left_arm;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=left_hand;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=right_hand;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=right_arm;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=head;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=braid1;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=braid2;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=cape1;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=cape2;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=cape3;nm=npcpackvol4_parts;npid=empty} @self
+  - delay 25
+  - effect:particles{particle=flash;amount=1;hS=0;vS=0;speed=0} @forward{f=.5}
+  - changepart{m=lr_assassin;pid=torso;nm=lr_assassin;npid=torso} @self
+  - changepart{m=lr_assassin;pid=left_leg;nm=lr_assassin;npid=left_leg} @self
+  - changepart{m=lr_assassin;pid=left_foot;nm=lr_assassin;npid=left_foot} @self
+  - changepart{m=lr_assassin;pid=right_leg;nm=lr_assassin;npid=right_leg} @self
+  - changepart{m=lr_assassin;pid=right_foot;nm=lr_assassin;npid=right_foot} @self
+  - changepart{m=lr_assassin;pid=left_arm;nm=lr_assassin;npid=left_arm} @self
+  - changepart{m=lr_assassin;pid=left_hand;nm=lr_assassin;npid=left_hand} @self
+  - changepart{m=lr_assassin;pid=right_hand;nm=lr_assassin;npid=right_hand} @self
+  - changepart{m=lr_assassin;pid=right_arm;nm=lr_assassin;npid=right_arm} @self
+  - changepart{m=lr_assassin;pid=head;nm=lr_assassin;npid=head} @self
+  - changepart{m=lr_assassin;pid=braid1;nm=lr_assassin;npid=braid1} @self
+  - changepart{m=lr_assassin;pid=braid2;nm=lr_assassin;npid=braid2} @self
+  - changepart{m=lr_assassin;pid=cape1;nm=lr_assassin;npid=cape1} @self
+  - changepart{m=lr_assassin;pid=cape2;nm=lr_assassin;npid=cape2} @self
+  - changepart{m=lr_assassin;pid=cape3;nm=lr_assassin;npid=cape3} @self
+
+
+
+
+
+### AGGRO ASSASSIN ###
+
+assassinNPCrandomswing:
+  Skills:
+  - randomskill{s=assassinNPCrandomswing1,assassinNPCrandomswing2,assassinNPCrandomswing3,assassinNPCrandomswing4,assassinNPCrandomswing5} @self
+  
+assassinNPCrandomswing1:
+  Skills:
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.assassin_swing1;v=1;sc=HOSTILE} @self
+assassinNPCrandomswing2:
+  Skills:
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.assassin_swing2;v=1;sc=HOSTILE} @self
+assassinNPCrandomswing3:
+  Skills:
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.assassin_swing3;v=1;sc=HOSTILE} @self
+assassinNPCrandomswing4:
+  Skills:
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.assassin_swing4;v=1;sc=HOSTILE} @self
+assassinNPCrandomswing5:
+  Skills:
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.assassin_swing5;v=1;sc=HOSTILE} @self
+  
+
+assassinNPCrandomimpact:
+  Skills:
+  - randomskill{s=assassinNPCrandomimpact1,assassinNPCrandomimpact2,assassinNPCrandomimpact3,assassinNPCrandomimpact4} @self
+  
+assassinNPCrandomimpact1:
+  Skills:
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.assassin_impact1;v=1;sc=HOSTILE} @self
+assassinNPCrandomimpact2:
+  Skills:
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.assassin_impact2;v=1;sc=HOSTILE} @self
+assassinNPCrandomimpact3:
+  Skills:
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.assassin_impact3;v=1;sc=HOSTILE} @self
+assassinNPCrandomimpact4:
+  Skills:
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.assassin_impact4;v=1;sc=HOSTILE} @self
+  
+
+assassinNPCrandomvocal:
+  Skills:
+  - randomskill{s=assassinNPCrandomvocal1,assassinNPCrandomvocal2,assassinNPCrandomvocal3,assassinNPCrandomvocal4,assassinNPCrandomvocal5} @self
+  
+assassinNPCrandomvocal1:
+  Skills:
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.assassin_vocal;v=1;sc=HOSTILE} @self
+assassinNPCrandomvocal2:
+  Skills:
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.assassin_vocal2;v=1;sc=HOSTILE} @self
+assassinNPCrandomvocal3:
+  Skills:
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.assassin_vocal3;v=1;sc=HOSTILE} @self
+assassinNPCrandomvocal4:
+  Skills:
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.assassin_vocal4;v=1;sc=HOSTILE} @self
+
+assassinNPCaggrospawn:
+  Skills:
+  - delay 1
+  - changepart{m=lr_assassin;pid=right_hand;nm=npcpackvol4_parts;npid=assassin_hand} @self
+  - effect:particles{particle=flash;amount=1;hS=0;vS=0;speed=0} @forward{f=.5}
+  - effect:particles{particle=large_smoke;amount=50;hS=.5;vS=0;speed=0.01;d=true;dir=0,1,0;repeat=5;repeatInterval=2} @self
+  - defaultstate{m=lr_assassin;t=idle;s=idle_aggro} @self
+  - delay 1
+  - defaultstate{m=lr_assassin;t=walk;s=walk_aggro} @self
+  
+assassinNPCgapcloser:
+  Conditions:
+  - offgcd true
+  - targetwithin{d=12} false
+  - incombat true
+  Skills:
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.assassin_poof;v=1;sc=HOSTILE} @self
+  - setAI{ai=false} @self
+  - effect:particles{particle=flash;amount=1;hS=0;vS=0;speed=0} @forward{f=.5}
+  - effect:particles{particle=large_smoke;amount=50;hS=.5;vS=0;speed=0.01;d=true;dir=0,1,0;repeat=5;repeatInterval=2} @self
+  - changepart{m=lr_assassin;pid=torso;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=left_leg;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=left_foot;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=right_leg;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=right_foot;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=left_arm;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=left_hand;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=right_hand;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=right_arm;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=head;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=braid1;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=braid2;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=cape1;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=cape2;nm=npcpackvol4_parts;npid=empty} @self
+  - changepart{m=lr_assassin;pid=cape3;nm=npcpackvol4_parts;npid=empty} @self
+  - teleport @target
+  - delay 25
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.assassin_poof;v=1;sc=HOSTILE} @self
+  - setAI{ai=true} @self
+  - effect:particles{particle=flash;amount=1;hS=0;vS=0;speed=0} @forward{f=.5}
+  - changepart{m=lr_assassin;pid=torso;nm=lr_assassin;npid=torso} @self
+  - changepart{m=lr_assassin;pid=left_leg;nm=lr_assassin;npid=left_leg} @self
+  - changepart{m=lr_assassin;pid=left_foot;nm=lr_assassin;npid=left_foot} @self
+  - changepart{m=lr_assassin;pid=right_leg;nm=lr_assassin;npid=right_leg} @self
+  - changepart{m=lr_assassin;pid=right_foot;nm=lr_assassin;npid=right_foot} @self
+  - changepart{m=lr_assassin;pid=left_arm;nm=lr_assassin;npid=left_arm} @self
+  - changepart{m=lr_assassin;pid=left_hand;nm=lr_assassin;npid=left_hand} @self
+  - changepart{m=lr_assassin;pid=right_hand;nm=npcpackvol4_parts;npid=assassin_hand} @self
+  - changepart{m=lr_assassin;pid=right_arm;nm=lr_assassin;npid=right_arm} @self
+  - changepart{m=lr_assassin;pid=head;nm=lr_assassin;npid=head} @self
+  - changepart{m=lr_assassin;pid=braid1;nm=lr_assassin;npid=braid1} @self
+  - changepart{m=lr_assassin;pid=braid2;nm=lr_assassin;npid=braid2} @self
+  - changepart{m=lr_assassin;pid=cape1;nm=lr_assassin;npid=cape1} @self
+  - changepart{m=lr_assassin;pid=cape2;nm=lr_assassin;npid=cape2} @self
+  - changepart{m=lr_assassin;pid=cape3;nm=lr_assassin;npid=cape3} @self
+
+
+assassinNPCattack_sync:
+  Skills:
+  - CancelEvent
+  - randomskill{skills=assassinNPCattack_melee,assassinNPCattack_melee_katar} @self
+  
+assassinNPCdamage:
+  Cooldown: 1
+  Skills:
+  - skill{s=assassinNPCrandomimpact} @self
+  - throw{v=5;vy=-2}
+  - damage{a=5}
+  - skill{s=assassinNPCbloodfx}
+  
+assassinNPCbloodfx:
+  TargetConditions:
+  - blocking false
+  Skills:
+  - effect:particles{particle=block;material=redstone_block;amount=25;hS=.2;vS=.2;speed=0;y=1}
+  
+  
+assassinNPCattack_melee:
+  Conditions:
+  - offgcd true
+  Skills:
+  - changepart{m=lr_assassin;pid=right_hand;nm=npcpackvol4_parts;npid=assassin_hand} @self
+  - setspeed{type=walking;speed=0} @self
+  - gcd{ticks=20}
+  - state{s=attack_1} @self
+  - delay 12
+  - skill{s=assassinNPCrandomvocal} @self
+  - skill{s=assassinNPCrandomswing} @self
+  - totem{ch=1;oH=assassinNPCdamage;int=1;hR=1;vR=1;md=2;repeat=5;repeatInterval=1} @forward{f=.5}
+  - lunge{v=1;vy=0} @target
+  - delay 8
+  - setspeed{type=walking;speed=2} @self
+  - skill{s=assassinNPCattack_melee2} @self .5
+  
+assassinNPCattack_melee2:
+  Conditions:
+  - offgcd true
+  Skills:
+  - changepart{m=lr_assassin;pid=right_hand;nm=npcpackvol4_parts;npid=assassin_hand_flip} @self
+  - setspeed{type=walking;speed=0} @self
+  - gcd{ticks=20}
+  - state{s=attack_2} @self
+  - skill{s=assassinNPCrandomvocal} @self
+  - skill{s=assassinNPCrandomswing} @self
+  - totem{ch=1;oH=assassinNPCdamage;int=1;hR=1;vR=1;md=2;repeat=5;repeatInterval=1} @forward{f=.5}
+  - lunge{v=1;vy=0} @target
+  - delay 15
+  - changepart{m=lr_assassin;pid=right_hand;nm=npcpackvol4_parts;npid=assassin_hand} @self
+  - delay 5
+  - setspeed{type=walking;speed=2} @self
+  
+assassinNPCattack_melee_katar:
+  Conditions:
+  - offgcd true
+  Skills:
+  - changepart{m=lr_assassin;pid=right_hand;nm=npcpackvol4_parts;npid=assassin_katar} @self
+  - setspeed{type=walking;speed=0} @self
+  - gcd{ticks=20}
+  - state{s=attack_1} @self
+  - delay 12
+  - skill{s=assassinNPCrandomvocal} @self
+  - skill{s=assassinNPCrandomswing} @self
+  - totem{ch=1;oH=assassinNPCdamage;int=1;hR=1;vR=1;md=2;repeat=5;repeatInterval=1} @forward{f=.5}
+  - lunge{v=1;vy=0} @target
+  - delay 8
+  - setspeed{type=walking;speed=2} @self
+  - skill{s=assassinNPCattack_melee2_katar} @self .5
+  
+assassinNPCattack_melee2_katar:
+  Conditions:
+  - offgcd true
+  Skills:
+  - setspeed{type=walking;speed=0} @self
+  - gcd{ticks=20}
+  - state{s=attack_2} @self
+  - skill{s=assassinNPCrandomvocal} @self
+  - skill{s=assassinNPCrandomswing} @self
+  - totem{ch=1;oH=assassinNPCdamage;int=1;hR=1;vR=1;md=2;repeat=5;repeatInterval=1} @forward{f=.5}
+  - lunge{v=1;vy=0} @target
+  - delay 20
+  - setspeed{type=walking;speed=2} @self
+  
+assassinNPCprojectile:
+  Cooldown: 5
+  Conditions:
+  - offgcd true
+  - targetwithin{d=4} false
+  - incombat true
+  Skills:
+  - gcd{ticks=20}
+  - state{s=projectile_1} @self
+  - delay 13  
+  - projectile{bulletSpin=29;bulletType=MYTHICITEM;material=assassinNPC_shuriken;onTick=assassinNPCprojectileTICK;onHit=assassinNPCprojectileHIT;v=20;i=.5;hR=1;vR=1;hnp=false}
+  
+assassinNPCprojectileTICK:
+  Skills:
+  - effect:particles{particle=dragon_breath;amount=1;hS=.2;vS=.2}
+  
+assassinNPCprojectileHIT:
+  Skills:
+  - skill{s=assassinNPCrandomimpact} @self
+  - damage{a=1}
+  - potion{type=SLOW;duration=120;level=1}
+  - potion{type=POISON;duration=20;level=1}
+  
+assassinNPCcomplete:
+  Skills:
+  - state{s=fidget} @self
+  - delay 15
+  - effect:particles{particle=flash;amount=1;hS=0;vS=0;speed=0} @forward{f=.5}
+  - effect:particles{particle=large_smoke;amount=50;hS=.5;vS=0;speed=0.01;d=true;dir=0,1,0;repeat=5;repeatInterval=2} @self
+  - model{mod=lr_assassin;r=true} @self
+  
+  
+assassinNPCdeath:
+  Skills:
+  - skill{s=assassinNPCrandomvocal} @self
+  - delay 35
+  - effect:particles{particle=flash;amount=1;hS=0;vS=0;speed=0} @forward{f=.5}
+  - effect:particles{particle=large_smoke;amount=50;hS=.5;vS=0;speed=0.01;d=true;dir=0,1,0;repeat=5;repeatInterval=2} @self
+  - model{mod=lr_assassin;r=true} @self
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+### acolyte ###
+
+
+acolyteNPCAlone:
+  Conditions:
+  - stance{s=alone;str=true} true
+  Skills:
+  - setstance{stance=idle_alone} @self
+  - changepart{m=lr_acolyte;pid=incense;nm=lr_acolyte;npid=incense} @self
+  - state{s=alone} @self
+  
+acolyteNPCWALK:
+  Conditions:
+  - stance{s=idle_alone} true
+  Skills:  
+  - defaultstate{m=lr_acolyte;t=walk;s=walk} @self
+  - setspeed{type=walk;speed=.5} @self
+  - changepart{m=lr_acolyte;pid=incense;nm=lr_acolyte;npid=incense} @self
+  - defaultstate{m=lr_acolyte;t=idle;s=alone} @self
+
+acolyteNPCGreet:
+  Cooldown: 5
+  Conditions:
+  - stance{s=idle_alone} true
+  - playerwithin{d=5} true
+  Skills:
+  - state{s=alone;r=true} @self
+  - setspeed{type=walk;speed=0} @self
+  - changepart{m=lr_acolyte;pid=incense;nm=npcpackvol4_parts;npid=empty} @self
+  - gcd{ticks=30}
+  - defaultstate{m=lr_acolyte;t=idle;s=idle} @self
+  - defaultstate{m=lr_acolyte;t=walk;s=idle} @self
+  - summon{t=NPCVOL4GREETFX} @Forward{f=0;y=1.75}
+  - setstance{stance=player} @self
+  - state{s=greet} @self
+  - randomskill{skills=acolytespeech1,acolytespeech2,acolytespeech3} @self
+  
+acolytespeech1:
+  Skills:
+  - actionmessage{m="☢💨    &0What troubles you?      "} @NearestPlayer{r=6}
+  
+acolytespeech2:
+  Skills:
+  - actionmessage{m="☢💨    &0Im listening            "} @NearestPlayer{r=6}
+  
+acolytespeech3:
+  Skills:
+  - actionmessage{m="☢💨    &0How art thou?           "} @NearestPlayer{r=6}
+
+  
+acolyteNPCInteract:
+  Skills:
+  - actionmessage{m="☢&0💨    &CI still need to be set up!"} @trigger
+  
+  
+acolyteNPCfidget:
+  Conditions:
+  - stance{s=player} true
+  - offgcd
+  Skills:
+  - state{s=fidget} @self
+  
+acolyteNPCincense:
+  Conditions:
+  - stance{s=idle_alone} true
+  Skills:
+  - effect:particles{particle=large_smoke;amount=1;hS=0;vS=0;speed=0} @modelpart{m=lr_acolyte;p=incense;offset=LOCAL;y=-1}
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ### paladin ###
+
+
+paladinNPCAlone:
+  Conditions:
+  - stance{s=alone;str=true} true
+  Skills:
+  - setstance{stance=idle_alone} @self
+  - state{s=alone} @self
+  #- defaultstate{m=lr_paladin;t=idle;s=alone} @self
+
+  
+paladinNPCWALK:
+  Conditions:
+  - stance{s=idle_alone} true
+  Skills:  
+  - defaultstate{m=lr_paladin;t=walk;s=walk} @self
+  - setspeed{type=walk;speed=.5} @self
+  - changepart{m=lr_paladin;pid=incense;nm=lr_paladin;npid=incense} @self
+  - defaultstate{m=lr_paladin;t=idle;s=alone} @self
+
+paladinNPCGreet:
+  Cooldown: 5
+  Conditions:
+  - stance{s=idle_alone} true
+  - playerwithin{d=5} true
+  Skills:
+  - state{s=alone;r=true} @self
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.paladin_greet;v=1;sc=HOSTILE} @self
+  - setspeed{type=walk;speed=0} @self
+  - changepart{m=lr_paladin;pid=incense;nm=npcpackvol4_parts;npid=empty} @self
+  - gcd{ticks=30}
+  - defaultstate{m=lr_paladin;t=idle;s=idle} @self
+  - defaultstate{m=lr_paladin;t=walk;s=idle} @self
+  - summon{t=NPCVOL4GREETFX} @Forward{f=0;y=1.75}
+  - setstance{stance=player} @self
+  - state{s=greet} @self
+  - randomskill{skills=paladinspeech1,paladinspeech2,paladinspeech3} @self
+  
+paladinspeech1:
+  Skills:
+  - actionmessage{m="☣💨    &0Thats my hammer!       "} @NearestPlayer{r=6}
+  
+paladinspeech2:
+  Skills:
+  - actionmessage{m="☣💨    &0Justice reigns...      "} @NearestPlayer{r=6}
+  
+paladinspeech3:
+  Skills:
+  - actionmessage{m="☣💨    &0Purge the wicked!      "} @NearestPlayer{r=6}
+
+  
+paladinNPCInteract:
+  Skills:
+  - actionmessage{m="☣&0💨    &CI still need to be set up!"} @trigger
+  
+  
+paladinNPCfidget:
+  Conditions:
+  - stance{s=player} true
+  - offgcd
+  Skills:
+  - state{s=fidget} @self
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ### tinkerer ###
+
+tinkererNPCAlone:
+  Conditions:
+  - stance{s=alone;str=true} true
+  Skills:
+  - setstance{stance=idle_alone} @self
+  - state{s=alone} @self
+
+  
+tinkererNPCWALK:
+  Conditions:
+  - stance{s=idle_alone} true
+  Skills:  
+  - defaultstate{m=lr_tinkerer;t=walk;s=walk} @self
+  - setspeed{type=walk;speed=.5} @self
+  - changepart{m=lr_tinkerer;pid=incense;nm=lr_tinkerer;npid=incense} @self
+  - defaultstate{m=lr_tinkerer;t=idle;s=alone} @self
+
+tinkererNPCGreet:
+  Cooldown: 5
+  Conditions:
+  - stance{s=idle_alone} true
+  - playerwithin{d=5} true
+  Skills:
+  - state{s=alone;r=true} @self
+  - setspeed{type=walk;speed=0} @self
+  - changepart{m=lr_tinkerer;pid=incense;nm=npcpackvol4_parts;npid=empty} @self
+  - gcd{ticks=30}
+  - defaultstate{m=lr_tinkerer;t=idle;s=idle} @self
+  - defaultstate{m=lr_tinkerer;t=walk;s=idle} @self
+  - summon{t=NPCVOL4GREETFX} @Forward{f=0;y=1.75}
+  - setstance{stance=player} @self
+  - state{s=greet} @self
+  - randomskill{skills=tinkererspeech1,tinkererspeech2,tinkererspeech3} @self
+  
+tinkererspeech1:
+  Skills:
+  - actionmessage{m="☤💨    &0Im very busy!         "} @NearestPlayer{r=6}
+  
+tinkererspeech2:
+  Skills:
+  - actionmessage{m="☤💨  &0Hand me that screwdriver!"} @NearestPlayer{r=6}
+  
+tinkererspeech3:
+  Skills:
+  - actionmessage{m="☤💨  &0Have you seen my robot?"} @NearestPlayer{r=6}
+
+  
+tinkererNPCInteract:
+  Skills:
+  - actionmessage{m="☤&0💨    &CI still need to be set up!"} @trigger
+  
+  
+tinkererNPCfidget:
+  Conditions:
+  - stance{s=player} true
+  - offgcd
+  Skills:
+  - state{s=fidget} @self
+  
+tinkererNPCrobot:
+  Skills:
+  - summon{t=NPCtinkererbot;r=1} @self
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ### fortuneteller ###
+
+fortunetellerNPCballfx:
+  Skills:
+  - effect:particles{particle=portal;amount=5;hS=.1;vS=.1;speed=1;y=.2} @self
+
+fortunetellerNPCAlone:
+  Conditions:
+  - stance{s=alone;str=true} true
+  Skills:
+  - setstance{stance=idle_alone} @self
+  - state{s=alone} @self
+  
+
+fortunetellerNPCGreet:
+  Cooldown: 5
+  Conditions:
+  - stance{s=idle_alone} true
+  - playerwithin{d=5} true
+  Skills:
+  - state{s=alone;r=true} @self
+  - setspeed{type=walk;speed=0} @self
+  - changepart{m=lr_fortuneteller;pid=incense;nm=npcpackvol4_parts;npid=empty} @self
+  - gcd{ticks=30}
+  - defaultstate{m=lr_fortuneteller;t=idle;s=idle} @self
+  - defaultstate{m=lr_fortuneteller;t=walk;s=idle} @self
+  - summon{t=NPCVOL4GREETFX} @Forward{f=0;y=1.75}
+  - setstance{stance=player} @self
+  - state{s=greet} @self
+  - randomskill{skills=fortunetellerspeech1,fortunetellerspeech2,fortunetellerspeech3} @self
+  
+fortunetellerspeech1:
+  Skills:
+  - actionmessage{m="☦💨&0I knew you would be here"} @NearestPlayer{r=6}
+  
+fortunetellerspeech2:
+  Skills:
+  - actionmessage{m="☦💨    &0In the basement."} @NearestPlayer{r=6}
+  
+fortunetellerspeech3:
+  Skills:
+  - actionmessage{m="☦💨    &0What do you seek?"} @NearestPlayer{r=6}
+
+  
+fortunetellerNPCInteract:
+  Skills:
+  - actionmessage{m="☦&0💨    &CI still need to be set up!"} @trigger
+  
+  
+fortunetellerNPCfidget:
+  Conditions:
+  - stance{s=player} true
+  - offgcd
+  Skills:
+  - state{s=fidget} @self
+

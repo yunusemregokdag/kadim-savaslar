@@ -1,0 +1,10 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "item/stone_sword"
+    },
+    "overrides": [
+		{"predicate": {"custom_model_data":2060}, "model": "monk_model/monk_gauntlet"},
+		{"predicate": {"custom_model_data":2061}, "model": "monk_model/monk_gauntlet_shiny"}
+    ]
+}

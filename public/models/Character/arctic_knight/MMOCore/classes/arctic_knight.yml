@@ -1,0 +1,58 @@
+display:
+    name: '&b&lArctic Knight Class'
+    lore:
+    - '&9Choose the Arctic Knight Class'
+    item: STONE_SWORD:2058 # Supports custom model data/texture by durability
+
+exp-curve: levels
+
+max-level: 100
+
+exp-table: class_exp_table
+
+skills:
+    FROSTBITE:
+        level: 1
+        max-level: 30
+    FROST_STRIKE:
+        level: 1
+        max-level: 30
+    GLACIAL_IMPALEMENT:
+        level: 1
+        max-level: 30
+    ARCTIC_CHARGE:
+        level: 1
+        max-level: 30
+    GLACIER_SMASH:
+        level: 1
+        max-level: 20
+    FROZEN_SHIELD:
+        level: 1
+        max-level: 30
+    PERMAFROST_LANCE:
+        level: 1
+        max-level: 20
+
+skill-slots:
+    1:
+        name: "&aSkill Slot I (Passive)"
+        formula: "<PASSIVE>"
+        unlocked-by-default: true
+    2:
+        name: "&aSkill Slot II"
+        unlocked-by-default: true
+    3:
+        name: "&aSkill Slot III"
+        unlocked-by-default: true
+    4:
+        name: "&aSkill Slot IV"
+        unlocked-by-default: true
+    5:
+        name: "&aSkill Slot V"
+        unlocked-by-default: true
+    6:
+        name: "&aSkill Slot VI"
+        unlocked-by-default: true
+    7:
+        name: "&aSkill Slot VII"
+        unlocked-by-default: true

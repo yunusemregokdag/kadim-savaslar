@@ -1,0 +1,15 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "item/coal"
+    },	
+	"overrides": [	
+		{"predicate": {"custom_model_data":2153}, "model": "reaper_model/icon_death_spin"},
+		{"predicate": {"custom_model_data":2154}, "model": "reaper_model/icon_god_of_death"},
+		{"predicate": {"custom_model_data":2155}, "model": "reaper_model/icon_reaping_claw"},
+		{"predicate": {"custom_model_data":2156}, "model": "reaper_model/icon_soul_collector"},
+		{"predicate": {"custom_model_data":2157}, "model": "reaper_model/icon_soul_scythe"},
+		{"predicate": {"custom_model_data":2158}, "model": "reaper_model/icon_soul_slice"},
+		{"predicate": {"custom_model_data":2159}, "model": "reaper_model/icon_surge"}
+	]
+}

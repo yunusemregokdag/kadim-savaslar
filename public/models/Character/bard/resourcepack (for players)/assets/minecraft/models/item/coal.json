@@ -1,0 +1,14 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "item/coal"
+    },	
+	"overrides": [	
+		{"predicate": {"custom_model_data":2094}, "model": "bard_model/icon_angelic_serenade"},
+		{"predicate": {"custom_model_data":2095}, "model": "bard_model/icon_rhapsody"},
+		{"predicate": {"custom_model_data":2096}, "model": "bard_model/icon_shield_of_harmony"},
+		{"predicate": {"custom_model_data":2097}, "model": "bard_model/icon_sound_wave"},
+		{"predicate": {"custom_model_data":2098}, "model": "bard_model/icon_symphony_of_destruction"},
+		{"predicate": {"custom_model_data":2099}, "model": "bard_model/icon_vibrative_strike"}
+	]
+}

@@ -1,0 +1,34 @@
+display:
+    name: '&6Warrior'
+    lore:
+    - '&eChoose the Warrior Class'
+    item: STONE_SWORD:2017 # Supports custom model data/texture by durability
+
+# Must match an existing exp curve filename from the 'expcurves' folder
+exp-curve: levels
+
+# The maximum level players can reach
+max-level: 100
+
+exp-table: class_exp_table
+
+skills:
+    BRUTAL_STRIKE:
+        level: 1
+        max-level: 30
+    CHARGE:
+        level: 1
+        max-level: 30
+    RAMPAGE:
+        level: 1
+        max-level: 30
+    SHIELD_BARRIER:
+        level: 1
+        max-level: 30
+    CHAIN_HOOK:
+        level: 1
+        max-level: 30
+    JUDGEMENT:
+        level: 1
+        max-level: 20
+

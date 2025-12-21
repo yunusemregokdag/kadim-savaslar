@@ -1,0 +1,40 @@
+name: Deadly Javelin
+lore:
+- '&aThrow a javelin, knocking back'
+- '&aand stunning the target for a short time'
+- ''
+- '&c{damage} Damage'
+- '&c{damage}s Stun Duration'
+- '&e{cooldown}s Cooldown'
+- '&9Costs {mana} {mana_name}'
+material: 'COAL:2059'
+damage:
+  base: 4
+  per-level: 1
+  min: 4
+  max: 8
+duration:
+  base: 2
+  per-level: 0.3
+  min: 2
+  max: 4
+timer:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+mana:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+stamina:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+cooldown:
+  base: 4
+  per-level: -0.3
+  min: 2.5
+  max: 4

@@ -1,0 +1,77 @@
+info:
+  namespace: monk
+items:
+  monk_gauntlet:
+    display_name: "monk_gauntlet"
+    permission: monk_gauntlet
+    resource:
+      material: STONE_SWORD
+      model_id: 2060
+      generate: false
+      model_path: monk_model/monk_gauntlet
+  monk_gauntlet_shiny:
+    display_name: "monk_gauntlet_shiny"
+    permission: monk_gauntlet_shiny
+    resource:
+      material: STONE_SWORD
+      model_id: 2061
+      generate: false
+      model_path: monk_model/monk_gauntlet_shiny
+  icon_beads_of_karma:
+    display_name: "icon_beads_of_karma"
+    permission: icon_beads_of_karma
+    resource:
+      material: COAL
+      model_id: 2193
+      generate: false
+      model_path: monk_model/icon_beads_of_karma
+  icon_chi_blast:
+    display_name: "icon_chi_blast"
+    permission: icon_chi_blast
+    resource:
+      material: COAL
+      model_id: 2194
+      generate: false
+      model_path: monk_model/icon_chi_blast
+  icon_counterstrike:
+    display_name: "icon_counterstrike"
+    permission: icon_counterstrike
+    resource:
+      material: COAL
+      model_id: 2195
+      generate: false
+      model_path: monk_model/icon_counterstrike
+  icon_dragon_fists:
+    display_name: "icon_dragon_fists"
+    permission: icon_dragon_fists
+    resource:
+      material: COAL
+      model_id: 2196
+      generate: false
+      model_path: monk_model/icon_dragon_fists
+  icon_focus_chi:
+    display_name: "icon_focus_chi"
+    permission: icon_focus_chi
+    resource:
+      material: COAL
+      model_id: 2197
+      generate: false
+      model_path: monk_model/icon_focus_chi
+  icon_swift_strikes:
+    display_name: "icon_swift_strikes"
+    permission: icon_swift_strikes
+    resource:
+      material: COAL
+      model_id: 2198
+      generate: false
+      model_path: monk_model/icon_swift_strikes
+  icon_zen_throw:
+    display_name: "icon_zen_throw"
+    permission: icon_zen_throw
+    resource:
+      material: COAL
+      model_id: 2199
+      generate: false
+      model_path: monk_model/icon_zen_throw
+  
+#Uzc5B1QIREOWl3ZuhnSOhnMJ52UxEkeOlXQ61EMRRlT5FFSUZnNDpFZQhGeUF1QBZVQZRTN

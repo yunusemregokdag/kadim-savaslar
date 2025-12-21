@@ -1,0 +1,61 @@
+display:
+    name: '&a&lReaper Class'
+    lore:
+    - '&bChoose the Reaper Class'
+    item: STONE_SWORD:2049 # Supports custom model data/texture by durability
+
+# Must match an existing exp curve filename from the 'expcurves' folder
+exp-curve: levels
+
+# The maximum level players can reach
+max-level: 100
+
+exp-table: class_exp_table
+
+skills:
+    SOUL_COLLECTOR:
+        level: 1
+        max-level: 30
+    SOUL_SLICE:
+        level: 1
+        max-level: 30
+    DEATH_SPIN:
+        level: 1
+        max-level: 30
+    REAPING_CLAW:
+        level: 1
+        max-level: 30
+    SURGE:
+        level: 1
+        max-level: 20
+    SOUL_SCYTHE:
+        level: 1
+        max-level: 30
+    GOD_OF_DEATH:
+        level: 1
+        max-level: 20
+
+skill-slots:
+    1:
+        name: "&aSkill Slot I (Passive)"
+        formula: "<PASSIVE>"
+        unlocked-by-default: true
+    2:
+        name: "&aSkill Slot II"
+        unlocked-by-default: true
+    3:
+        name: "&aSkill Slot III"
+        unlocked-by-default: true
+    4:
+        name: "&aSkill Slot IV"
+        unlocked-by-default: true
+    5:
+        name: "&aSkill Slot V"
+        unlocked-by-default: true
+    6:
+        name: "&aSkill Slot VI"
+        unlocked-by-default: true
+    7:
+        name: "&aSkill Slot VII"
+        unlocked-by-default: true
+#ATVTx0V1oUbXJUQtxWNDhUQvhlW4VFRNBzZq1UNjRlTwEEWUV3QxwWduh1UYB3d0xENEhUO

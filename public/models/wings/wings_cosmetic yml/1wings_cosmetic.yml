@@ -1,0 +1,21 @@
+info:
+  namespace: elitecreatures
+categories:
+  butterfly_wings_cosmetic:
+    enabled: true
+    skip_if_already: false
+    icon: "elitecreatures:butterfly_wings_cosmetic_wings_1"
+    name: "Butterfly Wings Cosmetic"
+    permission: "ia.menu.butterfly_wings_cosmetic"
+    items:
+      - "elitecreatures:butterfly_wings_cosmetic_wings_1"
+      - "elitecreatures:butterfly_wings_cosmetic_wings_2"
+      - "elitecreatures:butterfly_wings_cosmetic_wings_3"
+      - "elitecreatures:butterfly_wings_cosmetic_wings_4"
+      - "elitecreatures:butterfly_wings_cosmetic_wings_5"
+      - "elitecreatures:butterfly_wings_cosmetic_wings_6"
+      - "elitecreatures:butterfly_wings_cosmetic_wings_7"
+      - "elitecreatures:butterfly_wings_cosmetic_wings_8"
+      - "elitecreatures:butterfly_wings_cosmetic_wings_9"
+      - "elitecreatures:butterfly_wings_cosmetic_wings_10"
+#d4c2886be2ec837b60e73c87402b61db

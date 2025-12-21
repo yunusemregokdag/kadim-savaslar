@@ -1,0 +1,489 @@
+
+archmage_staff:
+  Pack:
+    custom_model_data: 2043
+    generate_model: false
+    model: archmage_model/archmage_staff
+  displayname: archmage_staff
+  material: STONE_SWORD
+  permission: archmage_staff
+archmage_staff_shiny:
+  Pack:
+    custom_model_data: 2044
+    generate_model: false
+    model: archmage_model/archmage_staff_shiny
+  displayname: archmage_staff_shiny
+  material: STONE_SWORD
+  permission: archmage_staff_shiny
+icon_arcane_devastation:
+  Pack:
+    custom_model_data: 2132
+    generate_model: false
+    model: archmage_model/icon_arcane_devastation
+  displayname: icon_arcane_devastation
+  material: COAL
+  permission: icon_arcane_devastation
+icon_arcane_shield:
+  Pack:
+    custom_model_data: 2133
+    generate_model: false
+    model: archmage_model/icon_arcane_shield
+  displayname: icon_arcane_shield
+  material: COAL
+  permission: icon_arcane_shield
+icon_arcane_slash:
+  Pack:
+    custom_model_data: 2134
+    generate_model: false
+    model: archmage_model/icon_arcane_slash
+  displayname: icon_arcane_slash
+  material: COAL
+  permission: icon_arcane_slash
+icon_blizzard:
+  Pack:
+    custom_model_data: 2135
+    generate_model: false
+    model: archmage_model/icon_blizzard
+  displayname: icon_blizzard
+  material: COAL
+  permission: icon_blizzard
+icon_chains_of_void:
+  Pack:
+    custom_model_data: 2136
+    generate_model: false
+    model: archmage_model/icon_chains_of_void
+  displayname: icon_chains_of_void
+  material: COAL
+  permission: icon_chains_of_void
+icon_cloak_of_hastur:
+  Pack:
+    custom_model_data: 2137
+    generate_model: false
+    model: archmage_model/icon_cloak_of_hastur
+  displayname: icon_cloak_of_hastur
+  material: COAL
+  permission: icon_cloak_of_hastur
+icon_meteor_storm:
+  Pack:
+    custom_model_data: 2138
+    generate_model: false
+    model: archmage_model/icon_meteor_storm
+  displayname: icon_meteor_storm
+  material: COAL
+  permission: icon_meteor_storm
+arcane_bolt_1:
+  Pack:
+    custom_model_data: 2686
+    generate_model: false
+    model: archmage_model/arcane_bolt_1
+  displayname: arcane_bolt_1
+  material: PAPER
+  permission: arcane_bolt_1
+arcane_bolt_2:
+  Pack:
+    custom_model_data: 2687
+    generate_model: false
+    model: archmage_model/arcane_bolt_2
+  displayname: arcane_bolt_2
+  material: PAPER
+  permission: arcane_bolt_2
+arcane_bolt_3:
+  Pack:
+    custom_model_data: 2688
+    generate_model: false
+    model: archmage_model/arcane_bolt_3
+  displayname: arcane_bolt_3
+  material: PAPER
+  permission: arcane_bolt_3
+arcane_bolt_4:
+  Pack:
+    custom_model_data: 2689
+    generate_model: false
+    model: archmage_model/arcane_bolt_4
+  displayname: arcane_bolt_4
+  material: PAPER
+  permission: arcane_bolt_4
+arcane_bolt_5:
+  Pack:
+    custom_model_data: 2690
+    generate_model: false
+    model: archmage_model/arcane_bolt_5
+  displayname: arcane_bolt_5
+  material: PAPER
+  permission: arcane_bolt_5
+arcane_bolt_6:
+  Pack:
+    custom_model_data: 2691
+    generate_model: false
+    model: archmage_model/arcane_bolt_6
+  displayname: arcane_bolt_6
+  material: PAPER
+  permission: arcane_bolt_6
+arcane_bolt_7:
+  Pack:
+    custom_model_data: 2692
+    generate_model: false
+    model: archmage_model/arcane_bolt_7
+  displayname: arcane_bolt_7
+  material: PAPER
+  permission: arcane_bolt_7
+arcane_bolt_8:
+  Pack:
+    custom_model_data: 2693
+    generate_model: false
+    model: archmage_model/arcane_bolt_8
+  displayname: arcane_bolt_8
+  material: PAPER
+  permission: arcane_bolt_8
+arcane_bolt_9:
+  Pack:
+    custom_model_data: 2694
+    generate_model: false
+    model: archmage_model/arcane_bolt_9
+  displayname: arcane_bolt_9
+  material: PAPER
+  permission: arcane_bolt_9
+arcane_impact_1:
+  Pack:
+    custom_model_data: 2695
+    generate_model: false
+    model: archmage_model/arcane_impact_1
+  displayname: arcane_impact_1
+  material: PAPER
+  permission: arcane_impact_1
+arcane_impact_2:
+  Pack:
+    custom_model_data: 2696
+    generate_model: false
+    model: archmage_model/arcane_impact_2
+  displayname: arcane_impact_2
+  material: PAPER
+  permission: arcane_impact_2
+arcane_impact_3:
+  Pack:
+    custom_model_data: 2697
+    generate_model: false
+    model: archmage_model/arcane_impact_3
+  displayname: arcane_impact_3
+  material: PAPER
+  permission: arcane_impact_3
+arcane_impact_4:
+  Pack:
+    custom_model_data: 2698
+    generate_model: false
+    model: archmage_model/arcane_impact_4
+  displayname: arcane_impact_4
+  material: PAPER
+  permission: arcane_impact_4
+arcane_impact_5:
+  Pack:
+    custom_model_data: 2699
+    generate_model: false
+    model: archmage_model/arcane_impact_5
+  displayname: arcane_impact_5
+  material: PAPER
+  permission: arcane_impact_5
+arcane_impact_6:
+  Pack:
+    custom_model_data: 2700
+    generate_model: false
+    model: archmage_model/arcane_impact_6
+  displayname: arcane_impact_6
+  material: PAPER
+  permission: arcane_impact_6
+arcane_impact_7:
+  Pack:
+    custom_model_data: 2701
+    generate_model: false
+    model: archmage_model/arcane_impact_7
+  displayname: arcane_impact_7
+  material: PAPER
+  permission: arcane_impact_7
+arcane_slash_1:
+  Pack:
+    custom_model_data: 2702
+    generate_model: false
+    model: archmage_model/arcane_slash_1
+  displayname: arcane_slash_1
+  material: PAPER
+  permission: arcane_slash_1
+arcane_slash_2:
+  Pack:
+    custom_model_data: 2703
+    generate_model: false
+    model: archmage_model/arcane_slash_2
+  displayname: arcane_slash_2
+  material: PAPER
+  permission: arcane_slash_2
+arcane_slash_3:
+  Pack:
+    custom_model_data: 2704
+    generate_model: false
+    model: archmage_model/arcane_slash_3
+  displayname: arcane_slash_3
+  material: PAPER
+  permission: arcane_slash_3
+arcane_slash_4:
+  Pack:
+    custom_model_data: 2705
+    generate_model: false
+    model: archmage_model/arcane_slash_4
+  displayname: arcane_slash_4
+  material: PAPER
+  permission: arcane_slash_4
+arcane_slash_5:
+  Pack:
+    custom_model_data: 2706
+    generate_model: false
+    model: archmage_model/arcane_slash_5
+  displayname: arcane_slash_5
+  material: PAPER
+  permission: arcane_slash_5
+arcane_slash_6:
+  Pack:
+    custom_model_data: 2707
+    generate_model: false
+    model: archmage_model/arcane_slash_6
+  displayname: arcane_slash_6
+  material: PAPER
+  permission: arcane_slash_6
+arcane_slash_7:
+  Pack:
+    custom_model_data: 2708
+    generate_model: false
+    model: archmage_model/arcane_slash_7
+  displayname: arcane_slash_7
+  material: PAPER
+  permission: arcane_slash_7
+arcane_thunder_1:
+  Pack:
+    custom_model_data: 2709
+    generate_model: false
+    model: archmage_model/arcane_thunder_1
+  displayname: arcane_thunder_1
+  material: PAPER
+  permission: arcane_thunder_1
+arcane_thunder_2:
+  Pack:
+    custom_model_data: 2710
+    generate_model: false
+    model: archmage_model/arcane_thunder_2
+  displayname: arcane_thunder_2
+  material: PAPER
+  permission: arcane_thunder_2
+arcane_thunder_3:
+  Pack:
+    custom_model_data: 2711
+    generate_model: false
+    model: archmage_model/arcane_thunder_3
+  displayname: arcane_thunder_3
+  material: PAPER
+  permission: arcane_thunder_3
+arcane_thunder_4:
+  Pack:
+    custom_model_data: 2712
+    generate_model: false
+    model: archmage_model/arcane_thunder_4
+  displayname: arcane_thunder_4
+  material: PAPER
+  permission: arcane_thunder_4
+arcane_thunder_5:
+  Pack:
+    custom_model_data: 2713
+    generate_model: false
+    model: archmage_model/arcane_thunder_5
+  displayname: arcane_thunder_5
+  material: PAPER
+  permission: arcane_thunder_5
+arcane_thunder_6:
+  Pack:
+    custom_model_data: 2714
+    generate_model: false
+    model: archmage_model/arcane_thunder_6
+  displayname: arcane_thunder_6
+  material: PAPER
+  permission: arcane_thunder_6
+arcane_thunder_7:
+  Pack:
+    custom_model_data: 2715
+    generate_model: false
+    model: archmage_model/arcane_thunder_7
+  displayname: arcane_thunder_7
+  material: PAPER
+  permission: arcane_thunder_7
+arcane_thunder_8:
+  Pack:
+    custom_model_data: 2716
+    generate_model: false
+    model: archmage_model/arcane_thunder_8
+  displayname: arcane_thunder_8
+  material: PAPER
+  permission: arcane_thunder_8
+arcane_thunder_9:
+  Pack:
+    custom_model_data: 2717
+    generate_model: false
+    model: archmage_model/arcane_thunder_9
+  displayname: arcane_thunder_9
+  material: PAPER
+  permission: arcane_thunder_9
+blizzard_icicle:
+  Pack:
+    custom_model_data: 2718
+    generate_model: false
+    model: archmage_model/blizzard_icicle
+  displayname: blizzard_icicle
+  material: PAPER
+  permission: blizzard_icicle
+blizzard_impact_1:
+  Pack:
+    custom_model_data: 2719
+    generate_model: false
+    model: archmage_model/blizzard_impact_1
+  displayname: blizzard_impact_1
+  material: PAPER
+  permission: blizzard_impact_1
+blizzard_impact_2:
+  Pack:
+    custom_model_data: 2720
+    generate_model: false
+    model: archmage_model/blizzard_impact_2
+  displayname: blizzard_impact_2
+  material: PAPER
+  permission: blizzard_impact_2
+blizzard_impact_3:
+  Pack:
+    custom_model_data: 2721
+    generate_model: false
+    model: archmage_model/blizzard_impact_3
+  displayname: blizzard_impact_3
+  material: PAPER
+  permission: blizzard_impact_3
+blizzard_impact_4:
+  Pack:
+    custom_model_data: 2722
+    generate_model: false
+    model: archmage_model/blizzard_impact_4
+  displayname: blizzard_impact_4
+  material: PAPER
+  permission: blizzard_impact_4
+blizzard_impact_5:
+  Pack:
+    custom_model_data: 2723
+    generate_model: false
+    model: archmage_model/blizzard_impact_5
+  displayname: blizzard_impact_5
+  material: PAPER
+  permission: blizzard_impact_5
+blizzard_impact_6:
+  Pack:
+    custom_model_data: 2724
+    generate_model: false
+    model: archmage_model/blizzard_impact_6
+  displayname: blizzard_impact_6
+  material: PAPER
+  permission: blizzard_impact_6
+blizzard_impact_7:
+  Pack:
+    custom_model_data: 2725
+    generate_model: false
+    model: archmage_model/blizzard_impact_7
+  displayname: blizzard_impact_7
+  material: PAPER
+  permission: blizzard_impact_7
+meteor_storm_explosion_1:
+  Pack:
+    custom_model_data: 2726
+    generate_model: false
+    model: archmage_model/meteor_storm_explosion_1
+  displayname: meteor_storm_explosion_1
+  material: PAPER
+  permission: meteor_storm_explosion_1
+meteor_storm_explosion_2:
+  Pack:
+    custom_model_data: 2727
+    generate_model: false
+    model: archmage_model/meteor_storm_explosion_2
+  displayname: meteor_storm_explosion_2
+  material: PAPER
+  permission: meteor_storm_explosion_2
+meteor_storm_explosion_3:
+  Pack:
+    custom_model_data: 2728
+    generate_model: false
+    model: archmage_model/meteor_storm_explosion_3
+  displayname: meteor_storm_explosion_3
+  material: PAPER
+  permission: meteor_storm_explosion_3
+meteor_storm_explosion_4:
+  Pack:
+    custom_model_data: 2729
+    generate_model: false
+    model: archmage_model/meteor_storm_explosion_4
+  displayname: meteor_storm_explosion_4
+  material: PAPER
+  permission: meteor_storm_explosion_4
+meteor_storm_explosion_5:
+  Pack:
+    custom_model_data: 2730
+    generate_model: false
+    model: archmage_model/meteor_storm_explosion_5
+  displayname: meteor_storm_explosion_5
+  material: PAPER
+  permission: meteor_storm_explosion_5
+meteor_storm_explosion_6:
+  Pack:
+    custom_model_data: 2731
+    generate_model: false
+    model: archmage_model/meteor_storm_explosion_6
+  displayname: meteor_storm_explosion_6
+  material: PAPER
+  permission: meteor_storm_explosion_6
+void_rupture_1:
+  Pack:
+    custom_model_data: 2732
+    generate_model: false
+    model: archmage_model/void_rupture_1
+  displayname: void_rupture_1
+  material: PAPER
+  permission: void_rupture_1
+void_rupture_2:
+  Pack:
+    custom_model_data: 2733
+    generate_model: false
+    model: archmage_model/void_rupture_2
+  displayname: void_rupture_2
+  material: PAPER
+  permission: void_rupture_2
+void_rupture_3:
+  Pack:
+    custom_model_data: 2734
+    generate_model: false
+    model: archmage_model/void_rupture_3
+  displayname: void_rupture_3
+  material: PAPER
+  permission: void_rupture_3
+void_rupture_4:
+  Pack:
+    custom_model_data: 2735
+    generate_model: false
+    model: archmage_model/void_rupture_4
+  displayname: void_rupture_4
+  material: PAPER
+  permission: void_rupture_4
+void_rupture_5:
+  Pack:
+    custom_model_data: 2736
+    generate_model: false
+    model: archmage_model/void_rupture_5
+  displayname: void_rupture_5
+  material: PAPER
+  permission: void_rupture_5
+void_rupture_6:
+  Pack:
+    custom_model_data: 2737
+    generate_model: false
+    model: archmage_model/void_rupture_6
+  displayname: void_rupture_6
+  material: PAPER
+  permission: void_rupture_6

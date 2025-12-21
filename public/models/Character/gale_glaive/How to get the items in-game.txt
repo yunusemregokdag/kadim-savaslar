@@ -1,0 +1,17 @@
+MMOItems:
+/mi browse
+look for the SWORD category
+
+================================================
+
+MythicCrucible:
+/mm i get windreaver_gale_glaive
+/mm i get windreaver_gale_glaive_ancient
+
+================================================
+
+Gale Glaive Windreaver:
+/minecraft:give USERNAME stone_sword{CustomModelData:2068}
+
+Ancient Gale Glaive Windreaver:
+/minecraft:give USERNAME stone_sword{CustomModelData:2069}

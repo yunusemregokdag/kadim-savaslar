@@ -1,0 +1,36 @@
+﻿
+#########################################################
+## Developed by Little Room, patreon.com/littleroomdev ##
+#########################################################
+
+
+Tinkerer_bot_PET:
+  Type: HUSK
+  AIGoalSelectors:
+  - 0 clear
+  - 1 lookatplayers
+  - 2 randomstroll
+  AITargetSelectors:
+  - 0 clear
+  Drops: []
+  Equipment: []
+  Skills:
+   - skill{s=lr_tinkerer_robot_interact} @self ~onInteract
+   - model{mid=lr_tinkerer_robot;n=false} @self ~onSpawn
+   - model{mid=lr_tinkerer_robot;n=false} @self ~onLoad
+   - skill{s=lr_tinkerer_robot_Spawn} @self ~onSpawn
+  Display: "§bTinkerBot"
+  Health: 100
+  Damage: 0
+  Options:
+    Collidable: false
+    Invincible: true
+    Despawn: true
+    AlwaysShowName: false
+    PreventOtherDrops: true
+    Silent: true
+    KnockbackResistance: 1
+    FollowRange: 5
+    PreventItemPickup: true
+    PreventRandomEquipment: true
+    MovementSpeed: 0.24

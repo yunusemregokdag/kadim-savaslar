@@ -1,0 +1,41 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "item/paper"
+    },
+	"overrides": [	
+		{"predicate": {"custom_model_data":2840}, "model": "reaper_model/death_slice_1"},
+		{"predicate": {"custom_model_data":2841}, "model": "reaper_model/death_slice_2"},
+		{"predicate": {"custom_model_data":2842}, "model": "reaper_model/death_slice_3"},
+		{"predicate": {"custom_model_data":2843}, "model": "reaper_model/death_slice_4"},
+		{"predicate": {"custom_model_data":2844}, "model": "reaper_model/death_slice_5"},
+		{"predicate": {"custom_model_data":2845}, "model": "reaper_model/death_slice_6"},
+		{"predicate": {"custom_model_data":2846}, "model": "reaper_model/death_slice_7"},
+		{"predicate": {"custom_model_data":2847}, "model": "reaper_model/death_slice_8"},
+		{"predicate": {"custom_model_data":2848}, "model": "reaper_model/death_spin"},
+		{"predicate": {"custom_model_data":2849}, "model": "reaper_model/soul_cross_1"},
+		{"predicate": {"custom_model_data":2850}, "model": "reaper_model/soul_cross_2"},
+		{"predicate": {"custom_model_data":2851}, "model": "reaper_model/soul_cross_3"},
+		{"predicate": {"custom_model_data":2852}, "model": "reaper_model/soul_cross_4"},
+		{"predicate": {"custom_model_data":2853}, "model": "reaper_model/soul_cross_5"},
+		{"predicate": {"custom_model_data":2854}, "model": "reaper_model/soul_cross_6"},
+		{"predicate": {"custom_model_data":2855}, "model": "reaper_model/soul_cross_7"},
+		{"predicate": {"custom_model_data":2856}, "model": "reaper_model/soul_cross_8"},
+		{"predicate": {"custom_model_data":2857}, "model": "reaper_model/soul_slice_1"},
+		{"predicate": {"custom_model_data":2858}, "model": "reaper_model/soul_slice_2"},
+		{"predicate": {"custom_model_data":2859}, "model": "reaper_model/soul_slice_3"},
+		{"predicate": {"custom_model_data":2860}, "model": "reaper_model/soul_slice_4"},
+		{"predicate": {"custom_model_data":2861}, "model": "reaper_model/soul_slice_5"},
+		{"predicate": {"custom_model_data":2862}, "model": "reaper_model/soul_slice_6"},
+		{"predicate": {"custom_model_data":2863}, "model": "reaper_model/soul_slice_7"},
+		{"predicate": {"custom_model_data":2864}, "model": "reaper_model/soul_slice_8"},
+		{"predicate": {"custom_model_data":2865}, "model": "reaper_model/soul_spin"},
+		{"predicate": {"custom_model_data":2866}, "model": "reaper_model/soul_wave_1"},
+		{"predicate": {"custom_model_data":2867}, "model": "reaper_model/soul_wave_2"},
+		{"predicate": {"custom_model_data":2868}, "model": "reaper_model/soul_wave_3"},
+		{"predicate": {"custom_model_data":2869}, "model": "reaper_model/soul_wave_4"},
+		{"predicate": {"custom_model_data":2870}, "model": "reaper_model/soul_wave_5"},
+		{"predicate": {"custom_model_data":2871}, "model": "reaper_model/soul_wave_6"},
+		{"predicate": {"custom_model_data":2872}, "model": "reaper_model/soul_wave_7"}
+    ]
+}

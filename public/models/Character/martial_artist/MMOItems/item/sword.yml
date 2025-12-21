@@ -1,0 +1,83 @@
+MARTIAL_ARTIST_GAUNTLET:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2029.0
+    name: <gradient:#e3410b:#b0e9ff:#e3410b>Gauntlet of Martial Artist
+    lore:
+    - <gradient:#e3410b:#b0e9ff:#e3410b>The gauntlet of the Martial Artist
+    displayed-type: <gradient:#e3410b:#b0e9ff:#e3410b>Martial Artist
+    attack-damage: 5.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: DOUBLE_STRIKE
+        mode: LEFT_CLICK
+        damage: 3
+        cooldown: 1.0
+      ability2:
+        type: AGILE_STRIKE
+        mode: RIGHT_CLICK
+        damage: 3
+        cooldown: 2.0
+      ability3:
+        type: DEADLY_SQUASH
+        mode: SHIFT_RIGHT_CLICK
+        damage: 4
+        duration: 2
+        cooldown: 4.0
+      ability4:
+        type: UPPERCUT
+        damage: 4
+        mode: SNEAK
+      ability5:
+        type: EVASION
+        mode: DAMAGED
+      ability6:
+        type: MULTI_STRIKE
+        mode: SHIFT_LEFT_CLICK
+        damage: 10
+        cooldown: 5.0
+    disable-attack-passive: true
+    attack-speed: 1.0
+    
+MARTIAL_ARTIST_GAUNTLET_SHINY:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2030.0
+    name: <gradient:#e3410b:#ffeb52:#e3410b>Shiny Gauntlet of Martial Artist
+    lore:
+    - <gradient:#e3410b:#ffeb52:#e3410b>The gauntlet of the Martial Artist
+    displayed-type: <gradient:#e3410b:#b0e9ff:#e3410b>Martial Artist
+    attack-damage: 6.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: DOUBLE_STRIKE
+        mode: LEFT_CLICK
+        damage: 3
+        cooldown: 1.0
+      ability2:
+        type: AGILE_STRIKE
+        mode: RIGHT_CLICK
+        damage: 3
+        cooldown: 2.0
+      ability3:
+        type: DEADLY_SQUASH
+        mode: SHIFT_RIGHT_CLICK
+        damage: 4
+        duration: 2
+        cooldown: 4.0
+      ability4:
+        type: UPPERCUT
+        damage: 4
+        mode: SNEAK
+      ability5:
+        type: EVASION
+        mode: DAMAGED
+      ability6:
+        type: MULTI_STRIKE
+        mode: SHIFT_LEFT_CLICK
+        damage: 10
+        cooldown: 5.0
+    disable-attack-passive: true
+    attack-speed: 1.0

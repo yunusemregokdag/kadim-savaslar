@@ -1,0 +1,42 @@
+name: Divine Cross
+lore:
+- '&eYou summon a holy cross on the ground, dealing'
+- '&edamage to all enemies in the area, pushing them back.'
+- '&eAllies within the range of the cross receive'
+- '&ehealing and speed boost.'
+- ''
+- '&a{heal} Heal'
+- '&c{damage} Damage'
+- '&e{cooldown}s Cooldown'
+- '&9Costs {mana} {mana_name}'
+material: 'COAL:2143'
+damage:
+  base: 4
+  per-level: 1
+  min: 4
+  max: 6
+heal:
+  base: 3
+  per-level: 1
+  min: 3
+  max: 6
+timer:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+mana:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+stamina:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+cooldown:
+  base: 13
+  per-level: -0.1
+  min: 11
+  max: 13

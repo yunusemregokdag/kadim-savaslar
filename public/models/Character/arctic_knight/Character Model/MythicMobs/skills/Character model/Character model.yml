@@ -1,0 +1,83 @@
+##ONI BRUTE
+oni_brute_step:
+  Skills:
+  - sound{s=entity.strider.step;p=0.4;v=0.4} @self
+
+oni_brute_dead:
+  Skills:
+  - particles{p=end_rod;a=50;hS=0.4;vS=0.2;speed=0.1;y=0.25} @self
+
+oni_brute_atk:
+  Conditions:
+  - offgcd
+  - targetwithin{d=4.5} true
+  Skills:
+  - gcd{ticks=50}
+  - state{state=atk;li=2;lo=4;n=false;speed=1} @Self 
+  - delay 20
+  - damage{amount=10} @LivingInCone{a=220;r=4.5}
+  - delay 20
+  - damage{amount=10} @LivingInCone{a=220;r=4.5}
+
+oni_brute_heavy:
+  Conditions:
+  - offgcd
+  - targetwithin{d=5} true
+  Skills:
+  - gcd{ticks=30}
+  - state{state=heavy;li=2;lo=4;n=false;speed=1} @Self 
+  - delay 14
+  - damage{amount=10} @LivingInCone{a=360;r=5}
+  - delay 2
+  - throw{velocity=5;velocityY=5} @LivingInCone{a=360;r=5}
+  ##mechanic
+
+oni_brute_warcry:
+  Cooldown: 15
+  Conditions:
+  - targetwithin{d=15} true
+  Skills:
+  - state{state=warcry;li=2;lo=4;n=false;speed=1} @Self 
+  - delay 10
+  - particles{p=poof;a=25;hS=0;vS=0.25;speed=0.25;y=0.5} @self
+  - particles{p=snowflake;a=25;hS=0;vS=0.25;speed=0.25;y=0.5} @self
+  - particles{p=cherry_leaves;hs=1;vS=1.5;a=100;x=2,y=2} @self
+  - sound{s=entity.illusioner.cast_spell;p=1.5;v=0.5} @self
+  - sound{s=entity.strider.ambient;p=1;v=2} @self
+  - potion{type=SPEED;duration=160;level=1} @self
+  - potion{type=SLOWNESS;duration=160;level=1} @PIR{r=15}
+  ## 8s of Strength III with 20s cooldown
+  - delay 10
+  - particles{p=cherry_leaves;hs=0.5;vS=1.5;a=10;x=2,y=2} @self
+  - delay 10
+  - particles{p=cherry_leaves;hs=0.5;vS=1.5;a=10;x=2,y=2} @self
+  - delay 10
+  - particles{p=cherry_leaves;hs=0.5;vS=1.5;a=10;x=2,y=2} @self
+  - delay 10
+  - particles{p=cherry_leaves;hs=0.5;vS=1.5;a=10;x=2,y=2} @self
+  - delay 10
+  - particles{p=cherry_leaves;hs=0.5;vS=1.5;a=10;x=2,y=2} @self
+  - delay 10
+  - particles{p=cherry_leaves;hs=0.5;vS=1.5;a=10;x=2,y=2} @self
+  - delay 10
+  - particles{p=cherry_leaves;hs=0.5;vS=1.5;a=10;x=2,y=2} @self
+  - delay 10
+  - particles{p=cherry_leaves;hs=0.5;vS=1.5;a=10;x=2,y=2} @self
+  - delay 10
+  - particles{p=cherry_leaves;hs=0.5;vS=1.5;a=10;x=2,y=2} @self
+  - delay 10
+  - particles{p=cherry_leaves;hs=0.5;vS=1.5;a=10;x=2,y=2} @self
+  - delay 10
+  - particles{p=cherry_leaves;hs=0.5;vS=1.5;a=10;x=2,y=2} @self
+  - delay 10
+  - particles{p=cherry_leaves;hs=0.5;vS=1.5;a=10;x=2,y=2} @self
+  - delay 10
+  - particles{p=cherry_leaves;hs=0.5;vS=1.5;a=10;x=2,y=2} @self
+  - delay 10
+  - particles{p=cherry_leaves;hs=0.5;vS=1.5;a=10;x=2,y=2} @self
+  - delay 10
+  - particles{p=cherry_leaves;hs=0.5;vS=1.5;a=10;x=2,y=2} @self
+  - delay 10
+  - particles{p=cherry_leaves;hs=0.5;vS=1.5;a=10;x=2,y=2} @self
+  ##160 ticks = 8s
+#75a3c7ebb1c1c156a85271386b11868f

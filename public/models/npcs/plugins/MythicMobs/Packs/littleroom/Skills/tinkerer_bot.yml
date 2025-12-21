@@ -1,0 +1,19 @@
+
+#########################################################
+## Developed by Little Room, patreon.com/littleroomdev ##
+#########################################################
+
+
+lr_tinkerer_robot_Spawn:
+  Skills:
+   - effect:particles{particle=poof;amount=50;hS=.5;vS=.5} @self
+   
+lr_tinkerer_robot_Despawn:
+  Skills:
+   - effect:particles{particle=poof;amount=50;hS=.5;vS=.5} @self
+   - remove @self # Note the presence of this remove here which is essential if you use a custom despawn mechanic
+
+lr_tinkerer_robot_interact:
+  Skills:
+  - state{s=fidget} @self
+  

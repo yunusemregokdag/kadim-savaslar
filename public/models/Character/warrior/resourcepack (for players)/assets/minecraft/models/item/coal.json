@@ -1,0 +1,14 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "item/coal"
+    },	
+	"overrides": [	
+		{"predicate": {"custom_model_data":2052}, "model": "warrior_model/icon_brutal_strike"},
+		{"predicate": {"custom_model_data":2053}, "model": "warrior_model/icon_chain_hook"},
+		{"predicate": {"custom_model_data":2054}, "model": "warrior_model/icon_charge"},
+		{"predicate": {"custom_model_data":2055}, "model": "warrior_model/icon_judgement"},
+		{"predicate": {"custom_model_data":2056}, "model": "warrior_model/icon_rampage"},
+		{"predicate": {"custom_model_data":2057}, "model": "warrior_model/icon_shield_barrier"}
+	]
+}

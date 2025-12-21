@@ -1,0 +1,34 @@
+display:
+    name: '&4Martial Artist'
+    lore:
+    - '&cChoose the Martial Artist Class'
+    item: STONE_SWORD:2029 # Supports custom model data/texture by durability
+
+# Must match an existing exp curve filename from the 'expcurves' folder
+exp-curve: levels
+
+# The maximum level players can reach
+max-level: 100
+
+exp-table: class_exp_table
+
+skills:
+    DOUBLE_STRIKE:
+        level: 1
+        max-level: 30
+    AGILE_STRIKE:
+        level: 1
+        max-level: 30
+    EVASION:
+        level: 1
+        max-level: 30
+    UPPERCUT:
+        level: 1
+        max-level: 30
+    DEADLY_SQUASH:
+        level: 1
+        max-level: 30
+    MULTI_STRIKE:
+        level: 1
+        max-level: 20
+

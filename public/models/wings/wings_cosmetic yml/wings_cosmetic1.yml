@@ -1,0 +1,102 @@
+cosmetics:
+  butterfly_wings_cosmetic_wings_1:
+    display_name: "[Butterfly] Wings 1"
+    type: BODY_ITEM
+    model:
+      gui: elitecreatures:butterfly_wings_cosmetic_wings_1
+      normal: elitecreatures:butterfly_wings_cosmetic_wings_1
+      self: elitecreatures:butterfly_wings_cosmetic_wings_1_self
+    dye:
+      enabled: false
+      default: "#000000"
+  butterfly_wings_cosmetic_wings_2:
+    display_name: "[Butterfly] Wings 2"
+    type: BODY_ITEM
+    model:
+      gui: elitecreatures:butterfly_wings_cosmetic_wings_2
+      normal: elitecreatures:butterfly_wings_cosmetic_wings_2
+      self: elitecreatures:butterfly_wings_cosmetic_wings_2_self
+    dye:
+      enabled: false
+      default: "#000000"
+  butterfly_wings_cosmetic_wings_3:
+    display_name: "[Butterfly] Wings 3"
+    type: BODY_ITEM
+    model:
+      gui: elitecreatures:butterfly_wings_cosmetic_wings_3
+      normal: elitecreatures:butterfly_wings_cosmetic_wings_3
+      self: elitecreatures:butterfly_wings_cosmetic_wings_3_self
+    dye:
+      enabled: false
+      default: "#000000"
+  butterfly_wings_cosmetic_wings_4:
+    display_name: "[Butterfly] Wings 4"
+    type: BODY_ITEM
+    model:
+      gui: elitecreatures:butterfly_wings_cosmetic_wings_4
+      normal: elitecreatures:butterfly_wings_cosmetic_wings_4
+      self: elitecreatures:butterfly_wings_cosmetic_wings_4_self
+    dye:
+      enabled: false
+      default: "#000000"
+  butterfly_wings_cosmetic_wings_5:
+    display_name: "[Butterfly] Wings 5"
+    type: BODY_ITEM
+    model:
+      gui: elitecreatures:butterfly_wings_cosmetic_wings_5
+      normal: elitecreatures:butterfly_wings_cosmetic_wings_5
+      self: elitecreatures:butterfly_wings_cosmetic_wings_5_self
+    dye:
+      enabled: false
+      default: "#000000"
+  butterfly_wings_cosmetic_wings_6:
+    display_name: "[Butterfly] Wings 6"
+    type: BODY_ITEM
+    model:
+      gui: elitecreatures:butterfly_wings_cosmetic_wings_6
+      normal: elitecreatures:butterfly_wings_cosmetic_wings_6
+      self: elitecreatures:butterfly_wings_cosmetic_wings_6_self
+    dye:
+      enabled: false
+      default: "#000000"
+  butterfly_wings_cosmetic_wings_7:
+    display_name: "[Butterfly] Wings 7"
+    type: BODY_ITEM
+    model:
+      gui: elitecreatures:butterfly_wings_cosmetic_wings_7
+      normal: elitecreatures:butterfly_wings_cosmetic_wings_7
+      self: elitecreatures:butterfly_wings_cosmetic_wings_7_self
+    dye:
+      enabled: false
+      default: "#000000"
+  butterfly_wings_cosmetic_wings_8:
+    display_name: "[Butterfly] Wings 8"
+    type: BODY_ITEM
+    model:
+      gui: elitecreatures:butterfly_wings_cosmetic_wings_8
+      normal: elitecreatures:butterfly_wings_cosmetic_wings_8
+      self: elitecreatures:butterfly_wings_cosmetic_wings_8_self
+    dye:
+      enabled: false
+      default: "#000000"
+  butterfly_wings_cosmetic_wings_9:
+    display_name: "[Butterfly] Wings 9"
+    type: BODY_ITEM
+    model:
+      gui: elitecreatures:butterfly_wings_cosmetic_wings_9
+      normal: elitecreatures:butterfly_wings_cosmetic_wings_9
+      self: elitecreatures:butterfly_wings_cosmetic_wings_9_self
+    dye:
+      enabled: false
+      default: "#000000"
+  butterfly_wings_cosmetic_wings_10:
+    display_name: "[Butterfly] Wings 10"
+    type: BODY_ITEM
+    model:
+      gui: elitecreatures:butterfly_wings_cosmetic_wings_10
+      normal: elitecreatures:butterfly_wings_cosmetic_wings_10
+      self: elitecreatures:butterfly_wings_cosmetic_wings_10_self
+    dye:
+      enabled: false
+      default: "#000000"
+#d4c2886be2ec837b60e73c87402b61db

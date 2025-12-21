@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "redhat.vscode-yaml",
+        "cesium.gltf-vscode",
+        "dbaeumer.vscode-eslint",
+        "vscjava.vscode-java-pack",
+        "mathiasfrohlich.Kotlin"
+    ]
+}

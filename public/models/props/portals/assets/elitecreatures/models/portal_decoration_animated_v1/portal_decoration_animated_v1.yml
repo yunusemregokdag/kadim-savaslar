@@ -1,0 +1,230 @@
+portal_decoration_animated_v1_portal_1:
+  itemname: <white>Portal 1
+  material: PAPER
+  Mechanics:
+    furniture:
+      limited_placing:
+        roof: false
+        floor: true
+        wall: false
+      drop:
+        silktouch: false
+        loots:
+          - probability: 1.0
+            nexo_item: portal_decoration_animated_v1_portal_1
+      properties:
+        scale: 3,3,3
+        translation: 0,1,0
+      hitbox:
+        interactions:
+          - 0,0,0 1.0,1.0
+  Pack:
+    generate_model: false
+    model: elitecreatures/portal_decoration_animated_v1/portal_1
+portal_decoration_animated_v1_portal_2:
+  itemname: <white>Portal 2
+  material: PAPER
+  Mechanics:
+    furniture:
+      limited_placing:
+        roof: false
+        floor: true
+        wall: false
+      drop:
+        silktouch: false
+        loots:
+          - probability: 1.0
+            nexo_item: portal_decoration_animated_v1_portal_2
+      properties:
+        scale: 3,3,3
+        translation: 0,1,0
+      hitbox:
+        interactions:
+          - 0,0,0 1.0,1.0
+  Pack:
+    generate_model: false
+    model: elitecreatures/portal_decoration_animated_v1/portal_2
+portal_decoration_animated_v1_portal_3:
+  itemname: <white>Portal 3
+  material: PAPER
+  Mechanics:
+    furniture:
+      limited_placing:
+        roof: false
+        floor: true
+        wall: false
+      drop:
+        silktouch: false
+        loots:
+          - probability: 1.0
+            nexo_item: portal_decoration_animated_v1_portal_3
+      properties:
+        scale: 2.8,2.8,2.8
+        translation: 0,3.7,0
+      hitbox:
+        interactions:
+          - 0,0,0 1.0,1.0
+  Pack:
+    generate_model: false
+    model: elitecreatures/portal_decoration_animated_v1/portal_3
+portal_decoration_animated_v1_portal_4:
+  itemname: <white>Portal 4
+  material: PAPER
+  Mechanics:
+    furniture:
+      limited_placing:
+        roof: false
+        floor: true
+        wall: false
+      drop:
+        silktouch: false
+        loots:
+          - probability: 1.0
+            nexo_item: portal_decoration_animated_v1_portal_4
+      properties:
+        scale: 2.7,2.7,2.7
+        translation: 0,3.4,0
+      hitbox:
+        interactions:
+          - 0,0,0 1.0,1.0
+  Pack:
+    generate_model: false
+    model: elitecreatures/portal_decoration_animated_v1/portal_4
+portal_decoration_animated_v1_portal_5:
+  itemname: <white>Portal 5
+  material: PAPER
+  Mechanics:
+    furniture:
+      limited_placing:
+        roof: false
+        floor: true
+        wall: false
+      drop:
+        silktouch: false
+        loots:
+          - probability: 1.0
+            nexo_item: portal_decoration_animated_v1_portal_5
+      properties:
+        scale: 2.7,2.7,2.7
+        translation: 0,3.3,0
+      hitbox:
+        interactions:
+          - 0,0,0 1.0,1.0
+  Pack:
+    generate_model: false
+    model: elitecreatures/portal_decoration_animated_v1/portal_5
+portal_decoration_animated_v1_portal_6:
+  itemname: <white>Portal 6
+  material: PAPER
+  Mechanics:
+    furniture:
+      limited_placing:
+        roof: false
+        floor: true
+        wall: false
+      drop:
+        silktouch: false
+        loots:
+          - probability: 1.0
+            nexo_item: portal_decoration_animated_v1_portal_6
+      properties:
+        scale: 2.7,2.7,2.7
+        translation: 0,3.5,0
+      hitbox:
+        interactions:
+          - 0,0,0 1.0,1.0
+  Pack:
+    generate_model: false
+    model: elitecreatures/portal_decoration_animated_v1/portal_6
+portal_decoration_animated_v1_portal_7:
+  itemname: <white>Portal 7
+  material: PAPER
+  Mechanics:
+    furniture:
+      limited_placing:
+        roof: false
+        floor: true
+        wall: false
+      drop:
+        silktouch: false
+        loots:
+          - probability: 1.0
+            nexo_item: portal_decoration_animated_v1_portal_7
+      properties:
+        scale: 2.7,2.7,2.7
+        translation: 0,2.7,0
+      hitbox:
+        interactions:
+          - 0,0,0 1.0,1.0
+  Pack:
+    generate_model: false
+    model: elitecreatures/portal_decoration_animated_v1/portal_7
+portal_decoration_animated_v1_portal_8:
+  itemname: <white>Portal 8
+  material: PAPER
+  Mechanics:
+    furniture:
+      limited_placing:
+        roof: false
+        floor: true
+        wall: false
+      drop:
+        silktouch: false
+        loots:
+          - probability: 1.0
+            nexo_item: portal_decoration_animated_v1_portal_8
+      properties:
+        scale: 2.7,2.7,2.7
+        translation: 0,3.15,0
+      hitbox:
+        interactions:
+          - 0,0,0 1.0,1.0
+  Pack:
+    generate_model: false
+    model: elitecreatures/portal_decoration_animated_v1/portal_8
+portal_decoration_animated_v1_portal_9:
+  itemname: <white>Portal 9
+  material: PAPER
+  Mechanics:
+    furniture:
+      limited_placing:
+        roof: false
+        floor: true
+        wall: false
+      drop:
+        silktouch: false
+        loots:
+          - probability: 1.0
+            nexo_item: portal_decoration_animated_v1_portal_9
+      properties:
+        scale: 2.7,2.7,2.7
+        translation: 0,3.5,0
+      hitbox:
+        interactions:
+          - 0,0,0 1.0,1.0
+  Pack:
+    generate_model: false
+    model: elitecreatures/portal_decoration_animated_v1/portal_9
+portal_decoration_animated_v1_portal_10:
+  itemname: <white>Portal 10
+  material: PAPER
+  Mechanics:
+    furniture:
+      limited_placing:
+        roof: false
+        floor: true
+        wall: false
+      drop:
+        silktouch: false
+        loots:
+          - probability: 1.0
+            nexo_item: portal_decoration_animated_v1_portal_10
+      properties:
+        scale: 2.7,2.7,2.7
+        translation: 0,3.5,0
+      hitbox:
+        interactions:
+          - 0,0,0 1.0,1.0
+  Pack:
+    generate_model: false
+    model: elitecreatures/portal_decoration_animated_v1/portal_10

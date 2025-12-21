@@ -1,0 +1,34 @@
+display:
+    name: '&aArcher'
+    lore:
+    - '&2Choose the Archer Class'
+    item: STONE_SWORD:2019 # Supports custom model data/texture by durability
+
+# Must match an existing exp curve filename from the 'expcurves' folder
+exp-curve: levels
+
+# The maximum level players can reach
+max-level: 100
+
+exp-table: class_exp_table
+
+skills:
+    QUICK_SHOT:
+        level: 1
+        max-level: 30
+    BACKSTEP:
+        level: 1
+        max-level: 30
+    HUNTERS_FOCUS:
+        level: 1
+        max-level: 30
+    WINDRAZOR:
+        level: 1
+        max-level: 30
+    DEADLY_JAVELIN:
+        level: 1
+        max-level: 30
+    DRAGON_PIERCER:
+        level: 1
+        max-level: 20
+

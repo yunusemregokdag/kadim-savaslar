@@ -1,0 +1,99 @@
+FRIGID_LANCE_ARCTIC_KNIGHT:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2058.0
+    name: <gradient:#4ca4fc:#6bf5ff:#4ca4fc>Frigid Lance of Arctic Knight
+    lore:
+    - <gradient:#4ca4fc:#6bf5ff:#4ca4fc>The frigid lance of the Arctic Knight
+    displayed-type: <gradient:#4ca4fc:#6bf5ff:#4ca4fc>Arctic Knight
+    attack-damage: 5.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: FROST_STRIKE
+        mode: LEFT_CLICK
+        damage: 4
+        cooldown: 0.5
+      ability2:
+        type: GLACIAL_IMPALEMENT
+        mode: RIGHT_CLICK
+        damage: 4
+        cooldown: 3
+      ability3:
+        type: GLACIER_SMASH
+        mode: SNEAK
+        damage: 5
+        duration: 3
+      ability4:
+        type: ARCTIC_CHARGE
+        mode: SHIFT_RIGHT_CLICK
+        damage: 4
+        cooldown: 5
+      ability5:
+        type: FROSTBITE
+        mode: TIMER
+        timer: 10
+      ability6:
+        type: FROZEN_SHIELD
+        mode: TIMER
+        timer: 10
+        damage: 3
+        duration: 4
+      ability7:
+        type: PERMAFROST_LANCE
+        mode: SHIFT_LEFT_CLICK
+        damage: 4
+        duration: 5
+        cooldown: 8
+    disable-attack-passive: true
+    attack-speed: 1.0
+    
+FRIGID_LANCE_ARCTIC_KNIGHT_DARKICE:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2059.0
+    name: <gradient:#4ca4fc:#17298f:#4ca4fc>Darkice Frigid Lance of Arctic Knight
+    lore:
+    - <gradient:#4ca4fc:#17298f:#4ca4fc>The frigid lance of the Arctic Knight
+    displayed-type: <gradient:#4ca4fc:#6bf5ff:#4ca4fc>Arctic Knight
+    attack-damage: 5.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: FROST_STRIKE
+        mode: LEFT_CLICK
+        damage: 4
+        cooldown: 0.5
+      ability2:
+        type: GLACIAL_IMPALEMENT
+        mode: RIGHT_CLICK
+        damage: 4
+        cooldown: 3
+      ability3:
+        type: GLACIER_SMASH
+        mode: SNEAK
+        damage: 5
+        duration: 3
+      ability4:
+        type: ARCTIC_CHARGE
+        mode: SHIFT_RIGHT_CLICK
+        damage: 4
+        cooldown: 5
+      ability5:
+        type: FROSTBITE
+        mode: TIMER
+        timer: 10
+      ability6:
+        type: FROZEN_SHIELD
+        mode: TIMER
+        timer: 10
+        damage: 3
+        duration: 4
+      ability7:
+        type: PERMAFROST_LANCE
+        mode: SHIFT_LEFT_CLICK
+        damage: 4
+        duration: 5
+        cooldown: 8
+    disable-attack-passive: true
+    attack-speed: 1.0

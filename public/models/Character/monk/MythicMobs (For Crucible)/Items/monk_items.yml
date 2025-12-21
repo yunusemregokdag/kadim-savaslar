@@ -1,0 +1,42 @@
+######## created by samus2002 #########
+  
+gauntlet_monk:
+  Id: stone_sword
+  Display: "<gradient:#ffffff:#dcf7fa:#ffffff>&lGauntlet of Monk"
+  Model: 2060
+  Lore:
+  - '<gradient:#ffffff:#dcf7fa:#ffffff>The gauntlet of Monk'
+  Unbreakable: true
+  NBT:
+    Unbreakable: int/1 
+  Hide:
+  - ATTRIBUTES
+  Skills:
+  - skill{s=Focus_Chi} @self ~onDamaged
+  - skill{s=Swift_Strikes} @self ~onSwing
+  - skill{s=Chi_Blast} @self ~onUse
+  - skill{s=Zen_Throw} @self ~onCrouch
+  - skill{s=Beads_Of_Karma} @self ~onUse
+  - skill{s=Counterstrike} @self ~onTimer:10
+  - skill{s=Dragon_Fists} @self ~onSwing
+  
+gauntlet_monk_shiny:
+  Id: stone_sword
+  Display: "<gradient:#ffffff:#fafadc:#ffffff>&lShiny Gauntlet of Monk"
+  Model: 2061
+  Lore:
+  - '<gradient:#ffffff:#fafadc:#ffffff>The gauntlet of Monk'
+  Hide:
+  - ATTRIBUTES
+  Unbreakable: true
+  NBT:
+    Unbreakable: int/1 
+  Skills:
+  - skill{s=Focus_Chi} @self ~onDamaged
+  - skill{s=Swift_Strikes} @self ~onSwing
+  - skill{s=Chi_Blast} @self ~onUse
+  - skill{s=Zen_Throw} @self ~onCrouch
+  - skill{s=Beads_Of_Karma} @self ~onUse
+  - skill{s=Counterstrike} @self ~onTimer:10
+  - skill{s=Dragon_Fists} @self ~onSwing
+  

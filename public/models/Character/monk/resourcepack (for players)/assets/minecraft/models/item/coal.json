@@ -1,0 +1,15 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "item/coal"
+    },	
+	"overrides": [	
+		{"predicate": {"custom_model_data":2193}, "model": "monk_model/icon_beads_of_karma"},
+		{"predicate": {"custom_model_data":2194}, "model": "monk_model/icon_chi_blast"},
+		{"predicate": {"custom_model_data":2195}, "model": "monk_model/icon_counterstrike"},
+		{"predicate": {"custom_model_data":2196}, "model": "monk_model/icon_dragon_fists"},
+		{"predicate": {"custom_model_data":2197}, "model": "monk_model/icon_focus_chi"},
+		{"predicate": {"custom_model_data":2198}, "model": "monk_model/icon_swift_strikes"},
+		{"predicate": {"custom_model_data":2199}, "model": "monk_model/icon_zen_throw"}
+	]
+}

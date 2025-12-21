@@ -1,0 +1,11 @@
+The versions used to create this pack: MMOItems 6.9.3, MythicLib 1.5.2, MMOCore 1.11.3
+
+MMOItems folder: You can simply drag and drop the files that are inside "MMOItems", but if you have the same files that could be overwritten then just open up the ymls and copy & paste the stuff inside to your original files
+
+MythicLib folder: Drag and drop all the stuff inside "skill" right into your MythicLib>skill folder
+
+MMOCore folder: Drag and drop all the stuff inside the MMOCore folder into your MMOCore folder
+
+MythicMobs Skills folder: There should be 2 files - one for MMOItems and one for MMOCore.
+If you're gonna use MMOItems, apply only the skill file WITH the "_mmoitems" label
+If you're gonna use MMOCore, apply only the skill file WITH the "_mmocore" label

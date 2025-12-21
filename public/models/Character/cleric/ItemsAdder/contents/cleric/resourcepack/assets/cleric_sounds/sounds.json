@@ -1,0 +1,80 @@
+{
+  "samus.angel_shine": {
+    "category": "master",
+    "sounds": [
+      "cleric:samus/cleric/angel_shine"
+    ]
+  },
+  "samus.blood_drain": {
+    "category": "master",
+    "sounds": [
+      "cleric:samus/cleric/blood_drain"
+    ]
+  },
+  "samus.cross_land": {
+    "category": "master",
+    "sounds": [
+      "cleric:samus/cleric/cross_land"
+    ]
+  },
+  "samus.god_embodiment_aura": {
+    "category": "master",
+    "sounds": [
+      "cleric:samus/cleric/god_embodiment_aura"
+    ]
+  },
+  "samus.god_embodiment_start": {
+    "category": "master",
+    "sounds": [
+      "cleric:samus/cleric/god_embodiment_start"
+    ]
+  },
+  "samus.heavenly_choir": {
+    "category": "master",
+    "sounds": [
+      "cleric:samus/cleric/heavenly_choir"
+    ]
+  },
+  "samus.lantern_aura": {
+    "category": "master",
+    "sounds": [
+      "cleric:samus/cleric/lantern_aura"
+    ]
+  },
+  "samus.light_wave": {
+    "category": "master",
+    "sounds": [
+      "cleric:samus/cleric/light_wave"
+    ]
+  },
+  "samus.mace_impact": {
+    "category": "master",
+    "sounds": [
+      "cleric:samus/cleric/mace_impact"
+    ]
+  },
+  "samus.mace_swing": {
+    "category": "master",
+    "sounds": [
+      "cleric:samus/cleric/mace_swing"
+    ]
+  },
+  "samus.summon_cross": {
+    "category": "master",
+    "sounds": [
+      "cleric:samus/cleric/summon_cross"
+    ]
+  },
+  "samus.summon_lantern": {
+    "category": "master",
+    "sounds": [
+      "cleric:samus/cleric/summon_lantern"
+    ]
+  },
+  "samus.tear_drop": {
+    "category": "master",
+    "sounds": [
+      "cleric:samus/cleric/tear_drop"
+    ]
+  }
+}

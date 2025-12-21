@@ -1,0 +1,21 @@
+oni_brute:
+  Type: HUSK
+  Display: '&aOni Brute'
+  Health: 50
+  Damage: 0
+  Faction: Oniman
+  Skills:
+  - model{mid=oni_brute} @self ~onSpawn
+  - randomskill{skills=oni_brute_warcry,oni_brute_heavy,oni_brute_atk} ~onTimer:5
+  - sound{s=entity.strider.hurt;p=0.5;v=0.25} @self ~onHurt
+  - sound{s=entity.strider.death;p=0.5;v=0.5} @self ~onDeath
+  - sound{s=entity.strider.ambient;p=1.4;v=0.5} @self ~onTimer:60
+  - remapmodel{m=oni_brute;n=oni_brute_blue} @self ~onInteract
+  LevelModifiers:
+  - health 5
+  - damage 0.5
+  Options:
+    PreventOtherDrops: true
+    MovementSpeed: 0.25
+    Silent: true
+#75a3c7ebb1c1c156a85271386b11868f

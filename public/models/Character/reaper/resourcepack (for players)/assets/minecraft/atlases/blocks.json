@@ -1,0 +1,176 @@
+{
+    "sources": [
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_1_shadow"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_1_death"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_2_shadow"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_2_death"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_3_shadow"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_3_death"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_4_shadow"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_4_death"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_5_shadow"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_5_death"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_6_shadow"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_6_death"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_7_shadow"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_7_death"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_8_shadow"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_8_death"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_spin_shadow_a"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_spin_a_death"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/icon_death_spin"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/icon_god_of_death"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/icon_reaping_claw"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/icon_soul_collector"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/icon_soul_scythe"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/icon_soul_slice"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/icon_surge"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/scythe_reaper"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/scythe_reaper_shiny"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_1"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_2"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_3"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_4"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_5"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_6"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_7"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_slice_8"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_spin_a"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_wave_1"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_wave_2"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_wave_3"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_wave_4"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_wave_5"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_wave_6"
+        },
+        {
+            "type": "single",
+            "resource": "minecraft:reaper_texture/soul_wave_7"
+        }
+    ]
+}

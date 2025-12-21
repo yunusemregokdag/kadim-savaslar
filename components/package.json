@@ -1,0 +1,34 @@
+{
+  "name": "kadim-savaslar-mmorpg-asil-proje",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@juggle/resize-observer": "3.4.0",
+    "@react-three/drei": "9.121.5",
+    "@react-three/fiber": "9.0.0-rc.4",
+    "@react-three/postprocessing": "^3.0.4",
+    "its-fine": "1.2.5",
+    "lucide-react": "^0.556.0",
+    "postprocessing": "^6.38.0",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "react-use-measure": "2.1.1",
+    "three": "0.173.0",
+    "uuid": "9.0.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@types/three": "^0.173.0",
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}

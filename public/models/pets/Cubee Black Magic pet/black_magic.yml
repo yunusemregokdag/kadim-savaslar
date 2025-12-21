@@ -1,0 +1,32 @@
+cubees-icon-ebony_cat:
+  displayname: &e
+  material: GOLDEN_HORSE_ARMOR
+  Pack:  
+    generate_model: true 
+    textures: 
+      - cubees:witches_wizards/cubee-ebony_cat
+    custom_model_data: 7191157
+cubees-icon-gothic_hag:
+  displayname: &e
+  material: GOLDEN_HORSE_ARMOR
+  Pack:  
+    generate_model: true 
+    textures: 
+      - cubees:witches_wizards/cubee-gothic_hag
+    custom_model_data: 7191159
+cubees-icon-skelly_warlock:
+  displayname: &e
+  material: GOLDEN_HORSE_ARMOR
+  Pack:  
+    generate_model: true 
+    textures: 
+      - cubees:witches_wizards/cubee-skelly_warlock
+    custom_model_data: 7191161
+cubees-icon-soul_weaver:
+  displayname: &e
+  material: GOLDEN_HORSE_ARMOR
+  Pack:  
+    generate_model: true 
+    textures: 
+      - cubees:witches_wizards/cubee-soul_weaver
+    custom_model_data: 7191162

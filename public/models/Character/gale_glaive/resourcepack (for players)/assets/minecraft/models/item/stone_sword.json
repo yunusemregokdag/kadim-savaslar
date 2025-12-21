@@ -1,0 +1,10 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "item/stone_sword"
+    },
+    "overrides": [
+		{"predicate": {"custom_model_data":2068}, "model": "gale_glaive_model/gale_glaive_windreaver"},
+		{"predicate": {"custom_model_data":2069}, "model": "gale_glaive_model/gale_glaive_windreaver_ancient"}
+    ]
+}

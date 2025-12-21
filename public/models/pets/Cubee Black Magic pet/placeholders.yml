@@ -1,0 +1,83 @@
+Cubees-BlackMagic-Crouch_To_Face_Owner: 'true' #true/false
+Cubees-BlackMagic-Invincible: 'false' #true/false
+Cubee-ebony_cat-HelpsOwnerCombat: 'true' #true/false
+Cubee-ebony_cat-Skill_AutoActivate: 'true' #true/false
+Cubee-ebony_cat-Skill_MaximumTargetDistance: '10' #Blocks 
+Cubee-ebony_cat-Skill_Cooldown: '10' #Seconds
+Cubee-ebony_cat-Skill_Cooldown_PowerScale: '0.2' #Seconds, decrease per level.  
+Cubee-ebony_cat-Pet-Health: '50' #HP for this Cubee when it is a player's pet.
+Cubee-ebony_cat-Pet-Health_PowerScale: '3' #HP that will increase per level.
+Cubee-ebony_cat-Wild-Health: '100' #HP for when the Cubee isn't tamed.
+Cubee-ebony_cat-Wild-AddCooldown: '-5' #Seconds #This will be added or subtracted to the base cooldown if the Cubee isn't tamed.
+Cubee-ebony_cat-Wild-AddDamage: '3' #Unit for when the Cubee isn't tamed, that will be added or subtraced if is negative value. 
+Cubee-ebony_cat-Skill_Damage: '5' #Unit / 1 Cast.
+Cubee-ebony_cat-Skill_Damage_PowerScale: '5' #Unit, increase per level 
+Cubee-ebony_cat-EXP_Receive: '2' #EXP-Point everytime the skill is activated
+Cubee-ebony_cat-Feed-CubeeSnack-Exp_Receive: '10' #EXP-Point everytume you feed them a Cubee Snack!
+Cubee-ebony_cat-CanChangeTarget: 'false' #true/false, Could this cubee change its target while the skill is being casted.
+Cubee-ebony_cat-SharedCooldown: 'true'  #true/false, Should the cooldown of its ability be shared from previously summoned Cubee.
+Cubee-ebony_cat-UnlockSkill-Ultimate: '1' #Level/Integer, defines the level that the Cubee would unlock its Ultimate ability; Maximum level can be configured on McPets individual file.
+Cubee-ebony_cat-Tame-Cooldown: '0.3' #Seconds #After being knocked out, Cubees will stay for 5 Seconds, this defined the cooldown for each attempt of taming this Cubee. 
+Cubee-ebony_cat-Tame-Chance: '5.25' #Percent/Float, defines how many percent this Cubee can be successfully tamed on each attempt of feeding Cubee Snack.
+
+
+Cubee-gothic_hag-HelpsOwnerCombat: 'true' #true/false
+Cubee-gothic_hag-Skill_AutoActivate: 'true' #true/false
+Cubee-gothic_hag-Skill_MaximumTargetDistance: '10' #Blocks 
+Cubee-gothic_hag-Skill_Cooldown: '10' #Seconds
+Cubee-gothic_hag-Skill_Cooldown_PowerScale: '0.1' #Seconds, decrease per level. 
+Cubee-gothic_hag-Pet-Health: '50' #HP for this Cubee when it is a player's pet.
+Cubee-gothic_hag-Pet-Health_PowerScale: '3' #HP that will increase per level.
+Cubee-gothic_hag-Wild-Health: '100' #HP for when the Cubee isn't tamed.
+Cubee-gothic_hag-Wild-AddCooldown: '-5' #Seconds #This will be added or subtracted to the base cooldown if the Cubee isn't tamed.
+Cubee-gothic_hag-Wild-AddDamage: '3' #Unit for when the Cubee isn't tamed, that will be added or subtraced if is negative value. 
+Cubee-gothic_hag-Skill_Damage: '5' #Unit / 1 Cast.
+Cubee-gothic_hag-Skill_Damage_PowerScale: '5' #Unit, increase per level 
+Cubee-gothic_hag-EXP_Receive: '2' #EXP-Point everytime the skill is activated
+Cubee-gothic_hag-Feed-CubeeSnack-Exp_Receive: '10' #EXP-Point everytume you feed them a Cubee Snack!
+Cubee-gothic_hag-CanChangeTarget: 'false' #true/false, Could this cubee change its target while the skill is being casted.
+Cubee-gothic_hag-SharedCooldown: 'true'  #true/false, Should the cooldown of its ability be shared from previously summoned Cubee.
+Cubee-gothic_hag-UnlockSkill-Ultimate: '1' #Level/Integer, defines the level that the Cubee would unlock its Ultimate ability; Maximum level can be configured on McPets individual file.
+Cubee-gothic_hag-Tame-Cooldown: '0.3' #Seconds #After being knocked out, Cubees will stay for 5 Seconds, this defined the cooldown for each attempt of taming this Cubee. 
+Cubee-gothic_hag-Tame-Chance: '5.25' #Percent/Float, defines how many percent this Cubee can be successfully tamed on each attempt of feeding Cubee Snack.
+
+
+Cubee-skelly_warlock-HelpsOwnerCombat: 'true' #true/false
+Cubee-skelly_warlock-Skill_AutoActivate: 'true' #true/false
+Cubee-skelly_warlock-Skill_MaximumTargetDistance: '10' #Blocks 
+Cubee-skelly_warlock-Skill_Cooldown: '10' #Seconds
+Cubee-skelly_warlock-Skill_Cooldown_PowerScale: '0.2' #Seconds, decrease per level. 
+Cubee-skelly_warlock-Pet-Health: '50' #HP for this Cubee when it is a player's pet.
+Cubee-skelly_warlock-Pet-Health_PowerScale: '3' #HP that will increase per level.
+Cubee-skelly_warlock-Wild-Health: '100' #HP for when the Cubee isn't tamed.
+Cubee-skelly_warlock-Wild-AddCooldown: '-5' #Seconds #This will be added or subtracted to the base cooldown if the Cubee isn't tamed.
+Cubee-skelly_warlock-Wild-AddDamage: '3' #Unit for when the Cubee isn't tamed, that will be added or subtraced if is negative value. 
+Cubee-skelly_warlock-Skill_Damage: '5' #Unit / 1 Cast.
+Cubee-skelly_warlock-Skill_Damage_PowerScale: '5' #Unit, increase per level 
+Cubee-skelly_warlock-EXP_Receive: '2' #EXP-Point everytime the skill is activated
+Cubee-skelly_warlock-Feed-CubeeSnack-Exp_Receive: '10' #EXP-Point everytume you feed them a Cubee Snack!
+Cubee-skelly_warlock-CanChangeTarget: 'false' #true/false, Could this cubee change its target while the skill is being casted.
+Cubee-skelly_warlock-SharedCooldown: 'true'  #true/false, Should the cooldown of its ability be shared from previously summoned Cubee.
+Cubee-skelly_warlock-UnlockSkill-Ultimate: '1' #Level/Integer, defines the level that the Cubee would unlock its Ultimate ability; Maximum level can be configured on McPets individual file.
+Cubee-skelly_warlock-Tame-Cooldown: '0.3' #Seconds #After being knocked out, Cubees will stay for 5 Seconds, this defined the cooldown for each attempt of taming this Cubee. 
+Cubee-skelly_warlock-Tame-Chance: '5.25' #Percent/Float, defines how many percent this Cubee can be successfully tamed on each attempt of feeding Cubee Snack.
+
+Cubee-soul_weaver-HelpsOwnerCombat: 'true' #true/false
+Cubee-soul_weaver-Skill_AutoActivate: 'true' #true/false
+Cubee-soul_weaver-Skill_MaximumTargetDistance: '10' #Blocks 
+Cubee-soul_weaver-Skill_Cooldown: '10' #Seconds
+Cubee-soul_weaver-Skill_Cooldown_PowerScale: '0.2' #Seconds, decrease per level. 
+Cubee-soul_weaver-Pet-Health: '50' #HP for this Cubee when it is a player's pet.
+Cubee-soul_weaver-Pet-Health_PowerScale: '3' #HP that will increase per level.
+Cubee-soul_weaver-Wild-Health: '100' #HP for when the Cubee isn't tamed.
+Cubee-soul_weaver-Wild-AddCooldown: '-5' #Seconds #This will be added or subtracted to the base cooldown if the Cubee isn't tamed.
+Cubee-soul_weaver-Wild-AddDamage: '3' #Unit for when the Cubee isn't tamed, that will be added or subtraced if is negative value. 
+Cubee-soul_weaver-Skill_Damage: '5' #Unit / 1 Cast.
+Cubee-soul_weaver-Skill_Damage_PowerScale: '5' #Unit, increase per level 
+Cubee-soul_weaver-EXP_Receive: '2' #EXP-Point everytime the skill is activated
+Cubee-soul_weaver-Feed-CubeeSnack-Exp_Receive: '10' #EXP-Point everytume you feed them a Cubee Snack!
+Cubee-soul_weaver-CanChangeTarget: 'false' #true/false, Could this cubee change its target while the skill is being casted.
+Cubee-soul_weaver-SharedCooldown: 'true'  #true/false, Should the cooldown of its ability be shared from previously summoned Cubee.
+Cubee-soul_weaver-UnlockSkill-Ultimate: '1' #Level/Integer, defines the level that the Cubee would unlock its Ultimate ability; Maximum level can be configured on McPets individual file.
+Cubee-soul_weaver-Tame-Cooldown: '0.3' #Seconds #After being knocked out, Cubees will stay for 5 Seconds, this defined the cooldown for each attempt of taming this Cubee. 
+Cubee-soul_weaver-Tame-Chance: '5.25' #Percent/Float, defines how many percent this Cubee can be successfully tamed on each attempt of feeding Cubee Snack.

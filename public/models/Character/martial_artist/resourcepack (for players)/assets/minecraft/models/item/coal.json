@@ -1,0 +1,14 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "item/coal"
+    },	
+	"overrides": [	
+		{"predicate": {"custom_model_data":2088}, "model": "martial_artist_model/icon_agile_strike"},
+		{"predicate": {"custom_model_data":2089}, "model": "martial_artist_model/icon_deadly_squash"},
+		{"predicate": {"custom_model_data":2090}, "model": "martial_artist_model/icon_double_strike"},
+		{"predicate": {"custom_model_data":2091}, "model": "martial_artist_model/icon_evasion"},
+		{"predicate": {"custom_model_data":2092}, "model": "martial_artist_model/icon_multi_strike"},
+		{"predicate": {"custom_model_data":2093}, "model": "martial_artist_model/icon_uppercut"}
+	]
+}

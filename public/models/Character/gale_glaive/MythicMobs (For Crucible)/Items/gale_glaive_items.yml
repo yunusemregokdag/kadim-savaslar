@@ -1,0 +1,42 @@
+######## created by samus2002 #########
+  
+windreaver_gale_glaive:
+  Id: stone_sword
+  Display: "<gradient:#70FCC2:#CDFFEE:#70FCC2>&lWindreaver of Gale Glaive"
+  Model: 2068
+  Lore:
+  - '<gradient:#70FCC2:#CDFFEE:#70FCC2>The Windreaver of Gale Glaive'
+  Unbreakable: true
+  NBT:
+    Unbreakable: int/1 
+  Hide:
+  - ATTRIBUTES
+  Skills:
+  - skill{s=Windrune_Blade} @self ~onTimer:2
+  - skill{s=Gale_Slash} @self ~onSwing
+  - skill{s=Vault} @self ~onUse
+  - skill{s=Dancing_Blade} @self ~onCrouch
+  - skill{s=Cloudpiercer} @self ~onUse
+  - skill{s=Torrent} @self ~onTimer:10
+  - skill{s=Windbound_Fury} @self ~onSwing
+  
+windreaver_gale_glaive_ancient:
+  Id: stone_sword
+  Display: "<gradient:#70FCC2:#CDFFEE:#70FCC2>&lAncient Windreaver of Gale Glaive"
+  Model: 2069
+  Lore:
+  - '<gradient:#70FCC2:#CDFFEE:#70FCC2>The Windreaver of Gale Glaive'
+  Hide:
+  - ATTRIBUTES
+  Unbreakable: true
+  NBT:
+    Unbreakable: int/1 
+  Skills:
+  - skill{s=Windrune_Blade} @self ~onTimer:2
+  - skill{s=Gale_Slash} @self ~onSwing
+  - skill{s=Vault} @self ~onUse
+  - skill{s=Dancing_Blade} @self ~onCrouch
+  - skill{s=Cloudpiercer} @self ~onUse
+  - skill{s=Torrent} @self ~onTimer:10
+  - skill{s=Windbound_Fury} @self ~onSwing
+  

@@ -1,0 +1,245 @@
+info:
+  namespace: elitecreatures
+items:
+  portal_decoration_animated_v1_portal_1:
+    display_name: Portal 1
+    resource:
+      material: PAPER
+      generate: false
+      model_path: portal_decoration_animated_v1/portal_1
+    behaviours:
+      furniture:
+        fixed_rotation: true
+        entity: item_display # <---
+        display_transformation:
+          transform: HEAD
+          translation:
+            x: 0
+            y: 4.32
+            z: 0
+          scale:
+            x: 1.6
+            y: 1.6
+            z: 1.6
+        placeable_on:
+          walls: false
+          ceiling: false
+          floor: true
+  portal_decoration_animated_v1_portal_2:
+    display_name: Portal 2
+    resource:
+      material: PAPER
+      generate: false
+      model_path: portal_decoration_animated_v1/portal_2
+    behaviours:
+      furniture:
+        fixed_rotation: true
+        entity: item_display # <---
+        display_transformation:
+          transform: HEAD
+          translation:
+            x: 0
+            y: 4.32
+            z: 0
+          scale:
+            x: 1.6
+            y: 1.6
+            z: 1.6
+        placeable_on:
+          walls: false
+          ceiling: false
+          floor: true
+  portal_decoration_animated_v1_portal_3:
+    display_name: Portal 3
+    resource:
+      material: PAPER
+      generate: false
+      model_path: portal_decoration_animated_v1/portal_3
+    behaviours:
+      furniture:
+        fixed_rotation: true
+        entity: item_display # <---
+        display_transformation:
+          transform: HEAD
+          translation:
+            x: 0
+            y: 4.32
+            z: 0
+          scale:
+            x: 1.6
+            y: 1.6
+            z: 1.6
+        placeable_on:
+          walls: false
+          ceiling: false
+          floor: true
+  portal_decoration_animated_v1_portal_4:
+    display_name: Portal 4
+    resource:
+      material: PAPER
+      generate: false
+      model_path: portal_decoration_animated_v1/portal_4
+    behaviours:
+      furniture:
+        fixed_rotation: true
+        entity: item_display # <---
+        display_transformation:
+          transform: HEAD
+          translation:
+            x: 0
+            y: 4.32
+            z: 0
+          scale:
+            x: 1.6
+            y: 1.6
+            z: 1.6
+        placeable_on:
+          walls: false
+          ceiling: false
+          floor: true
+  portal_decoration_animated_v1_portal_5:
+    display_name: Portal 5
+    resource:
+      material: PAPER
+      generate: false
+      model_path: portal_decoration_animated_v1/portal_5
+    behaviours:
+      furniture:
+        fixed_rotation: true
+        entity: item_display # <---
+        display_transformation:
+          transform: HEAD
+          translation:
+            x: 0
+            y: 4.32
+            z: 0
+          scale:
+            x: 1.6
+            y: 1.6
+            z: 1.6
+        placeable_on:
+          walls: false
+          ceiling: false
+          floor: true
+  portal_decoration_animated_v1_portal_6:
+    display_name: Portal 6
+    resource:
+      material: PAPER
+      generate: false
+      model_path: portal_decoration_animated_v1/portal_6
+    behaviours:
+      furniture:
+        fixed_rotation: true
+        entity: item_display # <---
+        display_transformation:
+          transform: HEAD
+          translation:
+            x: 0
+            y: 4.32
+            z: 0
+          scale:
+            x: 1.6
+            y: 1.6
+            z: 1.6
+        placeable_on:
+          walls: false
+          ceiling: false
+          floor: true
+  portal_decoration_animated_v1_portal_7:
+    display_name: Portal 7
+    resource:
+      material: PAPER
+      generate: false
+      model_path: portal_decoration_animated_v1/portal_7
+    behaviours:
+      furniture:
+        fixed_rotation: true
+        entity: item_display # <---
+        display_transformation:
+          transform: HEAD
+          translation:
+            x: 0
+            y: 4.32
+            z: 0
+          scale:
+            x: 1.6
+            y: 1.6
+            z: 1.6
+        placeable_on:
+          walls: false
+          ceiling: false
+          floor: true
+  portal_decoration_animated_v1_portal_8:
+    display_name: Portal 8
+    resource:
+      material: PAPER
+      generate: false
+      model_path: portal_decoration_animated_v1/portal_8
+    behaviours:
+      furniture:
+        fixed_rotation: true
+        entity: item_display # <---
+        display_transformation:
+          transform: HEAD
+          translation:
+            x: 0
+            y: 4.32
+            z: 0
+          scale:
+            x: 1.6
+            y: 1.6
+            z: 1.6
+        placeable_on:
+          walls: false
+          ceiling: false
+          floor: true
+  portal_decoration_animated_v1_portal_9:
+    display_name: Portal 9
+    resource:
+      material: PAPER
+      generate: false
+      model_path: portal_decoration_animated_v1/portal_9
+    behaviours:
+      furniture:
+        fixed_rotation: true
+        entity: item_display # <---
+        display_transformation:
+          transform: HEAD
+          translation:
+            x: 0
+            y: 4.32
+            z: 0
+          scale:
+            x: 1.6
+            y: 1.6
+            z: 1.6
+        placeable_on:
+          walls: false
+          ceiling: false
+          floor: true
+  portal_decoration_animated_v1_portal_10:
+    display_name: Portal 10
+    resource:
+      material: PAPER
+      generate: false
+      model_path: portal_decoration_animated_v1/portal_10
+    behaviours:
+      furniture:
+        fixed_rotation: true
+        entity: item_display # <---
+        display_transformation:
+          transform: HEAD
+          translation:
+            x: 0
+            y: 4.32
+            z: 0
+          scale:
+            x: 1.6
+            y: 1.6
+            z: 1.6
+        placeable_on:
+          walls: false
+          ceiling: false
+          floor: true
+
+# 78597KGODBQ5

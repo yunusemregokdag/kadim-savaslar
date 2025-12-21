@@ -1,0 +1,377 @@
+
+bard_harp:
+  Pack:
+    custom_model_data: 2031
+    generate_model: false
+    model: bard_model/bard_harp
+  displayname: bard_harp
+  material: STONE_SWORD
+  permission: bard_harp
+bard_harp_shiny:
+  Pack:
+    custom_model_data: 2032
+    generate_model: false
+    model: bard_model/bard_harp_shiny
+  displayname: bard_harp_shiny
+  material: STONE_SWORD
+  permission: bard_harp_shiny
+icon_angelic_serenade:
+  Pack:
+    custom_model_data: 2094
+    generate_model: false
+    model: bard_model/icon_angelic_serenade
+  displayname: icon_angelic_serenade
+  material: COAL
+  permission: icon_angelic_serenade
+icon_rhapsody:
+  Pack:
+    custom_model_data: 2095
+    generate_model: false
+    model: bard_model/icon_rhapsody
+  displayname: icon_rhapsody
+  material: COAL
+  permission: icon_rhapsody
+icon_shield_of_harmony:
+  Pack:
+    custom_model_data: 2096
+    generate_model: false
+    model: bard_model/icon_shield_of_harmony
+  displayname: icon_shield_of_harmony
+  material: COAL
+  permission: icon_shield_of_harmony
+icon_sound_wave:
+  Pack:
+    custom_model_data: 2097
+    generate_model: false
+    model: bard_model/icon_sound_wave
+  displayname: icon_sound_wave
+  material: COAL
+  permission: icon_sound_wave
+icon_symphony_of_destruction:
+  Pack:
+    custom_model_data: 2098
+    generate_model: false
+    model: bard_model/icon_symphony_of_destruction
+  displayname: icon_symphony_of_destruction
+  material: COAL
+  permission: icon_symphony_of_destruction
+icon_vibrative_strike:
+  Pack:
+    custom_model_data: 2099
+    generate_model: false
+    model: bard_model/icon_vibrative_strike
+  displayname: icon_vibrative_strike
+  material: COAL
+  permission: icon_vibrative_strike
+clef_1:
+  Pack:
+    custom_model_data: 2461
+    generate_model: false
+    model: bard_model/clef_1
+  displayname: clef_1
+  material: PAPER
+  permission: clef_1
+clef_2:
+  Pack:
+    custom_model_data: 2462
+    generate_model: false
+    model: bard_model/clef_2
+  displayname: clef_2
+  material: PAPER
+  permission: clef_2
+clef_3:
+  Pack:
+    custom_model_data: 2463
+    generate_model: false
+    model: bard_model/clef_3
+  displayname: clef_3
+  material: PAPER
+  permission: clef_3
+clef_4:
+  Pack:
+    custom_model_data: 2464
+    generate_model: false
+    model: bard_model/clef_4
+  displayname: clef_4
+  material: PAPER
+  permission: clef_4
+clef_5:
+  Pack:
+    custom_model_data: 2465
+    generate_model: false
+    model: bard_model/clef_5
+  displayname: clef_5
+  material: PAPER
+  permission: clef_5
+clef_6:
+  Pack:
+    custom_model_data: 2466
+    generate_model: false
+    model: bard_model/clef_6
+  displayname: clef_6
+  material: PAPER
+  permission: clef_6
+clef_7:
+  Pack:
+    custom_model_data: 2467
+    generate_model: false
+    model: bard_model/clef_7
+  displayname: clef_7
+  material: PAPER
+  permission: clef_7
+clef_8:
+  Pack:
+    custom_model_data: 2468
+    generate_model: false
+    model: bard_model/clef_8
+  displayname: clef_8
+  material: PAPER
+  permission: clef_8
+clef_9:
+  Pack:
+    custom_model_data: 2469
+    generate_model: false
+    model: bard_model/clef_9
+  displayname: clef_9
+  material: PAPER
+  permission: clef_9
+clef_10:
+  Pack:
+    custom_model_data: 2470
+    generate_model: false
+    model: bard_model/clef_10
+  displayname: clef_10
+  material: PAPER
+  permission: clef_10
+clef_11:
+  Pack:
+    custom_model_data: 2471
+    generate_model: false
+    model: bard_model/clef_11
+  displayname: clef_11
+  material: PAPER
+  permission: clef_11
+clef_12:
+  Pack:
+    custom_model_data: 2472
+    generate_model: false
+    model: bard_model/clef_12
+  displayname: clef_12
+  material: PAPER
+  permission: clef_12
+clef_13:
+  Pack:
+    custom_model_data: 2473
+    generate_model: false
+    model: bard_model/clef_13
+  displayname: clef_13
+  material: PAPER
+  permission: clef_13
+musical_note:
+  Pack:
+    custom_model_data: 2474
+    generate_model: false
+    model: bard_model/musical_note
+  displayname: musical_note
+  material: PAPER
+  permission: musical_note
+rhapsody:
+  Pack:
+    custom_model_data: 2475
+    generate_model: false
+    model: bard_model/rhapsody
+  displayname: rhapsody
+  material: PAPER
+  permission: rhapsody
+symphony_explosion_1:
+  Pack:
+    custom_model_data: 2476
+    generate_model: false
+    model: bard_model/symphony_explosion_1
+  displayname: symphony_explosion_1
+  material: PAPER
+  permission: symphony_explosion_1
+symphony_explosion_2:
+  Pack:
+    custom_model_data: 2477
+    generate_model: false
+    model: bard_model/symphony_explosion_2
+  displayname: symphony_explosion_2
+  material: PAPER
+  permission: symphony_explosion_2
+symphony_explosion_3:
+  Pack:
+    custom_model_data: 2478
+    generate_model: false
+    model: bard_model/symphony_explosion_3
+  displayname: symphony_explosion_3
+  material: PAPER
+  permission: symphony_explosion_3
+symphony_explosion_4:
+  Pack:
+    custom_model_data: 2479
+    generate_model: false
+    model: bard_model/symphony_explosion_4
+  displayname: symphony_explosion_4
+  material: PAPER
+  permission: symphony_explosion_4
+symphony_explosion_5:
+  Pack:
+    custom_model_data: 2480
+    generate_model: false
+    model: bard_model/symphony_explosion_5
+  displayname: symphony_explosion_5
+  material: PAPER
+  permission: symphony_explosion_5
+symphony_explosion_6:
+  Pack:
+    custom_model_data: 2481
+    generate_model: false
+    model: bard_model/symphony_explosion_6
+  displayname: symphony_explosion_6
+  material: PAPER
+  permission: symphony_explosion_6
+symphony_explosion_7:
+  Pack:
+    custom_model_data: 2482
+    generate_model: false
+    model: bard_model/symphony_explosion_7
+  displayname: symphony_explosion_7
+  material: PAPER
+  permission: symphony_explosion_7
+symphony_explosion_8:
+  Pack:
+    custom_model_data: 2483
+    generate_model: false
+    model: bard_model/symphony_explosion_8
+  displayname: symphony_explosion_8
+  material: PAPER
+  permission: symphony_explosion_8
+symphony_explosion_9:
+  Pack:
+    custom_model_data: 2484
+    generate_model: false
+    model: bard_model/symphony_explosion_9
+  displayname: symphony_explosion_9
+  material: PAPER
+  permission: symphony_explosion_9
+symphony_light_1:
+  Pack:
+    custom_model_data: 2485
+    generate_model: false
+    model: bard_model/symphony_light_1
+  displayname: symphony_light_1
+  material: PAPER
+  permission: symphony_light_1
+symphony_light_2:
+  Pack:
+    custom_model_data: 2486
+    generate_model: false
+    model: bard_model/symphony_light_2
+  displayname: symphony_light_2
+  material: PAPER
+  permission: symphony_light_2
+symphony_light_3:
+  Pack:
+    custom_model_data: 2487
+    generate_model: false
+    model: bard_model/symphony_light_3
+  displayname: symphony_light_3
+  material: PAPER
+  permission: symphony_light_3
+symphony_light_4:
+  Pack:
+    custom_model_data: 2488
+    generate_model: false
+    model: bard_model/symphony_light_4
+  displayname: symphony_light_4
+  material: PAPER
+  permission: symphony_light_4
+symphony_light_5:
+  Pack:
+    custom_model_data: 2489
+    generate_model: false
+    model: bard_model/symphony_light_5
+  displayname: symphony_light_5
+  material: PAPER
+  permission: symphony_light_5
+symphony_light_6:
+  Pack:
+    custom_model_data: 2490
+    generate_model: false
+    model: bard_model/symphony_light_6
+  displayname: symphony_light_6
+  material: PAPER
+  permission: symphony_light_6
+symphony_light_7:
+  Pack:
+    custom_model_data: 2491
+    generate_model: false
+    model: bard_model/symphony_light_7
+  displayname: symphony_light_7
+  material: PAPER
+  permission: symphony_light_7
+symphony_light_8:
+  Pack:
+    custom_model_data: 2492
+    generate_model: false
+    model: bard_model/symphony_light_8
+  displayname: symphony_light_8
+  material: PAPER
+  permission: symphony_light_8
+symphony_light_9:
+  Pack:
+    custom_model_data: 2493
+    generate_model: false
+    model: bard_model/symphony_light_9
+  displayname: symphony_light_9
+  material: PAPER
+  permission: symphony_light_9
+vibration_1:
+  Pack:
+    custom_model_data: 2494
+    generate_model: false
+    model: bard_model/vibration_1
+  displayname: vibration_1
+  material: PAPER
+  permission: vibration_1
+vibration_2:
+  Pack:
+    custom_model_data: 2495
+    generate_model: false
+    model: bard_model/vibration_2
+  displayname: vibration_2
+  material: PAPER
+  permission: vibration_2
+vibration_3:
+  Pack:
+    custom_model_data: 2496
+    generate_model: false
+    model: bard_model/vibration_3
+  displayname: vibration_3
+  material: PAPER
+  permission: vibration_3
+vibration_4:
+  Pack:
+    custom_model_data: 2497
+    generate_model: false
+    model: bard_model/vibration_4
+  displayname: vibration_4
+  material: PAPER
+  permission: vibration_4
+vibration_5:
+  Pack:
+    custom_model_data: 2498
+    generate_model: false
+    model: bard_model/vibration_5
+  displayname: vibration_5
+  material: PAPER
+  permission: vibration_5
+vibration_6:
+  Pack:
+    custom_model_data: 2499
+    generate_model: false
+    model: bard_model/vibration_6
+  displayname: vibration_6
+  material: PAPER
+  permission: vibration_6

@@ -1,0 +1,75 @@
+info:
+  namespace: gale_glaive
+items:
+  gale_glaive_windreaver:
+    display_name: "gale_glaive_windreaver"
+    permission: gale_glaive_windreaver
+    resource:
+      material: STONE_SWORD
+      model_id: 2068
+      generate: false
+      model_path: gale_glaive_model/gale_glaive_windreaver
+  gale_glaive_windreaver_ancient:
+    display_name: "gale_glaive_windreaver_ancient"
+    permission: gale_glaive_windreaver_ancient
+    resource:
+      material: STONE_SWORD
+      model_id: 2069
+      generate: false
+      model_path: gale_glaive_model/gale_glaive_windreaver_ancient
+  icon_cloudpiercer:
+    display_name: "icon_cloudpiercer"
+    permission: icon_cloudpiercer
+    resource:
+      material: COAL
+      model_id: 2221
+      generate: false
+      model_path: gale_glaive_model/icon_cloudpiercer
+  icon_dancing_blade:
+    display_name: "icon_dancing_blade"
+    permission: icon_dancing_blade
+    resource:
+      material: COAL
+      model_id: 2219
+      generate: false
+      model_path: gale_glaive_model/icon_dancing_blade
+  icon_gale_slash:
+    display_name: "icon_gale_slash"
+    permission: icon_gale_slash
+    resource:
+      material: COAL
+      model_id: 2217
+      generate: false
+      model_path: gale_glaive_model/icon_gale_slash
+  icon_torrent:
+    display_name: "icon_torrent"
+    permission: icon_torrent
+    resource:
+      material: COAL
+      model_id: 2220
+      generate: false
+      model_path: gale_glaive_model/icon_torrent
+  icon_vault:
+    display_name: "icon_vault"
+    permission: icon_vault
+    resource:
+      material: COAL
+      model_id: 2218
+      generate: false
+      model_path: gale_glaive_model/icon_vault
+  icon_windbound_fury:
+    display_name: "icon_windbound_fury"
+    permission: icon_windbound_fury
+    resource:
+      material: COAL
+      model_id: 2222
+      generate: false
+      model_path: gale_glaive_model/icon_windbound_fury
+  icon_windrune_blade:
+    display_name: "icon_windrune_blade"
+    permission: icon_windrune_blade
+    resource:
+      material: COAL
+      model_id: 2216
+      generate: false
+      model_path: gale_glaive_model/icon_windrune_blade

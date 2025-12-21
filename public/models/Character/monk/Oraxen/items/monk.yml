@@ -1,0 +1,73 @@
+
+monk_gauntlet:
+  Pack:
+    custom_model_data: 2060
+    generate_model: false
+    model: monk_model/monk_gauntlet
+  displayname: monk_gauntlet
+  material: STONE_SWORD
+  permission: monk_gauntlet
+monk_gauntlet_shiny:
+  Pack:
+    custom_model_data: 2061
+    generate_model: false
+    model: monk_model/monk_gauntlet_shiny
+  displayname: monk_gauntlet_shiny
+  material: STONE_SWORD
+  permission: monk_gauntlet_shiny
+icon_beads_of_karma:
+  Pack:
+    custom_model_data: 2193
+    generate_model: false
+    model: monk_model/icon_beads_of_karma
+  displayname: icon_beads_of_karma
+  material: COAL
+  permission: icon_beads_of_karma
+icon_chi_blast:
+  Pack:
+    custom_model_data: 2194
+    generate_model: false
+    model: monk_model/icon_chi_blast
+  displayname: icon_chi_blast
+  material: COAL
+  permission: icon_chi_blast
+icon_counterstrike:
+  Pack:
+    custom_model_data: 2195
+    generate_model: false
+    model: monk_model/icon_counterstrike
+  displayname: icon_counterstrike
+  material: COAL
+  permission: icon_counterstrike
+icon_dragon_fists:
+  Pack:
+    custom_model_data: 2196
+    generate_model: false
+    model: monk_model/icon_dragon_fists
+  displayname: icon_dragon_fists
+  material: COAL
+  permission: icon_dragon_fists
+icon_focus_chi:
+  Pack:
+    custom_model_data: 2197
+    generate_model: false
+    model: monk_model/icon_focus_chi
+  displayname: icon_focus_chi
+  material: COAL
+  permission: icon_focus_chi
+icon_swift_strikes:
+  Pack:
+    custom_model_data: 2198
+    generate_model: false
+    model: monk_model/icon_swift_strikes
+  displayname: icon_swift_strikes
+  material: COAL
+  permission: icon_swift_strikes
+icon_zen_throw:
+  Pack:
+    custom_model_data: 2199
+    generate_model: false
+    model: monk_model/icon_zen_throw
+  displayname: icon_zen_throw
+  material: COAL
+  permission: icon_zen_throw

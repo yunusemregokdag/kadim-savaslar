@@ -1,0 +1,99 @@
+ARCHMAGE_STAFF:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2043.0
+    name: <gradient:#b43eff:#94fff1:#b43eff>Staff of Archmage
+    lore:
+    - <gradient:#b43eff:#94fff1:#b43eff>The staff of the Archmage
+    displayed-type: <gradient:#b43eff:#94fff1:#b43eff>Archmage
+    attack-damage: 5.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: ARCANE_SLASH
+        mode: LEFT_CLICK
+        damage: 3
+        cooldown: 0.2
+      ability2:
+        type: BLIZZARD_
+        mode: RIGHT_CLICK
+        damage: 4
+        duration: 2
+        cooldown: 4
+      ability3:
+        type: CHAINS_OF_VOID
+        mode: SHIFT_RIGHT_CLICK
+        damage: 5
+        cooldown: 7
+      ability4:
+        type: CLOAK_OF_HASTUR
+        mode: SNEAK
+        damage: 4
+        duration: 2
+      ability5:
+        type: ARCANE_SHIELD
+        mode: TIMER
+        timer: 20
+      ability6:
+        type: METEOR_STORM
+        mode: TIMER
+        timer: 10
+        damage: 7
+      ability7:
+        type: ARCANE_DEVASTATION
+        mode: SHIFT_LEFT_CLICK
+        damage: 5
+        duration: 4
+        cooldown: 10
+    disable-attack-passive: true
+    attack-speed: 1.0
+    
+ARCHMAGE_STAFF_SHINY:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2044.0
+    name: <gradient:#b43eff:#staff:#b43eff>Shiny Staff of Archmage
+    lore:
+    - <gradient:#b43eff:#staff:#b43eff>The staff of the Archmage
+    displayed-type: <gradient:#b43eff:#94fff1:#b43eff>Archmage
+    attack-damage: 6.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: ARCANE_SLASH
+        mode: LEFT_CLICK
+        damage: 3
+        cooldown: 0.2
+      ability2:
+        type: BLIZZARD_
+        mode: RIGHT_CLICK
+        damage: 4
+        duration: 2
+        cooldown: 4
+      ability3:
+        type: CHAINS_OF_VOID
+        mode: SHIFT_RIGHT_CLICK
+        damage: 5
+        cooldown: 7
+      ability4:
+        type: CLOAK_OF_HASTUR
+        mode: SNEAK
+        damage: 4
+        duration: 2
+      ability5:
+        type: ARCANE_SHIELD
+        mode: TIMER
+        timer: 20
+      ability6:
+        type: METEOR_STORM
+        mode: TIMER
+        timer: 10
+        damage: 7
+      ability7:
+        type: ARCANE_DEVASTATION
+        mode: SHIFT_LEFT_CLICK
+        damage: 5
+        duration: 4
+        cooldown: 10
+    disable-attack-passive: true
+    attack-speed: 1.0

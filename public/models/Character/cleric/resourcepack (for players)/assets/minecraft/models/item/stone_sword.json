@@ -1,0 +1,10 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "item/stone_sword"
+    },
+    "overrides": [
+		{"predicate": {"custom_model_data":2045}, "model": "cleric_model/cleric_mace"},
+		{"predicate": {"custom_model_data":2046}, "model": "cleric_model/cleric_mace_shiny"}
+    ]
+}

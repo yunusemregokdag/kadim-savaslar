@@ -1,0 +1,409 @@
+
+warrior_sword:
+  Pack:
+    custom_model_data: 2017
+    generate_model: false
+    model: warrior_model/warrior_sword
+  displayname: warrior_sword
+  material: STONE_SWORD
+  permission: warrior_sword
+warrior_sword_shiny:
+  Pack:
+    custom_model_data: 2018
+    generate_model: false
+    model: warrior_model/warrior_sword_shiny
+  displayname: warrior_sword_shiny
+  material: STONE_SWORD
+  permission: warrior_sword_shiny
+icon_brutal_strike:
+  Pack:
+    custom_model_data: 2052
+    generate_model: false
+    model: warrior_model/icon_brutal_strike
+  displayname: icon_brutal_strike
+  material: COAL
+  permission: icon_brutal_strike
+icon_chain_hook:
+  Pack:
+    custom_model_data: 2053
+    generate_model: false
+    model: warrior_model/icon_chain_hook
+  displayname: icon_chain_hook
+  material: COAL
+  permission: icon_chain_hook
+icon_charge:
+  Pack:
+    custom_model_data: 2054
+    generate_model: false
+    model: warrior_model/icon_charge
+  displayname: icon_charge
+  material: COAL
+  permission: icon_charge
+icon_judgement:
+  Pack:
+    custom_model_data: 2055
+    generate_model: false
+    model: warrior_model/icon_judgement
+  displayname: icon_judgement
+  material: COAL
+  permission: icon_judgement
+icon_rampage:
+  Pack:
+    custom_model_data: 2056
+    generate_model: false
+    model: warrior_model/icon_rampage
+  displayname: icon_rampage
+  material: COAL
+  permission: icon_rampage
+icon_shield_barrier:
+  Pack:
+    custom_model_data: 2057
+    generate_model: false
+    model: warrior_model/icon_shield_barrier
+  displayname: icon_shield_barrier
+  material: COAL
+  permission: icon_shield_barrier
+chain_hook_1:
+  Pack:
+    custom_model_data: 2177
+    generate_model: false
+    model: warrior_model/chain_hook_1
+  displayname: chain_hook_1
+  material: PAPER
+  permission: chain_hook_1
+chain_hook_2:
+  Pack:
+    custom_model_data: 2178
+    generate_model: false
+    model: warrior_model/chain_hook_2
+  displayname: chain_hook_2
+  material: PAPER
+  permission: chain_hook_2
+chain_hook_3:
+  Pack:
+    custom_model_data: 2179
+    generate_model: false
+    model: warrior_model/chain_hook_3
+  displayname: chain_hook_3
+  material: PAPER
+  permission: chain_hook_3
+chain_hook_4:
+  Pack:
+    custom_model_data: 2180
+    generate_model: false
+    model: warrior_model/chain_hook_4
+  displayname: chain_hook_4
+  material: PAPER
+  permission: chain_hook_4
+chain_hook_5:
+  Pack:
+    custom_model_data: 2181
+    generate_model: false
+    model: warrior_model/chain_hook_5
+  displayname: chain_hook_5
+  material: PAPER
+  permission: chain_hook_5
+charge_1:
+  Pack:
+    custom_model_data: 2182
+    generate_model: false
+    model: warrior_model/charge_1
+  displayname: charge_1
+  material: PAPER
+  permission: charge_1
+charge_2:
+  Pack:
+    custom_model_data: 2183
+    generate_model: false
+    model: warrior_model/charge_2
+  displayname: charge_2
+  material: PAPER
+  permission: charge_2
+charge_3:
+  Pack:
+    custom_model_data: 2184
+    generate_model: false
+    model: warrior_model/charge_3
+  displayname: charge_3
+  material: PAPER
+  permission: charge_3
+charge_4:
+  Pack:
+    custom_model_data: 2185
+    generate_model: false
+    model: warrior_model/charge_4
+  displayname: charge_4
+  material: PAPER
+  permission: charge_4
+charge_5:
+  Pack:
+    custom_model_data: 2186
+    generate_model: false
+    model: warrior_model/charge_5
+  displayname: charge_5
+  material: PAPER
+  permission: charge_5
+judgement_sword_1:
+  Pack:
+    custom_model_data: 2187
+    generate_model: false
+    model: warrior_model/judgement_sword_1
+  displayname: judgement_sword_1
+  material: PAPER
+  permission: judgement_sword_1
+judgement_sword_2:
+  Pack:
+    custom_model_data: 2188
+    generate_model: false
+    model: warrior_model/judgement_sword_2
+  displayname: judgement_sword_2
+  material: PAPER
+  permission: judgement_sword_2
+judgement_sword_3:
+  Pack:
+    custom_model_data: 2189
+    generate_model: false
+    model: warrior_model/judgement_sword_3
+  displayname: judgement_sword_3
+  material: PAPER
+  permission: judgement_sword_3
+judgement_sword_4:
+  Pack:
+    custom_model_data: 2190
+    generate_model: false
+    model: warrior_model/judgement_sword_4
+  displayname: judgement_sword_4
+  material: PAPER
+  permission: judgement_sword_4
+shield_barrier_1:
+  Pack:
+    custom_model_data: 2191
+    generate_model: false
+    model: warrior_model/shield_barrier_1
+  displayname: shield_barrier_1
+  material: PAPER
+  permission: shield_barrier_1
+shield_barrier_2:
+  Pack:
+    custom_model_data: 2192
+    generate_model: false
+    model: warrior_model/shield_barrier_2
+  displayname: shield_barrier_2
+  material: PAPER
+  permission: shield_barrier_2
+shield_barrier_3:
+  Pack:
+    custom_model_data: 2193
+    generate_model: false
+    model: warrior_model/shield_barrier_3
+  displayname: shield_barrier_3
+  material: PAPER
+  permission: shield_barrier_3
+shield_barrier_4:
+  Pack:
+    custom_model_data: 2194
+    generate_model: false
+    model: warrior_model/shield_barrier_4
+  displayname: shield_barrier_4
+  material: PAPER
+  permission: shield_barrier_4
+warrior_pierce_1:
+  Pack:
+    custom_model_data: 2195
+    generate_model: false
+    model: warrior_model/warrior_pierce_1
+  displayname: warrior_pierce_1
+  material: PAPER
+  permission: warrior_pierce_1
+warrior_pierce_2:
+  Pack:
+    custom_model_data: 2196
+    generate_model: false
+    model: warrior_model/warrior_pierce_2
+  displayname: warrior_pierce_2
+  material: PAPER
+  permission: warrior_pierce_2
+warrior_pierce_3:
+  Pack:
+    custom_model_data: 2197
+    generate_model: false
+    model: warrior_model/warrior_pierce_3
+  displayname: warrior_pierce_3
+  material: PAPER
+  permission: warrior_pierce_3
+warrior_pierce_4:
+  Pack:
+    custom_model_data: 2198
+    generate_model: false
+    model: warrior_model/warrior_pierce_4
+  displayname: warrior_pierce_4
+  material: PAPER
+  permission: warrior_pierce_4
+warrior_pierce_5:
+  Pack:
+    custom_model_data: 2199
+    generate_model: false
+    model: warrior_model/warrior_pierce_5
+  displayname: warrior_pierce_5
+  material: PAPER
+  permission: warrior_pierce_5
+warrior_pierce_6:
+  Pack:
+    custom_model_data: 2200
+    generate_model: false
+    model: warrior_model/warrior_pierce_6
+  displayname: warrior_pierce_6
+  material: PAPER
+  permission: warrior_pierce_6
+warrior_slash_1:
+  Pack:
+    custom_model_data: 2201
+    generate_model: false
+    model: warrior_model/warrior_slash_1
+  displayname: warrior_slash_1
+  material: PAPER
+  permission: warrior_slash_1
+warrior_slash_2:
+  Pack:
+    custom_model_data: 2202
+    generate_model: false
+    model: warrior_model/warrior_slash_2
+  displayname: warrior_slash_2
+  material: PAPER
+  permission: warrior_slash_2
+warrior_slash_3:
+  Pack:
+    custom_model_data: 2203
+    generate_model: false
+    model: warrior_model/warrior_slash_3
+  displayname: warrior_slash_3
+  material: PAPER
+  permission: warrior_slash_3
+warrior_slash_4:
+  Pack:
+    custom_model_data: 2204
+    generate_model: false
+    model: warrior_model/warrior_slash_4
+  displayname: warrior_slash_4
+  material: PAPER
+  permission: warrior_slash_4
+warrior_slash_5:
+  Pack:
+    custom_model_data: 2205
+    generate_model: false
+    model: warrior_model/warrior_slash_5
+  displayname: warrior_slash_5
+  material: PAPER
+  permission: warrior_slash_5
+warrior_slash_6:
+  Pack:
+    custom_model_data: 2206
+    generate_model: false
+    model: warrior_model/warrior_slash_6
+  displayname: warrior_slash_6
+  material: PAPER
+  permission: warrior_slash_6
+warrior_slash_7:
+  Pack:
+    custom_model_data: 2207
+    generate_model: false
+    model: warrior_model/warrior_slash_7
+  displayname: warrior_slash_7
+  material: PAPER
+  permission: warrior_slash_7
+whirlwind_1:
+  Pack:
+    custom_model_data: 2208
+    generate_model: false
+    model: warrior_model/whirlwind_1
+  displayname: whirlwind_1
+  material: PAPER
+  permission: whirlwind_1
+whirlwind_2:
+  Pack:
+    custom_model_data: 2209
+    generate_model: false
+    model: warrior_model/whirlwind_2
+  displayname: whirlwind_2
+  material: PAPER
+  permission: whirlwind_2
+whirlwind_3:
+  Pack:
+    custom_model_data: 2210
+    generate_model: false
+    model: warrior_model/whirlwind_3
+  displayname: whirlwind_3
+  material: PAPER
+  permission: whirlwind_3
+whirlwind_4:
+  Pack:
+    custom_model_data: 2211
+    generate_model: false
+    model: warrior_model/whirlwind_4
+  displayname: whirlwind_4
+  material: PAPER
+  permission: whirlwind_4
+whirlwind_5:
+  Pack:
+    custom_model_data: 2212
+    generate_model: false
+    model: warrior_model/whirlwind_5
+  displayname: whirlwind_5
+  material: PAPER
+  permission: whirlwind_5
+judgement_shield_1:
+  Pack:
+    custom_model_data: 2213
+    generate_model: false
+    model: warrior_model/judgement_shield_1
+  displayname: judgement_shield_1
+  material: PAPER
+  permission: judgement_shield_1
+shield_barrier_1_broken:
+  Pack:
+    custom_model_data: 2214
+    generate_model: false
+    model: warrior_model/shield_barrier_1_broken
+  displayname: shield_barrier_1_broken
+  material: PAPER
+  permission: shield_barrier_1_broken
+shield_barrier_2_broken:
+  Pack:
+    custom_model_data: 2215
+    generate_model: false
+    model: warrior_model/shield_barrier_2_broken
+  displayname: shield_barrier_2_broken
+  material: PAPER
+  permission: shield_barrier_2_broken
+shield_barrier_3_broken:
+  Pack:
+    custom_model_data: 2216
+    generate_model: false
+    model: warrior_model/shield_barrier_3_broken
+  displayname: shield_barrier_3_broken
+  material: PAPER
+  permission: shield_barrier_3_broken
+judgement_shield_2:
+  Pack:
+    custom_model_data: 2217
+    generate_model: false
+    model: warrior_model/judgement_shield_2
+  displayname: judgement_shield_2
+  material: PAPER
+  permission: judgement_shield_2
+judgement_shield_3:
+  Pack:
+    custom_model_data: 2218
+    generate_model: false
+    model: warrior_model/judgement_shield_3
+  displayname: judgement_shield_3
+  material: PAPER
+  permission: judgement_shield_3
+judgement_shield_4:
+  Pack:
+    custom_model_data: 2219
+    generate_model: false
+    model: warrior_model/judgement_shield_4
+  displayname: judgement_shield_4
+  material: PAPER
+  permission: judgement_shield_4

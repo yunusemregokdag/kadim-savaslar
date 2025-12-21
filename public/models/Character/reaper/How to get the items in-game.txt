@@ -1,0 +1,17 @@
+MMOItems:
+/mi browse
+look for the SWORD category
+
+================================================
+
+MythicCrucible:
+/mm i get reaper_scythe
+/mm i get reaper_scythe_shiny
+
+================================================
+
+Reaper Scythe:
+/minecraft:give USERNAME stone_sword{CustomModelData:2049}
+
+Shiny Reaper Scythe:
+/minecraft:give USERNAME stone_sword{CustomModelData:2050}

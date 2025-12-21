@@ -1,0 +1,19 @@
+info:
+  namespace: elitecreatures
+categories:
+  portal_decoration_animated_v1:
+    enabled: true
+    icon: "elitecreatures:portal_decoration_animated_v1_portal_9"
+    name: "Portal Decoration Animated v1"
+    permission: "ia.menu.portal_decoration_animated_v1"
+    items:
+      - "elitecreatures:portal_decoration_animated_v1_portal_1"
+      - "elitecreatures:portal_decoration_animated_v1_portal_2"
+      - "elitecreatures:portal_decoration_animated_v1_portal_3"
+      - "elitecreatures:portal_decoration_animated_v1_portal_4"
+      - "elitecreatures:portal_decoration_animated_v1_portal_5"
+      - "elitecreatures:portal_decoration_animated_v1_portal_6"
+      - "elitecreatures:portal_decoration_animated_v1_portal_7"
+      - "elitecreatures:portal_decoration_animated_v1_portal_8"
+      - "elitecreatures:portal_decoration_animated_v1_portal_9"
+      - "elitecreatures:portal_decoration_animated_v1_portal_10"

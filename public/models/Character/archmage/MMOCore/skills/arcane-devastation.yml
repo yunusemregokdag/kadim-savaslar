@@ -1,0 +1,44 @@
+name: Arcane Devastation
+lore:
+- '&5Levitate yourself in the air and form an area'
+- '&5of destruction where you summon bolts of thunder'
+- '&5that stun enemies. After some time, you lunge down'
+- '&5to the surface and summon bigger, longer-lasting'
+- '&5thunder bolts in a ring, dealing huge damage to nearby'
+- '&5enemies, stunning them.'
+- ''
+- '&c{damage} Damage'
+- '&c{duration}s Stun Duration'
+- '&e{cooldown}s Cooldown'
+- '&9Costs {mana} {mana_name}'
+material: 'COAL:2132'
+damage:
+  base: 5
+  per-level: 1
+  min: 5
+  max: 8
+duration:
+  base: 3
+  per-level: 0.1
+  min: 3
+  max: 4
+timer:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+mana:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+stamina:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+cooldown:
+  base: 12
+  per-level: -0.1
+  min: 10
+  max: 12

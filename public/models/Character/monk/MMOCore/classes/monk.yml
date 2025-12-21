@@ -1,0 +1,60 @@
+display:
+    name: '&f&lMonk Class'
+    lore:
+    - '&bChoose the Monk Class'
+    item: STONE_SWORD:2060 # Supports custom model data/texture by durability
+
+# Must match an existing exp curve filename from the 'expcurves' folder
+exp-curve: levels
+
+# The maximum level players can reach
+max-level: 100
+
+exp-table: class_exp_table
+
+skills:
+    FOCUS_CHI:
+        level: 1
+        max-level: 30
+    SWIFT_STRIKES:
+        level: 1
+        max-level: 30
+    CHI_BLAST:
+        level: 1
+        max-level: 30
+    ZEN_THROW:
+        level: 1
+        max-level: 30
+    BEADS_OF_KARMA:
+        level: 1
+        max-level: 20
+    COUNTERSTRIKE:
+        level: 1
+        max-level: 30
+    DRAGON_FISTS:
+        level: 1
+        max-level: 20
+
+skill-slots:
+    1:
+        name: "&aSkill Slot I (Passive)"
+        formula: "<PASSIVE>"
+        unlocked-by-default: true
+    2:
+        name: "&aSkill Slot II"
+        unlocked-by-default: true
+    3:
+        name: "&aSkill Slot III"
+        unlocked-by-default: true
+    4:
+        name: "&aSkill Slot IV"
+        unlocked-by-default: true
+    5:
+        name: "&aSkill Slot V"
+        unlocked-by-default: true
+    6:
+        name: "&aSkill Slot VI"
+        unlocked-by-default: true
+    7:
+        name: "&aSkill Slot VII"
+        unlocked-by-default: true

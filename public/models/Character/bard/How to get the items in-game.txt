@@ -1,0 +1,17 @@
+MMOItems:
+/mi browse
+look for the SWORD category
+
+================================================
+
+MythicCrucible:
+/mm i get bard_harp
+/mm i get bard_harp_shiny
+
+================================================
+
+Bard Harp:
+/minecraft:give USERNAME stone_sword{CustomModelData:2031}
+
+Shiny Bard Harp:
+/minecraft:give USERNAME stone_sword{CustomModelData:2032}

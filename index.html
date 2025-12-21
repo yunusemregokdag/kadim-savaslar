@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kadim Savaşlar MMORPG</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0f172a;
+      color: #e2e8f0;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    .rpg-font {
+      font-family: 'Cinzel', serif;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #1e293b;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+  </style>
+
+  <link rel="stylesheet" href="/index.css">
+</head>
+
+<body>
+  <div id="root"></div>
+  <script>
+    window.onerror = function (message, source, lineno, colno, error) {
+      console.error("Global Catch:", message);
+      var div = document.createElement('div');
+      div.style.position = 'fixed';
+      div.style.top = '0';
+      div.style.left = '0';
+      div.style.width = '100%';
+      div.style.height = '100%';
+      div.style.zIndex = '999999';
+      div.style.backgroundColor = 'rgba(50,0,0,0.95)';
+      div.style.color = 'white';
+      div.style.padding = '20px';
+      div.style.fontFamily = 'monospace';
+      div.innerHTML = '<h1>CRITICAL ERROR</h1><h3>' + message + '</h3><p>' + source + ':' + lineno + '</p><pre>' + (error ? error.stack : '') + '</pre>';
+      document.body.appendChild(div);
+    };
+  </script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>

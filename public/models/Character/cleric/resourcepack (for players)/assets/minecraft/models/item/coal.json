@@ -1,0 +1,15 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "item/coal"
+    },	
+	"overrides": [	
+		{"predicate": {"custom_model_data":2139}, "model": "cleric_model/icon_dawnbringer_angel"},
+		{"predicate": {"custom_model_data":2140}, "model": "cleric_model/icon_divine_immolation"},
+		{"predicate": {"custom_model_data":2141}, "model": "cleric_model/icon_luminous_wave"},
+		{"predicate": {"custom_model_data":2142}, "model": "cleric_model/icon_blessing_of_the_white_lantern"},
+		{"predicate": {"custom_model_data":2143}, "model": "cleric_model/icon_divine_cross"},
+		{"predicate": {"custom_model_data":2144}, "model": "cleric_model/icon_tears_of_god"},
+		{"predicate": {"custom_model_data":2145}, "model": "cleric_model/icon_divine_punishment"}
+	]
+}

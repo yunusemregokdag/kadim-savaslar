@@ -1,0 +1,19 @@
+MMOItems:
+/mi browse
+look for the SWORD category
+
+================================================
+
+MythicCrucible:
+/mm i get frigid_lance_arctic_knight
+/mm i get frigid_lance_arctic_knight_darkice
+
+================================================
+
+Arctic Knight Frigid Lance:
+/minecraft:give USERNAME stone_sword{CustomModelData:2058}
+
+Arctic Knight Darkice Frigid Lance:
+/minecraft:give USERNAME stone_sword{CustomModelData:2059}
+
+# 74802DU2VR6EBZOBOS9FG

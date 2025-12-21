@@ -1,0 +1,15 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "item/coal"
+    },	
+	"overrides": [	
+		{"predicate": {"custom_model_data":2132}, "model": "archmage_model/icon_arcane_devastation"},
+		{"predicate": {"custom_model_data":2133}, "model": "archmage_model/icon_arcane_shield"},
+		{"predicate": {"custom_model_data":2134}, "model": "archmage_model/icon_arcane_slash"},
+		{"predicate": {"custom_model_data":2135}, "model": "archmage_model/icon_blizzard"},
+		{"predicate": {"custom_model_data":2136}, "model": "archmage_model/icon_chains_of_void"},
+		{"predicate": {"custom_model_data":2137}, "model": "archmage_model/icon_cloak_of_hastur"},
+		{"predicate": {"custom_model_data":2138}, "model": "archmage_model/icon_meteor_storm"}
+	]
+}

@@ -1,0 +1,15 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "item/coal"
+    },	
+	"overrides": [	
+		{"predicate": {"custom_model_data":2186}, "model": "arctic_knight_model/icon_arctic_charge"},
+		{"predicate": {"custom_model_data":2187}, "model": "arctic_knight_model/icon_frost_strike"},
+		{"predicate": {"custom_model_data":2188}, "model": "arctic_knight_model/icon_frostbite"},
+		{"predicate": {"custom_model_data":2189}, "model": "arctic_knight_model/icon_frozen_shield"},
+		{"predicate": {"custom_model_data":2190}, "model": "arctic_knight_model/icon_glacial_impalement"},
+		{"predicate": {"custom_model_data":2191}, "model": "arctic_knight_model/icon_glacier_smash"},
+		{"predicate": {"custom_model_data":2192}, "model": "arctic_knight_model/icon_permafrost_lance"}
+	]
+}

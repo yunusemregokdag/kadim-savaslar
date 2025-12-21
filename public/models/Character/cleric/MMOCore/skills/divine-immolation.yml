@@ -1,0 +1,35 @@
+name: Divine Immolation
+lore:
+- '&eWhen swung, your mace has a radiant light trail.'
+- '&eEnemies get pushed in the direction of the'
+- '&eslash when it hits.'
+- ''
+- '&c{damage} Damage'
+- '&e{cooldown}s Cooldown'
+- '&9Costs {mana} {mana_name}'
+material: 'COAL:2140'
+damage:
+  base: 3
+  per-level: 1
+  min: 3
+  max: 6
+timer:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+mana:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+stamina:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+cooldown:
+  base: 0.6
+  per-level: 0
+  min: 0.5
+  max: 0.6

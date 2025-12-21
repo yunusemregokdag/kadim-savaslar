@@ -1,0 +1,723 @@
+info:
+  namespace: martial_artist
+items:
+  martial_artist_gauntlet:
+    display_name: "martial_artist_gauntlet"
+    permission: martial_artist_gauntlet
+    resource:
+      material: STONE_SWORD
+      model_id: 2029
+      generate: false
+      model_path: martial_artist_model/martial_artist_gauntlet
+  martial_artist_gauntlet_shiny:
+    display_name: "martial_artist_gauntlet_shiny"
+    permission: martial_artist_gauntlet_shiny
+    resource:
+      material: STONE_SWORD
+      model_id: 2030
+      generate: false
+      model_path: martial_artist_model/martial_artist_gauntlet_shiny
+  icon_agile_strike:
+    display_name: "icon_agile_strike"
+    permission: icon_agile_strike
+    resource:
+      material: COAL
+      model_id: 2088
+      generate: false
+      model_path: martial_artist_model/icon_agile_strike
+  icon_deadly_squash:
+    display_name: "icon_deadly_squash"
+    permission: icon_deadly_squash
+    resource:
+      material: COAL
+      model_id: 2089
+      generate: false
+      model_path: martial_artist_model/icon_deadly_squash
+  icon_double_strike:
+    display_name: "icon_double_strike"
+    permission: icon_double_strike
+    resource:
+      material: COAL
+      model_id: 2090
+      generate: false
+      model_path: martial_artist_model/icon_double_strike
+  icon_evasion:
+    display_name: "icon_evasion"
+    permission: icon_evasion
+    resource:
+      material: COAL
+      model_id: 2091
+      generate: false
+      model_path: martial_artist_model/icon_evasion
+  icon_multi_strike:
+    display_name: "icon_multi_strike"
+    permission: icon_multi_strike
+    resource:
+      material: COAL
+      model_id: 2092
+      generate: false
+      model_path: martial_artist_model/icon_multi_strike
+  icon_uppercut:
+    display_name: "icon_uppercut"
+    permission: icon_uppercut
+    resource:
+      material: COAL
+      model_id: 2093
+      generate: false
+      model_path: martial_artist_model/icon_uppercut
+  agile_strike_1:
+    display_name: "agile_strike_1"
+    permission: agile_strike_1
+    resource:
+      material: PAPER
+      model_id: 2379
+      generate: false
+      model_path: martial_artist_model/agile_strike_1
+  agile_strike_2:
+    display_name: "agile_strike_2"
+    permission: agile_strike_2
+    resource:
+      material: PAPER
+      model_id: 2380
+      generate: false
+      model_path: martial_artist_model/agile_strike_2
+  agile_strike_3:
+    display_name: "agile_strike_3"
+    permission: agile_strike_3
+    resource:
+      material: PAPER
+      model_id: 2381
+      generate: false
+      model_path: martial_artist_model/agile_strike_3
+  agile_strike_4:
+    display_name: "agile_strike_4"
+    permission: agile_strike_4
+    resource:
+      material: PAPER
+      model_id: 2382
+      generate: false
+      model_path: martial_artist_model/agile_strike_4
+  basic_strike_1:
+    display_name: "basic_strike_1"
+    permission: basic_strike_1
+    resource:
+      material: PAPER
+      model_id: 2383
+      generate: false
+      model_path: martial_artist_model/basic_strike_1
+  basic_strike_2:
+    display_name: "basic_strike_2"
+    permission: basic_strike_2
+    resource:
+      material: PAPER
+      model_id: 2384
+      generate: false
+      model_path: martial_artist_model/basic_strike_2
+  basic_strike_3:
+    display_name: "basic_strike_3"
+    permission: basic_strike_3
+    resource:
+      material: PAPER
+      model_id: 2385
+      generate: false
+      model_path: martial_artist_model/basic_strike_3
+  basic_strike_4:
+    display_name: "basic_strike_4"
+    permission: basic_strike_4
+    resource:
+      material: PAPER
+      model_id: 2386
+      generate: false
+      model_path: martial_artist_model/basic_strike_4
+  basic_strike_5:
+    display_name: "basic_strike_5"
+    permission: basic_strike_5
+    resource:
+      material: PAPER
+      model_id: 2387
+      generate: false
+      model_path: martial_artist_model/basic_strike_5
+  basic_strike_6:
+    display_name: "basic_strike_6"
+    permission: basic_strike_6
+    resource:
+      material: PAPER
+      model_id: 2388
+      generate: false
+      model_path: martial_artist_model/basic_strike_6
+  blue_basic_strike_1:
+    display_name: "blue_basic_strike_1"
+    permission: blue_basic_strike_1
+    resource:
+      material: PAPER
+      model_id: 2389
+      generate: false
+      model_path: martial_artist_model/blue_basic_strike_1
+  blue_basic_strike_2:
+    display_name: "blue_basic_strike_2"
+    permission: blue_basic_strike_2
+    resource:
+      material: PAPER
+      model_id: 2390
+      generate: false
+      model_path: martial_artist_model/blue_basic_strike_2
+  blue_basic_strike_3:
+    display_name: "blue_basic_strike_3"
+    permission: blue_basic_strike_3
+    resource:
+      material: PAPER
+      model_id: 2391
+      generate: false
+      model_path: martial_artist_model/blue_basic_strike_3
+  blue_basic_strike_4:
+    display_name: "blue_basic_strike_4"
+    permission: blue_basic_strike_4
+    resource:
+      material: PAPER
+      model_id: 2392
+      generate: false
+      model_path: martial_artist_model/blue_basic_strike_4
+  blue_basic_strike_5:
+    display_name: "blue_basic_strike_5"
+    permission: blue_basic_strike_5
+    resource:
+      material: PAPER
+      model_id: 2393
+      generate: false
+      model_path: martial_artist_model/blue_basic_strike_5
+  blue_basic_strike_6:
+    display_name: "blue_basic_strike_6"
+    permission: blue_basic_strike_6
+    resource:
+      material: PAPER
+      model_id: 2394
+      generate: false
+      model_path: martial_artist_model/blue_basic_strike_6
+  blue_strike_1:
+    display_name: "blue_strike_1"
+    permission: blue_strike_1
+    resource:
+      material: PAPER
+      model_id: 2395
+      generate: false
+      model_path: martial_artist_model/blue_strike_1
+  blue_strike_2:
+    display_name: "blue_strike_2"
+    permission: blue_strike_2
+    resource:
+      material: PAPER
+      model_id: 2396
+      generate: false
+      model_path: martial_artist_model/blue_strike_2
+  blue_strike_3:
+    display_name: "blue_strike_3"
+    permission: blue_strike_3
+    resource:
+      material: PAPER
+      model_id: 2397
+      generate: false
+      model_path: martial_artist_model/blue_strike_3
+  blue_strike_4:
+    display_name: "blue_strike_4"
+    permission: blue_strike_4
+    resource:
+      material: PAPER
+      model_id: 2398
+      generate: false
+      model_path: martial_artist_model/blue_strike_4
+  blue_strike_5:
+    display_name: "blue_strike_5"
+    permission: blue_strike_5
+    resource:
+      material: PAPER
+      model_id: 2399
+      generate: false
+      model_path: martial_artist_model/blue_strike_5
+  blue_strike_6:
+    display_name: "blue_strike_6"
+    permission: blue_strike_6
+    resource:
+      material: PAPER
+      model_id: 2400
+      generate: false
+      model_path: martial_artist_model/blue_strike_6
+  blue_strike_slash_1:
+    display_name: "blue_strike_slash_1"
+    permission: blue_strike_slash_1
+    resource:
+      material: PAPER
+      model_id: 2401
+      generate: false
+      model_path: martial_artist_model/blue_strike_slash_1
+  blue_strike_slash_2:
+    display_name: "blue_strike_slash_2"
+    permission: blue_strike_slash_2
+    resource:
+      material: PAPER
+      model_id: 2402
+      generate: false
+      model_path: martial_artist_model/blue_strike_slash_2
+  blue_strike_slash_3:
+    display_name: "blue_strike_slash_3"
+    permission: blue_strike_slash_3
+    resource:
+      material: PAPER
+      model_id: 2403
+      generate: false
+      model_path: martial_artist_model/blue_strike_slash_3
+  blue_strike_slash_4:
+    display_name: "blue_strike_slash_4"
+    permission: blue_strike_slash_4
+    resource:
+      material: PAPER
+      model_id: 2404
+      generate: false
+      model_path: martial_artist_model/blue_strike_slash_4
+  blue_strike_slash_5:
+    display_name: "blue_strike_slash_5"
+    permission: blue_strike_slash_5
+    resource:
+      material: PAPER
+      model_id: 2405
+      generate: false
+      model_path: martial_artist_model/blue_strike_slash_5
+  blue_strike_slash_6:
+    display_name: "blue_strike_slash_6"
+    permission: blue_strike_slash_6
+    resource:
+      material: PAPER
+      model_id: 2406
+      generate: false
+      model_path: martial_artist_model/blue_strike_slash_6
+  blue_uppercut_1:
+    display_name: "blue_uppercut_1"
+    permission: blue_uppercut_1
+    resource:
+      material: PAPER
+      model_id: 2407
+      generate: false
+      model_path: martial_artist_model/blue_uppercut_1
+  blue_uppercut_2:
+    display_name: "blue_uppercut_2"
+    permission: blue_uppercut_2
+    resource:
+      material: PAPER
+      model_id: 2408
+      generate: false
+      model_path: martial_artist_model/blue_uppercut_2
+  blue_uppercut_3:
+    display_name: "blue_uppercut_3"
+    permission: blue_uppercut_3
+    resource:
+      material: PAPER
+      model_id: 2409
+      generate: false
+      model_path: martial_artist_model/blue_uppercut_3
+  blue_uppercut_4:
+    display_name: "blue_uppercut_4"
+    permission: blue_uppercut_4
+    resource:
+      material: PAPER
+      model_id: 2410
+      generate: false
+      model_path: martial_artist_model/blue_uppercut_4
+  blue_uppercut_5:
+    display_name: "blue_uppercut_5"
+    permission: blue_uppercut_5
+    resource:
+      material: PAPER
+      model_id: 2411
+      generate: false
+      model_path: martial_artist_model/blue_uppercut_5
+  blue_uppercut_6:
+    display_name: "blue_uppercut_6"
+    permission: blue_uppercut_6
+    resource:
+      material: PAPER
+      model_id: 2412
+      generate: false
+      model_path: martial_artist_model/blue_uppercut_6
+  deadly_squash:
+    display_name: "deadly_squash"
+    permission: deadly_squash
+    resource:
+      material: PAPER
+      model_id: 2413
+      generate: false
+      model_path: martial_artist_model/deadly_squash
+  deadly_squash_2:
+    display_name: "deadly_squash_2"
+    permission: deadly_squash_2
+    resource:
+      material: PAPER
+      model_id: 2414
+      generate: false
+      model_path: martial_artist_model/deadly_squash_2
+  deadly_squash_3:
+    display_name: "deadly_squash_3"
+    permission: deadly_squash_3
+    resource:
+      material: PAPER
+      model_id: 2415
+      generate: false
+      model_path: martial_artist_model/deadly_squash_3
+  deadly_squash_4:
+    display_name: "deadly_squash_4"
+    permission: deadly_squash_4
+    resource:
+      material: PAPER
+      model_id: 2416
+      generate: false
+      model_path: martial_artist_model/deadly_squash_4
+  diving_strike_rupture_1:
+    display_name: "diving_strike_rupture_1"
+    permission: diving_strike_rupture_1
+    resource:
+      material: PAPER
+      model_id: 2417
+      generate: false
+      model_path: martial_artist_model/diving_strike_rupture_1
+  diving_strike_rupture_2:
+    display_name: "diving_strike_rupture_2"
+    permission: diving_strike_rupture_2
+    resource:
+      material: PAPER
+      model_id: 2418
+      generate: false
+      model_path: martial_artist_model/diving_strike_rupture_2
+  diving_strike_rupture_3:
+    display_name: "diving_strike_rupture_3"
+    permission: diving_strike_rupture_3
+    resource:
+      material: PAPER
+      model_id: 2419
+      generate: false
+      model_path: martial_artist_model/diving_strike_rupture_3
+  diving_strike_rupture_4:
+    display_name: "diving_strike_rupture_4"
+    permission: diving_strike_rupture_4
+    resource:
+      material: PAPER
+      model_id: 2420
+      generate: false
+      model_path: martial_artist_model/diving_strike_rupture_4
+  diving_strike_rupture_5:
+    display_name: "diving_strike_rupture_5"
+    permission: diving_strike_rupture_5
+    resource:
+      material: PAPER
+      model_id: 2421
+      generate: false
+      model_path: martial_artist_model/diving_strike_rupture_5
+  diving_strike_rupture_6:
+    display_name: "diving_strike_rupture_6"
+    permission: diving_strike_rupture_6
+    resource:
+      material: PAPER
+      model_id: 2422
+      generate: false
+      model_path: martial_artist_model/diving_strike_rupture_6
+  evasion_1:
+    display_name: "evasion_1"
+    permission: evasion_1
+    resource:
+      material: PAPER
+      model_id: 2423
+      generate: false
+      model_path: martial_artist_model/evasion_1
+  evasion_2:
+    display_name: "evasion_2"
+    permission: evasion_2
+    resource:
+      material: PAPER
+      model_id: 2424
+      generate: false
+      model_path: martial_artist_model/evasion_2
+  evasion_3:
+    display_name: "evasion_3"
+    permission: evasion_3
+    resource:
+      material: PAPER
+      model_id: 2425
+      generate: false
+      model_path: martial_artist_model/evasion_3
+  evasion_4:
+    display_name: "evasion_4"
+    permission: evasion_4
+    resource:
+      material: PAPER
+      model_id: 2426
+      generate: false
+      model_path: martial_artist_model/evasion_4
+  multi_strike_1_1:
+    display_name: "multi_strike_1_1"
+    permission: multi_strike_1_1
+    resource:
+      material: PAPER
+      model_id: 2427
+      generate: false
+      model_path: martial_artist_model/multi_strike_1_1
+  multi_strike_1_2:
+    display_name: "multi_strike_1_2"
+    permission: multi_strike_1_2
+    resource:
+      material: PAPER
+      model_id: 2428
+      generate: false
+      model_path: martial_artist_model/multi_strike_1_2
+  multi_strike_1_3:
+    display_name: "multi_strike_1_3"
+    permission: multi_strike_1_3
+    resource:
+      material: PAPER
+      model_id: 2429
+      generate: false
+      model_path: martial_artist_model/multi_strike_1_3
+  multi_strike_1_4:
+    display_name: "multi_strike_1_4"
+    permission: multi_strike_1_4
+    resource:
+      material: PAPER
+      model_id: 2430
+      generate: false
+      model_path: martial_artist_model/multi_strike_1_4
+  multi_strike_2_1:
+    display_name: "multi_strike_2_1"
+    permission: multi_strike_2_1
+    resource:
+      material: PAPER
+      model_id: 2431
+      generate: false
+      model_path: martial_artist_model/multi_strike_2_1
+  multi_strike_2_2:
+    display_name: "multi_strike_2_2"
+    permission: multi_strike_2_2
+    resource:
+      material: PAPER
+      model_id: 2432
+      generate: false
+      model_path: martial_artist_model/multi_strike_2_2
+  multi_strike_2_3:
+    display_name: "multi_strike_2_3"
+    permission: multi_strike_2_3
+    resource:
+      material: PAPER
+      model_id: 2433
+      generate: false
+      model_path: martial_artist_model/multi_strike_2_3
+  multi_strike_2_4:
+    display_name: "multi_strike_2_4"
+    permission: multi_strike_2_4
+    resource:
+      material: PAPER
+      model_id: 2434
+      generate: false
+      model_path: martial_artist_model/multi_strike_2_4
+  multi_strike_3_1:
+    display_name: "multi_strike_3_1"
+    permission: multi_strike_3_1
+    resource:
+      material: PAPER
+      model_id: 2435
+      generate: false
+      model_path: martial_artist_model/multi_strike_3_1
+  multi_strike_3_2:
+    display_name: "multi_strike_3_2"
+    permission: multi_strike_3_2
+    resource:
+      material: PAPER
+      model_id: 2436
+      generate: false
+      model_path: martial_artist_model/multi_strike_3_2
+  multi_strike_3_3:
+    display_name: "multi_strike_3_3"
+    permission: multi_strike_3_3
+    resource:
+      material: PAPER
+      model_id: 2437
+      generate: false
+      model_path: martial_artist_model/multi_strike_3_3
+  multi_strike_3_4:
+    display_name: "multi_strike_3_4"
+    permission: multi_strike_3_4
+    resource:
+      material: PAPER
+      model_id: 2438
+      generate: false
+      model_path: martial_artist_model/multi_strike_3_4
+  multi_strike_4_1:
+    display_name: "multi_strike_4_1"
+    permission: multi_strike_4_1
+    resource:
+      material: PAPER
+      model_id: 2439
+      generate: false
+      model_path: martial_artist_model/multi_strike_4_1
+  multi_strike_4_2:
+    display_name: "multi_strike_4_2"
+    permission: multi_strike_4_2
+    resource:
+      material: PAPER
+      model_id: 2440
+      generate: false
+      model_path: martial_artist_model/multi_strike_4_2
+  multi_strike_4_3:
+    display_name: "multi_strike_4_3"
+    permission: multi_strike_4_3
+    resource:
+      material: PAPER
+      model_id: 2441
+      generate: false
+      model_path: martial_artist_model/multi_strike_4_3
+  multi_strike_4_4:
+    display_name: "multi_strike_4_4"
+    permission: multi_strike_4_4
+    resource:
+      material: PAPER
+      model_id: 2442
+      generate: false
+      model_path: martial_artist_model/multi_strike_4_4
+  strike_1:
+    display_name: "strike_1"
+    permission: strike_1
+    resource:
+      material: PAPER
+      model_id: 2443
+      generate: false
+      model_path: martial_artist_model/strike_1
+  strike_2:
+    display_name: "strike_2"
+    permission: strike_2
+    resource:
+      material: PAPER
+      model_id: 2444
+      generate: false
+      model_path: martial_artist_model/strike_2
+  strike_3:
+    display_name: "strike_3"
+    permission: strike_3
+    resource:
+      material: PAPER
+      model_id: 2445
+      generate: false
+      model_path: martial_artist_model/strike_3
+  strike_4:
+    display_name: "strike_4"
+    permission: strike_4
+    resource:
+      material: PAPER
+      model_id: 2446
+      generate: false
+      model_path: martial_artist_model/strike_4
+  strike_5:
+    display_name: "strike_5"
+    permission: strike_5
+    resource:
+      material: PAPER
+      model_id: 2447
+      generate: false
+      model_path: martial_artist_model/strike_5
+  strike_6:
+    display_name: "strike_6"
+    permission: strike_6
+    resource:
+      material: PAPER
+      model_id: 2448
+      generate: false
+      model_path: martial_artist_model/strike_6
+  strike_slash_1:
+    display_name: "strike_slash_1"
+    permission: strike_slash_1
+    resource:
+      material: PAPER
+      model_id: 2449
+      generate: false
+      model_path: martial_artist_model/strike_slash_1
+  strike_slash_2:
+    display_name: "strike_slash_2"
+    permission: strike_slash_2
+    resource:
+      material: PAPER
+      model_id: 2450
+      generate: false
+      model_path: martial_artist_model/strike_slash_2
+  strike_slash_3:
+    display_name: "strike_slash_3"
+    permission: strike_slash_3
+    resource:
+      material: PAPER
+      model_id: 2451
+      generate: false
+      model_path: martial_artist_model/strike_slash_3
+  strike_slash_4:
+    display_name: "strike_slash_4"
+    permission: strike_slash_4
+    resource:
+      material: PAPER
+      model_id: 2452
+      generate: false
+      model_path: martial_artist_model/strike_slash_4
+  strike_slash_5:
+    display_name: "strike_slash_5"
+    permission: strike_slash_5
+    resource:
+      material: PAPER
+      model_id: 2453
+      generate: false
+      model_path: martial_artist_model/strike_slash_5
+  strike_slash_6:
+    display_name: "strike_slash_6"
+    permission: strike_slash_6
+    resource:
+      material: PAPER
+      model_id: 2454
+      generate: false
+      model_path: martial_artist_model/strike_slash_6
+  uppercut_1:
+    display_name: "uppercut_1"
+    permission: uppercut_1
+    resource:
+      material: PAPER
+      model_id: 2455
+      generate: false
+      model_path: martial_artist_model/uppercut_1
+  uppercut_2:
+    display_name: "uppercut_2"
+    permission: uppercut_2
+    resource:
+      material: PAPER
+      model_id: 2456
+      generate: false
+      model_path: martial_artist_model/uppercut_2
+  uppercut_3:
+    display_name: "uppercut_3"
+    permission: uppercut_3
+    resource:
+      material: PAPER
+      model_id: 2457
+      generate: false
+      model_path: martial_artist_model/uppercut_3
+  uppercut_4:
+    display_name: "uppercut_4"
+    permission: uppercut_4
+    resource:
+      material: PAPER
+      model_id: 2458
+      generate: false
+      model_path: martial_artist_model/uppercut_4
+  uppercut_5:
+    display_name: "uppercut_5"
+    permission: uppercut_5
+    resource:
+      material: PAPER
+      model_id: 2459
+      generate: false
+      model_path: martial_artist_model/uppercut_5
+  uppercut_6:
+    display_name: "uppercut_6"
+    permission: uppercut_6
+    resource:
+      material: PAPER
+      model_id: 2460
+      generate: false
+      model_path: martial_artist_model/uppercut_6

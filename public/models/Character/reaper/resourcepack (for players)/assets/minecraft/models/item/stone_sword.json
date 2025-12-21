@@ -1,0 +1,10 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "item/stone_sword"
+    },
+    "overrides": [
+		{"predicate": {"custom_model_data":2049}, "model": "reaper_model/scythe_reaper"},
+		{"predicate": {"custom_model_data":2050}, "model": "reaper_model/scythe_reaper_shiny"}
+    ]
+}

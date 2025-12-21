@@ -1,0 +1,18 @@
+MMOItems:
+/mi browse
+look for the SWORD category
+
+================================================
+
+MythicCrucible:
+/mm i get cleric_mace
+/mm i get cleric_mace_shiny
+
+================================================
+
+Cleric Mace:
+/minecraft:give USERNAME stone_sword{CustomModelData:2045}
+
+Shiny Cleric Mace:
+/minecraft:give USERNAME stone_sword{CustomModelData:2046}
+# vu+4O2JHra8GGEqK7AKPJrAUyNWyCLMkkg4HGGBgHxJqdG00KXF9OtPOp+aNL4NkjF9JtxtOj5rS3rZ77iyGE5+7iRtm2SQBfGk+9VFm+Fs=

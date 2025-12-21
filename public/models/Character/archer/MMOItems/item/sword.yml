@@ -1,0 +1,79 @@
+ARCHER_BOW:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2019.0
+    name: <gradient:#30f060:#f05d30:#30f060>Bow of Archer
+    lore:
+    - <gradient:#30f060:#f05d30:#30f060>The bow of an Archer
+    displayed-type: <gradient:#30f060:#f05d30:#30f060>Archer
+    attack-damage: 5.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: QUICK_SHOT
+        mode: LEFT_CLICK
+        damage: 3
+        cooldown: 1.0
+      ability2:
+        type: BACKSTEP
+        mode: RIGHT_CLICK
+        cooldown: 2.0
+      ability3:
+        type: DEADLY_JAVELIN
+        mode: SHIFT_RIGHT_CLICK
+        damage: 6
+        duration: 2
+        cooldown: 3.0
+      ability4:
+        type: WINDRAZOR
+        damage: 4
+        duration: 5
+        mode: SNEAK
+      ability5:
+        type: DRAGON_PIERCER
+        mode: SHIFT_LEFT_CLICK
+        damage: 15
+        duration: 4
+        cooldown: 7.0
+    disable-attack-passive: true
+    attack-speed: 1.0
+    
+ARCHER_BOW_SHINY:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2020.0
+    name: <gradient:#30f060:#fffc81:#30f060>Shiny Bow of Archer
+    lore:
+    - <gradient:#30f060:#fffc81:#30f060>The bow of an Archer
+    displayed-type: <gradient:#30f060:#f05d30:#30f060>Archer
+    attack-damage: 6.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: QUICK_SHOT
+        mode: LEFT_CLICK
+        damage: 3
+        cooldown: 1.0
+      ability2:
+        type: BACKSTEP
+        mode: RIGHT_CLICK
+        cooldown: 2.0
+      ability3:
+        type: DEADLY_JAVELIN
+        mode: SHIFT_RIGHT_CLICK
+        damage: 6
+        duration: 2
+        cooldown: 3.0
+      ability4:
+        type: WINDRAZOR
+        damage: 4
+        duration: 5
+        mode: SNEAK
+      ability5:
+        type: DRAGON_PIERCER
+        mode: SHIFT_LEFT_CLICK
+        damage: 15
+        duration: 4
+        cooldown: 7.0
+    disable-attack-passive: true
+    attack-speed: 1.0

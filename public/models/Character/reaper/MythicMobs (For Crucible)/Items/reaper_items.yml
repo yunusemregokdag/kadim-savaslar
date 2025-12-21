@@ -1,0 +1,275 @@
+######## created by samus2002 #########
+  
+scythe_reaper:
+  Id: stone_sword
+  Display: "<gradient:#10141e:#afe4a4:#10141e>&lScythe of Reaper"
+  Model: 2049
+  Lore:
+  - '<gradient:#10141e:#afe4a4:#10141e>The scythe of the Reaper'
+  Unbreakable: true
+  NBT:
+    Unbreakable: int/1 
+  Hide:
+  - ATTRIBUTES
+  Skills:
+  - skill{s=Soul_Collector} @self ~onTimer:20
+  - skill{s=Soul_Slice} @self ~onSwing
+  - skill{s=Soul_Slice} @self ~onAttack
+  - skill{s=Death_Spin} @self ~onUse
+  - skill{s=Reaping_Claw} @self ~onCrouch
+  - skill{s=Surge} @self ~onUse
+  - skill{s=Soul_Scythe} @self ~onTimer:10
+  - skill{s=God_Of_Death} @self ~onSwing
+  
+scythe_reaper_shiny:
+  Id: stone_sword
+  Display: "<gradient:#fff09f:#afe4a4:#fff09f>&lShiny Scythe of Reaper"
+  Model: 2050
+  Lore:
+  - '<gradient:#fff09f:#afe4a4:#fff09f>The scythe of the Reaper'
+  Hide:
+  - ATTRIBUTES
+  Unbreakable: true
+  NBT:
+    Unbreakable: int/1 
+  Skills:
+  - skill{s=Soul_Collector} @self ~onTimer:20
+  - skill{s=Soul_Slice} @self ~onSwing
+  - skill{s=Soul_Slice} @self ~onAttack
+  - skill{s=Death_Spin} @self ~onUse
+  - skill{s=Reaping_Claw} @self ~onCrouch
+  - skill{s=Surge} @self ~onUse
+  - skill{s=Soul_Scythe} @self ~onTimer:10
+  - skill{s=God_Of_Death} @self ~onSwing
+  
+death_slice_1:
+  Id: paper
+  Display: "&6"
+  Model: 2840
+  Hide:
+  - ATTRIBUTES
+ 
+death_slice_2:
+  Id: paper
+  Display: "&6"
+  Model: 2841
+  Hide:
+  - ATTRIBUTES
+
+death_slice_3:
+  Id: paper
+  Display: "&6"
+  Model: 2842
+  Hide:
+  - ATTRIBUTES
+  
+death_slice_4:
+  Id: paper
+  Display: "&6"
+  Model: 2843
+  Hide:
+  - ATTRIBUTES
+  
+death_slice_5:
+  Id: paper
+  Display: "&6"
+  Model: 2844
+  Hide:
+  - ATTRIBUTES
+  
+death_slice_6:
+  Id: paper
+  Display: "&6"
+  Model: 2845
+  Hide:
+  - ATTRIBUTES
+  
+death_slice_7:
+  Id: paper
+  Display: "&6"
+  Model: 2846
+  Hide:
+  - ATTRIBUTES
+  
+death_slice_8:
+  Id: paper
+  Display: "&6"
+  Model: 2847
+  Hide:
+  - ATTRIBUTES
+  
+death_spin:
+  Id: paper
+  Display: "&6"
+  Model: 2848
+  Hide:
+  - ATTRIBUTES
+  
+soul_cross_1:
+  Id: paper
+  Display: "&6"
+  Model: 2849
+  Hide:
+  - ATTRIBUTES
+  
+soul_cross_2:
+  Id: paper
+  Display: "&6"
+  Model: 2850
+  Hide:
+  - ATTRIBUTES
+  
+soul_cross_3:
+  Id: paper
+  Display: "&6"
+  Model: 2851
+  Hide:
+  - ATTRIBUTES
+  
+soul_cross_4:
+  Id: paper
+  Display: "&6"
+  Model: 2852
+  Hide:
+  - ATTRIBUTES
+  
+soul_cross_5:
+  Id: paper
+  Display: "&6"
+  Model: 2853
+  Hide:
+  - ATTRIBUTES
+ 
+soul_cross_6:
+  Id: paper
+  Display: "&6"
+  Model: 2854
+  Hide:
+  - ATTRIBUTES
+
+soul_cross_7:
+  Id: paper
+  Display: "&6"
+  Model: 2855
+  Hide:
+  - ATTRIBUTES
+  
+soul_cross_8:
+  Id: paper
+  Display: "&6"
+  Model: 2856
+  Hide:
+  - ATTRIBUTES
+  
+soul_slice_1:
+  Id: paper
+  Display: "&6"
+  Model: 2857
+  Hide:
+  - ATTRIBUTES
+  
+soul_slice_2:
+  Id: paper
+  Display: "&6"
+  Model: 2858
+  Hide:
+  - ATTRIBUTES
+  
+soul_slice_3:
+  Id: paper
+  Display: "&6"
+  Model: 2859
+  Hide:
+  - ATTRIBUTES
+  
+soul_slice_4:
+  Id: paper
+  Display: "&6"
+  Model: 2860
+  Hide:
+  - ATTRIBUTES
+  
+soul_slice_5:
+  Id: paper
+  Display: "&6"
+  Model: 2861
+  Hide:
+  - ATTRIBUTES
+ 
+soul_slice_6:
+  Id: paper
+  Display: "&6"
+  Model: 2862
+  Hide:
+  - ATTRIBUTES
+
+soul_slice_7:
+  Id: paper
+  Display: "&6"
+  Model: 2863
+  Hide:
+  - ATTRIBUTES
+  
+soul_slice_8:
+  Id: paper
+  Display: "&6"
+  Model: 2864
+  Hide:
+  - ATTRIBUTES
+  
+soul_spin:
+  Id: paper
+  Display: "&6"
+  Model: 2865
+  Hide:
+  - ATTRIBUTES
+  
+soul_wave_1:
+  Id: paper
+  Display: "&6"
+  Model: 2866
+  Hide:
+  - ATTRIBUTES
+  
+soul_wave_2:
+  Id: paper
+  Display: "&6"
+  Model: 2867
+  Hide:
+  - ATTRIBUTES
+  
+soul_wave_3:
+  Id: paper
+  Display: "&6"
+  Model: 2868
+  Hide:
+  - ATTRIBUTES
+  
+soul_wave_4:
+  Id: paper
+  Display: "&6"
+  Model: 2869
+  Hide:
+  - ATTRIBUTES
+  
+soul_wave_5:
+  Id: paper
+  Display: "&6"
+  Model: 2870
+  Hide:
+  - ATTRIBUTES
+  
+soul_wave_6:
+  Id: paper
+  Display: "&6"
+  Model: 2871
+  Hide:
+  - ATTRIBUTES
+  
+soul_wave_7:
+  Id: paper
+  Display: "&6"
+  Model: 2872
+  Hide:
+  - ATTRIBUTES
+  

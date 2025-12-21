@@ -1,0 +1,60 @@
+display:
+    name: '&e&lCleric Class'
+    lore:
+    - '&6Choose the Cleric Class'
+    item: STONE_SWORD:2045 # Supports custom model data/texture by durability
+
+# Must match an existing exp curve filename from the 'expcurves' folder
+exp-curve: levels
+
+# The maximum level players can reach
+max-level: 100
+
+exp-table: class_exp_table
+
+skills:
+    DAWNBRINGER_ANGEL:
+        level: 1
+        max-level: 30
+    DIVINE_IMMOLATION:
+        level: 1
+        max-level: 30
+    LUMINOUS_WAVE:
+        level: 1
+        max-level: 30
+    BLESSING_OF_THE_WHITE_LANTERN:
+        level: 1
+        max-level: 30
+    DIVINE_CROSS:
+        level: 1
+        max-level: 20
+    TEARS_OF_GOD:
+        level: 1
+        max-level: 30
+    DIVINE_PUNISHMENT:
+        level: 1
+        max-level: 20
+
+skill-slots:
+    1:
+        name: "&aSkill Slot I (Passive)"
+        formula: "<PASSIVE>"
+        unlocked-by-default: true
+    2:
+        name: "&aSkill Slot II"
+        unlocked-by-default: true
+    3:
+        name: "&aSkill Slot III"
+        unlocked-by-default: true
+    4:
+        name: "&aSkill Slot IV"
+        unlocked-by-default: true
+    5:
+        name: "&aSkill Slot V"
+        unlocked-by-default: true
+    6:
+        name: "&aSkill Slot VI"
+        unlocked-by-default: true
+    7:
+        name: "&aSkill Slot VII"
+        unlocked-by-default: true

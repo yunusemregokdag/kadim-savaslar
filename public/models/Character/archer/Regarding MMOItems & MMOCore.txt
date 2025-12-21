@@ -1,0 +1,12 @@
+Tested on: MMOItems 6.8.2, MythicLib 1.4.2, MMOCore 1.10.2
+
+MMOItems folder: You can simply drag and drop the files that are inside "MMOItems", but if you have the same files that could be overwritten then just open up the ymls and copy & paste the stuff inside to your original files
+
+MythicLib folder: Drag and drop all the stuff inside "skill" right into your MythicLib>skill folder
+
+MMOCore folder: Drag and drop all the stuff inside the MMOCore folder into your MMOCore folder
+
+
+MythicMobs Skills folder: There should be 2 files - one for MMOItems/Crucible and one for MMOCore.
+If you're gonna use MMOItems/Crucible, apply only the skill file WITHOUT the "_mmocore" label
+If you're gonna use MMOCore, apply only the skill file WITH the "_mmocore" label

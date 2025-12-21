@@ -1,0 +1,36 @@
+name: Chains of Void
+lore:
+- '&5Open a void portal on the ground, summoning'
+- '&5void chains that strike the surface in front'
+- '&5of you 2 times, each time creating a void'
+- '&5rupture that pulls in enemies.'
+- ''
+- '&c{damage} Damage'
+- '&e{cooldown}s Cooldown'
+- '&9Costs {mana} {mana_name}'
+material: 'COAL:2136'
+damage:
+  base: 4
+  per-level: 1
+  min: 4
+  max: 6
+timer:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+mana:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+stamina:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+cooldown:
+  base: 7
+  per-level: -0.1
+  min: 6
+  max: 7

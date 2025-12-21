@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/ink_sac"
+  },
+    "overrides": [
+		{"predicate": {"custom_model_data":1}, "model": "littleroom_npcpack4:assassin_shuriken"},
+		{"predicate": {"custom_model_data":2}, "model": "littleroom_npcpack4:acolyte_staff"},
+		{"predicate": {"custom_model_data":3}, "model": "littleroom_npcpack4:assassin_katar"},
+		{"predicate": {"custom_model_data":4}, "model": "littleroom_npcpack4:assassin_tanto"},
+		{"predicate": {"custom_model_data":5}, "model": "littleroom_npcpack4:paladin_hammer"},
+		{"predicate": {"custom_model_data":6}, "model": "littleroom_npcpack4:tinker_spanner"}
+        ]
+}

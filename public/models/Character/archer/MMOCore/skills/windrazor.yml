@@ -1,0 +1,41 @@
+name: Windrazor
+lore:
+- '&aYour bow gets attuned with air for a short time,'
+- '&ashooting a volley of arrows on Basic Attack'
+- '&awith slight knockback'
+- ''
+- '&c{damage} Damage'
+- '&c{duration}s Duration'
+- '&e{cooldown}s Cooldown'
+- '&9Costs {mana} {mana_name}'
+material: 'COAL:2063'
+damage:
+  base: 4
+  per-level: 1
+  min: 4
+  max: 7
+duration:
+  base: 5
+  per-level: 1
+  min: 5
+  max: 7
+timer:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+mana:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+stamina:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+cooldown:
+  base: 11
+  per-level: -0.3
+  min: 9
+  max: 11

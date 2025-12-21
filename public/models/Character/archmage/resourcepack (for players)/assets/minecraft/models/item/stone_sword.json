@@ -1,0 +1,10 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "item/stone_sword"
+    },
+    "overrides": [
+		{"predicate": {"custom_model_data":2043}, "model": "archmage_model/archmage_staff"},
+		{"predicate": {"custom_model_data":2044}, "model": "archmage_model/archmage_staff_shiny"}
+    ]
+}

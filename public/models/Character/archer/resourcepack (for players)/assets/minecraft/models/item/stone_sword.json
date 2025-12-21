@@ -1,0 +1,10 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "item/stone_sword"
+    },
+    "overrides": [
+		{"predicate": {"custom_model_data":2019}, "model": "archer_model/archer_bow"},
+		{"predicate": {"custom_model_data":2020}, "model": "archer_model/archer_bow_shiny"}
+    ]
+}

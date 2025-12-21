@@ -1,0 +1,17 @@
+MMOItems:
+/mi browse
+look for the SWORD category
+
+================================================
+
+MythicCrucible:
+/mm i get warrior_sword
+/mm i get warrior_sword_shiny
+
+================================================
+
+Warrior Sword:
+/minecraft:give USERNAME stone_sword{CustomModelData:2017}
+
+Shiny Warrior Sword:
+/minecraft:give USERNAME stone_sword{CustomModelData:2018}

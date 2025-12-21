@@ -1,0 +1,19 @@
+name: Chain Hook
+modifier:
+  damage:
+    name: Damage
+    default-value: 3
+  timer:
+    name: Timer
+    default-value: 0
+  mana:
+    name: Mana
+    default-value: 0
+  stamina:
+    name: Stamina
+    default-value: 0
+  cooldown:
+    name: Cooldown
+    default-value: 0
+
+# odGCEJ436f3Fi+UALGHcxOuJSUJ241w80fhc0Hj+HUF3rV/QjS28o4ZONMizJo5JqKGYuwoA8ydCk95LEXcaE41NNcM5FKMby5KBhYBW9NU=

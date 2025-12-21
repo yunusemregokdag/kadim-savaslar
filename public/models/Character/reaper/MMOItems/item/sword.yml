@@ -1,0 +1,109 @@
+SCYTHE_REAPER:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2049.0
+    name: <gradient:#10141e:#afe4a4:#10141e>Scythe of Reaper
+    lore:
+    - <gradient:#10141e:#afe4a4:#10141e>The scythe of the Reaper
+    displayed-type: <gradient:#10141e:#afe4a4:#10141e>Reaper
+    attack-damage: 5.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: SOUL_SLICE
+        mode: LEFT_CLICK
+        damage: 3
+        cooldown: 0
+      ability2:
+        type: SOUL_SLICE
+        mode: ATTACK
+        damage: 3
+        cooldown: 0
+      ability3:
+        type: DEATH_SPIN
+        mode: RIGHT_CLICK
+        damage: 4
+        cooldown: 2
+      ability4:
+        type: REAPING_CLAW
+        mode: SNEAK
+        damage: 3
+      ability5:
+        type: SURGE
+        mode: SHIFT_RIGHT_CLICK
+        damage: 4
+        cooldown: 2
+      ability6:
+        type: SOUL_COLLECTOR
+        mode: TIMER
+        timer: 20
+      ability7:
+        type: SOUL_SCYTHE
+        mode: TIMER
+        timer: 10
+        damage: 5
+        heal: 4
+        cooldown: 2
+      ability8:
+        type: GOD_OF_DEATH
+        mode: SHIFT_LEFT_CLICK
+        damage: 6
+        duration: 12
+        cooldown: 15
+    disable-attack-passive: true
+    attack-speed: 1.0
+    
+SCYTHE_REAPER_SHINY:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2050.0
+    name: <gradient:#fff09f:#afe4a4:#fff09f>Shiny Scythe of Reaper
+    lore:
+    - <gradient:#fff09f:#afe4a4:#fff09f>The scythe of the Reaper
+    displayed-type: <gradient:#10141e:#afe4a4:#10141e>Reaper
+    attack-damage: 5.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: SOUL_SLICE
+        mode: LEFT_CLICK
+        damage: 3
+        cooldown: 0
+      ability2:
+        type: SOUL_SLICE
+        mode: ATTACK
+        damage: 3
+        cooldown: 0
+      ability3:
+        type: DEATH_SPIN
+        mode: RIGHT_CLICK
+        damage: 4
+        cooldown: 2
+      ability4:
+        type: REAPING_CLAW
+        mode: SNEAK
+        damage: 3
+      ability5:
+        type: SURGE
+        mode: SHIFT_RIGHT_CLICK
+        damage: 4
+        cooldown: 2
+      ability6:
+        type: SOUL_COLLECTOR
+        mode: TIMER
+        timer: 20
+      ability7:
+        type: SOUL_SCYTHE
+        mode: TIMER
+        timer: 10
+        damage: 5
+        heal: 4
+        cooldown: 2
+      ability8:
+        type: GOD_OF_DEATH
+        mode: SHIFT_LEFT_CLICK
+        damage: 6
+        duration: 12
+        cooldown: 15
+    disable-attack-passive: true
+    attack-speed: 1.0

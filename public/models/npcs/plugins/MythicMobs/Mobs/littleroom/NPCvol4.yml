@@ -1,0 +1,460 @@
+#########################################################
+## Developed by Little Room, patreon.com/littleroomdev ##
+#########################################################
+
+#### UTILITY STUFF ####
+
+
+NPCVOL4GREETFX:
+  Type: CAT
+  Display: "GREETFX"
+  AIGoalSelectors:
+  - 0 clear
+  - 1 lookatplayers
+  AITargetSelectors:
+  - 0 clear
+  Skills:
+  - model{mid=npcgreeting;d=false;n=false} @self ~onSpawn
+  - skill{s=NPCvol4greetfx} @self ~onSpawn
+  Options:
+    PreventBlockInfection: true
+    Invincible: true
+    Silent: true
+    NoGravity: true
+  
+NPC4_HITBOX:
+  Type: PIG
+  Display: "NPCHITBOX"
+  AIGoalSelectors:
+  - 0 clear
+  AITargetSelectors:
+  - 0 clear
+  Options:
+    Silent: true
+    PreventBlockInfection: true
+    Invincible: true
+    ApplyInvisibility: true
+  Skills:
+  - sudoskill{s=NPC4hitboxinteract;cat=true} @trigger ~onInteract
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+##### ASSASSIN #####
+  
+NPCassassin:
+  Type: PIG
+  Display: "Assassin"
+  Health: 5
+  Damage: 0
+  Faction: NPC
+  AIGoalSelectors:
+  - 0 clear
+  - 1 lookatplayers
+  AITargetSelectors:
+  - 0 clear
+  Options:
+    Despawn: true
+    Invincible: true
+    Collidable: false
+    Silent: true
+    Persistent: false
+  Skills:
+  - skill{s=NPC4hitboxSPAWN} @self ~onSpawn
+  - skill{s=NPCvol4playercheck} @self ~onTimer:40
+  - setstance{s=alone} @self ~onSpawn
+  - skill{s=assassinNPCAlone} @self ~onTimer:80
+  - skill{s=assassinNPCGreet} @self ~onTimer:20
+  - skill{s=assassinNPCInteract} @self ~onInteract
+  - model{mid=lr_assassin;n=false;d=false;ride=true} @self ~onSpawn
+  - model{mid=lr_assassin;n=false;d=false;ride=true} @self ~onLoad
+  - skill{s=assassinNPCfidget} @self ~onTimer:120 .6
+  - bodyclamp{m=lr_assassin;c=25} @self ~onSpawn
+  - bodyclamp{m=lr_assassin;c=25} @self ~onLoad
+  - skill{s=assassinNPCInteract} @self ~onSignal:INTERACT
+    
+  
+NPCassassinAGGRO:
+  Type: IRON_GOLEM
+  Display: "Assassin"
+  Health: 75
+  Damage: 0
+  Faction: NPC
+  AITargetSelectors:
+  - players
+  Options:
+    Despawn: true
+    Collidable: true
+    Silent: true
+    Persistent: false
+    PreventBlockInfection: true
+    PreventOtherDrops: true
+    MovementSpeed: 0.4
+    KnockbackResistance: 1
+    FollowDistance: 32
+  Skills:
+  - skill{s=assassinNPCcomplete} @self ~onKillPlayer
+  - skill{s=assassinNPCgapcloser} @target ~onTimer:20
+  - skill{s=assassinNPCprojectile} @target ~onTimer:5
+  - skill{s=assassinNPCdeath} @self ~onDeath
+  - skill{s=assassinNPCaggrospawn} @self ~onSpawn
+  - skill{s=assassinNPCattack_sync;sync=true} @self ~onAttack
+  - model{mid=lr_assassin;n=false;d=true;step=1} @self ~onSpawn
+  - model{mid=lr_assassin;n=false;d=true;step=1} @self ~onLoad
+  - bodyclamp{m=lr_assassin;c=25} @self ~onSpawn
+  - bodyclamp{m=lr_assassin;c=25} @self ~onLoad
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+##### ACOLYTE #####
+  
+NPCacolyte:
+  Type: PIG
+  Display: "Acolyte"
+  Health: 5
+  Damage: 0
+  Faction: NPC
+  AIGoalSelectors:
+  - 0 clear
+  - 1 lookatplayers
+  AITargetSelectors:
+  - 0 clear
+  Options:
+    Despawn: true
+    Invincible: true
+    Collidable: false
+    Silent: true
+    Persistent: false
+  Skills:
+  - skill{s=NPC4hitboxSPAWN} @self ~onSpawn
+  - skill{s=acolyteNPCincense} @self ~onTimer:5
+  - skill{s=NPCvol4playercheck} @self ~onTimer:40
+  - setstance{s=alone} @self ~onSpawn
+  - skill{s=acolyteNPCAlone} @self ~onTimer:60
+  - skill{s=acolyteNPCGreet} @self ~onTimer:20
+  - skill{s=acolyteNPCInteract} @self ~onInteract
+  - model{mid=lr_acolyte;n=false;d=false;ride=true} @self ~onSpawn
+  - model{mid=lr_acolyte;n=false;d=false;ride=true} @self ~onLoad
+  - skill{s=acolyteNPCfidget} @self ~onTimer:80 .2
+  - bodyclamp{m=lr_acolyte;c=25} @self ~onSpawn
+  - bodyclamp{m=lr_acolyte;c=25} @self ~onLoad
+  
+NPCacolyte_WALK_EXAMPLE:
+  Type: PIG
+  Display: "Acolyte"
+  Health: 5
+  Damage: 0
+  Faction: NPC
+  AIGoalSelectors:
+  - 0 randomstroll
+  - 1 lookatplayers
+  AITargetSelectors:
+  - 0 clear
+  Options:
+    Despawn: true
+    Invincible: true
+    Collidable: false
+    Silent: true
+    Persistent: false
+    MovementSpeed: .1
+  Skills:
+  - skill{s=NPC4hitboxSPAWN} @self ~onSpawn
+  - skill{s=acolyteNPCincense} @self ~onTimer:5
+  - skill{s=NPCvol4playercheck} @self ~onTimer:40
+  - setstance{s=alone} @self ~onSpawn
+  - skill{s=acolyteNPCWALK} @self ~onTimer:60
+  - skill{s=acolyteNPCGreet} @self ~onTimer:20
+  - skill{s=acolyteNPCInteract} @self ~onInteract
+  - model{mid=lr_acolyte;n=false;d=false;ride=true} @self ~onSpawn
+  - model{mid=lr_acolyte;n=false;d=false;ride=true} @self ~onLoad
+  - skill{s=acolyteNPCfidget} @self ~onTimer:80 .2
+  - bodyclamp{m=lr_acolyte;c=25} @self ~onSpawn
+  - bodyclamp{m=lr_acolyte;c=25} @self ~onLoad
+  - skill{s=assassinNPCInteract} @self ~onSignal:INTERACT
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+##### PALADIN #####
+  
+NPCpaladin:
+  Type: PIG
+  Display: "Paladin"
+  Health: 5
+  Damage: 0
+  Faction: NPC
+  AIGoalSelectors:
+  - 0 clear
+  - 1 lookatplayers
+  AITargetSelectors:
+  - 0 clear
+  Options:
+    Silent: true
+    Despawn: true
+    Invincible: true
+    Collidable: false
+    Persistent: false
+  Skills:
+  - skill{s=NPC4hitboxSPAWN} @self ~onSpawn
+  - skill{s=NPCvol4playercheck} @self ~onTimer:40
+  - setstance{s=alone} @self ~onSpawn
+  - skill{s=paladinNPCAlone} @self ~onTimer:40
+  - skill{s=paladinNPCGreet} @self ~onTimer:20
+  - skill{s=paladinNPCInteract} @self ~onInteract
+  - model{mid=lr_paladin;n=false;d=false;ride=true} @self ~onSpawn
+  - model{mid=lr_paladin;n=false;d=false;ride=true} @self ~onLoad
+  - skill{s=paladinNPCfidget} @self ~onTimer:80 .2
+  - bodyclamp{m=lr_paladin;c=10} @self ~onSpawn
+  - bodyclamp{m=lr_paladin;c=10} @self ~onLoad
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+##### TINKERER #####
+  
+NPCtinkerer:
+  Type: PIG
+  Display: "tinkerer"
+  Health: 5
+  Damage: 0
+  Faction: NPC
+  AIGoalSelectors:
+  - 0 clear
+  - 1 lookatplayers
+  AITargetSelectors:
+  - 0 clear
+  Options:
+    Silent: true
+    Despawn: true
+    Invincible: true
+    Collidable: false
+    Persistent: false
+  Skills:
+  - skill{s=NPC4hitboxSPAWN} @self ~onSpawn
+  - skill{s=tinkererNPCrobot} @self ~onSpawn
+  - skill{s=NPCvol4playercheck} @self ~onTimer:40
+  - setstance{s=alone} @self ~onSpawn
+  - skill{s=tinkererNPCAlone} @self ~onTimer:60
+  - skill{s=tinkererNPCGreet} @self ~onTimer:20
+  - skill{s=tinkererNPCInteract} @self ~onInteract
+  - model{mid=lr_tinkerer;n=false;d=false;ride=true} @self ~onSpawn
+  - model{mid=lr_tinkerer;n=false;d=false;ride=true} @self ~onLoad
+  - skill{s=tinkererNPCfidget} @self ~onTimer:80 .2
+  - bodyclamp{m=lr_tinkerer;c=35} @self ~onSpawn
+  - bodyclamp{m=lr_tinkerer;c=35} @self ~onLoad
+    
+### TINKERER ROBOT ###
+
+NPCtinkererbot:
+  Type: CAT
+  Display: "tinkerer bot"
+  Health: 5
+  Damage: 0
+  Faction: NPC
+  AIGoalSelectors:
+  - clear
+  - lookatplayers
+  - randomstroll
+  - gotoparent
+  Options:
+    Silent: true
+    Despawn: true
+    Invincible: true
+    Collidable: false
+    Persistent: false
+  Skills:
+  - sound{s=littleroom_npcpack4:littleroom.npcpack4.tinkerer_robot;v=1;sc=HOSTILE} @self ~onTimer:120 .25
+  - model{mid=lr_tinkerer_robot;n=false;d=false} @self ~onSpawn
+  - model{mid=lr_tinkerer_robot;n=false;d=false} @self ~onLoad
+  - bodyclamp{m=lr_tinkerer_robot;c=360} @self ~onSpawn
+  - bodyclamp{m=lr_tinkerer_robot;c=360} @self ~onLoad
+  
+### TINKERER FURNITURE ###
+  
+  
+NPCtinkererbench_north:
+  Type: ARMOR_STAND
+  Display: "tinkerer bench"
+  Damage: 0
+  Faction: NPC
+  Options:
+    Marker: true
+    Despawn: true
+    Persistent: false
+  Skills:
+  - model{mid=lr_tinkerertable;n=false;d=false} @self ~onSpawn
+  - model{mid=lr_tinkerertable;n=false;d=false} @self ~onLoad
+  - bodyclamp{m=lr_tinkerertable;c=0} @self ~onSpawn
+  - bodyclamp{m=lr_tinkerertable;c=0} @self ~onLoad
+  
+NPCtinkererbench_south:
+  Type: ARMOR_STAND
+  Display: "tinkerer bench"
+  Damage: 0
+  Faction: NPC
+  Options:
+    Marker: true
+    Despawn: true
+    Persistent: false
+  Skills:
+  - skill{s=npcpack4_face_south} @self ~onSpawn
+  - skill{s=npcpack4_face_south} @self ~onLoad
+  - model{mid=lr_tinkerertable;n=false;d=false} @self ~onSpawn
+  - model{mid=lr_tinkerertable;n=false;d=false} @self ~onLoad
+  - bodyclamp{m=lr_tinkerertable;c=0} @self ~onSpawn
+  - bodyclamp{m=lr_tinkerertable;c=0} @self ~onLoad
+  
+NPCtinkererbench_west:
+  Type: ARMOR_STAND
+  Display: "tinkerer bench"
+  Damage: 0
+  Faction: NPC
+  Options:
+    Marker: true
+    Despawn: true
+    Persistent: false
+  Skills:
+  - skill{s=npcpack4_face_west} @self ~onSpawn
+  - skill{s=npcpack4_face_west} @self ~onLoad
+  - model{mid=lr_tinkerertable;n=false;d=false} @self ~onSpawn
+  - model{mid=lr_tinkerertable;n=false;d=false} @self ~onLoad
+  - bodyclamp{m=lr_tinkerertable;c=0} @self ~onSpawn
+  - bodyclamp{m=lr_tinkerertable;c=0} @self ~onLoad
+  
+NPCtinkererbench_east:
+  Type: ARMOR_STAND
+  Display: "tinkerer bench"
+  Damage: 0
+  Faction: NPC
+  Options:
+    Marker: true
+    Despawn: true
+    Persistent: false
+  Skills:
+  - skill{s=npcpack4_face_east} @self ~onSpawn
+  - skill{s=npcpack4_face_east} @self ~onLoad
+  - model{mid=lr_tinkerertable;n=false;d=false} @self ~onSpawn
+  - model{mid=lr_tinkerertable;n=false;d=false} @self ~onLoad
+  - bodyclamp{m=lr_tinkerertable;c=0} @self ~onSpawn
+  - bodyclamp{m=lr_tinkerertable;c=0} @self ~onLoad
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+##### FORTUNETELLER #####
+  
+  
+NPCfortuneteller:
+  Type: PIG
+  Display: "fortuneteller"
+  Health: 5
+  Damage: 0
+  Faction: NPC
+  AIGoalSelectors:
+  - 0 clear
+  AITargetSelectors:
+  - 0 clear
+  Options:
+    Silent: true
+    Despawn: true
+    Invincible: true
+    Collidable: false
+    Persistent: false
+    PreventTeleport: true
+  Skills:
+  - skill{s=NPC4hitboxSPAWN} @self ~onSpawn
+  - look{headOnly=false;immediately=true;repeat=20;repeatInterval=1} @MIR{r=2;t=NPCfortunetellerball} ~onTimer:20
+  - skill{s=NPCvol4playercheck} @self ~onTimer:40
+  - setstance{s=alone} @self ~onSpawn
+  - skill{s=fortunetellerNPCAlone} @self ~onTimer:60
+  - skill{s=fortunetellerNPCGreet} @self ~onTimer:20
+  - skill{s=fortunetellerNPCInteract} @self ~onInteract
+  - model{mid=lr_fortuneteller;n=false;d=false;lpitch=true;ride=true} @self ~onSpawn
+  - model{mid=lr_fortuneteller;n=false;d=false;lpitch=true;ride=true} @self ~onLoad
+  - skill{s=fortunetellerNPCfidget} @self ~onTimer:120
+  - bodyclamp{m=lr_fortuneteller;c=0} @self ~onSpawn
+  - bodyclamp{m=lr_fortuneteller;c=0} @self ~onLoad
+
+  
+NPCfortunetellerball:
+  Type: PIG
+  Display: "fortune teller ball"
+  Health: 5
+  Damage: 0
+  Faction: NPC
+  AIGoalSelectors:
+  - clear
+  AITargetSelectors:
+  - clear
+  Options:
+    Silent: true
+    Despawn: true
+    Invincible: true
+    Collidable: false
+    Persistent: false
+  Skills:
+  - setblock{m=light} @selflocation{y=.5} ~onSpawn
+  - skill{s=fortunetellerNPCballfx} @self ~onTimer:5
+  - model{mid=lr_fortuneteller_ball;n=false;d=false;ride=true} @self ~onSpawn
+  - model{mid=lr_fortuneteller_ball;n=false;d=false;ride=true} @self ~onLoad
+  - bodyclamp{m=lr_fortuneteller_ball;c=360} @self ~onSpawn
+  - bodyclamp{m=lr_fortuneteller_ball;c=360} @self ~onLoad
+  
+# t3zjXY9TSpLe04HqIk8nlchuKumvnvu9+oOWV5efuiiBv7RuSljqR4CuUbTmws/ZgpmOpO0gMtYcXd7ZNC91Pe9+kja8+PMbBLDkJmMBTfA=

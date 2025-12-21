@@ -1,0 +1,15 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "item/coal"
+    },	
+	"overrides": [	
+		{"predicate": {"custom_model_data":2216}, "model": "gale_glaive_model/icon_windrune_blade"},
+		{"predicate": {"custom_model_data":2217}, "model": "gale_glaive_model/icon_gale_slash"},
+		{"predicate": {"custom_model_data":2218}, "model": "gale_glaive_model/icon_vault"},
+		{"predicate": {"custom_model_data":2219}, "model": "gale_glaive_model/icon_dancing_blade"},
+		{"predicate": {"custom_model_data":2220}, "model": "gale_glaive_model/icon_torrent"},
+		{"predicate": {"custom_model_data":2221}, "model": "gale_glaive_model/icon_cloudpiercer"},
+		{"predicate": {"custom_model_data":2222}, "model": "gale_glaive_model/icon_windbound_fury"}
+	]
+}

@@ -1,0 +1,34 @@
+name: Blessing Of The White Lantern
+lore:
+- '&eSummon a holy lantern above you. Enemies inside'
+- '&eits radius are given weakness, while allies inside'
+- '&eare given resistance and fire resistance.'
+- ''
+- '&c{duration}s Duration'
+- '&9Costs {mana} {mana_name}'
+material: 'COAL:2142'
+duration:
+  base: 7
+  per-level: 0.1
+  min: 7
+  max: 8
+timer:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+mana:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+stamina:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+cooldown:
+  base: 12
+  per-level: -0.1
+  min: 10
+  max: 12

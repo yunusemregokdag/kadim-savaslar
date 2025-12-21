@@ -1,0 +1,87 @@
+{
+   "littleroom.npcpack4.assassin_impact1":{
+		 "sounds": [
+			"littleroom/npcpack4/assassin_impact1"
+		 ]
+	},
+   "littleroom.npcpack4.assassin_impact2":{
+		 "sounds": [
+			"littleroom/npcpack4/assassin_impact2"
+		 ]
+	},
+   "littleroom.npcpack4.assassin_impact3":{
+		 "sounds": [
+			"littleroom/npcpack4/assassin_impact3"
+		 ]
+	},
+   "littleroom.npcpack4.assassin_impact4":{
+		 "sounds": [
+			"littleroom/npcpack4/assassin_impact4"
+		 ]
+	},
+   "littleroom.npcpack4.assassin_poof":{
+		 "sounds": [
+			"littleroom/npcpack4/assassin_poof"
+		 ]
+	},
+   "littleroom.npcpack4.assassin_swing1":{
+		 "sounds": [
+			"littleroom/npcpack4/assassin_swing1"
+		 ]
+	},
+   "littleroom.npcpack4.assassin_swing2":{
+		 "sounds": [
+			"littleroom/npcpack4/assassin_swing2"
+		 ]
+	},
+   "littleroom.npcpack4.assassin_swing3":{
+		 "sounds": [
+			"littleroom/npcpack4/assassin_swing3"
+		 ]
+	},
+   "littleroom.npcpack4.assassin_swing4":{
+		 "sounds": [
+			"littleroom/npcpack4/assassin_swing4"
+		 ]
+	},
+   "littleroom.npcpack4.assassin_swing5":{
+		 "sounds": [
+			"littleroom/npcpack4/assassin_swing5"
+		 ]
+	},
+   "littleroom.npcpack4.assassin_vocal":{
+		 "sounds": [
+			"littleroom/npcpack4/assassin_vocal"
+		 ]
+	},
+   "littleroom.npcpack4.assassin_vocal2":{
+		 "sounds": [
+			"littleroom/npcpack4/assassin_vocal2"
+		 ]
+	},
+   "littleroom.npcpack4.assassin_vocal3":{
+		 "sounds": [
+			"littleroom/npcpack4/assassin_vocal3"
+		 ]
+	},
+   "littleroom.npcpack4.assassin_vocal4":{
+		 "sounds": [
+			"littleroom/npcpack4/assassin_vocal4"
+		 ]
+	},
+   "littleroom.npcpack4.greetings":{
+		 "sounds": [
+			"littleroom/npcpack4/greetings"
+		 ]
+	},
+   "littleroom.npcpack4.paladin_greet":{
+		 "sounds": [
+			"littleroom/npcpack4/paladin_greet"
+		 ]
+	},
+   "littleroom.npcpack4.tinkerer_robot":{
+		 "sounds": [
+			"littleroom/npcpack4/tinkerer_robot"
+		 ]
+	}
+}

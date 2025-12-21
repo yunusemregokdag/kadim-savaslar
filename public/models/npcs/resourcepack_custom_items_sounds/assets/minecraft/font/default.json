@@ -1,0 +1,77 @@
+{
+	"providers": [
+	    {
+         "file":"littleroom_npcpack4:empty_character.png",
+         "chars":[
+            ""
+         ],
+         "height":-6,
+         "ascent":-32768,
+         "type":"bitmap"
+      },
+      {
+         "file":"littleroom_npcpack4:empty_character.png",
+         "chars":[
+            ""
+         ],
+         "height":6,
+         "ascent":-65536,
+         "type":"bitmap"
+      },
+		{
+			"type": "bitmap",
+			"file": "littleroom_npcpack4:heads/speech1.png",
+			"height": 180,
+			"ascent": 90,
+			"chars": [
+				"💨"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "littleroom_npcpack4:heads/acolyte.png",
+			"height": 48,
+			"ascent": 24,
+			"chars": [
+				"☢"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "littleroom_npcpack4:heads/paladin.png",
+			"height": 48,
+			"ascent": 24,
+			"chars": [
+				"☣"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "littleroom_npcpack4:heads/tinkerer.png",
+			"height": 48,
+			"ascent": 24,
+			"chars": [
+				"☤"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "littleroom_npcpack4:heads/assassin.png",
+			"height": 48,
+			"ascent": 24,
+			"chars": [
+				"☥"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "littleroom_npcpack4:heads/fortuneteller.png",
+			"height": 48,
+			"ascent": 24,
+			"chars": [
+				"☦"
+			]
+		}
+
+	]
+}

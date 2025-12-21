@@ -1,0 +1,83 @@
+WARRIOR_SWORD:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2017.0
+    name: <gradient:#e8a01a:#faee70:#e8a01a>Sword of Warrior
+    lore:
+    - <gradient:#e8a01a:#faee70:#e8a01a>The sword of an Warrior
+    displayed-type: <gradient:#e8a01a:#faee70:#e8a01a>Warrior
+    attack-damage: 5.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: BRUTAL_STRIKE
+        mode: LEFT_CLICK
+        cooldown: 0
+        damage: 5
+      ability2:
+        type: CHARGE
+        mode: RIGHT_CLICK
+        cooldown: 4.0
+      ability3:
+        type: CHAIN_HOOK
+        mode: SHIFT_RIGHT_CLICK
+        cooldown: 4.0
+        damage: 3
+      ability4:
+        type: SHIELD_BARRIER
+        mode: SNEAK
+      ability5:
+        type: JUDGEMENT
+        mode: SHIFT_LEFT_CLICK
+        cooldown: 15.0
+        damage: 8
+        duration: 5
+      ability6:
+        type: RAMPAGE
+        mode: DAMAGED
+        cooldown: 30.0
+        duration: 10
+    disable-attack-passive: true
+    attack-speed: 1.0
+    
+WARRIOR_SWORD_SHINY:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2018.0
+    name: <gradient:#e8a01a:#fff5de:#e8a01a>Shiny Sword of Warrior
+    lore:
+    - <gradient:#e8a01a:#fff5de:#e8a01a>The sword of an Warrior
+    displayed-type: <gradient:#8df229:#fab712:#8df229>Warrior
+    attack-damage: 6.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: BRUTAL_STRIKE
+        mode: LEFT_CLICK
+        cooldown: 0
+        damage: 5
+      ability2:
+        type: CHARGE
+        mode: RIGHT_CLICK
+        cooldown: 4.0
+      ability3:
+        type: CHAIN_HOOK
+        mode: SHIFT_RIGHT_CLICK
+        cooldown: 4.0
+        damage: 3
+      ability4:
+        type: SHIELD_BARRIER
+        mode: SNEAK
+      ability5:
+        type: JUDGEMENT
+        mode: SHIFT_LEFT_CLICK
+        cooldown: 15.0
+        damage: 8
+        duration: 5
+      ability6:
+        type: RAMPAGE
+        mode: DAMAGED
+        cooldown: 30.0
+        duration: 10
+    disable-attack-passive: true
+    attack-speed: 1.0

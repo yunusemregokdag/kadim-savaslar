@@ -1,0 +1,341 @@
+info:
+  namespace: reaper
+items:
+  scythe_reaper:
+    display_name: "scythe_reaper"
+    permission: scythe_reaper
+    resource:
+      material: STONE_SWORD
+      model_id: 2049
+      generate: false
+      model_path: reaper_model/scythe_reaper
+  scythe_reaper_shiny:
+    display_name: "scythe_reaper_shiny"
+    permission: scythe_reaper_shiny
+    resource:
+      material: STONE_SWORD
+      model_id: 2050
+      generate: false
+      model_path: reaper_model/scythe_reaper_shiny
+  icon_death_spin:
+    display_name: "icon_death_spin"
+    permission: icon_death_spin
+    resource:
+      material: COAL
+      model_id: 2153
+      generate: false
+      model_path: reaper_model/icon_death_spin
+  icon_god_of_death:
+    display_name: "icon_god_of_death"
+    permission: icon_god_of_death
+    resource:
+      material: COAL
+      model_id: 2154
+      generate: false
+      model_path: reaper_model/icon_god_of_death
+  icon_reaping_claw:
+    display_name: "icon_reaping_claw"
+    permission: icon_reaping_claw
+    resource:
+      material: COAL
+      model_id: 2155
+      generate: false
+      model_path: reaper_model/icon_reaping_claw
+  icon_soul_collector:
+    display_name: "icon_soul_collector"
+    permission: icon_soul_collector
+    resource:
+      material: COAL
+      model_id: 2156
+      generate: false
+      model_path: reaper_model/icon_soul_collector
+  icon_soul_scythe:
+    display_name: "icon_soul_scythe"
+    permission: icon_soul_scythe
+    resource:
+      material: COAL
+      model_id: 2157
+      generate: false
+      model_path: reaper_model/icon_soul_scythe
+  icon_soul_slice:
+    display_name: "icon_soul_slice"
+    permission: icon_soul_slice
+    resource:
+      material: COAL
+      model_id: 2158
+      generate: false
+      model_path: reaper_model/icon_soul_slice
+  icon_surge:
+    display_name: "icon_surge"
+    permission: icon_surge
+    resource:
+      material: COAL
+      model_id: 2159
+      generate: false
+      model_path: reaper_model/icon_surge
+  death_slice_1:
+    display_name: "death_slice_1"
+    permission: death_slice_1
+    resource:
+      material: PAPER
+      model_id: 2840
+      generate: false
+      model_path: reaper_model/death_slice_1
+  death_slice_2:
+    display_name: "death_slice_2"
+    permission: death_slice_2
+    resource:
+      material: PAPER
+      model_id: 2841
+      generate: false
+      model_path: reaper_model/death_slice_2
+  death_slice_3:
+    display_name: "death_slice_3"
+    permission: death_slice_3
+    resource:
+      material: PAPER
+      model_id: 2842
+      generate: false
+      model_path: reaper_model/death_slice_3
+  death_slice_4:
+    display_name: "death_slice_4"
+    permission: death_slice_4
+    resource:
+      material: PAPER
+      model_id: 2843
+      generate: false
+      model_path: reaper_model/death_slice_4
+  death_slice_5:
+    display_name: "death_slice_5"
+    permission: death_slice_5
+    resource:
+      material: PAPER
+      model_id: 2844
+      generate: false
+      model_path: reaper_model/death_slice_5
+  death_slice_6:
+    display_name: "death_slice_6"
+    permission: death_slice_6
+    resource:
+      material: PAPER
+      model_id: 2845
+      generate: false
+      model_path: reaper_model/death_slice_6
+  death_slice_7:
+    display_name: "death_slice_7"
+    permission: death_slice_7
+    resource:
+      material: PAPER
+      model_id: 2846
+      generate: false
+      model_path: reaper_model/death_slice_7
+  death_slice_8:
+    display_name: "death_slice_8"
+    permission: death_slice_8
+    resource:
+      material: PAPER
+      model_id: 2847
+      generate: false
+      model_path: reaper_model/death_slice_8
+  death_spin:
+    display_name: "death_spin"
+    permission: death_spin
+    resource:
+      material: PAPER
+      model_id: 2848
+      generate: false
+      model_path: reaper_model/death_spin
+  soul_cross_1:
+    display_name: "soul_cross_1"
+    permission: soul_cross_1
+    resource:
+      material: PAPER
+      model_id: 2849
+      generate: false
+      model_path: reaper_model/soul_cross_1
+  soul_cross_2:
+    display_name: "soul_cross_2"
+    permission: soul_cross_2
+    resource:
+      material: PAPER
+      model_id: 2850
+      generate: false
+      model_path: reaper_model/soul_cross_2
+  soul_cross_3:
+    display_name: "soul_cross_3"
+    permission: soul_cross_3
+    resource:
+      material: PAPER
+      model_id: 2851
+      generate: false
+      model_path: reaper_model/soul_cross_3
+  soul_cross_4:
+    display_name: "soul_cross_4"
+    permission: soul_cross_4
+    resource:
+      material: PAPER
+      model_id: 2852
+      generate: false
+      model_path: reaper_model/soul_cross_4
+  soul_cross_5:
+    display_name: "soul_cross_5"
+    permission: soul_cross_5
+    resource:
+      material: PAPER
+      model_id: 2853
+      generate: false
+      model_path: reaper_model/soul_cross_5
+  soul_cross_6:
+    display_name: "soul_cross_6"
+    permission: soul_cross_6
+    resource:
+      material: PAPER
+      model_id: 2854
+      generate: false
+      model_path: reaper_model/soul_cross_6
+  soul_cross_7:
+    display_name: "soul_cross_7"
+    permission: soul_cross_7
+    resource:
+      material: PAPER
+      model_id: 2855
+      generate: false
+      model_path: reaper_model/soul_cross_7
+  soul_cross_8:
+    display_name: "soul_cross_8"
+    permission: soul_cross_8
+    resource:
+      material: PAPER
+      model_id: 2856
+      generate: false
+      model_path: reaper_model/soul_cross_8
+  soul_slice_1:
+    display_name: "soul_slice_1"
+    permission: soul_slice_1
+    resource:
+      material: PAPER
+      model_id: 2857
+      generate: false
+      model_path: reaper_model/soul_slice_1
+  soul_slice_2:
+    display_name: "soul_slice_2"
+    permission: soul_slice_2
+    resource:
+      material: PAPER
+      model_id: 2858
+      generate: false
+      model_path: reaper_model/soul_slice_2
+  soul_slice_3:
+    display_name: "soul_slice_3"
+    permission: soul_slice_3
+    resource:
+      material: PAPER
+      model_id: 2859
+      generate: false
+      model_path: reaper_model/soul_slice_3
+  soul_slice_4:
+    display_name: "soul_slice_4"
+    permission: soul_slice_4
+    resource:
+      material: PAPER
+      model_id: 2860
+      generate: false
+      model_path: reaper_model/soul_slice_4
+  soul_slice_5:
+    display_name: "soul_slice_5"
+    permission: soul_slice_5
+    resource:
+      material: PAPER
+      model_id: 2861
+      generate: false
+      model_path: reaper_model/soul_slice_5
+  soul_slice_6:
+    display_name: "soul_slice_6"
+    permission: soul_slice_6
+    resource:
+      material: PAPER
+      model_id: 2862
+      generate: false
+      model_path: reaper_model/soul_slice_6
+  soul_slice_7:
+    display_name: "soul_slice_7"
+    permission: soul_slice_7
+    resource:
+      material: PAPER
+      model_id: 2863
+      generate: false
+      model_path: reaper_model/soul_slice_7
+  soul_slice_8:
+    display_name: "soul_slice_8"
+    permission: soul_slice_8
+    resource:
+      material: PAPER
+      model_id: 2864
+      generate: false
+      model_path: reaper_model/soul_slice_8
+  soul_spin:
+    display_name: "soul_spin"
+    permission: soul_spin
+    resource:
+      material: PAPER
+      model_id: 2865
+      generate: false
+      model_path: reaper_model/soul_spin
+  soul_wave_1:
+    display_name: "soul_wave_1"
+    permission: soul_wave_1
+    resource:
+      material: PAPER
+      model_id: 2866
+      generate: false
+      model_path: reaper_model/soul_wave_1
+  soul_wave_2:
+    display_name: "soul_wave_2"
+    permission: soul_wave_2
+    resource:
+      material: PAPER
+      model_id: 2867
+      generate: false
+      model_path: reaper_model/soul_wave_2
+  soul_wave_3:
+    display_name: "soul_wave_3"
+    permission: soul_wave_3
+    resource:
+      material: PAPER
+      model_id: 2868
+      generate: false
+      model_path: reaper_model/soul_wave_3
+  soul_wave_4:
+    display_name: "soul_wave_4"
+    permission: soul_wave_4
+    resource:
+      material: PAPER
+      model_id: 2869
+      generate: false
+      model_path: reaper_model/soul_wave_4
+  soul_wave_5:
+    display_name: "soul_wave_5"
+    permission: soul_wave_5
+    resource:
+      material: PAPER
+      model_id: 2870
+      generate: false
+      model_path: reaper_model/soul_wave_5
+  soul_wave_6:
+    display_name: "soul_wave_6"
+    permission: soul_wave_6
+    resource:
+      material: PAPER
+      model_id: 2871
+      generate: false
+      model_path: reaper_model/soul_wave_6
+  soul_wave_7:
+    display_name: "soul_wave_7"
+    permission: soul_wave_7
+    resource:
+      material: PAPER
+      model_id: 2872
+      generate: false
+      model_path: reaper_model/soul_wave_7
+
+# 199BZ5D8Z7JSTW11BE

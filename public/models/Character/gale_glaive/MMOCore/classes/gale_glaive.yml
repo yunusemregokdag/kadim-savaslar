@@ -1,0 +1,60 @@
+display:
+    name: '&a&lGale Glaive Class'
+    lore:
+    - '&bChoose the Gale Glaive Class'
+    item: STONE_SWORD:2068 # Supports custom model data/texture by durability
+
+# Must match an existing exp curve filename from the 'expcurves' folder
+exp-curve: levels
+
+# The maximum level players can reach
+max-level: 100
+
+exp-table: class_exp_table
+
+skills:
+    WINDRUNE_BLADE:
+        level: 1
+        max-level: 30
+    GALE_SLASH:
+        level: 1
+        max-level: 30
+    VAULT:
+        level: 1
+        max-level: 30
+    DANCING_BLADE:
+        level: 1
+        max-level: 30
+    CLOUDPIERCER:
+        level: 1
+        max-level: 20
+    TORRENT:
+        level: 1
+        max-level: 30
+    WINDBOUND_FURY:
+        level: 1
+        max-level: 20
+
+skill-slots:
+    1:
+        name: "&aSkill Slot I (Passive)"
+        formula: "<PASSIVE>"
+        unlocked-by-default: true
+    2:
+        name: "&aSkill Slot II"
+        unlocked-by-default: true
+    3:
+        name: "&aSkill Slot III"
+        unlocked-by-default: true
+    4:
+        name: "&aSkill Slot IV"
+        unlocked-by-default: true
+    5:
+        name: "&aSkill Slot V"
+        unlocked-by-default: true
+    6:
+        name: "&aSkill Slot VI"
+        unlocked-by-default: true
+    7:
+        name: "&aSkill Slot VII"
+        unlocked-by-default: true

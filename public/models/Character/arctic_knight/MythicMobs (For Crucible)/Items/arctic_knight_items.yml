@@ -1,0 +1,41 @@
+  
+frigid_lance_arctic_knight:
+  Id: stone_sword
+  Display: "<gradient:#4ca4fc:#6bf5ff:#4ca4fc>&lFrigid Lance of Arctic Knight"
+  Model: 2058
+  Lore:
+  - '<gradient:#4ca4fc:#6bf5ff:#4ca4fc>The frigid lance of the Arctic Knight'
+  Unbreakable: true
+  NBT:
+    Unbreakable: int/1 
+  Hide:
+  - ATTRIBUTES
+  Skills:
+  - skill{s=Frostbite} @self ~onTimer:10
+  - skill{s=Frost_Strike} @self ~onSwing
+  - skill{s=Glacial_Impalement} @self ~onUse
+  - skill{s=Glacier_Smash} @self ~onCrouch
+  - skill{s=Arctic_Charge} @self ~onUse
+  - skill{s=Frozen_Shield} @self ~onTimer:10
+  - skill{s=Permafrost_Lance} @self ~onSwing
+  
+frigid_lance_arctic_knight_darkice:
+  Id: stone_sword
+  Display: "<gradient:#4ca4fc:#17298f:#4ca4fc>&lDarkice Frigid Lance of Arctic Knight"
+  Model: 2059
+  Lore:
+  - '<gradient:#4ca4fc:#17298f:#4ca4fc>The frigid lance of the Arctic Knight'
+  Hide:
+  - ATTRIBUTES
+  Unbreakable: true
+  NBT:
+    Unbreakable: int/1 
+  Skills:
+  - skill{s=Frostbite} @self ~onTimer:10
+  - skill{s=Frost_Strike} @self ~onSwing
+  - skill{s=Glacial_Impalement} @self ~onUse
+  - skill{s=Glacier_Smash} @self ~onCrouch
+  - skill{s=Arctic_Charge} @self ~onUse
+  - skill{s=Frozen_Shield} @self ~onTimer:10
+  - skill{s=Permafrost_Lance} @self ~onSwing
+  

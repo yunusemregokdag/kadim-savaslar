@@ -1,0 +1,17 @@
+MMOItems:
+/mi browse
+look for the SWORD category
+
+================================================
+
+MythicCrucible:
+/mm i get archer_bow
+/mm i get archer_bow_shiny
+
+================================================
+
+Archer Bow:
+/minecraft:give USERNAME stone_sword{CustomModelData:2019}
+
+Shiny Archer Bow:
+/minecraft:give USERNAME stone_sword{CustomModelData:2020}

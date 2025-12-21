@@ -1,0 +1,411 @@
+info:
+  namespace: warrior
+items:
+  warrior_sword:
+    display_name: "warrior_sword"
+    permission: warrior_sword
+    resource:
+      material: STONE_SWORD
+      model_id: 2017
+      generate: false
+      model_path: warrior_model/warrior_sword
+  warrior_sword_shiny:
+    display_name: "warrior_sword_shiny"
+    permission: warrior_sword_shiny
+    resource:
+      material: STONE_SWORD
+      model_id: 2018
+      generate: false
+      model_path: warrior_model/warrior_sword_shiny
+  icon_brutal_strike:
+    display_name: "icon_brutal_strike"
+    permission: icon_brutal_strike
+    resource:
+      material: COAL
+      model_id: 2052
+      generate: false
+      model_path: warrior_model/icon_brutal_strike
+  icon_chain_hook:
+    display_name: "icon_chain_hook"
+    permission: icon_chain_hook
+    resource:
+      material: COAL
+      model_id: 2053
+      generate: false
+      model_path: warrior_model/icon_chain_hook
+  icon_charge:
+    display_name: "icon_charge"
+    permission: icon_charge
+    resource:
+      material: COAL
+      model_id: 2054
+      generate: false
+      model_path: warrior_model/icon_charge
+  icon_judgement:
+    display_name: "icon_judgement"
+    permission: icon_judgement
+    resource:
+      material: COAL
+      model_id: 2055
+      generate: false
+      model_path: warrior_model/icon_judgement
+  icon_rampage:
+    display_name: "icon_rampage"
+    permission: icon_rampage
+    resource:
+      material: COAL
+      model_id: 2056
+      generate: false
+      model_path: warrior_model/icon_rampage
+  icon_shield_barrier:
+    display_name: "icon_shield_barrier"
+    permission: icon_shield_barrier
+    resource:
+      material: COAL
+      model_id: 2057
+      generate: false
+      model_path: warrior_model/icon_shield_barrier
+  chain_hook_1:
+    display_name: "chain_hook_1"
+    permission: chain_hook_1
+    resource:
+      material: PAPER
+      model_id: 2177
+      generate: false
+      model_path: warrior_model/chain_hook_1
+  chain_hook_2:
+    display_name: "chain_hook_2"
+    permission: chain_hook_2
+    resource:
+      material: PAPER
+      model_id: 2178
+      generate: false
+      model_path: warrior_model/chain_hook_2
+  chain_hook_3:
+    display_name: "chain_hook_3"
+    permission: chain_hook_3
+    resource:
+      material: PAPER
+      model_id: 2179
+      generate: false
+      model_path: warrior_model/chain_hook_3
+  chain_hook_4:
+    display_name: "chain_hook_4"
+    permission: chain_hook_4
+    resource:
+      material: PAPER
+      model_id: 2180
+      generate: false
+      model_path: warrior_model/chain_hook_4
+  chain_hook_5:
+    display_name: "chain_hook_5"
+    permission: chain_hook_5
+    resource:
+      material: PAPER
+      model_id: 2181
+      generate: false
+      model_path: warrior_model/chain_hook_5
+  charge_1:
+    display_name: "charge_1"
+    permission: charge_1
+    resource:
+      material: PAPER
+      model_id: 2182
+      generate: false
+      model_path: warrior_model/charge_1
+  charge_2:
+    display_name: "charge_2"
+    permission: charge_2
+    resource:
+      material: PAPER
+      model_id: 2183
+      generate: false
+      model_path: warrior_model/charge_2
+  charge_3:
+    display_name: "charge_3"
+    permission: charge_3
+    resource:
+      material: PAPER
+      model_id: 2184
+      generate: false
+      model_path: warrior_model/charge_3
+  charge_4:
+    display_name: "charge_4"
+    permission: charge_4
+    resource:
+      material: PAPER
+      model_id: 2185
+      generate: false
+      model_path: warrior_model/charge_4
+  charge_5:
+    display_name: "charge_5"
+    permission: charge_5
+    resource:
+      material: PAPER
+      model_id: 2186
+      generate: false
+      model_path: warrior_model/charge_5
+  judgement_sword_1:
+    display_name: "judgement_sword_1"
+    permission: judgement_sword_1
+    resource:
+      material: PAPER
+      model_id: 2187
+      generate: false
+      model_path: warrior_model/judgement_sword_1
+  judgement_sword_2:
+    display_name: "judgement_sword_2"
+    permission: judgement_sword_2
+    resource:
+      material: PAPER
+      model_id: 2188
+      generate: false
+      model_path: warrior_model/judgement_sword_2
+  judgement_sword_3:
+    display_name: "judgement_sword_3"
+    permission: judgement_sword_3
+    resource:
+      material: PAPER
+      model_id: 2189
+      generate: false
+      model_path: warrior_model/judgement_sword_3
+  judgement_sword_4:
+    display_name: "judgement_sword_4"
+    permission: judgement_sword_4
+    resource:
+      material: PAPER
+      model_id: 2190
+      generate: false
+      model_path: warrior_model/judgement_sword_4
+  shield_barrier_1:
+    display_name: "shield_barrier_1"
+    permission: shield_barrier_1
+    resource:
+      material: PAPER
+      model_id: 2191
+      generate: false
+      model_path: warrior_model/shield_barrier_1
+  shield_barrier_2:
+    display_name: "shield_barrier_2"
+    permission: shield_barrier_2
+    resource:
+      material: PAPER
+      model_id: 2192
+      generate: false
+      model_path: warrior_model/shield_barrier_2
+  shield_barrier_3:
+    display_name: "shield_barrier_3"
+    permission: shield_barrier_3
+    resource:
+      material: PAPER
+      model_id: 2193
+      generate: false
+      model_path: warrior_model/shield_barrier_3
+  shield_barrier_4:
+    display_name: "shield_barrier_4"
+    permission: shield_barrier_4
+    resource:
+      material: PAPER
+      model_id: 2194
+      generate: false
+      model_path: warrior_model/shield_barrier_4
+  warrior_pierce_1:
+    display_name: "warrior_pierce_1"
+    permission: warrior_pierce_1
+    resource:
+      material: PAPER
+      model_id: 2195
+      generate: false
+      model_path: warrior_model/warrior_pierce_1
+  warrior_pierce_2:
+    display_name: "warrior_pierce_2"
+    permission: warrior_pierce_2
+    resource:
+      material: PAPER
+      model_id: 2196
+      generate: false
+      model_path: warrior_model/warrior_pierce_2
+  warrior_pierce_3:
+    display_name: "warrior_pierce_3"
+    permission: warrior_pierce_3
+    resource:
+      material: PAPER
+      model_id: 2197
+      generate: false
+      model_path: warrior_model/warrior_pierce_3
+  warrior_pierce_4:
+    display_name: "warrior_pierce_4"
+    permission: warrior_pierce_4
+    resource:
+      material: PAPER
+      model_id: 2198
+      generate: false
+      model_path: warrior_model/warrior_pierce_4
+  warrior_pierce_5:
+    display_name: "warrior_pierce_5"
+    permission: warrior_pierce_5
+    resource:
+      material: PAPER
+      model_id: 2199
+      generate: false
+      model_path: warrior_model/warrior_pierce_5
+  warrior_pierce_6:
+    display_name: "warrior_pierce_6"
+    permission: warrior_pierce_6
+    resource:
+      material: PAPER
+      model_id: 2200
+      generate: false
+      model_path: warrior_model/warrior_pierce_6
+  warrior_slash_1:
+    display_name: "warrior_slash_1"
+    permission: warrior_slash_1
+    resource:
+      material: PAPER
+      model_id: 2201
+      generate: false
+      model_path: warrior_model/warrior_slash_1
+  warrior_slash_2:
+    display_name: "warrior_slash_2"
+    permission: warrior_slash_2
+    resource:
+      material: PAPER
+      model_id: 2202
+      generate: false
+      model_path: warrior_model/warrior_slash_2
+  warrior_slash_3:
+    display_name: "warrior_slash_3"
+    permission: warrior_slash_3
+    resource:
+      material: PAPER
+      model_id: 2203
+      generate: false
+      model_path: warrior_model/warrior_slash_3
+  warrior_slash_4:
+    display_name: "warrior_slash_4"
+    permission: warrior_slash_4
+    resource:
+      material: PAPER
+      model_id: 2204
+      generate: false
+      model_path: warrior_model/warrior_slash_4
+  warrior_slash_5:
+    display_name: "warrior_slash_5"
+    permission: warrior_slash_5
+    resource:
+      material: PAPER
+      model_id: 2205
+      generate: false
+      model_path: warrior_model/warrior_slash_5
+  warrior_slash_6:
+    display_name: "warrior_slash_6"
+    permission: warrior_slash_6
+    resource:
+      material: PAPER
+      model_id: 2206
+      generate: false
+      model_path: warrior_model/warrior_slash_6
+  warrior_slash_7:
+    display_name: "warrior_slash_7"
+    permission: warrior_slash_7
+    resource:
+      material: PAPER
+      model_id: 2207
+      generate: false
+      model_path: warrior_model/warrior_slash_7
+  whirlwind_1:
+    display_name: "whirlwind_1"
+    permission: whirlwind_1
+    resource:
+      material: PAPER
+      model_id: 2208
+      generate: false
+      model_path: warrior_model/whirlwind_1
+  whirlwind_2:
+    display_name: "whirlwind_2"
+    permission: whirlwind_2
+    resource:
+      material: PAPER
+      model_id: 2209
+      generate: false
+      model_path: warrior_model/whirlwind_2
+  whirlwind_3:
+    display_name: "whirlwind_3"
+    permission: whirlwind_3
+    resource:
+      material: PAPER
+      model_id: 2210
+      generate: false
+      model_path: warrior_model/whirlwind_3
+  whirlwind_4:
+    display_name: "whirlwind_4"
+    permission: whirlwind_4
+    resource:
+      material: PAPER
+      model_id: 2211
+      generate: false
+      model_path: warrior_model/whirlwind_4
+  whirlwind_5:
+    display_name: "whirlwind_5"
+    permission: whirlwind_5
+    resource:
+      material: PAPER
+      model_id: 2212
+      generate: false
+      model_path: warrior_model/whirlwind_5
+  judgement_shield_1:
+    display_name: "judgement_shield_1"
+    permission: judgement_shield_1
+    resource:
+      material: PAPER
+      model_id: 2213
+      generate: false
+      model_path: warrior_model/judgement_shield_1
+  shield_barrier_1_broken:
+    display_name: "shield_barrier_1_broken"
+    permission: shield_barrier_1_broken
+    resource:
+      material: PAPER
+      model_id: 2214
+      generate: false
+      model_path: warrior_model/shield_barrier_1_broken
+  shield_barrier_2_broken:
+    display_name: "shield_barrier_2_broken"
+    permission: shield_barrier_2_broken
+    resource:
+      material: PAPER
+      model_id: 2215
+      generate: false
+      model_path: warrior_model/shield_barrier_2_broken
+  shield_barrier_3_broken:
+    display_name: "shield_barrier_3_broken"
+    permission: shield_barrier_3_broken
+    resource:
+      material: PAPER
+      model_id: 2216
+      generate: false
+      model_path: warrior_model/shield_barrier_3_broken
+  judgement_shield_2:
+    display_name: "judgement_shield_2"
+    permission: judgement_shield_2
+    resource:
+      material: PAPER
+      model_id: 2217
+      generate: false
+      model_path: warrior_model/judgement_shield_2
+  judgement_shield_3:
+    display_name: "judgement_shield_3"
+    permission: judgement_shield_3
+    resource:
+      material: PAPER
+      model_id: 2218
+      generate: false
+      model_path: warrior_model/judgement_shield_3
+  judgement_shield_4:
+    display_name: "judgement_shield_4"
+    permission: judgement_shield_4
+    resource:
+      material: PAPER
+      model_id: 2219
+      generate: false
+      model_path: warrior_model/judgement_shield_4

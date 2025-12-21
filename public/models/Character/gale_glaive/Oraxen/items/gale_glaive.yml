@@ -1,0 +1,72 @@
+gale_glaive_windreaver:
+  Pack:
+    custom_model_data: 2068
+    generate_model: false
+    model: gale_glaive_model/gale_glaive_windreaver
+  displayname: gale_glaive_windreaver
+  material: STONE_SWORD
+  permission: gale_glaive_windreaver
+gale_glaive_windreaver_ancient:
+  Pack:
+    custom_model_data: 2069
+    generate_model: false
+    model: gale_glaive_model/gale_glaive_windreaver_ancient
+  displayname: gale_glaive_windreaver_ancient
+  material: STONE_SWORD
+  permission: gale_glaive_windreaver_ancient
+icon_cloudpiercer:
+  Pack:
+    custom_model_data: 2221
+    generate_model: false
+    model: gale_glaive_model/icon_cloudpiercer
+  displayname: icon_cloudpiercer
+  material: COAL
+  permission: icon_cloudpiercer
+icon_dancing_blade:
+  Pack:
+    custom_model_data: 2219
+    generate_model: false
+    model: gale_glaive_model/icon_dancing_blade
+  displayname: icon_dancing_blade
+  material: COAL
+  permission: icon_dancing_blade
+icon_gale_slash:
+  Pack:
+    custom_model_data: 2217
+    generate_model: false
+    model: gale_glaive_model/icon_gale_slash
+  displayname: icon_gale_slash
+  material: COAL
+  permission: icon_gale_slash
+icon_torrent:
+  Pack:
+    custom_model_data: 2220
+    generate_model: false
+    model: gale_glaive_model/icon_torrent
+  displayname: icon_torrent
+  material: COAL
+  permission: icon_torrent
+icon_vault:
+  Pack:
+    custom_model_data: 2218
+    generate_model: false
+    model: gale_glaive_model/icon_vault
+  displayname: icon_vault
+  material: COAL
+  permission: icon_vault
+icon_windbound_fury:
+  Pack:
+    custom_model_data: 2222
+    generate_model: false
+    model: gale_glaive_model/icon_windbound_fury
+  displayname: icon_windbound_fury
+  material: COAL
+  permission: icon_windbound_fury
+icon_windrune_blade:
+  Pack:
+    custom_model_data: 2216
+    generate_model: false
+    model: gale_glaive_model/icon_windrune_blade
+  displayname: icon_windrune_blade
+  material: COAL
+  permission: icon_windrune_blade

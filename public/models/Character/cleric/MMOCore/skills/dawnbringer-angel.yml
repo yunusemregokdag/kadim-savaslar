@@ -1,0 +1,39 @@
+name: Dawnbringer Angel
+lore:
+- '&eYou summon a guardian angel that flies beside you.'
+- "&eWhenever you use Divine Immolation, your angel's light"
+- '&escore increases and gets brighter. When the light score'
+- '&ereaches level 5, your angel releases a continuous'
+- '&ehealing aura that heals you and your allies, while'
+- '&epushing back nearby enemies.'
+- ''
+- '&a{heal} Heal'
+- '&e{cooldown}s Cooldown'
+- '&9Costs {mana} {mana_name}'
+material: 'COAL:2139'
+passive-type: TIMER
+timer:
+  base: 30
+  per-level: 0
+  min: 30
+  max: 30
+mana:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+heal:
+  base: 2
+  per-level: 1
+  min: 2
+  max: 4
+stamina:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+cooldown:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0

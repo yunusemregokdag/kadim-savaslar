@@ -1,0 +1,103 @@
+GAUNTLET_MONK:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2060.0
+    name: <gradient:#ffffff:#dcf7fa:#ffffff>Gauntlet of Monk
+    lore:
+    - <gradient:#ffffff:#dcf7fa:#ffffff>The gauntlet of Monk
+    displayed-type: <gradient:#ffffff:#dcf7fa:#ffffff>Monk
+    attack-damage: 5.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: SWIFT_STRIKES
+        mode: LEFT_CLICK
+        damage: 2
+        cooldown: 1
+      ability2:
+        type: CHI_BLAST
+        mode: RIGHT_CLICK
+        damage: 3
+        cooldown: 2
+      ability3:
+        type: ZEN_THROW
+        mode: SNEAK
+        damage: 4
+        duration: 2
+      ability4:
+        type: BEADS_OF_KARMA
+        mode: SHIFT_RIGHT_CLICK
+        damage: 3
+        heal: 3
+        cooldown: 5
+      ability5:
+        type: FOCUS_CHI
+        mode: TIMER
+        heal: 1
+        timer: 10
+      ability6:
+        type: COUNTERSTRIKE
+        mode: TIMER
+        timer: 10
+        damage: 3
+      ability7:
+        type: DRAGON_FISTS
+        mode: SHIFT_LEFT_CLICK
+        damage: 3
+        heal: 10
+        duration: 3
+        cooldown: 14
+    disable-attack-passive: true
+    attack-speed: 1.0
+    
+GAUNTLET_MONK_SHINY:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2061.0
+    name: <gradient:#ffffff:#fafadc:#ffffff>Gauntlet of Monk
+    lore:
+    - <gradient:#ffffff:#fafadc:#ffffff>The gauntlet of Monk
+    displayed-type: <gradient:#ffffff:#dcf7fa:#ffffff>Monk
+    attack-damage: 6.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: SWIFT_STRIKES
+        mode: LEFT_CLICK
+        damage: 2
+        cooldown: 1
+      ability2:
+        type: CHI_BLAST
+        mode: RIGHT_CLICK
+        damage: 3
+        cooldown: 2
+      ability3:
+        type: ZEN_THROW
+        mode: SNEAK
+        damage: 4
+        duration: 2
+      ability4:
+        type: BEADS_OF_KARMA
+        mode: SHIFT_RIGHT_CLICK
+        damage: 3
+        heal: 3
+        cooldown: 5
+      ability5:
+        type: FOCUS_CHI
+        mode: TIMER
+        heal: 1
+        timer: 10
+      ability6:
+        type: COUNTERSTRIKE
+        mode: TIMER
+        timer: 10
+        damage: 3
+      ability7:
+        type: DRAGON_FISTS
+        mode: SHIFT_LEFT_CLICK
+        damage: 3
+        heal: 10
+        duration: 3
+        cooldown: 14
+    disable-attack-passive: true
+    attack-speed: 1.0

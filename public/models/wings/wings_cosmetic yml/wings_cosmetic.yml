@@ -1,0 +1,144 @@
+info:
+  namespace: elitecreatures
+items:
+  butterfly_wings_cosmetic_wings_1:
+    display_name: Wings 1
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_1
+  butterfly_wings_cosmetic_wings_1_self:
+    display_name: Wings 1 Self
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_1_self
+  butterfly_wings_cosmetic_wings_2:
+    display_name: Wings 2
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_2
+  butterfly_wings_cosmetic_wings_2_self:
+    display_name: Wings 2 Self
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_2_self
+  butterfly_wings_cosmetic_wings_3:
+    display_name: Wings 3
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_3
+  butterfly_wings_cosmetic_wings_3_self:
+    display_name: Wings 3 Self
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_3_self
+  butterfly_wings_cosmetic_wings_4:
+    display_name: Wings 4
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_4
+  butterfly_wings_cosmetic_wings_4_self:
+    display_name: Wings 4 Self
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_4_self
+  butterfly_wings_cosmetic_wings_5:
+    display_name: Wings 5
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_5
+  butterfly_wings_cosmetic_wings_5_self:
+    display_name: Wings 5 Self
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_5_self
+  butterfly_wings_cosmetic_wings_6:
+    display_name: Wings 6
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_6
+  butterfly_wings_cosmetic_wings_6_self:
+    display_name: Wings 6 Self
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_6_self
+  butterfly_wings_cosmetic_wings_7:
+    display_name: Wings 7
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_7
+  butterfly_wings_cosmetic_wings_7_self:
+    display_name: Wings 7 Self
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_7_self
+  butterfly_wings_cosmetic_wings_8:
+    display_name: Wings 8
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_8
+  butterfly_wings_cosmetic_wings_8_self:
+    display_name: Wings 8 Self
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_8_self
+  butterfly_wings_cosmetic_wings_9:
+    display_name: Wings 9
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_9
+  butterfly_wings_cosmetic_wings_9_self:
+    display_name: Wings 9 Self
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_9_self
+  butterfly_wings_cosmetic_wings_10:
+    display_name: Wings 10
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_10
+  butterfly_wings_cosmetic_wings_10_self:
+    display_name: Wings 10 Self
+    permission: elitecreatures.use
+    resource:
+      material: paper
+      generate: false
+      model_path: butterfly_wings_cosmetic/wings_10_self
+#d4c2886be2ec837b60e73c87402b61db

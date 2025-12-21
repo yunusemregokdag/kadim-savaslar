@@ -1,0 +1,34 @@
+display:
+    name: '&b&lBard Class'
+    lore:
+    - '&9Choose the Bard Class'
+    item: STONE_SWORD:2031 # Supports custom model data/texture by durability
+
+# Must match an existing exp curve filename from the 'expcurves' folder
+exp-curve: levels
+
+# The maximum level players can reach
+max-level: 100
+
+exp-table: class_exp_table
+
+skills:
+    SOUND_WAVE:
+        level: 1
+        max-level: 30
+    VIBRATIVE_STRIKE:
+        level: 1
+        max-level: 30
+    SHIELD_OF_HARMONY:
+        level: 1
+        max-level: 30
+    ANGELIC_SERENADE:
+        level: 1
+        max-level: 30
+    RHAPSODY:
+        level: 1
+        max-level: 30
+    SYMPHONY_OF_DESTRUCTION:
+        level: 1
+        max-level: 20
+

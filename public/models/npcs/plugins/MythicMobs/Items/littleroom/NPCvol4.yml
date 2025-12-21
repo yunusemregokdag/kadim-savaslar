@@ -1,0 +1,31 @@
+#########################################################
+## Developed by Little Room, patreon.com/littleroomdev ##
+#########################################################
+
+assassinNPC_shuriken:
+  Id: INK_SAC
+  Model: 1
+  
+acolyteNPC_staff:
+  Id: INK_SAC
+  Model: 2
+  
+assassinNPC_katar:
+  Id: INK_SAC
+  Model: 3
+  
+assassinNPC_tanto:
+  Id: INK_SAC
+  Model: 4
+  
+paladinNPC_hammer:
+  Id: INK_SAC
+  Model: 5
+  
+tinkerNPC_spanner:
+  Id: INK_SAC
+  Model: 6
+  
+paladinNPC_shield:
+  Id: SHIELD
+  Model: 1

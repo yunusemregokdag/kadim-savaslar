@@ -1,0 +1,17 @@
+MMOItems:
+/mi browse
+look for the SWORD category
+
+================================================
+
+MythicCrucible:
+/mm i get archmage_staff
+/mm i get archmage_staff_shiny
+
+================================================
+
+Archmage Staff:
+/minecraft:give USERNAME stone_sword{CustomModelData:2043}
+
+Shiny Archmage Staff:
+/minecraft:give USERNAME stone_sword{CustomModelData:2044}

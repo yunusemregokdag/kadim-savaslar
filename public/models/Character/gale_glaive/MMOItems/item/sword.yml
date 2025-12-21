@@ -1,0 +1,95 @@
+WINDREAVER_GALE_GLAIVE:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2068.0
+    name: <gradient:#70FCC2:#CDFFEE:#70FCC2>Windreaver of Gale Glaive
+    lore:
+    - <gradient:#70FCC2:#CDFFEE:#70FCC2>The Windreaver of Gale Glaive
+    displayed-type: <gradient:#70FCC2:#CDFFEE:#70FCC2>Gale Glaive
+    attack-damage: 5.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: GALE_SLASH
+        mode: LEFT_CLICK
+        damage: 4
+        cooldown: 0.2
+      ability2:
+        type: VAULT
+        mode: RIGHT_CLICK
+        cooldown: 2
+      ability3:
+        type: DANCING_BLADE
+        mode: SNEAK
+        damage: 5
+        skillcooldown: 3
+      ability4:
+        type: CLOUDPIERCER
+        mode: SHIFT_RIGHT_CLICK
+        damage: 4
+        cooldown: 3
+      ability5:
+        type: WINDRUNE_BLADE
+        mode: TIMER
+        timer: 2
+      ability6:
+        type: TORRENT
+        mode: TIMER
+        timer: 10
+        damage: 5
+        skillcooldown: 3
+      ability7:
+        type: WINDBOUND_FURY
+        mode: SHIFT_LEFT_CLICK
+        damage: 7
+        cooldown: 8
+    disable-attack-passive: true
+    attack-speed: 1.0
+    
+WINDREAVER_GALE_GLAIVE_ANCIENT:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2069.0
+    name: <gradient:#70FCC2:#CDFFEE:#70FCC2>Ancient Windreaver of Gale Glaive
+    lore:
+    - <gradient:#70FCC2:#CDFFEE:#70FCC2>The Windreaver of Gale Glaive
+    displayed-type: <gradient:#70FCC2:#CDFFEE:#70FCC2>Gale Glaive
+    attack-damage: 5.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: GALE_SLASH
+        mode: LEFT_CLICK
+        damage: 4
+        cooldown: 0.2
+      ability2:
+        type: VAULT
+        mode: RIGHT_CLICK
+        cooldown: 2
+      ability3:
+        type: DANCING_BLADE
+        mode: SNEAK
+        damage: 5
+        skillcooldown: 3
+      ability4:
+        type: CLOUDPIERCER
+        mode: SHIFT_RIGHT_CLICK
+        damage: 4
+        cooldown: 3
+      ability5:
+        type: WINDRUNE_BLADE
+        mode: TIMER
+        timer: 2
+      ability6:
+        type: TORRENT
+        mode: TIMER
+        damage: 5
+        timer: 10
+        skillcooldown: 3
+      ability7:
+        type: WINDBOUND_FURY
+        mode: SHIFT_LEFT_CLICK
+        damage: 7
+        cooldown: 8
+    disable-attack-passive: true
+    attack-speed: 1.0

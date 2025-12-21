@@ -1,0 +1,52 @@
+name: Divine Punishment
+lore:
+- '&eThe glory of god is shown through you. You obtain'
+- '&eglowing and invulnerability. All allies nearby gain'
+- '&econtant healing and strength. All enemies nearby are'
+- '&eblasted with blinding light, afflicting weakness,'
+- '&eslowness, and blindness. They are dealt huge amounts'
+- '&eof damage and stunned from witnessing the embodiment'
+- '&eof god himself. You cannot cast any other spell while'
+- "&eyou're the embodiment of god, instead, your speed increases."
+- ''
+- '&a{heal} Heal'
+- '&c{damage} Damage'
+- '&c{duration}s Duration'
+- '&e{cooldown}s Cooldown'
+- '&9Costs {mana} {mana_name}'
+material: 'COAL:2145'
+damage:
+  base: 5
+  per-level: 1
+  min: 5
+  max: 8
+duration:
+  base: 8
+  per-level: 0.2
+  min: 8
+  max: 10
+heal:
+  base: 5
+  per-level: 1
+  min: 5
+  max: 8
+timer:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+mana:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+stamina:
+  base: 0
+  per-level: 0
+  min: 0
+  max: 0
+cooldown:
+  base: 15
+  per-level: -0.1
+  min: 14
+  max: 15

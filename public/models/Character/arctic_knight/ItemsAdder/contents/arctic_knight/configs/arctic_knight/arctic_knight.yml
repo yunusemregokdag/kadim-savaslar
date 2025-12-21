@@ -1,0 +1,76 @@
+info:
+  namespace: arctic_knight
+items:
+  frigid_lance_arctic_knight:
+    display_name: "frigid_lance_arctic_knight"
+    permission: frigid_lance_arctic_knight
+    resource:
+      material: STONE_SWORD
+      model_id: 2058
+      generate: false
+      model_path: arctic_knight_model/frigid_lance_arctic_knight
+  frigid_lance_darkice_arctic_knight:
+    display_name: "frigid_lance_darkice_arctic_knight"
+    permission: frigid_lance_darkice_arctic_knight
+    resource:
+      material: STONE_SWORD
+      model_id: 2059
+      generate: false
+      model_path: arctic_knight_model/frigid_lance_darkice_arctic_knight
+  icon_arctic_charge:
+    display_name: "icon_arctic_charge"
+    permission: icon_arctic_charge
+    resource:
+      material: COAL
+      model_id: 2186
+      generate: false
+      model_path: arctic_knight_model/icon_arctic_charge
+  icon_frost_strike:
+    display_name: "icon_frost_strike"
+    permission: icon_frost_strike
+    resource:
+      material: COAL
+      model_id: 2187
+      generate: false
+      model_path: arctic_knight_model/icon_frost_strike
+  icon_frostbite:
+    display_name: "icon_frostbite"
+    permission: icon_frostbite
+    resource:
+      material: COAL
+      model_id: 2188
+      generate: false
+      model_path: arctic_knight_model/icon_frostbite
+  icon_frozen_shield:
+    display_name: "icon_frozen_shield"
+    permission: icon_frozen_shield
+    resource:
+      material: COAL
+      model_id: 2189
+      generate: false
+      model_path: arctic_knight_model/icon_frozen_shield
+  icon_glacial_impalement:
+    display_name: "icon_glacial_impalement"
+    permission: icon_glacial_impalement
+    resource:
+      material: COAL
+      model_id: 2190
+      generate: false
+      model_path: arctic_knight_model/icon_glacial_impalement
+  icon_glacier_smash:
+    display_name: "icon_glacier_smash"
+    permission: icon_glacier_smash
+    resource:
+      material: COAL
+      model_id: 2191
+      generate: false
+      model_path: arctic_knight_model/icon_glacier_smash
+  icon_permafrost_lance:
+    display_name: "icon_permafrost_lance"
+    permission: icon_permafrost_lance
+    resource:
+      material: COAL
+      model_id: 2192
+      generate: false
+      model_path: arctic_knight_model/icon_permafrost_lance
+  

@@ -1,0 +1,113 @@
+CLERIC_MACE:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2045.0
+    name: <gradient:#ffd478:#fff766:#ffd478>Mace of Cleric
+    lore:
+    - <gradient:#ffd478:#94fff1:#ffd478>The mace of the Cleric
+    displayed-type: <gradient:#ffd478:#94fff1:#ffd478>Cleric
+    attack-damage: 5.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: DIVINE_IMMOLATION
+        mode: LEFT_CLICK
+        damage: 3
+        cooldown: 0.5
+      ability2:
+        type: DIVINE_IMMOLATION
+        mode: ATTACK
+        damage: 3
+        cooldown: 0.5
+      ability3:
+        type: LUMINOUS_WAVE
+        mode: RIGHT_CLICK
+        damage: 4
+        cooldown: 2
+      ability4:
+        type: DIVINE_CROSS
+        mode: SHIFT_RIGHT_CLICK
+        damage: 4
+        heal: 3
+        cooldown: 10
+      ability5:
+        type: BLESSING_OF_THE_WHITE_LANTERN
+        mode: SNEAK
+        duration: 6
+      ability6:
+        type: DAWNBRINGER_ANGEL
+        mode: TIMER
+        timer: 30
+        heal: 2
+      ability7:
+        type: TEARS_OF_GOD
+        mode: TIMER
+        timer: 10
+        duration: 4
+        heal: 5
+      ability8:
+        type: DIVINE_PUNISHMENT
+        mode: SHIFT_LEFT_CLICK
+        damage: 6
+        duration: 7
+        heal: 5
+        cooldown: 11
+    disable-attack-passive: true
+    attack-speed: 1.0
+    
+CLERIC_MACE_SHINY:
+  base:
+    material: STONE_SWORD
+    custom-model-data: 2046.0
+    name: <gradient:#fff9de:#fff766:#fff9de>Shiny Mace of Cleric
+    lore:
+    - <gradient:#fff9de:#fff766:#fff9de>The mace of the Cleric
+    displayed-type: <gradient:#ffd478:#94fff1:#ffd478>Cleric
+    attack-damage: 5.0
+    unbreakable: true
+    ability:
+      ability1:
+        type: DIVINE_IMMOLATION
+        mode: LEFT_CLICK
+        damage: 3
+        cooldown: 0.5
+      ability2:
+        type: DIVINE_IMMOLATION
+        mode: ATTACK
+        damage: 3
+        cooldown: 0.5
+      ability3:
+        type: LUMINOUS_WAVE
+        mode: RIGHT_CLICK
+        damage: 4
+        cooldown: 2
+      ability4:
+        type: DIVINE_CROSS
+        mode: SHIFT_RIGHT_CLICK
+        damage: 4
+        heal: 3
+        cooldown: 10
+      ability5:
+        type: BLESSING_OF_THE_WHITE_LANTERN
+        mode: SNEAK
+        duration: 6
+      ability6:
+        type: DAWNBRINGER_ANGEL
+        mode: TIMER
+        timer: 30
+        heal: 2
+      ability7:
+        type: TEARS_OF_GOD
+        mode: TIMER
+        timer: 10
+        duration: 4
+        heal: 5
+      ability8:
+        type: DIVINE_PUNISHMENT
+        mode: SHIFT_LEFT_CLICK
+        damage: 6
+        duration: 7
+        heal: 5
+        cooldown: 11
+    disable-attack-passive: true
+    attack-speed: 1.0

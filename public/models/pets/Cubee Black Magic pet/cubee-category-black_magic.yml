@@ -1,0 +1,32 @@
+DisplayName: Black Magic Cubees !
+IconName: Black Magic Cubees !
+DefaultCategory: false
+Icon:
+  ==: org.bukkit.inventory.ItemStack
+  v: 4189
+  type: GOLDEN_HORSE_ARMOR
+  meta:
+    ==: ItemMeta
+    meta-type: UNSPECIFIC
+    display-name: '{"text":"","extra":["Black Magic Cubees"]}'
+    lore:
+    - '{"text":"","extra":["- Ebony Cat Cubee"]}'
+    - '{"text":"","extra":["- Gothic Hag Cubee"]}'
+    - '{"text":"","extra":["- Skelly Warlock Cubee"]}'
+    - '{"text":"","extra":["- Soul Weaver Cubee"]}'
+    custom-model-data:
+      ==: CustomModelData
+      floats:
+      - 7191157.0
+      flags: []
+      strings: []
+      colors: []
+Pets:
+- cubee-ebony_cat
+- cubee-gothic_hag
+- cubee-skelly_warlock
+- cubee-soul_weaver
+Id: cubee-category-black_magic
+ExcludedCategories: []
+
+

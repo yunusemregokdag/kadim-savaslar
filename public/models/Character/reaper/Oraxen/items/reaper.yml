@@ -1,0 +1,337 @@
+
+scythe_reaper:
+  Pack:
+    custom_model_data: 2049
+    generate_model: false
+    model: reaper_model/scythe_reaper
+  displayname: scythe_reaper
+  material: STONE_SWORD
+  permission: scythe_reaper
+scythe_reaper_shiny:
+  Pack:
+    custom_model_data: 2050
+    generate_model: false
+    model: reaper_model/scythe_reaper_shiny
+  displayname: scythe_reaper_shiny
+  material: STONE_SWORD
+  permission: scythe_reaper_shiny
+icon_death_spin:
+  Pack:
+    custom_model_data: 2153
+    generate_model: false
+    model: reaper_model/icon_death_spin
+  displayname: icon_death_spin
+  material: COAL
+  permission: icon_death_spin
+icon_god_of_death:
+  Pack:
+    custom_model_data: 2154
+    generate_model: false
+    model: reaper_model/icon_god_of_death
+  displayname: icon_god_of_death
+  material: COAL
+  permission: icon_god_of_death
+icon_reaping_claw:
+  Pack:
+    custom_model_data: 2155
+    generate_model: false
+    model: reaper_model/icon_reaping_claw
+  displayname: icon_reaping_claw
+  material: COAL
+  permission: icon_reaping_claw
+icon_soul_collector:
+  Pack:
+    custom_model_data: 2156
+    generate_model: false
+    model: reaper_model/icon_soul_collector
+  displayname: icon_soul_collector
+  material: COAL
+  permission: icon_soul_collector
+icon_soul_scythe:
+  Pack:
+    custom_model_data: 2157
+    generate_model: false
+    model: reaper_model/icon_soul_scythe
+  displayname: icon_soul_scythe
+  material: COAL
+  permission: icon_soul_scythe
+icon_soul_slice:
+  Pack:
+    custom_model_data: 2158
+    generate_model: false
+    model: reaper_model/icon_soul_slice
+  displayname: icon_soul_slice
+  material: COAL
+  permission: icon_soul_slice
+icon_surge:
+  Pack:
+    custom_model_data: 2159
+    generate_model: false
+    model: reaper_model/icon_surge
+  displayname: icon_surge
+  material: COAL
+  permission: icon_surge
+death_slice_1:
+  Pack:
+    custom_model_data: 2840
+    generate_model: false
+    model: reaper_model/death_slice_1
+  displayname: death_slice_1
+  material: PAPER
+  permission: death_slice_1
+death_slice_2:
+  Pack:
+    custom_model_data: 2841
+    generate_model: false
+    model: reaper_model/death_slice_2
+  displayname: death_slice_2
+  material: PAPER
+  permission: death_slice_2
+death_slice_3:
+  Pack:
+    custom_model_data: 2842
+    generate_model: false
+    model: reaper_model/death_slice_3
+  displayname: death_slice_3
+  material: PAPER
+  permission: death_slice_3
+death_slice_4:
+  Pack:
+    custom_model_data: 2843
+    generate_model: false
+    model: reaper_model/death_slice_4
+  displayname: death_slice_4
+  material: PAPER
+  permission: death_slice_4
+death_slice_5:
+  Pack:
+    custom_model_data: 2844
+    generate_model: false
+    model: reaper_model/death_slice_5
+  displayname: death_slice_5
+  material: PAPER
+  permission: death_slice_5
+death_slice_6:
+  Pack:
+    custom_model_data: 2845
+    generate_model: false
+    model: reaper_model/death_slice_6
+  displayname: death_slice_6
+  material: PAPER
+  permission: death_slice_6
+death_slice_7:
+  Pack:
+    custom_model_data: 2846
+    generate_model: false
+    model: reaper_model/death_slice_7
+  displayname: death_slice_7
+  material: PAPER
+  permission: death_slice_7
+death_slice_8:
+  Pack:
+    custom_model_data: 2847
+    generate_model: false
+    model: reaper_model/death_slice_8
+  displayname: death_slice_8
+  material: PAPER
+  permission: death_slice_8
+death_spin:
+  Pack:
+    custom_model_data: 2848
+    generate_model: false
+    model: reaper_model/death_spin
+  displayname: death_spin
+  material: PAPER
+  permission: death_spin
+soul_cross_1:
+  Pack:
+    custom_model_data: 2849
+    generate_model: false
+    model: reaper_model/soul_cross_1
+  displayname: soul_cross_1
+  material: PAPER
+  permission: soul_cross_1
+soul_cross_2:
+  Pack:
+    custom_model_data: 2850
+    generate_model: false
+    model: reaper_model/soul_cross_2
+  displayname: soul_cross_2
+  material: PAPER
+  permission: soul_cross_2
+soul_cross_3:
+  Pack:
+    custom_model_data: 2851
+    generate_model: false
+    model: reaper_model/soul_cross_3
+  displayname: soul_cross_3
+  material: PAPER
+  permission: soul_cross_3
+soul_cross_4:
+  Pack:
+    custom_model_data: 2852
+    generate_model: false
+    model: reaper_model/soul_cross_4
+  displayname: soul_cross_4
+  material: PAPER
+  permission: soul_cross_4
+soul_cross_5:
+  Pack:
+    custom_model_data: 2853
+    generate_model: false
+    model: reaper_model/soul_cross_5
+  displayname: soul_cross_5
+  material: PAPER
+  permission: soul_cross_5
+soul_cross_6:
+  Pack:
+    custom_model_data: 2854
+    generate_model: false
+    model: reaper_model/soul_cross_6
+  displayname: soul_cross_6
+  material: PAPER
+  permission: soul_cross_6
+soul_cross_7:
+  Pack:
+    custom_model_data: 2855
+    generate_model: false
+    model: reaper_model/soul_cross_7
+  displayname: soul_cross_7
+  material: PAPER
+  permission: soul_cross_7
+soul_cross_8:
+  Pack:
+    custom_model_data: 2856
+    generate_model: false
+    model: reaper_model/soul_cross_8
+  displayname: soul_cross_8
+  material: PAPER
+  permission: soul_cross_8
+soul_slice_1:
+  Pack:
+    custom_model_data: 2857
+    generate_model: false
+    model: reaper_model/soul_slice_1
+  displayname: soul_slice_1
+  material: PAPER
+  permission: soul_slice_1
+soul_slice_2:
+  Pack:
+    custom_model_data: 2858
+    generate_model: false
+    model: reaper_model/soul_slice_2
+  displayname: soul_slice_2
+  material: PAPER
+  permission: soul_slice_2
+soul_slice_3:
+  Pack:
+    custom_model_data: 2859
+    generate_model: false
+    model: reaper_model/soul_slice_3
+  displayname: soul_slice_3
+  material: PAPER
+  permission: soul_slice_3
+soul_slice_4:
+  Pack:
+    custom_model_data: 2860
+    generate_model: false
+    model: reaper_model/soul_slice_4
+  displayname: soul_slice_4
+  material: PAPER
+  permission: soul_slice_4
+soul_slice_5:
+  Pack:
+    custom_model_data: 2861
+    generate_model: false
+    model: reaper_model/soul_slice_5
+  displayname: soul_slice_5
+  material: PAPER
+  permission: soul_slice_5
+soul_slice_6:
+  Pack:
+    custom_model_data: 2862
+    generate_model: false
+    model: reaper_model/soul_slice_6
+  displayname: soul_slice_6
+  material: PAPER
+  permission: soul_slice_6
+soul_slice_7:
+  Pack:
+    custom_model_data: 2863
+    generate_model: false
+    model: reaper_model/soul_slice_7
+  displayname: soul_slice_7
+  material: PAPER
+  permission: soul_slice_7
+soul_slice_8:
+  Pack:
+    custom_model_data: 2864
+    generate_model: false
+    model: reaper_model/soul_slice_8
+  displayname: soul_slice_8
+  material: PAPER
+  permission: soul_slice_8
+soul_spin:
+  Pack:
+    custom_model_data: 2865
+    generate_model: false
+    model: reaper_model/soul_spin
+  displayname: soul_spin
+  material: PAPER
+  permission: soul_spin
+soul_wave_1:
+  Pack:
+    custom_model_data: 2866
+    generate_model: false
+    model: reaper_model/soul_wave_1
+  displayname: soul_wave_1
+  material: PAPER
+  permission: soul_wave_1
+soul_wave_2:
+  Pack:
+    custom_model_data: 2867
+    generate_model: false
+    model: reaper_model/soul_wave_2
+  displayname: soul_wave_2
+  material: PAPER
+  permission: soul_wave_2
+soul_wave_3:
+  Pack:
+    custom_model_data: 2868
+    generate_model: false
+    model: reaper_model/soul_wave_3
+  displayname: soul_wave_3
+  material: PAPER
+  permission: soul_wave_3
+soul_wave_4:
+  Pack:
+    custom_model_data: 2869
+    generate_model: false
+    model: reaper_model/soul_wave_4
+  displayname: soul_wave_4
+  material: PAPER
+  permission: soul_wave_4
+soul_wave_5:
+  Pack:
+    custom_model_data: 2870
+    generate_model: false
+    model: reaper_model/soul_wave_5
+  displayname: soul_wave_5
+  material: PAPER
+  permission: soul_wave_5
+soul_wave_6:
+  Pack:
+    custom_model_data: 2871
+    generate_model: false
+    model: reaper_model/soul_wave_6
+  displayname: soul_wave_6
+  material: PAPER
+  permission: soul_wave_6
+soul_wave_7:
+  Pack:
+    custom_model_data: 2872
+    generate_model: false
+    model: reaper_model/soul_wave_7
+  displayname: soul_wave_7
+  material: PAPER
+  permission: soul_wave_7

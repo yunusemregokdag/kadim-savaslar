@@ -1,0 +1,14 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "item/coal"
+    },	
+	"overrides": [	
+		{"predicate": {"custom_model_data":2058}, "model": "archer_model/icon_backstep"},
+		{"predicate": {"custom_model_data":2059}, "model": "archer_model/icon_deadly_javelin"},
+		{"predicate": {"custom_model_data":2060}, "model": "archer_model/icon_dragon_piercer"},
+		{"predicate": {"custom_model_data":2061}, "model": "archer_model/icon_hunters_focus"},
+		{"predicate": {"custom_model_data":2062}, "model": "archer_model/icon_quick_shot"},
+		{"predicate": {"custom_model_data":2063}, "model": "archer_model/icon_windrazor"}
+	]
+}

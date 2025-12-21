@@ -1,0 +1,644 @@
+cubee-ebony_cat:
+  Type: WOLF
+  Display: 'Ebony Cat Cubee' 
+  Health: 1
+  Options:
+    PreventSunburn: true
+    ApplyInvisibility: true
+    Invisible: true
+    KnockbackResistance: 1
+    PreventRandomEquipment: true
+    AlwaysShowName: true
+    PreventOtherDrops: true
+    Persistent: false
+    Invincible: false
+    LockPitch: false
+    FollowRange: 50
+    MovementSpeed: 0.3
+    Silent: true
+    Interactable: true
+  DamageModifiers:
+  - FALL 0
+  - FALLING_BLOCK 0
+  - SUFFOCATION 0
+  - ENTITY_ATTACK 1.0
+  AIGoalSelectors:
+  - clear
+  AITargetSelectors:
+  - nearestConditional{targetconditions=
+    [- entitytype{type=WITHER,SILVERFISH} true
+     - isliving ];
+    mustsee=false;mustreach=false;interval=1}
+  - ownerAttacker
+  - ownerDamager
+  Modules:
+    ThreatTable: true
+  Skills:
+  - skill{s=Cubee-ebony_cat-Pet-Spawn} @self ~onSpawn
+  - skill{s=Cubee-ebony_cat-Pet-Spawn;delay=5} @self ~onLoad
+  - cancelEvent{sync=true} @Owner ~onDamaged ?~owner
+  - setvar{var=caster.cubeeLevel;value="(<pet.level.index>+1)";delay=2;type=INTEGER} @self ~onSpawn
+  - setvar{var=caster.cubee_UnlockSkill_Ultimate;value="<placeholder.Cubee-ebony_cat-UnlockSkill-Ultimate>";type=INTEGER;delay=2} @self ~onSpawn
+  - skill{s=[ - addtag{t=Ultimate} @self ?varinrange{var=caster.cubeeLevel;value=><caster.var.cubee_UnlockSkill_Ultimate>}];delay=3} @self ~onSpawn
+  - setParent{delay=1} @Owner ~onSpawn
+  - setvar{var=caster.owner_name;value=<target.name>;type=STRING;delay=2} @Parent ~onSpawn
+  - setvar{var=caster.owner_uuid;value=<target.uuid>;type=STRING;delay=2} @Parent ~onSpawn
+  - addtag{t=Cubees;delay=1} @self ~onSpawn
+  - state{s=start;loop=true;delay=2} @self ~onSpawn
+  - state{s=start;loop=true;delay=2} @self ~onLoad
+  - state{s=start;loop=true;delay=2} @self ~onChangeworld 
+  - sudoskill{s=[ - pull{v=10;to=true;Origin=@Forward{f=1.5;y=0.5;sideOffset=0.95;sudoowner=true;lockpitch=true};fo=true} @trigger ];cat=true} @owner{conditions=[ - crouching true]} ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Stay} ?!hasaura{auraname=Attacking}
+  - sudoskill{s=[ - setrotation{relative=false;yaw="<caster.l.yaw>+240"} @trigger ];cat=true} @owner{conditions=[ - crouching true]} ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Attacking}
+  - sudoskill{s=[ - pull{v=10;to=true;Origin=@Forward{f=1.5;y=0.9;sideOffset=0.95;sudoowner=true;lockpitch=true};fo=true} @trigger ];cat=true} @owner{conditions=[ - crouching false]} ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Stay} ?!hasaura{auraname=Attacking} ?hasaura{auraname=Crouching}
+  - sudoskill{s=[ - setrotation{relative=false;yaw="<caster.l.yaw>+240"} @trigger ];cat=true} @owner ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Attacking} ?hasaura{auraname=Crouching}
+  - sudoskill{s=[ - aura{auraname=Crouching;d=20;ms=1;ma=true;rd=true} @Trigger];cat=true} @owner{conditions=[ - crouching true]} ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Attacking} 
+  - state{s=emote;cooldown=7} @self ~onInteract
+  - aura{auraname=Crouching;d="3*20"} @Self ~onInteract ?hasaura{auraname=Crouching}
+  - setvar{var=target.cubeetype;value="ebony_cat";type=STRING;save=true;delay=2} @Owner ~onSpawn
+  - unsetvar{var=target.cubeetype} @Owner ~onDespawn
+  - setvar{var=caster.cubeemodel;value="ebony_cat";type=STRING;save=true;delay=2} @Self ~onSpawn
+  - sudoskill{s=[ - setrotation{relative=false;yaw=<caster.l.yaw>;pitch=0} @trigger ];cat=true} @owner{conditions=[ - crouching false]} ~onTimer:1 ?!hasaura{auraname=Crouching} ?!hasaura{auraname=Attacking} 
+  - model{scale=0.67;mid=cubee-ebony_cat;n=false;usm=true;delay=1} @self ~onSpawn
+  - model{scale=0.67;mid=cubee-ebony_cat;n=false;usm=true;delay=5} @self ~onSpawn
+  - model{scale=0.67;mid=cubee-ebony_cat;n=false;usm=true;delay=5} @self ~onLoad
+  - tint{m=cubee-ebony_cat;c=ffffff;d=true;delay=2} @self ~onSpawn
+  - cullconfig{mid=cubee-ebony_cat;bkc=false;delay=2} @self ~onSpawn
+  - skill{s=Cubees-Setting-Movement} @self ~onTimer:1 ?!hasaura{auraname=Crouching} ?!hasaura{auraname=Attacking} ?!hasaura{auraname=Stay}
+  - sound{s=entity.allay.death;p=1.0;v=1.0} @self ~onDeath
+  - setgravity{gravity=false;delay=1} @self ~onSpawn
+  - setgravity{gravity=false;delay=5} @self ~onLoad
+  - cancelevent{sync=true} @self ~onAttack
+  - sudoskill{s=[ - pull{v=5;to=true;Origin=@Forward{f=4;y=0.1;sideOffset=1.35;sudoowner=true;lockpitch=true};fo=true} @trigger ];cat=true} @owner{conditions=[ - moving false]} ~onTimer:1 ?hasaura{auraname=Attacking} ?!hasaura{auraname=Stay} ?!hasaura{auraname=Crouching}
+  - sudoskill{s=[ - pull{v=5;to=true;Origin=@Forward{f=4.5;y=0.1;sideOffset=1.35;sudoowner=true;lockpitch=true};fo=true} @trigger ];cat=true} @owner{conditions=[ - moving true]} ~onTimer:1 ?hasaura{auraname=Attacking} ?!hasaura{auraname=Stay} ?!hasaura{auraname=Crouching}
+  - sudoskill{s=[ - setrotation{relative=false;yaw="<caster.l.yaw> + 205"} @trigger ];cat=true} @owner ~onTimer:1 ?hasaura{auraname=Attacking} ?!hasaura{auraname=Stay}
+  - skill{s=Cubee-ebony_cat-Pet-Attack_Activate} @self ~onSignal:Activate ?stringEQ{val1="<placeholder.Cubee-ebony_cat-HelpsOwnerCombat>";val2="true"}
+  - cancelEvent{sync=true} @self ~onDamaged ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Invincible>";val2="true"} 
+  - runaigoalselector{goal=meleeattack} @self ~onTimer:10 ?stringEQ{val1="<placeholder.Cubee-ebony_cat-HelpsOwnerCombat>";val2="true"} ?stringEQ{val1="<placeholder.Cubee-ebony_cat-Skill_AutoActivate>";val2="true"}
+  - skill{s=Cubee-ebony_cat-Pet-Attack} @Target{limit=1;sort=NEAREST} ~onTimer:5 ?stringEQ{val1="<placeholder.Cubee-ebony_cat-HelpsOwnerCombat>";val2="true"} ?stringEQ{val1="<placeholder.Cubee-ebony_cat-Skill_AutoActivate>";val2="true"}
+  - aura{auraname="<caster.var.owner_uuid>-CubeeTarget";d=5;ms=1;ma=true;rd=true} @Target{limit=1;sort=NEAREST} ~onTimer:5 ?stringEQ{val1="<placeholder.Cubee-ebony_cat-HelpsOwnerCombat>";val2="true"} ?stringEQ{val1="<placeholder.Cubee-ebony_cat-Skill_AutoActivate>";val2="true"}
+  - skill{s=Cubee-ebony_cat-Pet-Attack_Execute} @Self ~onSignal:CubeeAttack ?stringEQ{val1="<placeholder.Cubee-ebony_cat-Skill_AutoActivate>";val2="true"} 
+  - removeaura{auraname=<caster.uuid>} @Target ~onSignal:CubeeAttack
+  - skill{s=Cubee-ebony_cat-TargetInherit} @self ~onSignal:CubeeTargetInherit 
+  - skill{s=Cubee-ebony_cat-AllyInherit} @self ~onSignal:CubeeAllyInherit 
+  - skill{s=Cubee-ebony_cat-Pet-OwnersCombatTarget} @self ~onTimer:20
+  - skill{s=[ 
+    - teleport @floorOfTargets{tries=99}
+    ]} @Self ~onTimer:60 ?stringEq{value1=<caster.var.CubeeIsTamed>;value2=false} ?!hasaura{aura=Attacking} 
+  - skill{s=Cubee_BlackMagic-Capture-checkOwner;delay=2} @Owner ~onSpawn
+  - settarget @Trigger ~onDamaged ?varisset{name=caster.CubeeIsTamed} ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false} ?!incombat ?!hastag{t=KnockedOut}
+  - skill{s=Cubee-ebony_cat-Wild-Attack} @Target ~onTimer:2 ?varisset{name=caster.CubeeIsTamed} ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false}
+  - skill{s=Cubees-ForceLookTarget-Inherit} @Target ~onTimer:2 ?varisset{name=caster.CubeeIsTamed} ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false} ?!hastag{t=KnockedOut} 
+  - sudoskill{s=[ - pull{v=1.5} @Trigger];cat=true} @Target ~onTimer:2 ?varisset{name=caster.CubeeIsTamed} ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false} ?!hasaura{auraname=Attacking} ?targetWithin{distance=25} ?!hastag{t=KnockedOut} ?!hasaura{auraname=Stay}
+  - summon{t=cubee-knocked_out-ebony_cat;a=1} @selflocation ~onDeath ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false}
+  - skill{s=Cubee-ebony_cat-Feed-Cubee_Snack} @self ~onInteract ?~holding{strict=true;types=Cubee_Snack}
+  
+
+cubee-knocked_out-ebony_cat:
+  Type: ITEM_DISPLAY
+  Display: 'Ebony Cat Cubee' 
+  DisplayOptions:
+    Item: AIR
+  Options:
+    Invincible: true
+    Interactable: true
+    Marker: false
+    Silent: true
+  Skills:
+  - potion{t=SLOW_FALLING;d=100;i=false;hasparticles=false} @self
+  - model{scale=0.67;mid=cubee-ebony_cat;n=false;usm=true} @self ~onSpawn
+  - model{scale=0.67;mid=cubee-ebony_cat;n=false;usm=true;delay=5} @self ~onSpawn
+  - model{scale=0.67;mid=cubee-ebony_cat;n=false;usm=true;delay=5} @self ~onLoad
+  - partvisibility{mid=cubee-ebony_cat;p=bone11;v=false} @self ~onSpawn 
+  - partvisibility{mid=cubee-ebony_cat;p=bone13;v=false} @self ~onSpawn
+  - state{s=knocked;li=0;lo=0} @self ~onSpawn
+  - remove{delay=100} @self ~onSpawn
+  - teleportin{v=0,1.4,0} @Child ~onTimer:1 
+  - summon{t=vfx_cubee-dizzy_effect;a=1;sio=true;sip=true} @Selflocation{y=1.4} ~onSpawn
+  - skill{s=Cubee_BlackMagic-ebony_cat-Capture-Tame} @Trigger ~onInteract
+  - particle{p=poof;a=10;hs=0.3;vs=0.3;delay=99} @selfLocation{y=0.3} ~onSpawn
+  - sound{s=entity.generic.extinguish_fire;volume=1;p=1.5;delay=99} @self ~onSpawn
+
+
+cubee-gothic_hag:
+  Type: WOLF
+  Display: 'Gothic Hag Cubee' 
+  Health: 50
+  Damage: 1
+  Options:
+    PreventSunburn: true
+    ApplyInvisibility: true
+    Invisible: true
+    KnockbackResistance: 1
+    PreventRandomEquipment: true
+    AlwaysShowName: true
+    PreventOtherDrops: true
+    Persistent: false
+    Invincible: false
+    LockPitch: false
+    FollowRange: 50
+    MovementSpeed: 0.3
+    Silent: true
+    Interactable: true
+  DamageModifiers:
+  - FALL 0
+  - FALLING_BLOCK 0
+  - SUFFOCATION 0
+  - ENTITY_ATTACK 1.0
+  AIGoalSelectors:
+  - clear
+  AITargetSelectors:
+  - nearestConditional{targetconditions=
+    [- entitytype{type=WITHER,SILVERFISH} true
+     - isliving ];
+    mustsee=false;mustreach=false;interval=1}
+  - ownerAttacker
+  - ownerDamager
+  Modules:
+    ThreatTable: true
+  Skills:
+  - skill{s=Cubee-gothic_hag-Pet-Spawn} @self ~onSpawn
+  - skill{s=Cubee-gothic_hag-Pet-Spawn;delay=5} @self ~onLoad
+  - cancelEvent{sync=true} @Owner ~onDamaged ?~owner
+  - setvar{var=caster.cubeeLevel;value="(<pet.level.index>+1)";delay=2;type=INTEGER} @self ~onSpawn
+  - setvar{var=caster.cubee_UnlockSkill_Ultimate;value="<placeholder.Cubee-gothic_hag-UnlockSkill-Ultimate>";type=INTEGER;delay=2} @self ~onSpawn
+  - skill{s=[ - addtag{t=Ultimate} @self ?varinrange{var=caster.cubeeLevel;value=><caster.var.cubee_UnlockSkill_Ultimate>}];delay=3} @self ~onSpawn
+  - setParent{delay=1} @Owner ~onSpawn
+  - setvar{var=caster.owner_name;value=<target.name>;type=STRING;delay=2} @Parent ~onSpawn
+  - setvar{var=caster.owner_uuid;value=<target.uuid>;type=STRING;delay=2} @Parent ~onSpawn
+  - addtag{t=Cubees;delay=1} @self ~onSpawn
+  - state{s=start;loop=true;delay=2} @self ~onSpawn
+  - state{s=start;loop=true;delay=2} @self ~onLoad
+  - state{s=start;loop=true;delay=2} @self ~onChangeworld 
+  - sudoskill{s=[ - pull{v=10;to=true;Origin=@Forward{f=1.5;y=0.5;sideOffset=0.95;sudoowner=true;lockpitch=true};fo=true} @trigger ];cat=true} @owner{conditions=[ - crouching true]} ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Stay} ?!hasaura{auraname=Attacking}
+  - sudoskill{s=[ - setrotation{relative=false;yaw="<caster.l.yaw>+240"} @trigger ];cat=true} @owner{conditions=[ - crouching true]} ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Attacking}
+  - sudoskill{s=[ - pull{v=10;to=true;Origin=@Forward{f=1.5;y=0.9;sideOffset=0.95;sudoowner=true;lockpitch=true};fo=true} @trigger ];cat=true} @owner{conditions=[ - crouching false]} ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Stay} ?!hasaura{auraname=Attacking} ?hasaura{auraname=Crouching}
+  - sudoskill{s=[ - setrotation{relative=false;yaw="<caster.l.yaw>+240"} @trigger ];cat=true} @owner ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Attacking} ?hasaura{auraname=Crouching}
+  - sudoskill{s=[ - aura{auraname=Crouching;d=20;ms=1;ma=true;rd=true} @Trigger];cat=true} @owner{conditions=[ - crouching true]} ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Attacking} 
+  - state{s=emote;cooldown=7} @self ~onInteract
+  - aura{auraname=Crouching;d="3*20"} @Self ~onInteract ?hasaura{auraname=Crouching}
+  - setvar{var=target.cubeetype;value="gothic_hag";type=STRING;save=true;delay=2} @Owner ~onSpawn
+  - unsetvar{var=target.cubeetype} @Owner ~onDespawn
+  - setvar{var=caster.cubeemodel;value="gothic_hag";type=STRING;save=true;delay=2} @Self ~onSpawn
+  - sudoskill{s=[ - setrotation{relative=false;yaw=<caster.l.yaw>;pitch=0} @trigger ];cat=true} @owner{conditions=[ - crouching false]} ~onTimer:1 ?!hasaura{auraname=Crouching} ?!hasaura{auraname=Attacking} 
+  - model{scale=0.67;mid=cubee-gothic_hag;n=false;usm=true;delay=1} @self ~onSpawn
+  - model{scale=0.67;mid=cubee-gothic_hag;n=false;usm=true;delay=5} @self ~onSpawn
+  - model{scale=0.67;mid=cubee-gothic_hag;n=false;usm=true;delay=5} @self ~onLoad
+  - tint{m=cubee-gothic_hag;c=ffffff;d=true;delay=2} @self ~onSpawn
+  - cullconfig{mid=cubee-gothic_hag;bkc=false;delay=2} @self ~onSpawn
+  - skill{s=Cubees-Setting-Movement} @self ~onTimer:1 ?!hasaura{auraname=Crouching} ?!hasaura{auraname=Attacking} ?!hasaura{auraname=Stay}
+  - sound{s=entity.allay.death;p=1.0;v=1.0} @self ~onDeath
+  - setgravity{gravity=false;delay=1} @self ~onSpawn
+  - setgravity{gravity=false;delay=5} @self ~onLoad
+  - cancelevent{sync=true} @self ~onAttack
+  - runaigoalselector{goal=movetowardstarget;delay=2} @self ~onSpawn ?stringEQ{val1="<placeholder.Cubee-gothic_hag-HelpsOwnerCombat>";val2="true"}
+  - sudoskill{s=[ - pull{v=5;to=true;Origin=@Forward{f=4;y=0.1;sideOffset=1.35;sudoowner=true;lockpitch=true};fo=true} @trigger ];cat=true} @owner{conditions=[ - moving false]} ~onTimer:1 ?hasaura{auraname=Attacking} ?!hasaura{auraname=Stay} ?!hasaura{auraname=Crouching}
+  - sudoskill{s=[ - pull{v=5;to=true;Origin=@Forward{f=4.5;y=0.1;sideOffset=1.35;sudoowner=true;lockpitch=true};fo=true} @trigger ];cat=true} @owner{conditions=[ - moving true]} ~onTimer:1 ?hasaura{auraname=Attacking} ?!hasaura{auraname=Stay} ?!hasaura{auraname=Crouching}
+  - sudoskill{s=[ - setrotation{relative=false;yaw="<caster.l.yaw> + 205"} @trigger ];cat=true} @owner ~onTimer:1 ?hasaura{auraname=Attacking} ?!hasaura{auraname=Stay}
+  - skill{s=Cubee-gothic_hag-Pet-Attack_Activate} @self ~onSignal:Activate ?stringEQ{val1="<placeholder.Cubee-gothic_hag-HelpsOwnerCombat>";val2="true"}
+  - cancelEvent{sync=true} @self ~onDamaged ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Invincible>";val2="true"} 
+  - runaigoalselector{goal=meleeattack} @self ~onTimer:10 ?stringEQ{val1="<placeholder.Cubee-gothic_hag-HelpsOwnerCombat>";val2="true"} ?stringEQ{val1="<placeholder.Cubee-gothic_hag-Skill_AutoActivate>";val2="true"}
+  - skill{s=Cubee-gothic_hag-Pet-Attack} @Target{limit=1;sort=NEAREST} ~onTimer:5 ?stringEQ{val1="<placeholder.Cubee-gothic_hag-HelpsOwnerCombat>";val2="true"} ?stringEQ{val1="<placeholder.Cubee-gothic_hag-Skill_AutoActivate>";val2="true"}
+  - aura{auraname="<caster.var.owner_uuid>-CubeeTarget";d=5;ms=1;ma=true;rd=true} @Target{limit=1;sort=NEAREST} ~onTimer:5 ?stringEQ{val1="<placeholder.Cubee-gothic_hag-HelpsOwnerCombat>";val2="true"} ?stringEQ{val1="<placeholder.Cubee-gothic_hag-Skill_AutoActivate>";val2="true"}
+  - skill{s=Cubee-gothic_hag-Pet-Attack_Execute} @Self ~onSignal:CubeeAttack ?stringEQ{val1="<placeholder.Cubee-gothic_hag-Skill_AutoActivate>";val2="true"} 
+  - removeaura{auraname=<caster.uuid>} @Target ~onSignal:CubeeAttack
+  - skill{s=Cubee-gothic_hag-TargetInherit} @self ~onSignal:CubeeTargetInherit 
+  - skill{s=Cubee-gothic_hag-AllyInherit} @self ~onSignal:CubeeAllyInherit 
+  - skill{s=Cubee-gothic_hag-Pet-OwnersCombatTarget} @self ~onTimer:20
+  - skill{s=[ 
+    - teleport @floorOfTargets{tries=99}
+    ]} @Self ~onTimer:60 ?stringEq{value1=<caster.var.CubeeIsTamed>;value2=false} ?!hasaura{aura=Attacking} 
+  - skill{s=Cubee_BlackMagic-Capture-checkOwner;delay=2} @Owner ~onSpawn
+  - settarget @Trigger ~onDamaged ?varisset{name=caster.CubeeIsTamed} ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false} ?!incombat ?!hastag{t=KnockedOut}
+  - skill{s=Cubee-gothic_hag-Wild-Attack} @Target ~onTimer:2 ?varisset{name=caster.CubeeIsTamed} ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false}
+  - skill{s=Cubees-ForceLookTarget-Inherit} @Target ~onTimer:2 ?varisset{name=caster.CubeeIsTamed} ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false} ?!hastag{t=KnockedOut} 
+  - sudoskill{s=[ - pull{v=1.5} @Trigger];cat=true} @Target ~onTimer:2 ?varisset{name=caster.CubeeIsTamed} ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false} ?!hasaura{auraname=Attacking} ?targetWithin{distance=25} ?!hastag{t=KnockedOut}
+  - summon{t=cubee-knocked_out-gothic_hag;a=1} @selflocation ~onDeath ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false}
+  - skill{s=Cubee-gothic_hag-Feed-Cubee_Snack} @self ~onInteract ?~holding{strict=true;types=Cubee_Snack}
+  
+
+cubee-knocked_out-gothic_hag:
+  Type: ITEM_DISPLAY
+  Display: 'Gothic Hag Cubee' 
+  DisplayOptions:
+    Item: AIR
+  Options:
+    Invincible: true
+    Interactable: true
+    Marker: false
+    Silent: true
+  Skills:
+  - potion{t=SLOW_FALLING;d=100;i=false;hasparticles=false} @self
+  - model{scale=0.67;mid=cubee-gothic_hag;n=false;usm=true} @self ~onSpawn
+  - model{scale=0.67;mid=cubee-gothic_hag;n=false;usm=true;delay=5} @self ~onSpawn
+  - model{scale=0.67;mid=cubee-gothic_hag;n=false;usm=true;delay=5} @self ~onLoad
+  - partvisibility{mid=cubee-gothic_hag;p=bone11;v=false} @self ~onSpawn 
+  - partvisibility{mid=cubee-gothic_hag;p=bone13;v=false} @self ~onSpawn
+  - state{s=knocked;li=0;lo=0} @self ~onSpawn
+  - remove{delay=100} @self ~onSpawn
+  - teleportin{v=0,1.4,0} @Child ~onTimer:1 
+  - summon{t=vfx_cubee-dizzy_effect;a=1;sio=true;sip=true} @Selflocation{y=1.4} ~onSpawn
+  - skill{s=Cubee_BlackMagic-gothic_hag-Capture-Tame} @Trigger ~onInteract
+  - particle{p=poof;a=10;hs=0.3;vs=0.3;delay=99} @selfLocation{y=0.3} ~onSpawn
+  - sound{s=entity.generic.extinguish_fire;volume=1;p=1.5;delay=99} @self ~onSpawn
+
+
+cubee-skelly_warlock:
+  Type: WOLF
+  Display: 'Skelly Warlock Cubee' 
+  Health: 50
+  Damage: 1
+  Options:
+    PreventSunburn: true
+    ApplyInvisibility: true
+    Invisible: true
+    KnockbackResistance: 1
+    PreventRandomEquipment: true
+    AlwaysShowName: true
+    PreventOtherDrops: true
+    Persistent: false
+    Invincible: false
+    LockPitch: false
+    FollowRange: 50
+    MovementSpeed: 0.3
+    Silent: true
+    Interactable: true
+  DamageModifiers:
+  - FALL 0
+  - FALLING_BLOCK 0
+  - SUFFOCATION 0
+  - ENTITY_ATTACK 1.0
+  AIGoalSelectors:
+  - clear
+  AITargetSelectors:
+  - nearestConditional{targetconditions=
+    [- entitytype{type=WITHER,SILVERFISH} true
+     - isliving ];
+    mustsee=false;mustreach=false;interval=1}
+  - ownerAttacker
+  - ownerDamager
+  Modules:
+    ThreatTable: true
+  Skills:
+  - skill{s=Cubee-skelly_warlock-Pet-Spawn} @self ~onSpawn
+  - skill{s=Cubee-skelly_warlock-Pet-Spawn;delay=5} @self ~onLoad
+  - cancelEvent{sync=true} @Owner ~onDamaged ?~owner
+  - setvar{var=caster.cubeeLevel;value="(<pet.level.index>+1)";delay=2;type=INTEGER} @self ~onSpawn
+  - setvar{var=caster.cubee_UnlockSkill_Ultimate;value="<placeholder.Cubee-skelly_warlock-UnlockSkill-Ultimate>";type=INTEGER;delay=2} @self ~onSpawn
+  - skill{s=[ - addtag{t=Ultimate} @self ?varinrange{var=caster.cubeeLevel;value=><caster.var.cubee_UnlockSkill_Ultimate>}];delay=3} @self ~onSpawn
+  - setParent{delay=1} @Owner ~onSpawn
+  - setvar{var=caster.owner_name;value=<target.name>;type=STRING;delay=2} @Parent ~onSpawn
+  - setvar{var=caster.owner_uuid;value=<target.uuid>;type=STRING;delay=2} @Parent ~onSpawn
+  - addtag{t=Cubees;delay=1} @self ~onSpawn
+  - state{s=start;loop=true;delay=2} @self ~onSpawn
+  - state{s=start;loop=true;delay=2} @self ~onLoad
+  - state{s=start;loop=true;delay=2} @self ~onChangeworld 
+  - sudoskill{s=[ - pull{v=10;to=true;Origin=@Forward{f=1.5;y=0.5;sideOffset=0.95;sudoowner=true;lockpitch=true};fo=true} @trigger ];cat=true} @owner{conditions=[ - crouching true]} ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Stay} ?!hasaura{auraname=Attacking}
+  - sudoskill{s=[ - setrotation{relative=false;yaw="<caster.l.yaw>+240"} @trigger ];cat=true} @owner{conditions=[ - crouching true]} ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Attacking}
+  - sudoskill{s=[ - pull{v=10;to=true;Origin=@Forward{f=1.5;y=0.9;sideOffset=0.95;sudoowner=true;lockpitch=true};fo=true} @trigger ];cat=true} @owner{conditions=[ - crouching false]} ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Stay} ?!hasaura{auraname=Attacking} ?hasaura{auraname=Crouching}
+  - sudoskill{s=[ - setrotation{relative=false;yaw="<caster.l.yaw>+240"} @trigger ];cat=true} @owner ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Attacking} ?hasaura{auraname=Crouching}
+  - sudoskill{s=[ - aura{auraname=Crouching;d=20;ms=1;ma=true;rd=true} @Trigger];cat=true} @owner{conditions=[ - crouching true]} ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Attacking} 
+  - state{s=emote;cooldown=7} @self ~onInteract
+  - aura{auraname=Crouching;d="3*20"} @Self ~onInteract ?hasaura{auraname=Crouching}
+  - setvar{var=target.cubeetype;value="skelly_warlock";type=STRING;save=true;delay=2} @Owner ~onSpawn
+  - unsetvar{var=target.cubeetype} @Owner ~onDespawn
+  - setvar{var=caster.cubeemodel;value="skelly_warlock";type=STRING;save=true;delay=2} @Self ~onSpawn
+  - sudoskill{s=[ - setrotation{relative=false;yaw=<caster.l.yaw>;pitch=0} @trigger ];cat=true} @owner{conditions=[ - crouching false]} ~onTimer:1 ?!hasaura{auraname=Crouching} ?!hasaura{auraname=Attacking} 
+  - model{scale=0.67;mid=cubee-skelly_warlock;n=false;usm=true;delay=1} @self ~onSpawn
+  - model{scale=0.67;mid=cubee-skelly_warlock;n=false;usm=true;delay=5} @self ~onSpawn
+  - model{scale=0.67;mid=cubee-skelly_warlock;n=false;usm=true;delay=5} @self ~onLoad
+  - tint{m=cubee-skelly_warlock;c=ffffff;d=true;delay=2} @self ~onSpawn
+  - cullconfig{mid=cubee-skelly_warlock;bkc=false;delay=2} @self ~onSpawn
+  - skill{s=Cubees-Setting-Movement} @self ~onTimer:1 ?!hasaura{auraname=Crouching} ?!hasaura{auraname=Attacking} ?!hasaura{auraname=Stay}
+  - sound{s=entity.allay.death;p=1.0;v=1.0} @self ~onDeath
+  - setgravity{gravity=false;delay=1} @self ~onSpawn
+  - setgravity{gravity=false;delay=5} @self ~onLoad
+  - cancelevent{sync=true} @self ~onAttack
+  - runaigoalselector{goal=movetowardstarget;delay=2} @self ~onSpawn ?stringEQ{val1="<placeholder.Cubee-skelly_warlock-HelpsOwnerCombat>";val2="true"}
+  - sudoskill{s=[ - pull{v=5;to=true;Origin=@Forward{f=4;y=0.1;sideOffset=1.35;sudoowner=true;lockpitch=true};fo=true} @trigger ];cat=true} @owner{conditions=[ - moving false]} ~onTimer:1 ?hasaura{auraname=Attacking} ?!hasaura{auraname=Stay} ?!hasaura{auraname=Crouching}
+  - sudoskill{s=[ - pull{v=5;to=true;Origin=@Forward{f=4.5;y=0.1;sideOffset=1.35;sudoowner=true;lockpitch=true};fo=true} @trigger ];cat=true} @owner{conditions=[ - moving true]} ~onTimer:1 ?hasaura{auraname=Attacking} ?!hasaura{auraname=Stay} ?!hasaura{auraname=Crouching}
+  - sudoskill{s=[ - setrotation{relative=false;yaw="<caster.l.yaw> + 205"} @trigger ];cat=true} @owner ~onTimer:1 ?hasaura{auraname=Attacking} ?!hasaura{auraname=Stay}
+  - skill{s=Cubee-skelly_warlock-Pet-Attack_Activate} @self ~onSignal:Activate ?stringEQ{val1="<placeholder.Cubee-skelly_warlock-HelpsOwnerCombat>";val2="true"}
+  - cancelEvent{sync=true} @self ~onDamaged ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Invincible>";val2="true"} 
+  - runaigoalselector{goal=meleeattack} @self ~onTimer:10 ?stringEQ{val1="<placeholder.Cubee-skelly_warlock-HelpsOwnerCombat>";val2="true"} ?stringEQ{val1="<placeholder.Cubee-skelly_warlock-Skill_AutoActivate>";val2="true"}
+  - skill{s=Cubee-skelly_warlock-Pet-Attack} @Target{limit=1;sort=NEAREST} ~onTimer:5 ?stringEQ{val1="<placeholder.Cubee-skelly_warlock-HelpsOwnerCombat>";val2="true"} ?stringEQ{val1="<placeholder.Cubee-skelly_warlock-Skill_AutoActivate>";val2="true"}
+  - aura{auraname="<caster.var.owner_uuid>-CubeeTarget";d=5;ms=1;ma=true;rd=true} @Target{limit=1;sort=NEAREST} ~onTimer:5 ?stringEQ{val1="<placeholder.Cubee-skelly_warlock-HelpsOwnerCombat>";val2="true"} ?stringEQ{val1="<placeholder.Cubee-skelly_warlock-Skill_AutoActivate>";val2="true"}
+  - skill{s=Cubee-skelly_warlock-Pet-Attack_Execute} @Self ~onSignal:CubeeAttack ?stringEQ{val1="<placeholder.Cubee-skelly_warlock-Skill_AutoActivate>";val2="true"} 
+  - removeaura{auraname=<caster.uuid>} @Target ~onSignal:CubeeAttack
+  - skill{s=Cubee-skelly_warlock-TargetInherit} @self ~onSignal:CubeeTargetInherit 
+  - skill{s=Cubee-skelly_warlock-AllyInherit} @self ~onSignal:CubeeAllyInherit 
+  - skill{s=Cubee-skelly_warlock-Pet-OwnersCombatTarget} @self ~onTimer:20
+  - skill{s=[ 
+    - teleport @floorOfTargets{tries=99}
+    ]} @Self ~onTimer:60 ?stringEq{value1=<caster.var.CubeeIsTamed>;value2=false} ?!hasaura{aura=Attacking} 
+  - skill{s=Cubee_BlackMagic-Capture-checkOwner;delay=2} @Owner ~onSpawn
+  - settarget @Trigger ~onDamaged ?varisset{name=caster.CubeeIsTamed} ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false} ?!incombat ?!hastag{t=KnockedOut}
+  - skill{s=Cubee-skelly_warlock-Wild-Attack} @Target ~onTimer:2 ?varisset{name=caster.CubeeIsTamed} ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false}
+  - skill{s=Cubees-ForceLookTarget-Inherit} @Target ~onTimer:2 ?varisset{name=caster.CubeeIsTamed} ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false} ?!hastag{t=KnockedOut} 
+  - sudoskill{s=[ - pull{v=1.5} @Trigger];cat=true} @Target ~onTimer:2 ?varisset{name=caster.CubeeIsTamed} ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false} ?!hasaura{auraname=Attacking} ?targetWithin{distance=25} ?!hastag{t=KnockedOut}
+  - summon{t=cubee-knocked_out-skelly_warlock;a=1} @selflocation ~onDeath ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false}
+  - skill{s=Cubee-skelly_warlock-Feed-Cubee_Snack} @self ~onInteract ?~holding{strict=true;types=Cubee_Snack}
+  
+
+cubee-knocked_out-skelly_warlock:
+  Type: ITEM_DISPLAY
+  Display: 'Skelly Warlock Cubee' 
+  DisplayOptions:
+    Item: AIR
+  Options:
+    Invincible: true
+    Interactable: true
+    Marker: false
+    Silent: true
+  Skills:
+  - potion{t=SLOW_FALLING;d=100;i=false;hasparticles=false} @self
+  - model{scale=0.67;mid=cubee-skelly_warlock;n=false;usm=true} @self ~onSpawn
+  - model{scale=0.67;mid=cubee-skelly_warlock;n=false;usm=true;delay=5} @self ~onSpawn
+  - model{scale=0.67;mid=cubee-skelly_warlock;n=false;usm=true;delay=5} @self ~onLoad
+  - partvisibility{mid=cubee-skelly_warlock;p=bone11;v=false} @self ~onSpawn 
+  - partvisibility{mid=cubee-skelly_warlock;p=bone13;v=false} @self ~onSpawn
+  - state{s=knocked;li=0;lo=0} @self ~onSpawn
+  - remove{delay=100} @self ~onSpawn
+  - teleportin{v=0,1.4,0} @Child ~onTimer:1 
+  - summon{t=vfx_cubee-dizzy_effect;a=1;sio=true;sip=true} @Selflocation{y=1.4} ~onSpawn
+  - skill{s=Cubee_BlackMagic-skelly_warlock-Capture-Tame} @Trigger ~onInteract
+  - particle{p=poof;a=10;hs=0.3;vs=0.3;delay=99} @selfLocation{y=0.3} ~onSpawn
+  - sound{s=entity.generic.extinguish_fire;volume=1;p=1.5;delay=99} @self ~onSpawn
+
+
+cubee-soul_weaver:
+  Type: WOLF
+  Display: 'Soul Weaver Cubee' 
+  Health: 50
+  Damage: 1
+  Options:
+    PreventSunburn: true
+    ApplyInvisibility: true
+    Invisible: true
+    KnockbackResistance: 1
+    PreventRandomEquipment: true
+    AlwaysShowName: true
+    PreventOtherDrops: true
+    Persistent: false
+    Invincible: false
+    LockPitch: false
+    FollowRange: 50
+    MovementSpeed: 0.3
+    Silent: true
+    Interactable: true
+  DamageModifiers:
+  - FALL 0
+  - FALLING_BLOCK 0
+  - SUFFOCATION 0
+  - ENTITY_ATTACK 1.0
+  AIGoalSelectors:
+  - clear
+  AITargetSelectors:
+  - nearestConditional{targetconditions=
+    [- entitytype{type=WITHER,SILVERFISH} true
+     - isliving ];
+    mustsee=false;mustreach=false;interval=1}
+  - ownerAttacker
+  - ownerDamager
+  Modules:
+    ThreatTable: true
+  Skills:
+  - skill{s=Cubee-soul_weaver-Pet-Spawn} @self ~onSpawn
+  - skill{s=Cubee-soul_weaver-Pet-Spawn;delay=5} @self ~onLoad
+  - cancelEvent{sync=true} @Owner ~onDamaged ?~owner
+  - setvar{var=caster.cubeeLevel;value="(<pet.level.index>+1)";delay=2;type=INTEGER} @self ~onSpawn
+  - setvar{var=caster.cubee_UnlockSkill_Ultimate;value="<placeholder.Cubee-soul_weaver-UnlockSkill-Ultimate>";type=INTEGER;delay=2} @self ~onSpawn
+  - skill{s=[ - addtag{t=Ultimate} @self ?varinrange{var=caster.cubeeLevel;value=><caster.var.cubee_UnlockSkill_Ultimate>}];delay=3} @self ~onSpawn
+  - setParent{delay=1} @Owner ~onSpawn
+  - setvar{var=caster.owner_name;value=<target.name>;type=STRING;delay=2} @Parent ~onSpawn
+  - setvar{var=caster.owner_uuid;value=<target.uuid>;type=STRING;delay=2} @Parent ~onSpawn
+  - addtag{t=Cubees;delay=1} @self ~onSpawn
+  - state{s=start;loop=true;delay=2} @self ~onSpawn
+  - state{s=start;loop=true;delay=2} @self ~onLoad
+  - state{s=start;loop=true;delay=2} @self ~onChangeworld 
+  - sudoskill{s=[ - pull{v=10;to=true;Origin=@Forward{f=1.5;y=0.5;sideOffset=0.95;sudoowner=true;lockpitch=true};fo=true} @trigger ];cat=true} @owner{conditions=[ - crouching true]} ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Stay} ?!hasaura{auraname=Attacking}
+  - sudoskill{s=[ - setrotation{relative=false;yaw="<caster.l.yaw>+240"} @trigger ];cat=true} @owner{conditions=[ - crouching true]} ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Attacking}
+  - sudoskill{s=[ - pull{v=10;to=true;Origin=@Forward{f=1.5;y=0.9;sideOffset=0.95;sudoowner=true;lockpitch=true};fo=true} @trigger ];cat=true} @owner{conditions=[ - crouching false]} ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Stay} ?!hasaura{auraname=Attacking} ?hasaura{auraname=Crouching}
+  - sudoskill{s=[ - setrotation{relative=false;yaw="<caster.l.yaw>+240"} @trigger ];cat=true} @owner ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Attacking} ?hasaura{auraname=Crouching}
+  - sudoskill{s=[ - aura{auraname=Crouching;d=20;ms=1;ma=true;rd=true} @Trigger];cat=true} @owner{conditions=[ - crouching true]} ~onTimer:1 ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Crouch_To_Face_Owner>";val2="true"} ?!hasaura{auraname=Attacking} 
+  - state{s=emote;cooldown=7} @self ~onInteract
+  - aura{auraname=Crouching;d="3*20"} @Self ~onInteract ?hasaura{auraname=Crouching}
+  - setvar{var=target.cubeetype;value="soul_weaver";type=STRING;save=true;delay=2} @Owner ~onSpawn
+  - unsetvar{var=target.cubeetype} @Owner ~onDespawn
+  - setvar{var=caster.cubeemodel;value="soul_weaver";type=STRING;save=true;delay=2} @Self ~onSpawn
+  - sudoskill{s=[ - setrotation{relative=false;yaw=<caster.l.yaw>;pitch=0} @trigger ];cat=true} @owner{conditions=[ - crouching false]} ~onTimer:1 ?!hasaura{auraname=Crouching} ?!hasaura{auraname=Attacking} 
+  - model{scale=0.67;mid=cubee-soul_weaver;n=false;usm=true;delay=1} @self ~onSpawn
+  - model{scale=0.67;mid=cubee-soul_weaver;n=false;usm=true;delay=5} @self ~onSpawn
+  - model{scale=0.67;mid=cubee-soul_weaver;n=false;usm=true;delay=5} @self ~onLoad
+  - tint{m=cubee-soul_weaver;c=ffffff;d=true;delay=2} @self ~onSpawn
+  - cullconfig{mid=cubee-soul_weaver;bkc=false;delay=2} @self ~onSpawn
+  - skill{s=Cubees-Setting-Movement} @self ~onTimer:1 ?!hasaura{auraname=Crouching} ?!hasaura{auraname=Attacking} ?!hasaura{auraname=Stay}
+  - sound{s=entity.allay.death;p=1.0;v=1.0} @self ~onDeath
+  - setgravity{gravity=false;delay=1} @self ~onSpawn
+  - setgravity{gravity=false;delay=5} @self ~onLoad
+  - cancelevent{sync=true} @self ~onAttack
+  - runaigoalselector{goal=movetowardstarget;delay=2} @self ~onSpawn ?stringEQ{val1="<placeholder.Cubee-soul_weaver-HelpsOwnerCombat>";val2="true"}
+  - sudoskill{s=[ - pull{v=5;to=true;Origin=@Forward{f=4;y=0.1;sideOffset=1.35;sudoowner=true;lockpitch=true};fo=true} @trigger ];cat=true} @owner{conditions=[ - moving false]} ~onTimer:1 ?hasaura{auraname=Attacking} ?!hasaura{auraname=Stay} ?!hasaura{auraname=Crouching}
+  - sudoskill{s=[ - pull{v=5;to=true;Origin=@Forward{f=4.5;y=0.1;sideOffset=1.35;sudoowner=true;lockpitch=true};fo=true} @trigger ];cat=true} @owner{conditions=[ - moving true]} ~onTimer:1 ?hasaura{auraname=Attacking} ?!hasaura{auraname=Stay} ?!hasaura{auraname=Crouching}
+  - sudoskill{s=[ - setrotation{relative=false;yaw="<caster.l.yaw> + 205"} @trigger ];cat=true} @owner ~onTimer:1 ?hasaura{auraname=Attacking} ?!hasaura{auraname=Stay}
+  - skill{s=Cubee-soul_weaver-Pet-Attack_Activate} @self ~onSignal:Activate ?stringEQ{val1="<placeholder.Cubee-soul_weaver-HelpsOwnerCombat>";val2="true"}
+  - cancelEvent{sync=true} @self ~onDamaged ?stringEQ{val1="<placeholder.Cubees-BlackMagic-Invincible>";val2="true"} 
+  - runaigoalselector{goal=meleeattack} @self ~onTimer:10 ?stringEQ{val1="<placeholder.Cubee-soul_weaver-HelpsOwnerCombat>";val2="true"} ?stringEQ{val1="<placeholder.Cubee-soul_weaver-Skill_AutoActivate>";val2="true"}
+  - skill{s=Cubee-soul_weaver-Pet-Attack} @Target{limit=1;sort=NEAREST} ~onTimer:5 ?stringEQ{val1="<placeholder.Cubee-soul_weaver-HelpsOwnerCombat>";val2="true"} ?stringEQ{val1="<placeholder.Cubee-soul_weaver-Skill_AutoActivate>";val2="true"}
+  - aura{auraname="<caster.var.owner_uuid>-CubeeTarget";d=5;ms=1;ma=true;rd=true} @Target{limit=1;sort=NEAREST} ~onTimer:5 ?stringEQ{val1="<placeholder.Cubee-soul_weaver-HelpsOwnerCombat>";val2="true"} ?stringEQ{val1="<placeholder.Cubee-soul_weaver-Skill_AutoActivate>";val2="true"}
+  - skill{s=Cubee-soul_weaver-Pet-Attack_Execute} @Self ~onSignal:CubeeAttack ?stringEQ{val1="<placeholder.Cubee-soul_weaver-Skill_AutoActivate>";val2="true"} 
+  - removeaura{auraname=<caster.uuid>} @Target ~onSignal:CubeeAttack
+  - skill{s=Cubee-soul_weaver-TargetInherit} @self ~onSignal:CubeeTargetInherit 
+  - skill{s=Cubee-soul_weaver-AllyInherit} @self ~onSignal:CubeeAllyInherit 
+  - skill{s=Cubee-soul_weaver-Pet-OwnersCombatTarget} @self ~onTimer:20
+  - skill{s=[ 
+    - teleport @floorOfTargets{tries=99}
+    ]} @Self ~onTimer:60 ?stringEq{value1=<caster.var.CubeeIsTamed>;value2=false} ?!hasaura{aura=Attacking} 
+  - skill{s=Cubee_BlackMagic-Capture-checkOwner;delay=2} @Owner ~onSpawn
+  - settarget @Trigger ~onDamaged ?varisset{name=caster.CubeeIsTamed} ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false} ?!incombat ?!hastag{t=KnockedOut}
+  - skill{s=Cubee-soul_weaver-Wild-Attack} @Target ~onTimer:2 ?varisset{name=caster.CubeeIsTamed} ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false}
+  - skill{s=Cubees-ForceLookTarget-Inherit} @Target ~onTimer:2 ?varisset{name=caster.CubeeIsTamed} ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false} ?!hastag{t=KnockedOut} 
+  - sudoskill{s=[ - pull{v=1.5} @Trigger];cat=true} @Target ~onTimer:2 ?varisset{name=caster.CubeeIsTamed} ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false} ?!hasaura{auraname=Attacking} ?targetWithin{distance=25} ?!hastag{t=KnockedOut}
+  - summon{t=cubee-knocked_out-soul_weaver;a=1} @selflocation ~onDeath ?stringEQ{value1=<caster.var.CubeeIsTamed>;value2=false}
+  - skill{s=Cubee-soul_weaver-Feed-Cubee_Snack} @self ~onInteract ?~holding{strict=true;types=Cubee_Snack}
+  
+
+cubee-knocked_out-soul_weaver:
+  Type: ITEM_DISPLAY
+  Display: 'Soul Weaver Cubee' 
+  DisplayOptions:
+    Item: AIR
+  Options:
+    Invincible: true
+    Interactable: true
+    Marker: false
+    Silent: true
+  Skills:
+  - potion{t=SLOW_FALLING;d=100;i=false;hasparticles=false} @self
+  - model{scale=0.67;mid=cubee-soul_weaver;n=false;usm=true} @self ~onSpawn
+  - model{scale=0.67;mid=cubee-soul_weaver;n=false;usm=true;delay=5} @self ~onSpawn
+  - model{scale=0.67;mid=cubee-soul_weaver;n=false;usm=true;delay=5} @self ~onLoad
+  - partvisibility{mid=cubee-soul_weaver;p=bone11;v=false} @self ~onSpawn 
+  - partvisibility{mid=cubee-soul_weaver;p=bone13;v=false} @self ~onSpawn
+  - state{s=knocked;li=0;lo=0} @self ~onSpawn
+  - remove{delay=100} @self ~onSpawn
+  - teleportin{v=0,1.4,0} @Child ~onTimer:1 
+  - summon{t=vfx_cubee-dizzy_effect;a=1;sio=true;sip=true} @Selflocation{y=1.4} ~onSpawn
+  - skill{s=Cubee_BlackMagic-soul_weaver-Capture-Tame} @Trigger ~onInteract
+  - particle{p=poof;a=10;hs=0.3;vs=0.3;delay=99} @selfLocation{y=0.3} ~onSpawn
+  - sound{s=entity.generic.extinguish_fire;volume=1;p=1.5;delay=99} @self ~onSpawn
+
+
+vfx_cubee-dizzy_effect:
+  Type: ITEM_DISPLAY
+  Display: '' 
+  DisplayOptions:
+    TeleportDuration: 1
+  Skills:
+  - model{mid=dizzy_effect;usm=true;scale=1} @self ~onSpawn
+  - remove{delay=100} @self ~onSpawn
+  
+XDummy-vfx-ebony_cat-bullet:
+  Type: ITEM_DISPLAY
+  Faction: VFX
+  Damage:
+  DisplayOptions:
+    Item: AIR
+  Display: '&d' # Display name of the mob
+  Skills:
+  - model{save=true;delay=1;scale=1.3;usm=true;mid=vfx-ebony_cat-bullet} @self ~onSpawn
+  - model{save=true;delay=5;scale=1.3;usm=true;mid=vfx-ebony_cat-bullet} @self ~onLoad
+
+XDummy-vfx-ebony_cat-explode:
+  Type: ITEM_DISPLAY
+  Faction: VFX
+  Damage:
+  DisplayOptions:
+    Item: AIR
+  Display: '&d' # Display name of the mob
+  Skills:
+  - model{save=true;delay=1;scale=1;usm=true;mid=vfx-ebony_cat-explode} @self ~onSpawn
+  - model{save=true;delay=5;scale=1;usm=true;mid=vfx-ebony_cat-explode} @self ~onLoad
+  - remove{delay=9} @self ~onSpawn
+
+XDummy-vfx-ebony_cat-large_bullet:
+  Type: ITEM_DISPLAY
+  Faction: VFX
+  Damage:
+  DisplayOptions:
+    Item: AIR
+  Display: '&d' # Display name of the mob
+  Skills:
+  - model{save=true;delay=1;scale=1.3;usm=true;mid=vfx-ebony_cat-large_bullet} @self ~onSpawn
+  - model{save=true;delay=5;scale=1.3;usm=true;mid=vfx-ebony_cat-large_bullet} @self ~onLoad
+
+XDummy-vfx-ebony_cat-large_explode:
+  Type: ITEM_DISPLAY
+  Faction: VFX
+  Damage:
+  DisplayOptions:
+    Item: AIR
+  Display: '&d' # Display name of the mob
+  Skills:
+  - setrotation{relative=true;yaw=180;p=0} @Self ~onSpawn
+  - model{save=true;delay=1;scale=1.25;usm=true;mid=vfx-ebony_cat-large_explode} @self ~onSpawn
+  - model{save=true;delay=5;scale=1.25;usm=true;mid=vfx-ebony_cat-large_explode} @self ~onLoad
+  - remove{delay=23} @self ~onSpawn
+
+XDummy-vfx-gothic_hag_crows:
+  Type: ITEM_DISPLAY
+  Faction: VFX
+  Damage:
+  DisplayOptions:
+    Item: AIR
+  Display: '&d' # Display name of the mob
+  Skills:
+  - model{save=true;delay=1;scale=2;usm=true;mid=vfx-gothic_hag_crows} @self ~onSpawn
+  - model{save=true;delay=5;scale=2;usm=true;mid=vfx-gothic_hag_crows} @self ~onLoad
+  - remove{delay=10} @self ~onSpawn
+
+
+XDummy-minion-cubee-skelly_warlock-bomb:
+  Type: WOLF
+  Display: 'Soul Weaver Cubee Minion' 
+  Health: 1
+  Damage: 1
+  Options:
+    PreventSunburn: true
+    ApplyInvisibility: true
+    Invisible: true
+    KnockbackResistance: 1
+    PreventRandomEquipment: true
+    AlwaysShowName: true
+    PreventOtherDrops: true
+    Persistent: false
+    Invincible: false
+    LockPitch: false
+    FollowRange: 50
+    MovementSpeed: 0.5
+    Silent: true
+    Interactable: true
+  DamageModifiers:
+  - FALL 0
+  - FALLING_BLOCK 0
+  - SUFFOCATION 0
+  - ENTITY_ATTACK 1.0
+  AIGoalSelectors:
+  - clear
+  AITargetSelectors:
+  - ownerAttacker
+  - ownerDamager
+  Modules:
+    ThreatTable: true
+  Skills:
+  - cancelEvent{forcesync=true} @self ~onAttack
+  - addtag{t=Spawned;delay=27} @self ~onSpawn
+  - stun{d=27;facing=false} @self ~onSpawn
+  - runaigoalselector{aigoalselector=meleeAttack;delay=28} @self ~onSpawn
+  - model{save=true;delay=1;scale=1;usm=true;mid=xdummy-minion_bomb_warlock} @self ~onSpawn
+  - model{save=true;delay=5;scale=1;usm=true;mid=xdummy-minion_bomb_warlock} @self ~onLoad
+  - skill{s=Cubee-skelly_warlock-minion-bomb} @self ~onTimer:3
+  - skill{s=Cubee-skelly_warlock-minion-bomb-explode} @self ~onDeath
+  - skill{s=Cubee-skelly_warlock-minion-bomb-explode} @self ~onDespawn
+  - remove{delay=200} @self ~onSpawn
+
+XDummy-minion-cubee-skelly_warlock-melee:
+  Type: WOLF
+  Display: 'Skelly Warlock Cubee Minion' 
+  Health: 30
+  Damage: 1
+  Options:
+    PreventSunburn: true
+    ApplyInvisibility: true
+    Invisible: true
+    KnockbackResistance: 1
+    PreventRandomEquipment: true
+    AlwaysShowName: true
+    PreventOtherDrops: true
+    Persistent: false
+    Invincible: false
+    LockPitch: false
+    FollowRange: 50
+    MovementSpeed: 0.4
+    Silent: true
+    Interactable: true
+  DamageModifiers:
+  - FALL 0
+  - FALLING_BLOCK 0
+  - SUFFOCATION 0
+  - ENTITY_ATTACK 1.0
+  AIGoalSelectors:
+  - clear
+  AITargetSelectors:
+  - ownerAttacker
+  - ownerDamager
+  Modules:
+    ThreatTable: true
+  Skills:
+  - cancelEvent{forcesync=true} @self ~onAttack
+  - addtag{t=Spawned;delay=27} @self ~onSpawn
+  - stun{d=27;facing=false} @self ~onSpawn
+  - runaigoalselector{aigoalselector=meleeAttack;delay=28} @self ~onSpawn
+  - model{save=true;delay=1;scale=1;usm=true;mid=xdummy-minion_melee_warlock} @self ~onSpawn
+  - model{save=true;delay=5;scale=1;usm=true;mid=xdummy-minion_melee_warlock} @self ~onLoad
+  - skill{s=Cubee-skelly_warlock-minion-melee} @self ~onTimer:3
+  - remove{delay=200} @self ~onSpawn

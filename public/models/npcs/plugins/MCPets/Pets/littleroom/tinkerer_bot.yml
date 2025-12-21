@@ -1,0 +1,19 @@
+
+#########################################################
+## Developed by Little Room, patreon.com/littleroomdev ##
+#########################################################
+
+
+Id: TinkerBot
+MythicMob: Tinkerer_bot_PET
+Permission: mcpets.tinkerbot
+Mountable: false
+DespawnSkill: lr_tinkerer_robot_Despawn
+Distance: 5
+SpawnRange: 1
+ComingBackRange: 5
+Icon:
+  Name: §bTinkerbot
+  TextureBase64: ewogICJ0aW1lc3RhbXAiIDogMTYzMDgwNDc0OTY1NCwKICAicHJvZmlsZUlkIiA6ICIyMDA2NTVkMjMyYTE0MTc2OGIwNjQ0NWNkNTliNDg3NCIsCiAgInByb2ZpbGVOYW1lIiA6ICJGaWVzdHlCbHVlXyIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS81MGNhOTNlYjYzYzQ3MGM3OGYxMGM3NmYyOTAyYWQ3ODNjNDI2NjUzOWFlNTA5NzIyZmNkOWIyZTIzMDBhOTIiCiAgICB9CiAgfQp9
+  Description:
+  - §7Magnificent Invention!

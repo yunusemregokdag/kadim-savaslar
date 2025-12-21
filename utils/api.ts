@@ -1,6 +1,20 @@
 // API Service for Backend Communication
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+// Smart API URL detection
+const getApiUrl = () => {
+    // If VITE_API_URL is set, use it
+    if (import.meta.env.VITE_API_URL) {
+        return import.meta.env.VITE_API_URL;
+    }
+    // Local development (localhost) -> backend at port 3001
+    if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+        return 'http://localhost:3001/api';
+    }
+    // Production (Vercel) -> use relative /api path
+    return '/api';
+};
+
+const API_BASE_URL = getApiUrl();
 
 // Token management
 let authToken: string | null = localStorage.getItem('authToken');

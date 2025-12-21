@@ -4,7 +4,7 @@
 // ============================================
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { weatherManager, WeatherEffect, WeatherType } from '../systems/WeatherSystem';
 
@@ -130,6 +130,7 @@ export function WeatherParticles(): JSX.Element | null {
 // Sis efekti - Scene'e three.js Fog ekler
 export function FogEffect(): JSX.Element | null {
     const [weather, setWeather] = useState<WeatherEffect>(weatherManager.getCurrentWeather());
+    const { scene } = useThree();
 
     useEffect(() => {
         const unsubscribe = weatherManager.subscribe((newWeather) => {
@@ -138,36 +139,29 @@ export function FogEffect(): JSX.Element | null {
         return unsubscribe;
     }, []);
 
-    // useThree hook ile scene'e erişip fog ayarla
-    const SceneFog = () => {
-        const { scene } = require('@react-three/fiber').useThree();
+    useEffect(() => {
+        if (weather.fogDensity > 0) {
+            // Exponential fog for realistic effect
+            const fogColor = weather.type === 'foggy' ? 0x94a3b8
+                : weather.type === 'snowy' ? 0xe0f2fe
+                    : weather.type === 'stormy' ? 0x4a5568
+                        : weather.type === 'rainy' ? 0x64748b
+                            : 0xffffff;
 
-        useEffect(() => {
-            if (weather.fogDensity > 0) {
-                // Exponential fog for realistic effect
-                const fogColor = weather.type === 'foggy' ? 0x94a3b8
-                    : weather.type === 'snowy' ? 0xe0f2fe
-                        : weather.type === 'stormy' ? 0x4a5568
-                            : weather.type === 'rainy' ? 0x64748b
-                                : 0xffffff;
+            const near = weather.type === 'foggy' ? 5 : 30;
+            const far = weather.type === 'foggy' ? 40 : 150;
 
-                const near = weather.type === 'foggy' ? 5 : 30;
-                const far = weather.type === 'foggy' ? 40 : 150;
+            scene.fog = new THREE.Fog(fogColor, near, far);
+        } else {
+            scene.fog = null;
+        }
 
-                scene.fog = new THREE.Fog(fogColor, near, far);
-            } else {
-                scene.fog = null;
-            }
+        return () => {
+            scene.fog = null;
+        };
+    }, [weather.fogDensity, weather.type, scene]);
 
-            return () => {
-                scene.fog = null;
-            };
-        }, [weather.fogDensity, weather.type, scene]);
-
-        return null;
-    };
-
-    return <SceneFog />;
+    return null;
 }
 
 // Hava durumu UI göstergesi

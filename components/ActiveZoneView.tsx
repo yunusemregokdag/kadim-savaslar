@@ -3123,15 +3123,19 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     const renderSkillButton = (skill: any, i: number, sizeClass: string = "w-12 h-12") => {
         const isOnCd = !!cooldowns[skill.id];
         const hasMana = playerState.mana >= skill.manaCost;
+        const skillLevelReq = skill.levelReq || 1;
+        const isLocked = playerState.level < skillLevelReq;
 
         return (
             <button
                 key={skill.id}
-                onMouseDown={() => handleSkill(skill.id, skill)}
-                onTouchStart={() => handleSkill(skill.id, skill)}
-                disabled={isOnCd}
+                onMouseDown={() => !isLocked && handleSkill(skill.id, skill)}
+                onTouchStart={() => !isLocked && handleSkill(skill.id, skill)}
+                disabled={isOnCd || isLocked}
                 className={`${sizeClass} rounded-full border-2 flex items-center justify-center relative overflow-hidden transition-all active:scale-95 shadow-lg select-none touch-none
-                    ${isOnCd ? 'bg-slate-800 border-slate-600 opacity-50' : hasMana ? 'bg-slate-900/90 border-slate-500 hover:border-yellow-400' : 'bg-slate-900/50 border-blue-900 opacity-80'}
+                    ${isLocked ? 'bg-slate-900 border-slate-700 opacity-40 grayscale' :
+                        isOnCd ? 'bg-slate-800 border-slate-600 opacity-50' :
+                            hasMana ? 'bg-slate-900/90 border-slate-500 hover:border-yellow-400' : 'bg-slate-900/50 border-blue-900 opacity-80'}
                 `}
             >
                 {/* ICON / EMOJI DISPLAY INSTEAD OF NUMBER */}
@@ -3144,8 +3148,16 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 {/* NUMBER BADGE (Small overlay) */}
                 <div className="absolute bottom-1 right-2 text-[8px] font-mono text-slate-300 opacity-70 border border-white/10 bg-black/50 px-1 rounded-full">{i + 1}</div>
 
-                {!hasMana && !isOnCd && <div className="absolute inset-0 flex items-center justify-center bg-black/30"><Droplet size={12} className="text-blue-500 animate-bounce" /></div>}
-                {isOnCd && <div className="absolute inset-0 bg-black/70 flex items-center justify-center text-xs text-white font-mono font-bold">{Math.ceil(cooldowns[skill.id] / 1000)}</div>}
+                {/* LEVEL LOCK OVERLAY */}
+                {isLocked && (
+                    <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center">
+                        <span className="text-xl">🔒</span>
+                        <span className="text-[8px] text-yellow-400 font-bold">Lv.{skillLevelReq}</span>
+                    </div>
+                )}
+
+                {!hasMana && !isOnCd && !isLocked && <div className="absolute inset-0 flex items-center justify-center bg-black/30"><Droplet size={12} className="text-blue-500 animate-bounce" /></div>}
+                {isOnCd && !isLocked && <div className="absolute inset-0 bg-black/70 flex items-center justify-center text-xs text-white font-mono font-bold">{Math.ceil(cooldowns[skill.id] / 1000)}</div>}
             </button>
         );
     };
@@ -3255,8 +3267,8 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                                     onClick={handleRespawnHere}
                                     disabled={playerState.gems < 100}
                                     className={`w-full py-4 rounded-xl border-2 flex items-center justify-center gap-3 font-bold text-lg transition-all ${playerState.gems >= 100
-                                            ? 'bg-gradient-to-r from-purple-700 to-purple-600 border-purple-400 text-white hover:from-purple-600 hover:to-purple-500 hover:scale-105 shadow-lg shadow-purple-900/50'
-                                            : 'bg-slate-800 border-slate-600 text-slate-500 cursor-not-allowed'
+                                        ? 'bg-gradient-to-r from-purple-700 to-purple-600 border-purple-400 text-white hover:from-purple-600 hover:to-purple-500 hover:scale-105 shadow-lg shadow-purple-900/50'
+                                        : 'bg-slate-800 border-slate-600 text-slate-500 cursor-not-allowed'
                                         }`}
                                 >
                                     <span className="text-2xl">💎</span>

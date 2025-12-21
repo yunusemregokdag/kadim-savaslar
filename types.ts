@@ -18,6 +18,7 @@ export interface Skill {
   description_en?: string;
   cd: number; // Cooldown in seconds
   manaCost: number;
+  levelReq?: number; // Level requirement to unlock (default: 1)
   type: 'damage' | 'buff' | 'heal' | 'utility' | 'ultimate';
   icon: string; // Lucide icon name placeholder
   visual: string; // Effect key

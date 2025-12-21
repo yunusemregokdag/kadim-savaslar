@@ -233,7 +233,7 @@ const BlacksmithView: React.FC<BlacksmithViewProps> = ({ playerState, onUpgrade,
             </div>
 
             <div className="flex-1 flex overflow-hidden">
-                {activeTab === 'upgrade' ? (
+                {activeTab === 'upgrade' && (
                     <>
                         {/* UPGRADE STATION (Left) */}
                         <div className="flex-1 p-8 flex flex-col items-center justify-center relative bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
@@ -370,7 +370,8 @@ const BlacksmithView: React.FC<BlacksmithViewProps> = ({ playerState, onUpgrade,
                             </div>
                         </div>
                     </>
-                ) : (
+                )}
+                {activeTab === 'repair' && (
                     <>
                         {/* REPAIR STATION (Left) */}
                         <div className="flex-1 p-8 flex flex-col items-center justify-center relative bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">

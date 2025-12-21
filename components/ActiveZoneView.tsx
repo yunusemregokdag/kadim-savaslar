@@ -2182,13 +2182,18 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 return;
             }
             const today = new Date().toISOString().split('T')[0];
+            // Eğer bugün zaten aldıysa gösterme
+            if (playerState.dailyLogin.lastLoginDate === today && playerState.dailyLogin.claimedToday) {
+                return; // Bugün zaten aldı, gösterme
+            }
+            // Eğer lastLoginDate bugün değilse yeni gün demek, göster
             if (playerState.dailyLogin.lastLoginDate !== today) {
                 setShowDailyReward(true);
             }
         };
         const t = setTimeout(checkDaily, 1500);
         return () => clearTimeout(t);
-    }, []);
+    }, [playerState.dailyLogin]);
 
     useEffect(() => {
         if (zoneData) {

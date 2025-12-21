@@ -72,6 +72,8 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onAdminLogin }) => {
     try {
       if (credentialResponse.credential) {
         await loginWithGoogle(credentialResponse.credential);
+        // State update gecikirse diye manuel yenileme (Güvenli Liman)
+        window.location.reload();
       }
     } catch (err: any) {
       console.error("Google Login Error", err);
@@ -185,7 +187,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onAdminLogin }) => {
 
             <div className="mt-8 text-center text-xs text-slate-500">
               Giriş yaparak Kullanıcı Sözleşmesi'ni kabul etmiş olursunuz.
-              <br />v1.2.2 - Deployment Verification
+              <br />v1.2.3 - Reload Fix
             </div>
           </>
         ) : (

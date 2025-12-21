@@ -58,25 +58,38 @@ export function WeatherParticles(): JSX.Element | null {
         const dummy = new THREE.Object3D();
 
         particles.forEach((particle, i) => {
-            // Düşme hareketi
-            particle.y -= particle.speed;
+            // Sis için özel hareket - düşmez, yatay sürüklenir
+            if (weather.type === 'foggy') {
+                particle.x += Math.sin(Date.now() * 0.0003 + particle.id * 0.5) * 0.02;
+                particle.z += Math.cos(Date.now() * 0.0002 + particle.id * 0.3) * 0.015;
+                particle.y += Math.sin(Date.now() * 0.0001 + particle.id) * 0.005;
 
-            // Rüzgar etkisi
-            if (weather.type === 'stormy') {
-                particle.x += 0.05;
-                particle.z += 0.02;
-            }
+                // Sınır kontrolü - yatay wrap
+                if (particle.x > 50) particle.x = -50;
+                if (particle.x < -50) particle.x = 50;
+                if (particle.z > 50) particle.z = -50;
+                if (particle.z < -50) particle.z = 50;
+            } else {
+                // Normal düşme hareketi (kar, yağmur)
+                particle.y -= particle.speed;
 
-            // Kar için hafif sallanma
-            if (weather.type === 'snowy') {
-                particle.x += Math.sin(Date.now() * 0.001 + particle.id) * 0.01;
-            }
+                // Rüzgar etkisi
+                if (weather.type === 'stormy') {
+                    particle.x += 0.05;
+                    particle.z += 0.02;
+                }
 
-            // Yeniden spawn
-            if (particle.y < 0) {
-                particle.y = 50;
-                particle.x = (Math.random() - 0.5) * 100;
-                particle.z = (Math.random() - 0.5) * 100;
+                // Kar için hafif sallanma
+                if (weather.type === 'snowy') {
+                    particle.x += Math.sin(Date.now() * 0.001 + particle.id) * 0.01;
+                }
+
+                // Yeniden spawn
+                if (particle.y < 0) {
+                    particle.y = 50;
+                    particle.x = (Math.random() - 0.5) * 100;
+                    particle.z = (Math.random() - 0.5) * 100;
+                }
             }
 
             dummy.position.set(particle.x, particle.y, particle.z);
@@ -94,20 +107,27 @@ export function WeatherParticles(): JSX.Element | null {
 
     const particleColor = weather.type === 'snowy' ? '#ffffff'
         : weather.type === 'rainy' || weather.type === 'stormy' ? '#aaccff'
-            : '#cccccc';
+            : weather.type === 'foggy' ? '#c8d6e5'
+                : '#cccccc';
 
+    // Kar için küre, yağmur için silindir, sis için büyük yarı saydam küre
     const geometry = weather.type === 'snowy'
         ? new THREE.SphereGeometry(1, 8, 8)
-        : new THREE.CylinderGeometry(0.02, 0.02, 0.5, 4);
+        : weather.type === 'foggy'
+            ? new THREE.SphereGeometry(1, 6, 6) // Sis için büyük dalgalı küreler
+            : new THREE.CylinderGeometry(0.02, 0.02, 0.5, 4);
+
+    // Sis için özel opacity ve size
+    const fogOpacity = weather.type === 'foggy' ? 0.25 : 0.7;
 
     return (
         <instancedMesh ref={meshRef} args={[geometry, undefined, weather.particleCount]}>
-            <meshBasicMaterial color={particleColor} transparent opacity={0.7} />
+            <meshBasicMaterial color={particleColor} transparent opacity={fogOpacity} />
         </instancedMesh>
     );
 }
 
-// Sis efekti
+// Sis efekti - Scene'e three.js Fog ekler
 export function FogEffect(): JSX.Element | null {
     const [weather, setWeather] = useState<WeatherEffect>(weatherManager.getCurrentWeather());
 
@@ -118,12 +138,36 @@ export function FogEffect(): JSX.Element | null {
         return unsubscribe;
     }, []);
 
-    useEffect(() => {
-        // THREE.js fog'u güncelle (scene'e erişim gerekli)
-        // Bu component scene provider içinden çağrılmalı
-    }, [weather.fogDensity]);
+    // useThree hook ile scene'e erişip fog ayarla
+    const SceneFog = () => {
+        const { scene } = require('@react-three/fiber').useThree();
 
-    return null;
+        useEffect(() => {
+            if (weather.fogDensity > 0) {
+                // Exponential fog for realistic effect
+                const fogColor = weather.type === 'foggy' ? 0x94a3b8
+                    : weather.type === 'snowy' ? 0xe0f2fe
+                        : weather.type === 'stormy' ? 0x4a5568
+                            : weather.type === 'rainy' ? 0x64748b
+                                : 0xffffff;
+
+                const near = weather.type === 'foggy' ? 5 : 30;
+                const far = weather.type === 'foggy' ? 40 : 150;
+
+                scene.fog = new THREE.Fog(fogColor, near, far);
+            } else {
+                scene.fog = null;
+            }
+
+            return () => {
+                scene.fog = null;
+            };
+        }, [weather.fogDensity, weather.type, scene]);
+
+        return null;
+    };
+
+    return <SceneFog />;
 }
 
 // Hava durumu UI göstergesi

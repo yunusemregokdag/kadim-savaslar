@@ -30,7 +30,7 @@ import { useBossAI } from './useBossAI';
 import EventBanner from './EventBanner';
 import { SettingsView, useSettings } from './SettingsView';
 import { CLASS_COMBAT_CONFIG, performAttack, isMeleeClass, logCombat } from '../utils/combatSystem';
-import { WeatherParticles, WeatherIndicator, WeatherChangeNotification } from './WeatherEffects';
+import { WeatherParticles, WeatherIndicator, WeatherChangeNotification, FogEffect } from './WeatherEffects';
 import { weatherManager } from '../systems/WeatherSystem';
 
 const MOCK_STALLS: PlayerStallData[] = [];
@@ -3236,9 +3236,10 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         onEffectComplete={(id) => setActive3DEffects(prev => prev.filter(e => e.id !== id))}
                     />
                 </Suspense>
-                {/* Hava Durumu Parçacıkları */}
+                {/* Hava Durumu Parçacıkları ve Sis */}
                 <Suspense fallback={null}>
                     <WeatherParticles />
+                    <FogEffect />
                 </Suspense>
             </Canvas>
 

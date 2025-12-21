@@ -32,6 +32,8 @@
         }
     ],
     "env": {
-        "MONGODB_URI": "mongodb+srv://yunusemregokdag_db_user:cmhmshp2gyegg@cluster0.lpw3x3g.mongodb.net/kadim-savaslar?retryWrites=true&w=majority"
+        "MONGODB_URI": "mongodb+srv://yunusemregokdag_db_user:cmhmshp2gyegg@cluster0.lpw3x3g.mongodb.net/kadim-savaslar?retryWrites=true&w=majority",
+        "GOOGLE_CLIENT_ID": "519507497096-ka6f141tsfrrehnnalcnlvbiggji458n.apps.googleusercontent.com",
+        "JWT_SECRET": "kadim-savaslar-super-secret-jwt-key-2024"
     }
 }

@@ -376,7 +376,8 @@ app.post('/api/guilds/:id/join', async (req, res) => {
 // ============================================
 // SOCKET.IO SERVER
 // ============================================
-const server = http.createServer(app);
+
+// NOT: server değişkeni dosyanın başında (satır 12) tanımlanmıştır.
 const io = new Server(server, {
     cors: {
         origin: "*",
@@ -410,12 +411,12 @@ io.on('connection', (socket) => {
     socket.on('join_zone', (zoneId) => {
         if (!players[socket.id]) return;
         const oldZone = players[socket.id].zoneId;
-        socket.leave(`zone_${oldZone} `);
+        socket.leave(`zone_${oldZone}`);
         players[socket.id].zoneId = zoneId;
-        socket.join(`zone_${zoneId} `);
+        socket.join(`zone_${zoneId}`);
         const zonePlayers = Object.values(players).filter(p => p.zoneId === zoneId && p.socketId !== socket.id);
         socket.emit('zone_players', zonePlayers);
-        socket.to(`zone_${zoneId} `).emit('player_joined', players[socket.id]);
+        socket.to(`zone_${zoneId}`).emit('player_joined', players[socket.id]);
         console.log(`🗺️ ${players[socket.id].nickname} harita ${zoneId} bölgesine geçti.`);
     });
 
@@ -424,7 +425,7 @@ io.on('connection', (socket) => {
         if (!players[socket.id]) return;
         players[socket.id] = { ...players[socket.id], ...data };
         const zoneId = players[socket.id].zoneId;
-        socket.to(`zone_${zoneId} `).emit('player_moved', { id: socket.id, ...data });
+        socket.to(`zone_${zoneId}`).emit('player_moved', { id: socket.id, ...data });
     });
 
     // Chat
@@ -443,7 +444,7 @@ io.on('connection', (socket) => {
         if (players[socket.id]) {
             const { zoneId, nickname } = players[socket.id];
             console.log(`❌ ${nickname} ayrıldı.`);
-            io.to(`zone_${zoneId} `).emit('player_left', socket.id);
+            io.to(`zone_${zoneId}`).emit('player_left', socket.id);
             delete players[socket.id];
         }
     });
@@ -452,10 +453,6 @@ io.on('connection', (socket) => {
 // ============================================
 // SERVER START
 // ============================================
-// ============================================
-// SERVER START
-// ============================================
-const PORT = process.env.PORT || 3001;
 
 // Vercel ortamında değilsek veya PORT tanımlıysa (Railway gibi) dinle
 if (process.env.PORT || !process.env.VERCEL) {

@@ -13,6 +13,16 @@ const server = http.createServer(app); // http server'ı express uygulamasıyla 
 app.use(cors());
 app.use(express.json());
 
+// Railway Healthcheck için root endpoint
+app.get('/', (req, res) => {
+    res.send('Kadim Savaslar Backend is Running! 🚀');
+});
+
+// Veya özel health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok', uptime: process.uptime() });
+});
+
 // Railway/Heroku uyumlu PORT
 const PORT = process.env.PORT || 3001;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key'; // Bunu .env'e taşımak en iyisi

@@ -80,12 +80,21 @@ const AppInitializer = ({ children }: { children: React.ReactNode }) => {
 
 import { AuthProvider } from './contexts/AuthContext';
 
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 const root = ReactDOM.createRoot(rootElement);
 console.log("Details: Rendering root");
+
+// Placeholder Client ID - Kendi ID'nizi alınca burayı değiştirin veya .env'e koyun
+// Örn: import.meta.env.VITE_GOOGLE_CLIENT_ID
+const GOOGLE_CLIENT_ID = "BURAYA_GOOGLE_CLIENT_ID_GELECEK";
+
 root.render(
   <React.StrictMode>
-    <AppInitializer>
-      <App />
-    </AppInitializer>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <AppInitializer>
+        <App />
+      </AppInitializer>
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );

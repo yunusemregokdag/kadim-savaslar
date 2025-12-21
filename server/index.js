@@ -1,12 +1,26 @@
-import express from 'express';
-import http from 'http';
-import { Server } from 'socket.io';
-import cors from 'cors';
-import mongoose from 'mongoose';
+```javascript
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const cors = require('cors');
+const mongoose = require('mongoose');
+const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken'); // Kullanıcı yetkilendirme için
+const { OAuth2Client } = require('google-auth-library'); // Google Auth
 
 const app = express();
+const server = http.createServer(app); // http server'ı express uygulamasıyla oluştur
 app.use(cors());
 app.use(express.json());
+
+// Railway/Heroku uyumlu PORT
+const PORT = process.env.PORT || 3001;
+const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key'; // Bunu .env'e taşımak en iyisi
+
+// Google Client ID (Frontend'den gelecek token'ı doğrulamak için)
+// Güvenlik için bunu .env dosyasında saklamalısın ama şimdilik kodda dursun veya boş geçelim
+// Client ID'yi henüz oluşturmadığın için şimdilik boş bırakıyorum veya sonra parametre olarak alacağız.
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // ============================================
 // MONGODB BAĞLANTISI
@@ -132,6 +146,65 @@ app.post('/api/auth/register', async (req, res) => {
         res.json({ success: true, userId: user._id });
     } catch (err) {
         res.status(500).json({ error: 'Kayıt hatası' });
+    }
+});
+
+
+// ============================================
+// GOOGLE AUTH ROUTE
+// ============================================
+app.post('/api/auth/google', async (req, res) => {
+    try {
+        const { token } = req.body; // Frontend'den gelen credential
+
+        // 1. Google Token Doğrulama
+        // Not: Gerçek bir client ID olduğunda verifyIdToken içine audience: CLIENT_ID eklenmeli
+        const ticket = await googleClient.verifyIdToken({
+            idToken: token,
+            // audience: process.env.GOOGLE_CLIENT_ID 
+        });
+        const payload = ticket.getPayload();
+        
+        const email = payload.email;
+        const googleId = payload.sub;
+        const name = payload.name;
+        const picture = payload.picture;
+
+        // 2. Kullanıcıyı Bul veya Oluştur
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            // Yeni Kullanıcı Oluştur
+            user = new User({
+                username: name.replace(/\s+/g, '_') + Math.floor(Math.random() * 1000), // Benzersiz username
+                email: email,
+                password: uuidv4(), // Rastgele şifre
+                googleId: googleId,
+                avatar: picture
+            });
+            await user.save();
+        }
+
+        // 3. JWT Token Oluştur
+        const jwtToken = jwt.sign(
+            { userId: user._id, email: user.email },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        // 4. Kullanıcı bilgilerini dön (şifre hariç)
+        res.json({
+            token: jwtToken,
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email
+            }
+        });
+
+    } catch (error) {
+        console.error('Google Auth Error:', error);
+        res.status(401).json({ error: 'Google authentication failed' });
     }
 });
 
@@ -317,20 +390,20 @@ io.on('connection', (socket) => {
             zoneId: 1
         };
         socket.emit('my_id', socket.id);
-        console.log(`👤 ${userData.nickname} oyuna katıldı.`);
+        console.log(`👤 ${ userData.nickname } oyuna katıldı.`);
     });
 
     // Join Zone
     socket.on('join_zone', (zoneId) => {
         if (!players[socket.id]) return;
         const oldZone = players[socket.id].zoneId;
-        socket.leave(`zone_${oldZone}`);
+        socket.leave(`zone_${ oldZone } `);
         players[socket.id].zoneId = zoneId;
-        socket.join(`zone_${zoneId}`);
+        socket.join(`zone_${ zoneId } `);
         const zonePlayers = Object.values(players).filter(p => p.zoneId === zoneId && p.socketId !== socket.id);
         socket.emit('zone_players', zonePlayers);
-        socket.to(`zone_${zoneId}`).emit('player_joined', players[socket.id]);
-        console.log(`🗺️ ${players[socket.id].nickname} harita ${zoneId} bölgesine geçti.`);
+        socket.to(`zone_${ zoneId } `).emit('player_joined', players[socket.id]);
+        console.log(`🗺️ ${ players[socket.id].nickname } harita ${ zoneId } bölgesine geçti.`);
     });
 
     // Movement
@@ -338,7 +411,7 @@ io.on('connection', (socket) => {
         if (!players[socket.id]) return;
         players[socket.id] = { ...players[socket.id], ...data };
         const zoneId = players[socket.id].zoneId;
-        socket.to(`zone_${zoneId}`).emit('player_moved', { id: socket.id, ...data });
+        socket.to(`zone_${ zoneId } `).emit('player_moved', { id: socket.id, ...data });
     });
 
     // Chat
@@ -356,8 +429,8 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         if (players[socket.id]) {
             const { zoneId, nickname } = players[socket.id];
-            console.log(`❌ ${nickname} ayrıldı.`);
-            io.to(`zone_${zoneId}`).emit('player_left', socket.id);
+            console.log(`❌ ${ nickname } ayrıldı.`);
+            io.to(`zone_${ zoneId } `).emit('player_left', socket.id);
             delete players[socket.id];
         }
     });
@@ -369,5 +442,5 @@ io.on('connection', (socket) => {
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Oyun Sunucusu Çalışıyor: http://0.0.0.0:${PORT}`);
-    console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
 });

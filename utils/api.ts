@@ -94,6 +94,15 @@ export const authAPI = {
     me: async () => {
         return apiFetch('/auth/me');
     },
+
+    googleLogin: async (token: string) => {
+        const data = await apiFetch('/auth/google', {
+            method: 'POST',
+            body: JSON.stringify({ token }),
+        });
+        setAuthToken(data.token);
+        return data;
+    },
 };
 
 // =====================

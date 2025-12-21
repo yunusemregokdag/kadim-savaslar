@@ -157,7 +157,7 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
 
     const handleFactionSelect = (faction: Faction) => {
         setSelectedFaction(faction);
-        setTimeout(() => setStep('class'), 300);
+        setStep('class');
     };
 
     // --- MODE: CHARACTER LIST ---

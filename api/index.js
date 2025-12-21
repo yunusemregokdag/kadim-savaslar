@@ -1,5 +1,5 @@
-// Vercel Serverless Function - Ultra Simple Test
-module.exports = async (req, res) => {
+// Vercel Serverless Function - ES Module Syntax
+export default async function handler(req, res) {
     // CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -44,4 +44,4 @@ module.exports = async (req, res) => {
     }
 
     return res.status(404).json({ error: 'Not found', url });
-};
+}

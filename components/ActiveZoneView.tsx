@@ -1701,10 +1701,27 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
     // HUD Layout State - Initialize using deep copy of props OR default
     const [hudLayout, setHudLayout] = useState<HUDLayout>(() => {
-        // Always start with default layout as base
+        // ═══════════════════════════════════════════════════════════════════════
+        // HUD LAYOUT VERSION 2 - FORCE NEW LAYOUT
+        // Eski localStorage datası varsa bile yeni default kullan
+        // Kullanıcı manuel olarak ayarlarsa onun seçimi kaydedilir
+        // ═══════════════════════════════════════════════════════════════════════
+        const HUD_VERSION = 2;
+        const versionKey = `hud_version_${playerState.nickname}`;
+        const savedVersion = localStorage.getItem(versionKey);
+
+        // Always use new default layout
         const defaultLayout = JSON.parse(JSON.stringify(DEFAULT_HUD_LAYOUT));
 
-        // Check if user has saved layout
+        // If version doesn't match, clear old layout and use new default
+        if (!savedVersion || parseInt(savedVersion) < HUD_VERSION) {
+            localStorage.setItem(versionKey, HUD_VERSION.toString());
+            localStorage.removeItem(`hud_settings_${playerState.nickname}`);
+            console.log('[HUD] Forcing new layout v2');
+            return defaultLayout;
+        }
+
+        // Check if user has manually saved layout
         let savedLayout = playerState.settings.hudLayout;
 
         // Fallback: Check LocalStorage if playerState has no valid layout

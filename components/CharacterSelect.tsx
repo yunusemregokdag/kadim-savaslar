@@ -78,6 +78,7 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
     const [error, setError] = useState('');
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [characterToDelete, setCharacterToDelete] = useState<string | null>(null);
+    const [showMobileClassList, setShowMobileClassList] = useState(false);
 
     // Debug Mode for character positioning - Karakter pozisyonu ayarlamak için aç
     const [debugMode, setDebugMode] = useState(false); // Debug kapalı - ayarlar kaydedildi
@@ -426,9 +427,6 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
 
     // STEP 2: CLASS SELECTION
     const activeClassData = CLASSES[selectedClass];
-
-    // Mobile state for class selector visibility
-    const [showMobileClassList, setShowMobileClassList] = useState(false);
 
     return (
         <div className="fixed inset-0 w-full h-full bg-slate-950 overflow-auto md:overflow-hidden flex flex-col md:flex-row">

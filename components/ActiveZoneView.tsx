@@ -3066,17 +3066,48 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         addFloatingText(box.item ? box.item.name : `+${gold} G`, box.x, 2, box.z, 'text-yellow-300');
     };
 
-    // Updated Respawn Logic
-    const handleRespawn = () => {
-        if (zoneId >= 15 && zoneId <= 18) {
-            props.onSwitchZone(18);
-        } else if (zoneId >= 25 && zoneId <= 28) {
-            props.onSwitchZone(28);
-        } else if (zoneId >= 35 && zoneId <= 38) {
-            props.onSwitchZone(38);
-        } else {
-            props.onExit();
+    // ═══════════════════════════════════════════════════════════════
+    // RESPAWN SYSTEM - Yerinde veya Güvenli Bölgede Doğma
+    // ═══════════════════════════════════════════════════════════════
+
+    // Güvenli bölge hesapla (faction'a göre x-1 veya x-8)
+    const getSafeZone = (): number => {
+        // Faction bazlı: Marsu=1x, Terya=2x, Venu=3x
+        const factionBase = playerState.faction === 'marsu' ? 10 : playerState.faction === 'terya' ? 20 : 30;
+
+        // x-5 ile x-8 arası veya boss haritaları → x-8'e git
+        if ((zoneId % 10 >= 5 && zoneId % 10 <= 8) || zoneId === 44 || zoneId === 45) {
+            return factionBase + 8; // x-8 (18, 28, 38)
         }
+
+        // x-1 ile x-4 veya PvP girişleri → x-1'e git
+        return factionBase + 1; // x-1 (11, 21, 31)
+    };
+
+    // Yerinde Doğma (100 Elmas)
+    const handleRespawnHere = () => {
+        const RESPAWN_COST = 100;
+        if (playerState.gems >= RESPAWN_COST) {
+            onUpdatePlayer({
+                gems: playerState.gems - RESPAWN_COST,
+                hp: playerState.maxHp,
+                mana: playerState.maxMana
+            });
+            addFloatingText('💎 Yerinde Dirildin!', playerPosRef.current.x, 3, playerPosRef.current.y, 'text-purple-400 font-bold');
+            soundManager.playSFX('level_up');
+        } else {
+            addFloatingText('Yetersiz Elmas!', playerPosRef.current.x, 3, playerPosRef.current.y, 'text-red-500 font-bold');
+        }
+    };
+
+    // Güvenli Bölgede Doğma (Ücretsiz)
+    const handleRespawnSafe = () => {
+        const safeZone = getSafeZone();
+        onUpdatePlayer({
+            hp: playerState.maxHp,
+            mana: playerState.maxMana
+        });
+        props.onSwitchZone(safeZone);
     };
 
     const currentLevelStartXP = LEVEL_XP_REQUIREMENTS[playerState.level] || 0;
@@ -3198,6 +3229,68 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                     <WeatherParticles />
                 </Suspense>
             </Canvas>
+
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* ÖLÜM EKRANI OVERLAY */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {playerState.hp <= 0 && (
+                <div className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center animate-[fadeIn_0.5s]">
+                    {/* Kırmızı titreme efekti */}
+                    <div className="absolute inset-0 bg-red-900/30 animate-pulse pointer-events-none" />
+
+                    <div className="relative bg-gradient-to-b from-slate-900 to-black border-2 border-red-800 rounded-2xl p-8 w-96 shadow-[0_0_50px_rgba(220,38,38,0.5)] animate-[bounceIn_0.5s]">
+                        {/* Kafatası İkonu */}
+                        <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 bg-gradient-to-b from-red-900 to-red-950 rounded-full border-4 border-red-600 flex items-center justify-center shadow-lg">
+                            <span className="text-5xl animate-pulse">💀</span>
+                        </div>
+
+                        <div className="mt-8 text-center">
+                            <h1 className="text-4xl font-black text-red-500 mb-2 tracking-wider animate-pulse">ÖLDÜN!</h1>
+                            <p className="text-slate-400 text-sm mb-6">Karakter seviyesi: {playerState.level}</p>
+
+                            {/* Seçenekler */}
+                            <div className="space-y-4">
+                                {/* Yerinde Doğma - 100 Elmas */}
+                                <button
+                                    onClick={handleRespawnHere}
+                                    disabled={playerState.gems < 100}
+                                    className={`w-full py-4 rounded-xl border-2 flex items-center justify-center gap-3 font-bold text-lg transition-all ${playerState.gems >= 100
+                                            ? 'bg-gradient-to-r from-purple-700 to-purple-600 border-purple-400 text-white hover:from-purple-600 hover:to-purple-500 hover:scale-105 shadow-lg shadow-purple-900/50'
+                                            : 'bg-slate-800 border-slate-600 text-slate-500 cursor-not-allowed'
+                                        }`}
+                                >
+                                    <span className="text-2xl">💎</span>
+                                    YERİNDE DİRİL
+                                    <span className="bg-black/50 px-3 py-1 rounded-lg text-sm">100 Elmas</span>
+                                </button>
+                                <p className="text-xs text-slate-500 -mt-2">
+                                    Elmasın: <span className={playerState.gems >= 100 ? 'text-purple-400' : 'text-red-400'}>{playerState.gems}</span>
+                                </p>
+
+                                {/* Güvenli Bölgede Doğma - Ücretsiz */}
+                                <button
+                                    onClick={handleRespawnSafe}
+                                    className="w-full py-4 bg-gradient-to-r from-emerald-700 to-emerald-600 rounded-xl border-2 border-emerald-400 text-white font-bold text-lg flex items-center justify-center gap-3 hover:from-emerald-600 hover:to-emerald-500 hover:scale-105 transition-all shadow-lg shadow-emerald-900/50"
+                                >
+                                    <span className="text-2xl">🏠</span>
+                                    GÜVENLİ BÖLGEDE DİRİL
+                                    <span className="bg-black/50 px-3 py-1 rounded-lg text-sm text-emerald-300">ÜCRETSİZ</span>
+                                </button>
+                                <p className="text-xs text-slate-500 -mt-2">
+                                    {getSafeZone() % 10 >= 5 ? `${playerState.faction?.toUpperCase()} x-8 haritasında doğarsın` : `${playerState.faction?.toUpperCase()} x-1 haritasında doğarsın`}
+                                </p>
+                            </div>
+
+                            {/* Alt Bilgi */}
+                            <div className="mt-6 pt-4 border-t border-slate-700/50">
+                                <p className="text-xs text-slate-600">
+                                    ⚠️ Ölüm korkulu değildir, korkulan ölümsüzlükteki yalnızlıktır.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* --- HUD RENDER LAYER --- */}
 

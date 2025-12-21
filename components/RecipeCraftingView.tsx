@@ -13,38 +13,302 @@ interface RecipeCraftingViewProps {
 // CRAFT MALZEMELERİ - BOSS'LARDAN DÜŞER
 // ==============================================================
 export const CRAFT_MATERIALS = {
-    // TEMEL MALZEMELER (T1-T3 için, kolay toplanır)
+    // TEMEL MALZEMELER (T1-T3 için)
     'wood_log': { name: 'Odun Kütüğü', tier: 1, rarity: 'common', dropSource: 'Ağaçlar' },
     'iron_ore': { name: 'Demir Cevheri', tier: 1, rarity: 'common', dropSource: 'Kayalar' },
     'leather_scrap': { name: 'Deri Parçası', tier: 1, rarity: 'common', dropSource: 'Kurt, Domuz' },
     'herb_green': { name: 'Yeşil Ot', tier: 1, rarity: 'common', dropSource: 'Çalılar' },
     'crystal': { name: 'Kristal Parçası', tier: 2, rarity: 'uncommon', dropSource: 'Kristal Kayalar' },
 
-    // EPİK MALZEMELER (T4 için - Orta Bosslardan)
-    'ancient_core': { name: 'Kadim Öz', tier: 4, rarity: 'epic', dropSource: 'Orman Bekçisi (Boss)' },
-    'shadow_essence': { name: 'Gölge Özü', tier: 4, rarity: 'epic', dropSource: 'Karanlık Lord (Boss)' },
-    'flame_heart': { name: 'Alev Kalbi', tier: 4, rarity: 'epic', dropSource: 'Ateş Devası (Boss)' },
-    'frost_shard': { name: 'Buz Kırıntısı', tier: 4, rarity: 'epic', dropSource: 'Buzul Kolosu (Boss)' },
-    'storm_crystal': { name: 'Fırtına Kristali', tier: 4, rarity: 'epic', dropSource: 'Fırtına Devası (Boss)' },
+    // T4 EPİK MALZEMELER (Orta Bosslardan)
+    'ancient_core': { name: 'Kadim Öz', tier: 4, rarity: 'epic', dropSource: 'Orman Bekçisi' },
+    'shadow_essence': { name: 'Gölge Özü', tier: 4, rarity: 'epic', dropSource: 'Karanlık Lord' },
+    'flame_heart': { name: 'Alev Kalbi', tier: 4, rarity: 'epic', dropSource: 'Ateş Devası' },
+    'frost_shard': { name: 'Buz Kırıntısı', tier: 4, rarity: 'epic', dropSource: 'Buzul Kolosu' },
+    'storm_crystal': { name: 'Fırtına Kristali', tier: 4, rarity: 'epic', dropSource: 'Fırtına Devası' },
+    'holy_light': { name: 'Kutsal Işık', tier: 4, rarity: 'epic', dropSource: 'Işık Meleği' },
+    'dark_matter': { name: 'Karanlık Madde', tier: 4, rarity: 'epic', dropSource: 'Gölge Lordu' },
+    'nature_essence': { name: 'Doğa Özü', tier: 4, rarity: 'epic', dropSource: 'Orman Ruhu' },
 
-    // EFSANE MALZEMELER (T5 için - En Zor Bosslardan)
+    // T5 EFSANE MALZEMELER (En Zor Bosslardan)
     'dragon_scale': { name: 'Ejderha Pulu', tier: 5, rarity: 'legendary', dropSource: 'Kadim Ejderha Tiamat' },
     'void_fragment': { name: 'Boşluk Parçası', tier: 5, rarity: 'legendary', dropSource: 'Hiçlik Lordu' },
-    'celestial_essence': { name: 'Göksel Öz', tier: 5, rarity: 'legendary', dropSource: 'Işık Muhafızı' },
+    'celestial_essence': { name: 'Göksel Öz', tier: 5, rarity: 'legendary', dropSource: 'Cennet Muhafızı' },
     'demonic_core': { name: 'Şeytani Çekirdek', tier: 5, rarity: 'legendary', dropSource: 'Cehennem Prensi' },
     'phoenix_feather': { name: 'Anka Tüyü', tier: 5, rarity: 'legendary', dropSource: 'Anka Kuşu' },
-
-    // SET MALZEMELER (Özel Set Parçaları için)
-    'dragon_set_fragment': { name: 'Ejderha Set Parçası', tier: 5, rarity: 'legendary', dropSource: 'Tiamat (Nadir)' },
-    'void_set_fragment': { name: 'Hiçlik Set Parçası', tier: 5, rarity: 'legendary', dropSource: 'Hiçlik Lordu (Nadir)' },
-    'celestial_set_fragment': { name: 'Göksel Set Parçası', tier: 5, rarity: 'legendary', dropSource: 'Işık Muhafızı (Nadir)' },
+    'titan_bone': { name: 'Titan Kemiği', tier: 5, rarity: 'legendary', dropSource: 'Kadim Titan' },
+    'arcane_crystal': { name: 'Büyülü Kristal', tier: 5, rarity: 'legendary', dropSource: 'Büyü Lordu' },
+    'divine_thread': { name: 'İlahi İplik', tier: 5, rarity: 'legendary', dropSource: 'Işık Tanrıçası' },
 };
 
 // ==============================================================
-// CRAFT TARİFLERİ
+// SINIF VE SET BİLGİLERİ
 // ==============================================================
-const RECIPES: CraftingRecipe[] = [
-    // ============= CONSUMABLES (Kolay) =============
+const CLASSES = [
+    { id: 'warrior', name: 'Savaşçı', t4Set: 'Demir Fırtına', t5Set: 'Savaş Lordu', statType: 'strength' },
+    { id: 'arctic_knight', name: 'Buz Şövalyesi', t4Set: 'Buzul Muhafızı', t5Set: 'Ebedi Buz', statType: 'strength' },
+    { id: 'storm_rider', name: 'Fırtına Süvarisi', t4Set: 'Şimşek Atlısı', t5Set: 'Fırtına Lordu', statType: 'dexterity' },
+    { id: 'martial_artist', name: 'Dövüş Ustası', t4Set: 'Çelik Yumruk', t5Set: 'Ejderha Ustası', statType: 'dexterity' },
+    { id: 'ranger', name: 'Usta Okçu', t4Set: 'Orman Avcısı', t5Set: 'Gölge Okçu', statType: 'dexterity' },
+    { id: 'mage', name: 'Ulu Büyücü', t4Set: 'Kadim Büyü', t5Set: 'Arşibüyücü', statType: 'intelligence' },
+    { id: 'bard', name: 'Ozan', t4Set: 'Melodi Ustası', t5Set: 'Efsane Ozan', statType: 'intelligence' },
+    { id: 'priest', name: 'Işık Rahibi', t4Set: 'Kutsal Rahip', t5Set: 'Işık Peygamberi', statType: 'intelligence' },
+    { id: 'cleric', name: 'Ruhban', t4Set: 'Şifa Ustası', t5Set: 'Kutsal Şifacı', statType: 'intelligence' },
+    { id: 'reaper', name: 'Ölüm Meleği', t4Set: 'Gölge Avcısı', t5Set: 'Ölüm Lordu', statType: 'strength' },
+];
+
+// ==============================================================
+// TARİF OLUŞTURUCU FONKSİYONLARI
+// ==============================================================
+function generateClassRecipes(): CraftingRecipe[] {
+    const recipes: CraftingRecipe[] = [];
+
+    CLASSES.forEach(cls => {
+        // T4 Malzemeleri
+        const t4Mat = cls.statType === 'strength' ? 'flame_heart' :
+            cls.statType === 'dexterity' ? 'storm_crystal' : 'ancient_core';
+
+        // T5 Malzemeleri  
+        const t5Mat = cls.statType === 'strength' ? 'dragon_scale' :
+            cls.statType === 'dexterity' ? 'phoenix_feather' : 'arcane_crystal';
+
+        // ============= T4 SET =============
+        // T4 Silah
+        recipes.push({
+            id: `${cls.id}_weapon_t4`, category: 'weapon', levelReq: 24, goldCost: 15000,
+            resultItem: {
+                id: `${cls.id}_weapon_t4`, name: `${cls.t4Set} Silahı`, type: 'weapon', tier: 4,
+                rarity: 'epic', value: 8000, setId: `${cls.id}_t4_set`,
+                stats: { damage: 200 + (cls.statType === 'strength' ? 50 : 0), [cls.statType]: 40, critChance: 10 }
+            },
+            materials: [
+                { itemId: 'iron_ore', count: 80 },
+                { itemId: 'crystal', count: 20 },
+                { itemId: t4Mat, count: 5 },
+            ],
+        });
+
+        // T4 Zırh
+        recipes.push({
+            id: `${cls.id}_armor_t4`, category: 'armor', levelReq: 24, goldCost: 12000,
+            resultItem: {
+                id: `${cls.id}_armor_t4`, name: `${cls.t4Set} Zırhı`, type: 'armor', tier: 4,
+                rarity: 'epic', value: 6000, setId: `${cls.id}_t4_set`,
+                stats: { defense: 120, hp: 400, [cls.statType]: 25 }
+            },
+            materials: [
+                { itemId: 'iron_ore', count: 100 },
+                { itemId: 'leather_scrap', count: 40 },
+                { itemId: t4Mat, count: 4 },
+            ],
+        });
+
+        // T4 Miğfer
+        recipes.push({
+            id: `${cls.id}_helmet_t4`, category: 'armor', levelReq: 24, goldCost: 8000,
+            resultItem: {
+                id: `${cls.id}_helmet_t4`, name: `${cls.t4Set} Miğferi`, type: 'helmet', tier: 4,
+                rarity: 'epic', value: 4000, setId: `${cls.id}_t4_set`,
+                stats: { defense: 60, hp: 200, [cls.statType]: 15 }
+            },
+            materials: [
+                { itemId: 'iron_ore', count: 50 },
+                { itemId: 'leather_scrap', count: 20 },
+                { itemId: t4Mat, count: 2 },
+            ],
+        });
+
+        // T4 Pantolon
+        recipes.push({
+            id: `${cls.id}_pants_t4`, category: 'armor', levelReq: 24, goldCost: 10000,
+            resultItem: {
+                id: `${cls.id}_pants_t4`, name: `${cls.t4Set} Pantolonu`, type: 'pants', tier: 4,
+                rarity: 'epic', value: 5000, setId: `${cls.id}_t4_set`,
+                stats: { defense: 80, hp: 300, [cls.statType]: 20 }
+            },
+            materials: [
+                { itemId: 'iron_ore', count: 60 },
+                { itemId: 'leather_scrap', count: 30 },
+                { itemId: t4Mat, count: 3 },
+            ],
+        });
+
+        // ============= T5 SET (LEGENDARY) =============
+        // T5 Silah
+        recipes.push({
+            id: `${cls.id}_weapon_t5`, category: 'weapon', levelReq: 30, goldCost: 50000,
+            resultItem: {
+                id: `${cls.id}_weapon_t5`, name: `${cls.t5Set} Silahı`, type: 'weapon', tier: 5,
+                rarity: 'legendary', value: 25000, setId: `${cls.id}_t5_set`,
+                stats: { damage: 450 + (cls.statType === 'strength' ? 100 : 0), [cls.statType]: 100, critChance: 25 }
+            },
+            materials: [
+                { itemId: 'iron_ore', count: 200 },
+                { itemId: 'crystal', count: 50 },
+                { itemId: t5Mat, count: 8 },
+                { itemId: t4Mat, count: 15 },
+            ],
+        });
+
+        // T5 Zırh
+        recipes.push({
+            id: `${cls.id}_armor_t5`, category: 'armor', levelReq: 30, goldCost: 40000,
+            resultItem: {
+                id: `${cls.id}_armor_t5`, name: `${cls.t5Set} Zırhı`, type: 'armor', tier: 5,
+                rarity: 'legendary', value: 20000, setId: `${cls.id}_t5_set`,
+                stats: { defense: 280, hp: 1500, [cls.statType]: 60 }
+            },
+            materials: [
+                { itemId: 'iron_ore', count: 250 },
+                { itemId: 'leather_scrap', count: 100 },
+                { itemId: t5Mat, count: 6 },
+                { itemId: t4Mat, count: 12 },
+            ],
+        });
+
+        // T5 Miğfer
+        recipes.push({
+            id: `${cls.id}_helmet_t5`, category: 'armor', levelReq: 30, goldCost: 25000,
+            resultItem: {
+                id: `${cls.id}_helmet_t5`, name: `${cls.t5Set} Miğferi`, type: 'helmet', tier: 5,
+                rarity: 'legendary', value: 12000, setId: `${cls.id}_t5_set`,
+                stats: { defense: 140, hp: 800, [cls.statType]: 35 }
+            },
+            materials: [
+                { itemId: 'iron_ore', count: 120 },
+                { itemId: 'leather_scrap', count: 50 },
+                { itemId: t5Mat, count: 4 },
+                { itemId: t4Mat, count: 8 },
+            ],
+        });
+
+        // T5 Pantolon
+        recipes.push({
+            id: `${cls.id}_pants_t5`, category: 'armor', levelReq: 30, goldCost: 30000,
+            resultItem: {
+                id: `${cls.id}_pants_t5`, name: `${cls.t5Set} Pantolonu`, type: 'pants', tier: 5,
+                rarity: 'legendary', value: 15000, setId: `${cls.id}_t5_set`,
+                stats: { defense: 180, hp: 1000, [cls.statType]: 45 }
+            },
+            materials: [
+                { itemId: 'iron_ore', count: 150 },
+                { itemId: 'leather_scrap', count: 70 },
+                { itemId: t5Mat, count: 5 },
+                { itemId: t4Mat, count: 10 },
+            ],
+        });
+    });
+
+    return recipes;
+}
+
+// Universal Aksesuarlar (Çizme, Kolye, Küpe)
+function generateAccessoryRecipes(): CraftingRecipe[] {
+    const recipes: CraftingRecipe[] = [];
+    const statTypes = [
+        { id: 'str', name: 'Güç', stat: 'strength', t4Mat: 'flame_heart', t5Mat: 'dragon_scale' },
+        { id: 'dex', name: 'Çeviklik', stat: 'dexterity', t4Mat: 'storm_crystal', t5Mat: 'phoenix_feather' },
+        { id: 'int', name: 'Zeka', stat: 'intelligence', t4Mat: 'ancient_core', t5Mat: 'arcane_crystal' },
+        { id: 'vit', name: 'Dayanıklılık', stat: 'vitality', t4Mat: 'frost_shard', t5Mat: 'titan_bone' },
+        { id: 'lck', name: 'Şans', stat: 'luck', t4Mat: 'nature_essence', t5Mat: 'celestial_essence' },
+    ];
+
+    // T4 ve T5 Çizmeler
+    statTypes.forEach(st => {
+        // T4 Çizme
+        recipes.push({
+            id: `boots_${st.id}_t4`, category: 'armor', levelReq: 24, goldCost: 8000,
+            resultItem: {
+                id: `boots_${st.id}_t4`, name: `${st.name} Çizmeleri (T4)`, type: 'boots', tier: 4,
+                rarity: 'epic', value: 4000,
+                stats: { defense: 50, [st.stat]: 30, speed: 5 }
+            },
+            materials: [
+                { itemId: 'leather_scrap', count: 60 },
+                { itemId: st.t4Mat, count: 2 },
+            ],
+        });
+
+        // T5 Çizme
+        recipes.push({
+            id: `boots_${st.id}_t5`, category: 'armor', levelReq: 30, goldCost: 20000,
+            resultItem: {
+                id: `boots_${st.id}_t5`, name: `${st.name} Çizmeleri (T5)`, type: 'boots', tier: 5,
+                rarity: 'legendary', value: 10000,
+                stats: { defense: 100, [st.stat]: 60, speed: 15 }
+            },
+            materials: [
+                { itemId: 'leather_scrap', count: 150 },
+                { itemId: st.t5Mat, count: 3 },
+                { itemId: st.t4Mat, count: 6 },
+            ],
+        });
+
+        // T4 Kolye
+        recipes.push({
+            id: `necklace_${st.id}_t4`, category: 'accessory', levelReq: 24, goldCost: 10000,
+            resultItem: {
+                id: `necklace_${st.id}_t4`, name: `${st.name} Kolyesi (T4)`, type: 'necklace', tier: 4,
+                rarity: 'epic', value: 5000,
+                stats: { [st.stat]: 40, hp: 200 }
+            },
+            materials: [
+                { itemId: 'crystal', count: 30 },
+                { itemId: st.t4Mat, count: 3 },
+            ],
+        });
+
+        // T5 Kolye
+        recipes.push({
+            id: `necklace_${st.id}_t5`, category: 'accessory', levelReq: 30, goldCost: 30000,
+            resultItem: {
+                id: `necklace_${st.id}_t5`, name: `${st.name} Kolyesi (T5)`, type: 'necklace', tier: 5,
+                rarity: 'legendary', value: 15000,
+                stats: { [st.stat]: 80, hp: 600, mana: 300 }
+            },
+            materials: [
+                { itemId: 'crystal', count: 80 },
+                { itemId: st.t5Mat, count: 4 },
+                { itemId: st.t4Mat, count: 8 },
+            ],
+        });
+
+        // T4 Küpe
+        recipes.push({
+            id: `earring_${st.id}_t4`, category: 'accessory', levelReq: 24, goldCost: 10000,
+            resultItem: {
+                id: `earring_${st.id}_t4`, name: `${st.name} Küpesi (T4)`, type: 'earring', tier: 4,
+                rarity: 'epic', value: 5000,
+                stats: { [st.stat]: 35, critChance: 5 }
+            },
+            materials: [
+                { itemId: 'crystal', count: 25 },
+                { itemId: st.t4Mat, count: 2 },
+            ],
+        });
+
+        // T5 Küpe
+        recipes.push({
+            id: `earring_${st.id}_t5`, category: 'accessory', levelReq: 30, goldCost: 25000,
+            resultItem: {
+                id: `earring_${st.id}_t5`, name: `${st.name} Küpesi (T5)`, type: 'earring', tier: 5,
+                rarity: 'legendary', value: 12000,
+                stats: { [st.stat]: 70, critChance: 15, critDamage: 25 }
+            },
+            materials: [
+                { itemId: 'crystal', count: 60 },
+                { itemId: st.t5Mat, count: 3 },
+                { itemId: st.t4Mat, count: 6 },
+            ],
+        });
+    });
+
+    return recipes;
+}
+
+// Temel Tarifler (T1-T3 + İksirler)
+const BASE_RECIPES: CraftingRecipe[] = [
+    // İksirler
     {
         id: 'hp_potion_medium', category: 'consumable', levelReq: 5, goldCost: 50,
         resultItem: { id: 'potion_hp_medium', name: 'Orta Can İksiri', type: 'consumable', tier: 2, rarity: 'common', value: 50, stats: { hp: 500 } },
@@ -61,7 +325,7 @@ const RECIPES: CraftingRecipe[] = [
         materials: [{ itemId: 'herb_green', count: 3 }],
     },
 
-    // ============= T2 SİLAHLAR (Kolay) =============
+    // T2 Silahlar
     {
         id: 'sword_iron', category: 'weapon', levelReq: 10, goldCost: 500,
         resultItem: { id: 'sword_t2', name: 'Demir Kılıç', type: 'weapon', tier: 2, rarity: 'uncommon', value: 250, stats: { damage: 45, strength: 5 } },
@@ -78,19 +342,24 @@ const RECIPES: CraftingRecipe[] = [
         materials: [{ itemId: 'wood_log', count: 10 }, { itemId: 'leather_scrap', count: 5 }],
     },
 
-    // ============= T3 SİLAHLAR (Orta) =============
+    // T3 Silahlar
     {
         id: 'sword_steel', category: 'weapon', levelReq: 18, goldCost: 2000,
         resultItem: { id: 'sword_t3', name: 'Çelik Kılıç', type: 'weapon', tier: 3, rarity: 'rare', value: 1000, stats: { damage: 120, strength: 15, critChance: 5 } },
         materials: [{ itemId: 'iron_ore', count: 40 }, { itemId: 'leather_scrap', count: 10 }, { itemId: 'crystal', count: 5 }],
     },
     {
-        id: 'axe_battle', category: 'weapon', levelReq: 18, goldCost: 2000,
-        resultItem: { id: 'axe_t3', name: 'Savaş Baltası', type: 'weapon', tier: 3, rarity: 'rare', value: 1000, stats: { damage: 135, strength: 20 } },
-        materials: [{ itemId: 'iron_ore', count: 45 }, { itemId: 'wood_log', count: 20 }, { itemId: 'crystal', count: 5 }],
+        id: 'staff_crystal', category: 'weapon', levelReq: 18, goldCost: 2000,
+        resultItem: { id: 'staff_t3', name: 'Kristal Asa', type: 'weapon', tier: 3, rarity: 'rare', value: 1000, stats: { damage: 100, intelligence: 25, mana: 100 } },
+        materials: [{ itemId: 'wood_log', count: 30 }, { itemId: 'crystal', count: 15 }],
+    },
+    {
+        id: 'bow_hunter', category: 'weapon', levelReq: 18, goldCost: 2000,
+        resultItem: { id: 'bow_t3', name: 'Avcı Yayı', type: 'weapon', tier: 3, rarity: 'rare', value: 1000, stats: { damage: 110, dexterity: 20, critChance: 8 } },
+        materials: [{ itemId: 'wood_log', count: 25 }, { itemId: 'leather_scrap', count: 15 }, { itemId: 'crystal', count: 5 }],
     },
 
-    // ============= T2-T3 ZIRHLAR =============
+    // T2-T3 Zırhlar
     {
         id: 'armor_leather', category: 'armor', levelReq: 10, goldCost: 400,
         resultItem: { id: 'armor_t2', name: 'Sert Deri Zırh', type: 'armor', tier: 2, rarity: 'uncommon', value: 200, stats: { defense: 25, dexterity: 5 } },
@@ -101,180 +370,31 @@ const RECIPES: CraftingRecipe[] = [
         resultItem: { id: 'armor_t3', name: 'Zincir Zırh', type: 'armor', tier: 3, rarity: 'rare', value: 800, stats: { defense: 60, strength: 10 } },
         materials: [{ itemId: 'iron_ore', count: 30 }, { itemId: 'leather_scrap', count: 10 }, { itemId: 'crystal', count: 3 }],
     },
+];
 
-    // ============= T4 SİLAHLAR (ZOR - EPİK MALZEME GEREKLİ) =============
-    {
-        id: 'sword_mythril', category: 'weapon', levelReq: 24, goldCost: 15000,
-        resultItem: { id: 'sword_t4', name: 'Mithril Kılıç', type: 'weapon', tier: 4, rarity: 'epic', value: 5000, stats: { damage: 250, strength: 30, critChance: 10 } },
-        materials: [
-            { itemId: 'iron_ore', count: 100 },
-            { itemId: 'crystal', count: 25 },
-            { itemId: 'ancient_core', count: 3 }, // Boss drop!
-        ],
-    },
-    {
-        id: 'staff_arcane', category: 'weapon', levelReq: 24, goldCost: 15000,
-        resultItem: { id: 'staff_t4', name: 'Kadim Asa', type: 'weapon', tier: 4, rarity: 'epic', value: 5000, stats: { damage: 200, intelligence: 50, mana: 300 } },
-        materials: [
-            { itemId: 'wood_log', count: 100 },
-            { itemId: 'crystal', count: 30 },
-            { itemId: 'shadow_essence', count: 3 }, // Boss drop!
-        ],
-    },
-    {
-        id: 'bow_hunter', category: 'weapon', levelReq: 24, goldCost: 15000,
-        resultItem: { id: 'bow_t4', name: 'Avcı Yayı', type: 'weapon', tier: 4, rarity: 'epic', value: 5000, stats: { damage: 220, dexterity: 40, critChance: 15 } },
-        materials: [
-            { itemId: 'wood_log', count: 80 },
-            { itemId: 'leather_scrap', count: 50 },
-            { itemId: 'storm_crystal', count: 3 }, // Boss drop!
-        ],
-    },
-    {
-        id: 'armor_plate_t4', category: 'armor', levelReq: 24, goldCost: 12000,
-        resultItem: { id: 'armor_t4', name: 'Plaka Zırh', type: 'armor', tier: 4, rarity: 'epic', value: 4500, stats: { defense: 150, hp: 500 } },
-        materials: [
-            { itemId: 'iron_ore', count: 150 },
-            { itemId: 'crystal', count: 20 },
-            { itemId: 'flame_heart', count: 2 }, // Boss drop!
-        ],
-    },
-
-    // ============= T5 SİLAHLAR (ÇOK ZOR - EFSANE MALZEME GEREKLİ) =============
-    {
-        id: 'sword_dragon_t5', category: 'weapon', levelReq: 30, goldCost: 50000,
-        resultItem: { id: 'sword_t5', name: 'Ejderha Ateşi Kılıcı', type: 'weapon', tier: 5, rarity: 'legendary', value: 20000, stats: { damage: 500, strength: 100, critChance: 25 } },
-        materials: [
-            { itemId: 'iron_ore', count: 300 },
-            { itemId: 'crystal', count: 50 },
-            { itemId: 'dragon_scale', count: 5 }, // Tiamat'tan!
-            { itemId: 'flame_heart', count: 10 },
-        ],
-    },
-    {
-        id: 'staff_void_t5', category: 'weapon', levelReq: 30, goldCost: 50000,
-        resultItem: { id: 'staff_t5', name: 'Hiçlik Asası', type: 'weapon', tier: 5, rarity: 'legendary', value: 20000, stats: { damage: 450, intelligence: 120, mana: 500 } },
-        materials: [
-            { itemId: 'wood_log', count: 300 },
-            { itemId: 'crystal', count: 50 },
-            { itemId: 'void_fragment', count: 5 }, // Hiçlik Lordu'ndan!
-            { itemId: 'shadow_essence', count: 10 },
-        ],
-    },
-    {
-        id: 'bow_celestial_t5', category: 'weapon', levelReq: 30, goldCost: 50000,
-        resultItem: { id: 'bow_t5', name: 'Göksel Yay', type: 'weapon', tier: 5, rarity: 'legendary', value: 20000, stats: { damage: 420, dexterity: 110, critChance: 30 } },
-        materials: [
-            { itemId: 'wood_log', count: 200 },
-            { itemId: 'leather_scrap', count: 150 },
-            { itemId: 'crystal', count: 50 },
-            { itemId: 'celestial_essence', count: 5 }, // Işık Muhafızı'ndan!
-            { itemId: 'phoenix_feather', count: 3 },
-        ],
-    },
-    {
-        id: 'armor_dragon_t5', category: 'armor', levelReq: 30, goldCost: 40000,
-        resultItem: { id: 'armor_t5', name: 'Ejderha Zırhı', type: 'armor', tier: 5, rarity: 'legendary', value: 15000, stats: { defense: 300, hp: 2000, strength: 20 } },
-        materials: [
-            { itemId: 'iron_ore', count: 400 },
-            { itemId: 'leather_scrap', count: 100 },
-            { itemId: 'dragon_scale', count: 10 }, // Tiamat'tan çok!
-            { itemId: 'flame_heart', count: 5 },
-        ],
-    },
-
-    // ============= SET PARÇALARI (EN ZOR - TAM SET İÇİN) =============
-    // EJDERHA SETİ
-    {
-        id: 'dragon_set_helmet', category: 'set', levelReq: 30, goldCost: 30000,
-        resultItem: { id: 'helmet_dragon_set', name: 'Ejderha Miğferi', type: 'helmet', tier: 5, rarity: 'legendary', value: 10000, stats: { defense: 100, hp: 500, strength: 15 }, setId: 'dragon_set' },
-        materials: [
-            { itemId: 'dragon_scale', count: 3 },
-            { itemId: 'dragon_set_fragment', count: 1 },
-            { itemId: 'iron_ore', count: 100 },
-        ],
-    },
-    {
-        id: 'dragon_set_armor', category: 'set', levelReq: 30, goldCost: 50000,
-        resultItem: { id: 'armor_dragon_set', name: 'Ejderha Göğüslüğü', type: 'armor', tier: 5, rarity: 'legendary', value: 18000, stats: { defense: 250, hp: 1500, strength: 30 }, setId: 'dragon_set' },
-        materials: [
-            { itemId: 'dragon_scale', count: 8 },
-            { itemId: 'dragon_set_fragment', count: 2 },
-            { itemId: 'iron_ore', count: 200 },
-            { itemId: 'flame_heart', count: 5 },
-        ],
-    },
-    {
-        id: 'dragon_set_pants', category: 'set', levelReq: 30, goldCost: 35000,
-        resultItem: { id: 'pants_dragon_set', name: 'Ejderha Pantolonu', type: 'pants', tier: 5, rarity: 'legendary', value: 12000, stats: { defense: 150, hp: 800, dexterity: 20 }, setId: 'dragon_set' },
-        materials: [
-            { itemId: 'dragon_scale', count: 5 },
-            { itemId: 'dragon_set_fragment', count: 1 },
-            { itemId: 'leather_scrap', count: 150 },
-        ],
-    },
-    {
-        id: 'dragon_set_boots', category: 'set', levelReq: 30, goldCost: 25000,
-        resultItem: { id: 'boots_dragon_set', name: 'Ejderha Çizmeleri', type: 'boots', tier: 5, rarity: 'legendary', value: 8000, stats: { defense: 80, dexterity: 25, speed: 10 }, setId: 'dragon_set' },
-        materials: [
-            { itemId: 'dragon_scale', count: 2 },
-            { itemId: 'dragon_set_fragment', count: 1 },
-            { itemId: 'leather_scrap', count: 100 },
-        ],
-    },
-    {
-        id: 'dragon_set_weapon', category: 'set', levelReq: 30, goldCost: 60000,
-        resultItem: { id: 'weapon_dragon_set', name: 'Ejderha Kılıcı', type: 'weapon', tier: 5, rarity: 'legendary', value: 25000, stats: { damage: 600, strength: 80, critChance: 20, fireDamage: 100 }, setId: 'dragon_set' },
-        materials: [
-            { itemId: 'dragon_scale', count: 10 },
-            { itemId: 'dragon_set_fragment', count: 3 },
-            { itemId: 'flame_heart', count: 10 },
-            { itemId: 'iron_ore', count: 300 },
-        ],
-    },
-
-    // HİÇLİK SETİ
-    {
-        id: 'void_set_armor', category: 'set', levelReq: 30, goldCost: 55000,
-        resultItem: { id: 'armor_void_set', name: 'Hiçlik Zırhı', type: 'armor', tier: 5, rarity: 'legendary', value: 20000, stats: { defense: 200, hp: 1000, intelligence: 50, mana: 500 }, setId: 'void_set' },
-        materials: [
-            { itemId: 'void_fragment', count: 8 },
-            { itemId: 'void_set_fragment', count: 2 },
-            { itemId: 'shadow_essence', count: 10 },
-            { itemId: 'crystal', count: 100 },
-        ],
-    },
-    {
-        id: 'void_set_weapon', category: 'set', levelReq: 30, goldCost: 65000,
-        resultItem: { id: 'weapon_void_set', name: 'Hiçlik Asası', type: 'weapon', tier: 5, rarity: 'legendary', value: 28000, stats: { damage: 500, intelligence: 150, mana: 800, voidDamage: 150 }, setId: 'void_set' },
-        materials: [
-            { itemId: 'void_fragment', count: 12 },
-            { itemId: 'void_set_fragment', count: 3 },
-            { itemId: 'shadow_essence', count: 15 },
-            { itemId: 'crystal', count: 150 },
-        ],
-    },
+// TÜM TARİFLERİ BİRLEŞTİR
+const RECIPES: CraftingRecipe[] = [
+    ...BASE_RECIPES,
+    ...generateClassRecipes(),      // 80 tarif (10 sınıf x 4 parça x 2 tier)
+    ...generateAccessoryRecipes(),  // 30 tarif (5 stat x 3 aksesuar x 2 tier)
 ];
 
 // ==============================================================
 // COMPONENT
 // ==============================================================
 const RecipeCraftingView: React.FC<RecipeCraftingViewProps> = ({ playerState, onCraft, onClose }) => {
-    const [selectedCategory, setSelectedCategory] = useState<'all' | 'weapon' | 'armor' | 'consumable' | 'set' | 'craftable'>('all');
+    const [selectedCategory, setSelectedCategory] = useState<'all' | 'weapon' | 'armor' | 'accessory' | 'consumable' | 'craftable'>('all');
     const [selectedRecipe, setSelectedRecipe] = useState<CraftingRecipe | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [isCrafting, setIsCrafting] = useState(false);
+    const [tierFilter, setTierFilter] = useState<number | null>(null);
 
-    // Malzeme sayısını al
     const getMaterialCount = (itemId: string) => {
         return playerState.inventory.filter(i =>
-            i.id === itemId ||
-            i.id.startsWith(itemId) ||
-            i.id.includes(itemId)
+            i.id === itemId || i.id.startsWith(itemId) || i.id.includes(itemId)
         ).length;
     };
 
-    // Craft yapılabilir mi?
     const canCraft = (recipe: CraftingRecipe) => {
         const playerGold = (playerState as any).gold || playerState.credits || 0;
         if (playerGold < recipe.goldCost) return false;
@@ -285,18 +405,19 @@ const RecipeCraftingView: React.FC<RecipeCraftingViewProps> = ({ playerState, on
         return true;
     };
 
-    // Filtreleme - "Üretilebilir" kategorisi için sadece yapılabilenleri göster
     const filteredRecipes = useMemo(() => {
         return RECIPES.filter(recipe => {
-            // Kategori filtresi
-            if (selectedCategory === 'craftable') {
-                return canCraft(recipe);
-            }
-            const matchesCategory = selectedCategory === 'all' || recipe.category === selectedCategory;
+            if (selectedCategory === 'craftable') return canCraft(recipe);
+
+            const matchesCategory = selectedCategory === 'all' ||
+                recipe.category === selectedCategory ||
+                (selectedCategory === 'armor' && ['armor', 'helmet', 'pants', 'boots'].includes(recipe.resultItem.type));
             const matchesSearch = recipe.resultItem.name.toLowerCase().includes(searchTerm.toLowerCase());
-            return matchesCategory && matchesSearch;
+            const matchesTier = tierFilter === null || recipe.resultItem.tier === tierFilter;
+
+            return matchesCategory && matchesSearch && matchesTier;
         });
-    }, [selectedCategory, searchTerm, playerState.inventory]);
+    }, [selectedCategory, searchTerm, tierFilter, playerState.inventory]);
 
     const handleCraftClick = () => {
         if (!selectedRecipe || !canCraft(selectedRecipe) || isCrafting) return;
@@ -321,61 +442,71 @@ const RecipeCraftingView: React.FC<RecipeCraftingViewProps> = ({ playerState, on
     };
 
     const getMaterialInfo = (itemId: string) => {
-        return CRAFT_MATERIALS[itemId as keyof typeof CRAFT_MATERIALS] || { name: itemId.replace(/_/g, ' '), tier: 1, rarity: 'common', dropSource: 'Bilinmiyor' };
+        return CRAFT_MATERIALS[itemId as keyof typeof CRAFT_MATERIALS] ||
+            { name: itemId.replace(/_/g, ' '), tier: 1, rarity: 'common', dropSource: 'Bilinmiyor' };
     };
 
     return (
         <div className="w-full h-full flex flex-col bg-[#0a0a12]">
             {/* Header */}
-            <div className="p-4 border-b border-slate-800 bg-gradient-to-r from-blue-900/20 to-purple-900/20">
-                <h2 className="text-xl font-bold text-blue-400 mb-3 flex items-center gap-2">
-                    <FlaskConical size={24} /> Üretim Tezgahı
-                </h2>
+            <div className="p-3 border-b border-slate-800 bg-gradient-to-r from-blue-900/20 to-purple-900/20">
+                <div className="flex items-center justify-between mb-2">
+                    <h2 className="text-lg font-bold text-blue-400 flex items-center gap-2">
+                        <FlaskConical size={20} /> Üretim ({RECIPES.length} Tarif)
+                    </h2>
+                    <div className="flex gap-1">
+                        {[null, 2, 3, 4, 5].map(t => (
+                            <button
+                                key={t || 'all'}
+                                onClick={() => setTierFilter(t)}
+                                className={`px-2 py-1 text-xs rounded ${tierFilter === t ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400'}`}
+                            >
+                                {t ? `T${t}` : 'Tümü'}
+                            </button>
+                        ))}
+                    </div>
+                </div>
 
-                {/* Arama */}
-                <div className="relative mb-3">
+                <div className="relative mb-2">
                     <input
                         type="text"
                         placeholder="Tarif ara..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-black/60 border border-slate-700 rounded-lg p-2 pl-9 text-sm text-white focus:border-blue-600 outline-none"
+                        className="w-full bg-black/60 border border-slate-700 rounded p-2 pl-8 text-sm text-white focus:border-blue-600 outline-none"
                     />
-                    <Search className="absolute left-3 top-2.5 text-slate-500" size={16} />
+                    <Search className="absolute left-2 top-2.5 text-slate-500" size={14} />
                 </div>
 
-                {/* Kategoriler */}
-                <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+                <div className="flex gap-1 overflow-x-auto pb-1 no-scrollbar">
                     {[
-                        { id: 'all', icon: Hammer, label: 'Tümü', color: 'yellow' },
-                        { id: 'craftable', icon: Sparkles, label: 'Üretilebilir', color: 'green' },
-                        { id: 'weapon', icon: Sword, label: 'Silah', color: 'red' },
-                        { id: 'armor', icon: Shield, label: 'Zırh', color: 'blue' },
-                        { id: 'consumable', icon: FlaskConical, label: 'İksir', color: 'pink' },
-                        { id: 'set', icon: Crown, label: 'Set', color: 'orange' },
+                        { id: 'all', label: 'Tümü' },
+                        { id: 'craftable', label: '✓ Yapılabilir' },
+                        { id: 'weapon', label: '⚔️ Silah' },
+                        { id: 'armor', label: '🛡️ Zırh' },
+                        { id: 'accessory', label: '💎 Aksesuar' },
+                        { id: 'consumable', label: '🧪 İksir' },
                     ].map(cat => (
                         <button
                             key={cat.id}
                             onClick={() => setSelectedCategory(cat.id as any)}
-                            className={`px-3 py-1.5 rounded text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap ${selectedCategory === cat.id
-                                ? `bg-${cat.color}-700 text-white`
+                            className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${selectedCategory === cat.id
+                                ? 'bg-blue-600 text-white'
                                 : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
                                 }`}
                         >
-                            <cat.icon size={14} /> {cat.label}
+                            {cat.label}
                         </button>
                     ))}
                 </div>
             </div>
 
-            {/* İçerik */}
+            {/* Content */}
             <div className="flex-1 flex overflow-hidden">
-                {/* Sol - Tarif Listesi */}
-                <div className="w-1/3 border-r border-slate-800 overflow-y-auto p-2 space-y-1">
+                {/* Left - Recipe List */}
+                <div className="w-2/5 border-r border-slate-800 overflow-y-auto p-1 space-y-0.5">
                     {filteredRecipes.length === 0 ? (
-                        <div className="text-center py-8 text-slate-500">
-                            <p>Bu kategoride tarif bulunamadı.</p>
-                        </div>
+                        <div className="text-center py-8 text-slate-500 text-sm">Tarif bulunamadı</div>
                     ) : (
                         filteredRecipes.map(recipe => {
                             const craftable = canCraft(recipe);
@@ -383,81 +514,72 @@ const RecipeCraftingView: React.FC<RecipeCraftingViewProps> = ({ playerState, on
                                 <button
                                     key={recipe.id}
                                     onClick={() => setSelectedRecipe(recipe)}
-                                    className={`w-full text-left p-2 rounded-lg border transition-all flex items-center gap-3 ${selectedRecipe?.id === recipe.id
-                                        ? 'bg-blue-900/30 border-blue-600'
-                                        : craftable
-                                            ? 'bg-slate-900/60 border-green-700/50 hover:border-green-500'
-                                            : 'bg-slate-900/40 border-slate-700/50 hover:border-slate-600'
+                                    className={`w-full text-left p-1.5 rounded border transition-all flex items-center gap-2 ${selectedRecipe?.id === recipe.id
+                                        ? 'bg-blue-900/40 border-blue-500'
+                                        : craftable ? 'bg-green-900/20 border-green-700/30' : 'bg-slate-900/40 border-slate-700/30'
                                         }`}
                                 >
-                                    <div className={`w-10 h-10 rounded border flex items-center justify-center bg-black/60 ${getRarityColor(recipe.resultItem.rarity)}`}>
-                                        <span className="text-lg">T{recipe.resultItem.tier}</span>
+                                    <div className={`w-8 h-8 rounded border flex items-center justify-center text-xs font-bold bg-black/60 ${getRarityColor(recipe.resultItem.rarity)}`}>
+                                        T{recipe.resultItem.tier}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <div className={`font-bold text-sm truncate ${getRarityColor(recipe.resultItem.rarity).split(' ')[0]}`}>
+                                        <div className={`text-xs font-bold truncate ${getRarityColor(recipe.resultItem.rarity).split(' ')[0]}`}>
                                             {recipe.resultItem.name}
                                         </div>
-                                        <div className="text-[10px] text-slate-500">Lvl {recipe.levelReq}</div>
+                                        <div className="text-[9px] text-slate-500">Lv{recipe.levelReq} • {recipe.goldCost.toLocaleString()}G</div>
                                     </div>
-                                    {craftable && <CheckCircle size={16} className="text-green-500 flex-shrink-0" />}
+                                    {craftable && <CheckCircle size={12} className="text-green-500" />}
                                 </button>
                             );
                         })
                     )}
                 </div>
 
-                {/* Sağ - Detay */}
-                <div className="flex-1 p-4 overflow-y-auto">
+                {/* Right - Detail */}
+                <div className="flex-1 p-3 overflow-y-auto">
                     {selectedRecipe ? (
-                        <div className="space-y-4">
-                            {/* Başlık */}
-                            <div className="flex items-center gap-4 pb-4 border-b border-slate-700">
-                                <div className={`w-16 h-16 rounded-xl border-2 flex items-center justify-center bg-black/60 ${getRarityColor(selectedRecipe.resultItem.rarity)}`}>
-                                    <span className="text-2xl font-bold">T{selectedRecipe.resultItem.tier}</span>
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3 pb-3 border-b border-slate-700">
+                                <div className={`w-14 h-14 rounded-lg border-2 flex items-center justify-center bg-black/60 text-xl font-bold ${getRarityColor(selectedRecipe.resultItem.rarity)}`}>
+                                    T{selectedRecipe.resultItem.tier}
                                 </div>
                                 <div>
-                                    <h3 className={`text-2xl font-bold ${getRarityColor(selectedRecipe.resultItem.rarity).split(' ')[0]}`}>
+                                    <h3 className={`text-xl font-bold ${getRarityColor(selectedRecipe.resultItem.rarity).split(' ')[0]}`}>
                                         {selectedRecipe.resultItem.name}
                                     </h3>
-                                    <div className="flex gap-2 mt-1">
-                                        <span className="text-xs bg-slate-800 px-2 py-0.5 rounded">{selectedRecipe.category}</span>
-                                        <span className="text-xs bg-yellow-900/50 text-yellow-400 px-2 py-0.5 rounded">Seviye {selectedRecipe.levelReq}</span>
-                                    </div>
+                                    {selectedRecipe.resultItem.setId && (
+                                        <div className="text-xs text-orange-400">🛡️ Set: {selectedRecipe.resultItem.setId.replace(/_/g, ' ')}</div>
+                                    )}
                                 </div>
                             </div>
 
-                            {/* Statlar */}
-                            <div className="bg-slate-900/50 p-3 rounded-lg">
-                                <h4 className="text-sm font-bold text-blue-400 mb-2 flex items-center gap-2"><Star size={14} /> Özellikler</h4>
-                                <div className="grid grid-cols-2 gap-2">
+                            <div className="bg-slate-900/50 p-2 rounded">
+                                <h4 className="text-xs font-bold text-blue-400 mb-1">📊 Özellikler</h4>
+                                <div className="grid grid-cols-2 gap-1">
                                     {Object.entries(selectedRecipe.resultItem.stats || {}).map(([key, val]) => (
-                                        <div key={key} className="flex justify-between bg-black/30 px-2 py-1 rounded text-sm">
-                                            <span className="text-slate-400 capitalize">{key}</span>
+                                        <div key={key} className="flex justify-between bg-black/30 px-2 py-0.5 rounded text-xs">
+                                            <span className="text-slate-400">{key}</span>
                                             <span className="text-white font-bold">+{val}</span>
                                         </div>
                                     ))}
                                 </div>
                             </div>
 
-                            {/* Malzemeler */}
-                            <div className="bg-slate-900/50 p-3 rounded-lg">
-                                <h4 className="text-sm font-bold text-yellow-400 mb-2 flex items-center gap-2"><Scroll size={14} /> Gerekli Malzemeler</h4>
-                                <div className="space-y-2">
+                            <div className="bg-slate-900/50 p-2 rounded">
+                                <h4 className="text-xs font-bold text-yellow-400 mb-1">📦 Malzemeler</h4>
+                                <div className="space-y-1">
                                     {selectedRecipe.materials.map((mat, idx) => {
-                                        const playerHas = getMaterialCount(mat.itemId);
-                                        const isEnough = playerHas >= mat.count;
-                                        const matInfo = getMaterialInfo(mat.itemId);
+                                        const has = getMaterialCount(mat.itemId);
+                                        const enough = has >= mat.count;
+                                        const info = getMaterialInfo(mat.itemId);
                                         return (
-                                            <div key={idx} className="flex justify-between items-center bg-black/40 p-2 rounded-lg border border-slate-700/50">
+                                            <div key={idx} className="flex justify-between items-center bg-black/40 p-1.5 rounded text-xs">
                                                 <div>
-                                                    <div className={`font-medium text-sm ${getRarityColor(matInfo.rarity).split(' ')[0]}`}>
-                                                        {matInfo.name}
-                                                    </div>
-                                                    <div className="text-[10px] text-slate-500">📍 {matInfo.dropSource}</div>
+                                                    <div className={getRarityColor(info.rarity).split(' ')[0]}>{info.name}</div>
+                                                    <div className="text-[9px] text-slate-500">📍 {info.dropSource}</div>
                                                 </div>
-                                                <div className={`font-bold flex items-center gap-2 ${isEnough ? 'text-green-400' : 'text-red-400'}`}>
-                                                    {playerHas} / {mat.count}
-                                                    {isEnough ? <CheckCircle size={14} /> : <XCircle size={14} />}
+                                                <div className={`font-bold ${enough ? 'text-green-400' : 'text-red-400'}`}>
+                                                    {has}/{mat.count}
                                                 </div>
                                             </div>
                                         );
@@ -465,39 +587,27 @@ const RecipeCraftingView: React.FC<RecipeCraftingViewProps> = ({ playerState, on
                                 </div>
                             </div>
 
-                            {/* Maliyet */}
-                            <div className="flex justify-between items-center bg-yellow-900/20 p-3 rounded-lg border border-yellow-700/50">
-                                <span className="text-slate-300">Üretim Maliyeti</span>
-                                <span className={`font-bold text-lg ${((playerState as any).gold || playerState.credits || 0) >= selectedRecipe.goldCost ? 'text-yellow-400' : 'text-red-400'}`}>
-                                    {selectedRecipe.goldCost.toLocaleString()} Altın
+                            <div className="flex justify-between bg-yellow-900/20 p-2 rounded text-sm">
+                                <span>Maliyet</span>
+                                <span className={((playerState as any).gold || playerState.credits || 0) >= selectedRecipe.goldCost ? 'text-yellow-400' : 'text-red-400'}>
+                                    {selectedRecipe.goldCost.toLocaleString()}G
                                 </span>
                             </div>
 
-                            {/* Craft Butonu */}
                             <button
                                 onClick={handleCraftClick}
                                 disabled={!canCraft(selectedRecipe) || isCrafting}
-                                className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all ${isCrafting
-                                    ? 'bg-slate-700 cursor-wait'
-                                    : canCraft(selectedRecipe)
-                                        ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-lg'
-                                        : 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                                className={`w-full py-3 rounded-lg font-bold flex items-center justify-center gap-2 ${isCrafting ? 'bg-slate-700' :
+                                    canCraft(selectedRecipe) ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' : 'bg-slate-800 text-slate-500'
                                     }`}
                             >
-                                {isCrafting ? (
-                                    <><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> ÜRETİLİYOR...</>
-                                ) : canCraft(selectedRecipe) ? (
-                                    <><Hammer size={20} /> EŞYAYI ÜRET</>
-                                ) : (
-                                    <><Lock size={18} /> EKSİK MALZEME</>
-                                )}
+                                {isCrafting ? '⏳ Üretiliyor...' : canCraft(selectedRecipe) ? '🔨 ÜRET' : '🔒 Eksik'}
                             </button>
                         </div>
                     ) : (
-                        <div className="h-full flex flex-col items-center justify-center text-slate-600">
-                            <Hammer size={60} className="mb-4 opacity-30" />
-                            <p className="font-bold">Bir tarif seç</p>
-                            <p className="text-sm mt-1 opacity-60">Sol menüden tarif seçerek detayları gör</p>
+                        <div className="h-full flex flex-col items-center justify-center text-slate-600 text-sm">
+                            <Hammer size={40} className="mb-2 opacity-30" />
+                            <p>Tarif seç</p>
                         </div>
                     )}
                 </div>

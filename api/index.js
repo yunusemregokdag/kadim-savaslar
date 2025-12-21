@@ -120,8 +120,9 @@ export default async function handler(req, res) {
         if (url.match(/\/api\/characters\/?$/) && req.method === 'POST') {
             const decoded = verifyToken(req);
             if (!decoded) return res.status(401).json({ error: 'Yetkilendirme gerekli' });
-            const { name, charClass } = req.body || {};
-            if (!name || !charClass) return res.status(400).json({ error: 'İsim ve sınıf gerekli' });
+            const { name } = req.body || {};
+            const charClass = req.body?.class || req.body?.charClass;
+            if (!name || !charClass) return res.status(400).json({ error: 'İsim ve sınıf gerekli', received: req.body });
 
             const character = new Character({ odaId: decoded.userId, name, class: charClass });
             await character.save();

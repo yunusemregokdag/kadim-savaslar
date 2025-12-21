@@ -654,7 +654,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                 onExit={() => { setActiveZone(null); setActiveTab('skills'); }}
                 onSwitchZone={(newZoneId) => setActiveZone(newZoneId)}
                 onLoot={handleLoot}
-                onUpdatePlayer={() => { }}
+                onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
                 onEquip={handleEquipItem}
                 onUnequip={handleUnequipItem}
                 onUseItem={handleUseItem}

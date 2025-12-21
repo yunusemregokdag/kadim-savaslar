@@ -3021,6 +3021,12 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
             if (e.key === 'm' || e.key === 'M') { setShowMap(prev => !prev); }
 
+            // TAB: Envanter aç/kapat
+            if (e.key === 'Tab') {
+                e.preventDefault(); // Tarayıcı varsayılan davranışını engelle
+                setShowInventory(prev => !prev);
+            }
+
             if (e.key === 't' || e.key === 'T') {
                 const hostileTarget = findTarget();
                 if (hostileTarget) setTarget(hostileTarget);

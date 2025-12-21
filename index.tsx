@@ -85,9 +85,8 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 const root = ReactDOM.createRoot(rootElement);
 console.log("Details: Rendering root");
 
-// Placeholder Client ID - Kendi ID'nizi alınca burayı değiştirin veya .env'e koyun
-// Örn: import.meta.env.VITE_GOOGLE_CLIENT_ID
-const GOOGLE_CLIENT_ID = "BURAYA_GOOGLE_CLIENT_ID_GELECEK";
+// Google Client ID
+const GOOGLE_CLIENT_ID = "519507497096-ka6f141tsfrrehnnalcnlvbiggji458n.apps.googleusercontent.com";
 
 root.render(
   <React.StrictMode>

@@ -137,36 +137,12 @@ function AppContent() {
         setIsAdmin(false);
     };
 
-    // API URL Check (Debug için)
-    const apiUrl = import.meta.env.VITE_API_URL;
-    const isProd = import.meta.env.PROD;
-
     if (loading) {
         return (
             <div className="h-screen w-full flex flex-col items-center justify-center bg-[#0f172a] text-white">
                 <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-500 mb-4"></div>
                 <h2 className="text-xl font-bold animate-pulse text-yellow-500">KADİM SAVAŞLAR</h2>
-                <p className="text-slate-400 mt-2">Sunucuya bağlanılıyor...</p>
-
-                {/* Debug Bilgisi */}
-                <div className="mt-8 p-3 bg-black/50 rounded font-mono text-[10px] text-slate-500 border border-slate-800">
-                    <div>Environment: {isProd ? 'Production' : 'Development'}</div>
-                    <div>API URL: {apiUrl ? apiUrl : (isProd ? '⚠️ TANIMSIZ (HATA!)' : 'Localhost (Proxy)')}</div>
-                </div>
-
-                {/* API URL Eksikse Uyarı (Sadece Prod) */}
-                {!apiUrl && isProd && (
-                    <div className="mt-4 max-w-md bg-red-900/20 border border-red-500/50 p-4 rounded text-left animate-bounce">
-                        <h3 className="text-red-500 font-bold mb-2">⚠️ EKSİK YAPILANDIRMA</h3>
-                        <p className="text-xs text-red-200">
-                            <strong>VITE_API_URL</strong> bulunamadı! Backend'e bağlanılamıyor.
-                            <br /><br />
-                            Lütfen Vercel Ayarlarından (Environment Variables) bu değeri ekleyin.
-                            <br />
-                            Değer: Railway Backend Adresiniz
-                        </p>
-                    </div>
-                )}
+                <p className="text-slate-400 mt-2">Yükleniyor...</p>
             </div>
         );
     }

@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "mobile:sync": "npm run build && npx cap sync android",
     "mobile:open": "npx cap open android",
+    "start": "node server/index.js",
     "server": "node server/index.js",
     "server:dev": "nodemon --watch server/src --ext ts,json --exec tsx server/src/server.ts",
     "server:build": "tsc -p server/tsconfig.json",

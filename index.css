@@ -82,3 +82,120 @@ canvas~div {
 .fixed {
   isolation: isolate;
 }
+
+/* ===============================================
+   MOBILE RESPONSIVE STYLES
+   =============================================== */
+
+/* Mobile-first approach for character select */
+@media (max-width: 768px) {
+  /* Force single column layout on mobile */
+  .character-select-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  /* Make 3D canvas smaller on mobile */
+  .character-canvas-mobile {
+    height: 200px !important;
+    min-height: 200px !important;
+    max-height: 200px !important;
+  }
+
+  /* Character info panel full width on mobile */
+  .character-info-panel {
+    width: 100% !important;
+    padding: 1rem !important;
+  }
+
+  /* Smaller font sizes on mobile */
+  .mobile-title {
+    font-size: 1.25rem !important;
+  }
+
+  .mobile-text {
+    font-size: 0.875rem !important;
+  }
+
+  .mobile-text-sm {
+    font-size: 0.75rem !important;
+  }
+
+  /* Full width buttons on mobile */
+  .mobile-full-btn {
+    width: 100% !important;
+  }
+
+  /* Reduce padding on mobile */
+  .mobile-p-2 {
+    padding: 0.5rem !important;
+  }
+
+  /* Class selector - horizontal scroll on mobile */
+  .class-selector-mobile {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .class-selector-mobile > * {
+    flex-shrink: 0 !important;
+    min-width: 100px !important;
+  }
+
+  /* Faction cards - smaller on mobile */
+  .faction-card-mobile {
+    padding: 1rem !important;
+    margin: 0.5rem !important;
+  }
+
+  /* Input fields larger touch targets */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    min-height: 44px !important;
+    font-size: 16px !important; /* Prevents iOS zoom */
+  }
+
+  /* Buttons larger for touch */
+  button {
+    min-height: 44px !important;
+  }
+
+  /* Hide complex 3D elements on very small screens */
+  .hide-on-mobile {
+    display: none !important;
+  }
+
+  /* Show simple version on mobile */
+  .show-on-mobile {
+    display: block !important;
+  }
+}
+
+/* Very small screens (phones in portrait) */
+@media (max-width: 480px) {
+  .character-canvas-mobile {
+    height: 150px !important;
+  }
+
+  .mobile-title {
+    font-size: 1rem !important;
+  }
+
+  /* Stack everything vertically */
+  .mobile-stack {
+    flex-direction: column !important;
+  }
+}
+
+/* Disable hover effects on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .hover-effect:hover {
+    transform: none !important;
+  }
+}

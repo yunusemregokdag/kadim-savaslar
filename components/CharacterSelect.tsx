@@ -416,12 +416,56 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
     // STEP 2: CLASS SELECTION
     const activeClassData = CLASSES[selectedClass];
 
+    // Mobile state for class selector visibility
+    const [showMobileClassList, setShowMobileClassList] = useState(false);
+
     return (
-        <div className="fixed inset-0 w-full h-full bg-slate-950 overflow-hidden flex">
+        <div className="fixed inset-0 w-full h-full bg-slate-950 overflow-auto md:overflow-hidden flex flex-col md:flex-row">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black opacity-80 z-0"></div>
 
-            {/* --- LEFT SIDEBAR (Class List) --- */}
-            <div className="relative z-20 w-80 h-full bg-black/40 backdrop-blur-md border-r border-slate-800/50 flex flex-col p-4 overflow-y-auto hidden md:flex">
+            {/* MOBILE: Back button and class selector toggle */}
+            <div className="md:hidden relative z-30 flex items-center justify-between p-4 bg-black/60 border-b border-slate-800">
+                <button
+                    onClick={() => setStep('faction')}
+                    className="flex items-center gap-2 text-slate-400"
+                >
+                    <ChevronLeft size={20} />
+                    <span className="text-sm">Geri</span>
+                </button>
+                <button
+                    onClick={() => setShowMobileClassList(!showMobileClassList)}
+                    className="px-4 py-2 bg-slate-800 text-yellow-400 rounded-lg text-sm font-bold"
+                >
+                    {cleanText(activeClassData.name)} ▼
+                </button>
+            </div>
+
+            {/* MOBILE: Class selector dropdown */}
+            {showMobileClassList && (
+                <div className="md:hidden relative z-40 bg-black/90 p-4 border-b border-slate-700">
+                    <div className="flex flex-wrap gap-2">
+                        {(Object.keys(CLASSES) as CharacterClass[]).map(cls => {
+                            const clsData = CLASSES[cls];
+                            const isSelected = selectedClass === cls;
+                            return (
+                                <button
+                                    key={cls}
+                                    onClick={() => { setSelectedClass(cls); setShowMobileClassList(false); }}
+                                    className={`px-3 py-2 rounded-lg text-sm font-bold transition-all ${isSelected
+                                            ? 'bg-yellow-600 text-white'
+                                            : 'bg-slate-800 text-slate-400'
+                                        }`}
+                                >
+                                    {cleanText(clsData.name)}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+
+            {/* --- LEFT SIDEBAR (Class List) - DESKTOP ONLY --- */}
+            <div className="relative z-20 w-80 h-full bg-black/40 backdrop-blur-md border-r border-slate-800/50 flex-col p-4 overflow-y-auto hidden md:flex">
                 <button
                     onClick={() => setStep('faction')}
                     className="flex items-center gap-2 text-slate-400 hover:text-white mb-6 transition-colors group"
@@ -458,18 +502,21 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
             </div>
 
             {/* --- CENTER (Character Display) --- */}
-            <div className="relative flex-1 h-full z-10">
-                {/* Header Info */}
-                <div className="absolute top-8 left-0 w-full text-center z-50 pointer-events-none">
-                    <h1 className="text-5xl md:text-7xl font-black text-white mb-2 drop-shadow-2xl" style={{ fontFamily: 'Cinzel, serif' }}>
+            <div className="relative flex-1 z-10 h-48 md:h-full min-h-[200px]">
+                {/* Header Info - Hidden on mobile, shown on desktop */}
+                <div className="absolute top-2 md:top-8 left-0 w-full text-center z-50 pointer-events-none">
+                    <h1 className="text-2xl md:text-7xl font-black text-white mb-1 md:mb-2 drop-shadow-2xl" style={{ fontFamily: 'Cinzel, serif' }}>
                         {cleanText(language === 'en' ? (activeClassData.name_en || activeClassData.name) : activeClassData.name)}
                     </h1>
-                    <div className="flex items-center justify-center gap-4">
+                    <div className="hidden md:flex items-center justify-center gap-4">
                         <div className="h-px w-16 bg-yellow-500/50" />
                         <div className="text-lg md:text-xl text-yellow-400 font-bold tracking-[0.3em] uppercase drop-shadow-md">
                             {cleanText(language === 'en' ? (activeClassData.role_en || activeClassData.role) : activeClassData.role)}
                         </div>
                         <div className="h-px w-16 bg-yellow-500/50" />
+                    </div>
+                    <div className="md:hidden text-sm text-yellow-400 font-bold">
+                        {cleanText(activeClassData.role)}
                     </div>
                 </div>
 
@@ -513,9 +560,10 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
                 </Canvas>
             </div>
 
-            {/* --- RIGHT SIDEBAR (Details & Confirm) --- */}
-            <div className="relative z-20 w-96 h-full bg-black/60 backdrop-blur-xl border-l border-slate-700/50 p-6 flex flex-col justify-between">
-                <div>
+            {/* --- RIGHT SIDEBAR (Details & Confirm) - Scrollable on mobile --- */}
+            <div className="relative z-20 w-full md:w-96 bg-black/60 backdrop-blur-xl border-t md:border-t-0 md:border-l border-slate-700/50 p-4 md:p-6 flex flex-col md:justify-between">
+                {/* Description - Collapsed on mobile */}
+                <div className="hidden md:block">
                     <h2 className="text-2xl font-bold text-white mb-6 uppercase border-b border-slate-700 pb-4 flex items-center gap-2">
                         <Info size={20} />
                         {cleanText(activeClassData.name)}
@@ -524,52 +572,51 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
                     <p className="text-slate-300 text-base leading-relaxed mb-8">
                         {cleanText(language === 'en' ? (activeClassData.description_en || activeClassData.description) : activeClassData.description)}
                     </p>
+                </div>
 
-                    <div className="space-y-6">
-                        {/* Mock Stats */}
-                        <div>
-                            <div className="flex justify-between text-xs font-black text-slate-400 mb-2 tracking-wider">
-                                <span>{t.DAMAGE}</span>
-                                <span className="text-yellow-400">{'★'.repeat(selectedClass === 'reaper' || selectedClass === 'archmage' ? 5 : 3)}</span>
-                            </div>
-                            <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                                <div className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400" style={{ width: selectedClass === 'reaper' ? '90%' : selectedClass === 'archmage' ? '85%' : '60%' }}></div>
-                            </div>
+                {/* Stats - Compact on mobile */}
+                <div className="space-y-3 md:space-y-6 mb-4">
+                    <div>
+                        <div className="flex justify-between text-xs font-black text-slate-400 mb-1 tracking-wider">
+                            <span>{t.DAMAGE}</span>
+                            <span className="text-yellow-400">{'★'.repeat(selectedClass === 'reaper' || selectedClass === 'archmage' ? 5 : 3)}</span>
                         </div>
-                        <div>
-                            <div className="flex justify-between text-xs font-black text-slate-400 mb-2 tracking-wider">
-                                <span>{t.SURVIVAL}</span>
-                                <span className="text-blue-400">{'★'.repeat(selectedClass === 'warrior' ? 5 : 2)}</span>
-                            </div>
-                            <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                                <div className="h-full bg-gradient-to-r from-blue-700 to-blue-400" style={{ width: selectedClass === 'warrior' ? '90%' : '40%' }}></div>
-                            </div>
+                        <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400" style={{ width: selectedClass === 'reaper' ? '90%' : selectedClass === 'archmage' ? '85%' : '60%' }}></div>
                         </div>
-                        <div>
-                            <div className="flex justify-between text-xs font-black text-slate-400 mb-2 tracking-wider">
-                                <span>{t.DIFFICULTY}</span>
-                                <span className="text-red-400">{'★'.repeat(selectedClass === 'cleric' ? 4 : 2)}</span>
-                            </div>
-                            <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                                <div className="h-full bg-gradient-to-r from-red-700 to-red-500" style={{ width: selectedClass === 'cleric' ? '70%' : '30%' }}></div>
-                            </div>
+                    </div>
+                    <div>
+                        <div className="flex justify-between text-xs font-black text-slate-400 mb-1 tracking-wider">
+                            <span>{t.SURVIVAL}</span>
+                            <span className="text-blue-400">{'★'.repeat(selectedClass === 'warrior' ? 5 : 2)}</span>
+                        </div>
+                        <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-blue-700 to-blue-400" style={{ width: selectedClass === 'warrior' ? '90%' : '40%' }}></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div className="flex justify-between text-xs font-black text-slate-400 mb-1 tracking-wider">
+                            <span>{t.DIFFICULTY}</span>
+                            <span className="text-red-400">{'★'.repeat(selectedClass === 'cleric' ? 4 : 2)}</span>
+                        </div>
+                        <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-red-700 to-red-500" style={{ width: selectedClass === 'cleric' ? '70%' : '30%' }}></div>
                         </div>
                     </div>
                 </div>
 
-                <div className="space-y-4">
-                    <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-700">
-                        <label className="text-xs text-slate-400 font-bold uppercase mb-2 block">{t.HERO_NAME}</label>
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="text"
-                                value={nickname}
-                                onChange={(e) => setNickname(e.target.value)}
-                                placeholder={t.ENTER_NAME}
-                                className="bg-transparent w-full text-white text-lg font-bold outline-none placeholder:text-slate-600"
-                                maxLength={12}
-                            />
-                        </div>
+                {/* Name input and button */}
+                <div className="space-y-3">
+                    <div className="bg-slate-900/50 rounded-xl p-3 md:p-4 border border-slate-700">
+                        <label className="text-xs text-slate-400 font-bold uppercase mb-1 block">{t.HERO_NAME}</label>
+                        <input
+                            type="text"
+                            value={nickname}
+                            onChange={(e) => setNickname(e.target.value)}
+                            placeholder={t.ENTER_NAME}
+                            className="bg-transparent w-full text-white text-lg font-bold outline-none placeholder:text-slate-600"
+                            maxLength={12}
+                        />
                     </div>
 
                     {error && (
@@ -590,7 +637,7 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
                     >
                         {loading ? '...' : t.START_ADVENTURE}
                     </button>
-                    <button onClick={() => setStep('faction')} className="w-full text-slate-500 text-sm hover:text-white transition-colors">
+                    <button onClick={() => setStep('faction')} className="w-full text-slate-500 text-sm hover:text-white transition-colors py-2">
                         ← {t.CHOOSE_SIDE}
                     </button>
                 </div>

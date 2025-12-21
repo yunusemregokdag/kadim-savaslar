@@ -630,58 +630,70 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
     const handleQuestProgress = () => { };
     const handleClaimQuest = () => { };
 
-    if (loading) {
-        return (
-            <div className="h-full w-full flex flex-col items-center justify-center bg-slate-950 text-white">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-500 mb-4"></div>
-                <h2 className="text-xl font-bold animate-pulse">Kadim Evren Yükleniyor...</h2>
-                <div className="text-slate-500 text-sm mt-2">Karakter verileri senkronize ediliyor</div>
-            </div>
-        );
-    }
+    // NOT: Early return kullanmıyoruz çünkü React Hook kurallarını ihlal eder (Error #310)
+    // Bunun yerine aşağıda conditional rendering kullanıyoruz
 
-    if (activeZone) {
-        return (
-            <div className="relative w-full h-full">
-                <ActiveZoneView
-                    zoneId={activeZone}
+    // Loading durumu - Ana return içinde koşullu olarak gösterilecek
+    const loadingScreen = (
+        <div className="h-full w-full flex flex-col items-center justify-center bg-slate-950 text-white">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-500 mb-4"></div>
+            <h2 className="text-xl font-bold animate-pulse">Kadim Evren Yükleniyor...</h2>
+            <div className="text-slate-500 text-sm mt-2">Karakter verileri senkronize ediliyor</div>
+        </div>
+    );
+
+    // ActiveZone görünümü - Ana return içinde koşullu olarak gösterilecek
+    const activeZoneScreen = activeZone ? (
+        <div className="relative w-full h-full">
+            <ActiveZoneView
+                zoneId={activeZone}
+                playerState={playerStats}
+                chatHistory={messages}
+                onSendChat={(msg) => handleSendMessage(msg, 'global')}
+                onReceiveChat={(msg) => setMessages(prev => [...prev, msg])}
+                onExit={() => { setActiveZone(null); setActiveTab('skills'); }}
+                onSwitchZone={(newZoneId) => setActiveZone(newZoneId)}
+                onLoot={handleLoot}
+                onUpdatePlayer={() => { }}
+                onEquip={handleEquipItem}
+                onUnequip={handleUnequipItem}
+                onUseItem={handleUseItem}
+                socketRef={socketRef}
+                onQuestProgress={handleQuestProgress}
+                onClaimQuest={handleClaimQuest}
+                onOpenCrafting={() => setShowCrafting(true)}
+                onQuickPotion={() => { }}
+                onInteraction={(type, id) => { if (type === 'portal') setActiveZone(Number(id) || null); }}
+                isAdmin={isAdmin}
+            />
+
+            {/* Trade Modal Overlay */}
+            {activeTrade && (
+                <TradeView
+                    trade={activeTrade}
                     playerState={playerStats}
-                    chatHistory={messages}
-                    onSendChat={(msg) => handleSendMessage(msg, 'global')}
-                    onReceiveChat={(msg) => setMessages(prev => [...prev, msg])}
-                    onExit={() => { setActiveZone(null); setActiveTab('skills'); }}
-                    onSwitchZone={(newZoneId) => setActiveZone(newZoneId)}
-                    onLoot={handleLoot}
-                    onUpdatePlayer={() => { }}
-                    onEquip={handleEquipItem}
-                    onUnequip={handleUnequipItem}
-                    onUseItem={handleUseItem}
-                    socketRef={socketRef}
-                    onQuestProgress={handleQuestProgress}
-                    onClaimQuest={handleClaimQuest}
-                    onOpenCrafting={() => setShowCrafting(true)}
-                    onQuickPotion={() => { }}
-                    onInteraction={(type, id) => { if (type === 'portal') setActiveZone(Number(id) || null); }}
-                    isAdmin={isAdmin}
+                    onAddItem={handleAddTradeItem}
+                    onSetGold={handleSetTradeGold}
+                    onConfirm={handleConfirmTrade}
+                    onCancel={handleCancelTrade}
+                    onClose={() => handleCancelTrade()}
                 />
+            )}
 
-                {/* Trade Modal Overlay */}
-                {activeTrade && (
-                    <TradeView
-                        trade={activeTrade}
-                        playerState={playerStats}
-                        onAddItem={handleAddTradeItem}
-                        onSetGold={handleSetTradeGold}
-                        onConfirm={handleConfirmTrade}
-                        onCancel={handleCancelTrade}
-                        onClose={() => handleCancelTrade()}
-                    />
-                )}
+            {showCrafting && <RecipeCraftingView playerState={playerStats} onCraft={() => { }} onClose={() => setShowCrafting(false)} />}
+        </div>
+    ) : null;
 
-                {showCrafting && <RecipeCraftingView playerState={playerStats} onCraft={() => { }} onClose={() => setShowCrafting(false)} />}
-            </div>
-        );
+    // Loading durumunda loading ekranını göster
+    if (loading) {
+        return loadingScreen;
     }
+
+    // ActiveZone varsa o ekranı göster
+    if (activeZone) {
+        return activeZoneScreen;
+    }
+
 
     return (
         <ErrorBoundary>

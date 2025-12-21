@@ -28,30 +28,40 @@ const userSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
+// ============================================
+// BETA MODE - Tüm yeni karakterler max stats ile başlar
+// Production'da bu değerleri düşür!
+// ============================================
+const BETA_MODE = true;
+
 // Karakter Şeması
 const characterSchema = new mongoose.Schema({
     odaId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     name: { type: String, required: true },
     class: { type: String, required: true },
     faction: { type: String, default: 'marsu' },
-    level: { type: Number, default: 1 },
-    exp: { type: Number, default: 0 },
-    credits: { type: Number, default: 500 },
-    gems: { type: Number, default: 10 },
-    honor: { type: Number, default: 0 },
-    rankPoints: { type: Number, default: 0 },
-    rank: { type: Number, default: 0 },
-    hp: { type: Number, default: 500 },
-    maxHp: { type: Number, default: 500 },
-    mana: { type: Number, default: 100 },
-    maxMana: { type: Number, default: 100 },
-    damage: { type: Number, default: 20 },
-    defense: { type: Number, default: 5 },
-    strength: { type: Number, default: 10 },
-    dexterity: { type: Number, default: 10 },
-    intelligence: { type: Number, default: 10 },
-    vitality: { type: Number, default: 10 },
-    statPoints: { type: Number, default: 0 },
+    // BETA: Max level ve kaynaklar
+    level: { type: Number, default: BETA_MODE ? 30 : 1 },
+    exp: { type: Number, default: BETA_MODE ? 999999 : 0 },
+    credits: { type: Number, default: BETA_MODE ? 1000000 : 500 },
+    gems: { type: Number, default: BETA_MODE ? 10000 : 10 },
+    honor: { type: Number, default: BETA_MODE ? 50000 : 0 },
+    rankPoints: { type: Number, default: BETA_MODE ? 10000 : 0 },
+    rank: { type: Number, default: BETA_MODE ? 10 : 0 },
+    // BETA: Max HP/Mana
+    hp: { type: Number, default: BETA_MODE ? 5000 : 500 },
+    maxHp: { type: Number, default: BETA_MODE ? 5000 : 500 },
+    mana: { type: Number, default: BETA_MODE ? 2000 : 100 },
+    maxMana: { type: Number, default: BETA_MODE ? 2000 : 100 },
+    // BETA: Yüksek damage/defense
+    damage: { type: Number, default: BETA_MODE ? 500 : 20 },
+    defense: { type: Number, default: BETA_MODE ? 200 : 5 },
+    // BETA: Max base stats
+    strength: { type: Number, default: BETA_MODE ? 100 : 10 },
+    dexterity: { type: Number, default: BETA_MODE ? 100 : 10 },
+    intelligence: { type: Number, default: BETA_MODE ? 100 : 10 },
+    vitality: { type: Number, default: BETA_MODE ? 100 : 10 },
+    statPoints: { type: Number, default: BETA_MODE ? 50 : 0 },
     inventory: { type: Array, default: [] },
     equipment: { type: Object, default: {} },
     ownedWings: { type: Array, default: [] },

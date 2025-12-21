@@ -457,8 +457,8 @@ io.on('connection', (socket) => {
 // ============================================
 const PORT = process.env.PORT || 3001;
 
-// Vercel ortamında değilsek veya local geliştirme yapıyorsak dinle
-if (!process.env.VERCEL) {
+// Vercel ortamında değilsek veya PORT tanımlıysa (Railway gibi) dinle
+if (process.env.PORT || !process.env.VERCEL) {
     server.listen(PORT, '0.0.0.0', () => {
         console.log(`🚀 Oyun Sunucusu Çalışıyor: http://0.0.0.0:${PORT}`);
         console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);

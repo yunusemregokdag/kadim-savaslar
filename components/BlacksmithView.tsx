@@ -76,6 +76,13 @@ const BlacksmithView: React.FC<BlacksmithViewProps> = ({ playerState, onUpgrade,
     const handleUpgradeClick = () => {
         if (!selectedItem || !selectedScroll) return;
 
+        // TIER CHECK: Scroll tier must match item tier!
+        if (selectedScroll.tier !== selectedItem.tier) {
+            setUpgradeResult('fail');
+            setMessage(`HATA: T${selectedScroll.tier} parşömen sadece T${selectedScroll.tier} ekipman yükseltebilir!`);
+            return;
+        }
+
         setIsUpgrading(true);
         setUpgradeResult('none');
         setMessage('Demir dövülüyor...');

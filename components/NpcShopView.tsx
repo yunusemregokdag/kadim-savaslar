@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Item, PlayerState, PetItem, WingItem } from '../types';
-import { ShoppingBasket, Shield, Sword, Box, DollarSign, X, Bird, Feather } from 'lucide-react';
+import { ShoppingBasket, Shield, Sword, Box, DollarSign, X, Bird, Feather, Sparkles } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { POTIONS, PETS_DATA, WINGS_DATA, ARMOR_SETS } from '../constants';
 
@@ -33,22 +33,22 @@ const WING_PRICES: Record<number, number> = {
     5: 1000000
 };
 
-// Basic Shops Stock
+// Basic Shops Stock - ONLY T1-T2 ITEMS (Higher tiers from drops/crafting)
+// Prices are HIGH to encourage player economy
 const SHOP_ITEMS: Item[] = [
-    // Consumables
-    ...POTIONS,
-    // Armor Sets (T1-T5)
-    ...ARMOR_SETS,
-    // Basic Gear (T1)
-    { id: 'shop_w1', name: 'Acemi Kılıcı', tier: 1, type: 'weapon', rarity: 'common', value: 100 },
-    // Some Mats
-    { id: 'shop_m1', name: 'Boş Şişe', tier: 1, type: 'material', rarity: 'common', value: 10 },
-    // Upgrade Scrolls (T1-T5)
-    { id: 'scroll_t1', name: 'Kutsal Parşömen (T1)', tier: 1, type: 'upgrade_scroll', rarity: 'common', value: 500 },
-    { id: 'scroll_t2', name: 'Kutsal Parşömen (T2)', tier: 2, type: 'upgrade_scroll', rarity: 'uncommon', value: 1500 },
-    { id: 'scroll_t3', name: 'Kutsal Parşömen (T3)', tier: 3, type: 'upgrade_scroll', rarity: 'rare', value: 5000 },
-    { id: 'scroll_t4', name: 'Kutsal Parşömen (T4)', tier: 4, type: 'upgrade_scroll', rarity: 'epic', value: 15000 },
-    { id: 'scroll_t5', name: 'Kutsal Parşömen (T5)', tier: 5, type: 'upgrade_scroll', rarity: 'legendary', value: 50000 },
+    // Consumables (pahalı!)
+    ...POTIONS.map(p => ({ ...p, value: (p.value || 50) * 5 })), // 5x pahalı
+    // Basic Gear (ONLY T1-T2)
+    { id: 'shop_w1', name: 'Acemi Kılıcı', tier: 1, type: 'weapon', rarity: 'common', value: 500 },
+    { id: 'shop_w2', name: 'Çelik Kılıcı', tier: 2, type: 'weapon', rarity: 'uncommon', value: 2500 },
+    { id: 'shop_a1', name: 'Deri Zırh', tier: 1, type: 'armor', rarity: 'common', value: 400 },
+    { id: 'shop_a2', name: 'Çelik Zırh', tier: 2, type: 'armor', rarity: 'uncommon', value: 2000 },
+    // Materials (pahalı - oyuncular arasında ekonomi için)
+    { id: 'shop_m1', name: 'Boş Şişe', tier: 1, type: 'material', rarity: 'common', value: 50 },
+    { id: 'shop_m2', name: 'Demir Külçe', tier: 1, type: 'material', rarity: 'common', value: 200 },
+    // Upgrade Scrolls - ONLY T1-T2 (T3+ from drops/crafting!)
+    { id: 'scroll_t1', name: 'Kutsal Parşömen (T1)', tier: 1, type: 'upgrade_scroll', rarity: 'common', value: 2500, description: 'Sadece T1 ekipman yükseltir' },
+    { id: 'scroll_t2', name: 'Kutsal Parşömen (T2)', tier: 2, type: 'upgrade_scroll', rarity: 'uncommon', value: 10000, description: 'Sadece T2 ekipman yükseltir' },
 ];
 
 const NpcShopView: React.FC<NpcShopViewProps> = ({ playerState, onBuy, onBuyPet, onBuyWing, onClose }) => {
@@ -260,20 +260,27 @@ const NpcShopView: React.FC<NpcShopViewProps> = ({ playerState, onBuy, onBuyPet,
 
                             return (
                                 <div key={item.id} className="bg-[#291d18] border border-[#4a3b32] p-3 rounded flex gap-3 hover:border-amber-600 transition-colors group">
-                                    <div className="w-12 h-12 bg-black/40 rounded flex items-center justify-center border border-[#3f2e26]">
+                                    <div className="w-12 h-12 bg-black/40 rounded flex items-center justify-center border border-[#3f2e26] relative">
                                         {item.type === 'consumable' ? <Box size={20} className="text-red-400" /> :
-                                            <Sword size={20} className="text-slate-400" />}
+                                            item.type === 'upgrade_scroll' ? <Sparkles size={20} className="text-blue-400" /> :
+                                                <Sword size={20} className="text-slate-400" />}
+                                        {item.tier && <span className="absolute -top-1 -right-1 bg-slate-800 text-[8px] px-1 rounded text-amber-400">T{item.tier}</span>}
                                     </div>
                                     <div className="flex-1 flex flex-col justify-between">
                                         <div>
                                             <div className="text-sm font-bold text-amber-100 group-hover:text-white">{item.name}</div>
                                             <div className="text-[10px] text-amber-500/60 uppercase">{item.type}</div>
+                                            {/* Show stats/buffs */}
+                                            {(item as any).damage && <div className="text-[9px] text-red-400">+{(item as any).damage} Hasar</div>}
+                                            {(item as any).defense && <div className="text-[9px] text-blue-400">+{(item as any).defense} Savunma</div>}
+                                            {(item as any).hp && <div className="text-[9px] text-green-400">+{(item as any).hp} Can</div>}
+                                            {(item as any).description && <div className="text-[9px] text-slate-400 italic">{(item as any).description}</div>}
                                         </div>
                                         <div className="flex justify-between items-center mt-2">
                                             <div className="flex items-center gap-2">
-                                                <span className="text-yellow-500 font-mono text-xs font-bold">{discountedPrice} G</span>
+                                                <span className="text-yellow-500 font-mono text-xs font-bold">{discountedPrice.toLocaleString()} G</span>
                                                 {hasDiscount && (
-                                                    <span className="text-slate-500 font-mono text-[10px] line-through">{originalPrice} G</span>
+                                                    <span className="text-slate-500 font-mono text-[10px] line-through">{originalPrice.toLocaleString()} G</span>
                                                 )}
                                             </div>
                                             <button

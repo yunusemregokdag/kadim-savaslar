@@ -3,13 +3,10 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://yunusemkdag.github.io/kadim-savaslar",
   "main": "electron/main.js",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
     "preview": "vite preview",
     "mobile:sync": "npm run build && npx cap sync android",
     "mobile:open": "npx cap open android",

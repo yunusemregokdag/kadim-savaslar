@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Item, PlayerState } from '../types';
-import { Hammer, ArrowUp, AlertTriangle, Sparkles, X, Shield, Sword, Package, Wrench, Coins } from 'lucide-react';
+import { Hammer, ArrowUp, AlertTriangle, Sparkles, X, Shield, Sword, Package, Wrench, Coins, FlaskConical } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+import RecipeCraftingView from './RecipeCraftingView';
 
 interface BlacksmithViewProps {
     playerState: any; // Using any for compatibility
     onUpgrade: (item: Item, scroll: Item) => { success: boolean, burned: boolean, newPlus: number };
     onRepair?: (item: Item, cost: number) => boolean;
+    onCraft?: (recipe: any) => void;
     onClose: () => void;
 }
 
@@ -46,9 +48,9 @@ const getRepairCost = (item: Item): number => {
     return Math.floor((tierMultiplier * (rarityMultiplier[item.rarity] || 1)) + plusBonus);
 };
 
-type TabType = 'upgrade' | 'repair';
+type TabType = 'upgrade' | 'repair' | 'craft';
 
-const BlacksmithView: React.FC<BlacksmithViewProps> = ({ playerState, onUpgrade, onRepair, onClose }) => {
+const BlacksmithView: React.FC<BlacksmithViewProps> = ({ playerState, onUpgrade, onRepair, onCraft, onClose }) => {
     const [activeTab, setActiveTab] = useState<TabType>('upgrade');
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
     const [selectedScroll, setSelectedScroll] = useState<Item | null>(null);
@@ -221,6 +223,12 @@ const BlacksmithView: React.FC<BlacksmithViewProps> = ({ playerState, onUpgrade,
                     className={`flex-1 py-4 flex items-center justify-center gap-2 font-bold transition-all ${activeTab === 'repair' ? 'bg-green-900/30 text-green-400 border-b-2 border-green-500' : 'bg-slate-900/50 text-slate-500 hover:bg-slate-800'}`}
                 >
                     <Wrench size={20} /> TAMİR
+                </button>
+                <button
+                    onClick={() => { setActiveTab('craft'); setSelectedItem(null); }}
+                    className={`flex-1 py-4 flex items-center justify-center gap-2 font-bold transition-all ${activeTab === 'craft' ? 'bg-blue-900/30 text-blue-400 border-b-2 border-blue-500' : 'bg-slate-900/50 text-slate-500 hover:bg-slate-800'}`}
+                >
+                    <FlaskConical size={20} /> ÜRETİM
                 </button>
             </div>
 
@@ -480,6 +488,15 @@ const BlacksmithView: React.FC<BlacksmithViewProps> = ({ playerState, onUpgrade,
                             </div>
                         </div>
                     </>
+                )}
+                {activeTab === 'craft' && (
+                    <div className="w-full h-full">
+                        <RecipeCraftingView
+                            playerState={playerState}
+                            onCraft={onCraft || (() => { })}
+                            onClose={() => setActiveTab('upgrade')}
+                        />
+                    </div>
                 )}
             </div>
         </div>

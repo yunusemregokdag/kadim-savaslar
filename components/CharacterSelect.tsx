@@ -76,6 +76,8 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
     const [selectedCharId, setSelectedCharId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [characterToDelete, setCharacterToDelete] = useState<string | null>(null);
 
     // Debug Mode for character positioning - Karakter pozisyonu ayarlamak için aç
     const [debugMode, setDebugMode] = useState(false); // Debug kapalı - ayarlar kaydedildi
@@ -159,8 +161,6 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
     };
 
     // --- MODE: CHARACTER LIST ---
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-    const [characterToDelete, setCharacterToDelete] = useState<string | null>(null);
 
     const checkDelete = (id: string, e: React.MouseEvent) => {
         e.stopPropagation();
@@ -452,8 +452,8 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
                                     key={cls}
                                     onClick={() => { setSelectedClass(cls); setShowMobileClassList(false); }}
                                     className={`px-3 py-2 rounded-lg text-sm font-bold transition-all ${isSelected
-                                            ? 'bg-yellow-600 text-white'
-                                            : 'bg-slate-800 text-slate-400'
+                                        ? 'bg-yellow-600 text-white'
+                                        : 'bg-slate-800 text-slate-400'
                                         }`}
                                 >
                                     {cleanText(clsData.name)}

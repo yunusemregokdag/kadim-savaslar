@@ -158,10 +158,9 @@ app.post('/api/auth/google', async (req, res) => {
         const { token } = req.body; // Frontend'den gelen credential
 
         // 1. Google Token Doğrulama
-        // Not: Gerçek bir client ID olduğunda verifyIdToken içine audience: CLIENT_ID eklenmeli
         const ticket = await googleClient.verifyIdToken({
             idToken: token,
-            // audience: process.env.GOOGLE_CLIENT_ID 
+            audience: "519507497096-ka6f141tsfrrehnnalcnlvbiggji458n.apps.googleusercontent.com"
         });
         const payload = ticket.getPayload();
         

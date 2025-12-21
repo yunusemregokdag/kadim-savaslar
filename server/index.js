@@ -1,4 +1,4 @@
-```javascript
+
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -167,7 +167,7 @@ app.post('/api/auth/google', async (req, res) => {
             audience: "519507497096-ka6f141tsfrrehnnalcnlvbiggji458n.apps.googleusercontent.com"
         });
         const payload = ticket.getPayload();
-        
+
         const email = payload.email;
         const googleId = payload.sub;
         const name = payload.name;
@@ -393,20 +393,20 @@ io.on('connection', (socket) => {
             zoneId: 1
         };
         socket.emit('my_id', socket.id);
-        console.log(`👤 ${ userData.nickname } oyuna katıldı.`);
+        console.log(`👤 ${userData.nickname} oyuna katıldı.`);
     });
 
     // Join Zone
     socket.on('join_zone', (zoneId) => {
         if (!players[socket.id]) return;
         const oldZone = players[socket.id].zoneId;
-        socket.leave(`zone_${ oldZone } `);
+        socket.leave(`zone_${oldZone} `);
         players[socket.id].zoneId = zoneId;
-        socket.join(`zone_${ zoneId } `);
+        socket.join(`zone_${zoneId} `);
         const zonePlayers = Object.values(players).filter(p => p.zoneId === zoneId && p.socketId !== socket.id);
         socket.emit('zone_players', zonePlayers);
-        socket.to(`zone_${ zoneId } `).emit('player_joined', players[socket.id]);
-        console.log(`🗺️ ${ players[socket.id].nickname } harita ${ zoneId } bölgesine geçti.`);
+        socket.to(`zone_${zoneId} `).emit('player_joined', players[socket.id]);
+        console.log(`🗺️ ${players[socket.id].nickname} harita ${zoneId} bölgesine geçti.`);
     });
 
     // Movement
@@ -414,7 +414,7 @@ io.on('connection', (socket) => {
         if (!players[socket.id]) return;
         players[socket.id] = { ...players[socket.id], ...data };
         const zoneId = players[socket.id].zoneId;
-        socket.to(`zone_${ zoneId } `).emit('player_moved', { id: socket.id, ...data });
+        socket.to(`zone_${zoneId} `).emit('player_moved', { id: socket.id, ...data });
     });
 
     // Chat
@@ -432,8 +432,8 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         if (players[socket.id]) {
             const { zoneId, nickname } = players[socket.id];
-            console.log(`❌ ${ nickname } ayrıldı.`);
-            io.to(`zone_${ zoneId } `).emit('player_left', socket.id);
+            console.log(`❌ ${nickname} ayrıldı.`);
+            io.to(`zone_${zoneId} `).emit('player_left', socket.id);
             delete players[socket.id];
         }
     });
@@ -445,5 +445,5 @@ io.on('connection', (socket) => {
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Oyun Sunucusu Çalışıyor: http://0.0.0.0:${PORT}`);
-console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
 });

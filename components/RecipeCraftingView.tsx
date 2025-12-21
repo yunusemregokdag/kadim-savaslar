@@ -9,6 +9,39 @@ interface RecipeCraftingViewProps {
     onClose: () => void;
 }
 
+// Stat isimlerini Türkçeye çevir
+const STAT_NAMES: Record<string, string> = {
+    damage: 'Hasar',
+    defense: 'Savunma',
+    hp: 'Can',
+    mana: 'Mana',
+    strength: 'Güç',
+    dexterity: 'Çeviklik',
+    intelligence: 'Zeka',
+    vitality: 'Dayanıklılık',
+    luck: 'Şans',
+    critChance: 'Kritik Şansı',
+    critDamage: 'Kritik Hasarı',
+    speed: 'Hız',
+    attackSpeed: 'Saldırı Hızı',
+    moveSpeed: 'Hareket Hızı',
+    magicPower: 'Büyü Gücü',
+    healPower: 'Şifa Gücü',
+    fireDamage: 'Ateş Hasarı',
+    iceDamage: 'Buz Hasarı',
+    lightningDamage: 'Yıldırım Hasarı',
+    voidDamage: 'Hiçlik Hasarı',
+    fireResist: 'Ateş Direnci',
+    iceResist: 'Buz Direnci',
+    lightningResist: 'Yıldırım Direnci',
+    lifesteal: 'Can Çalma',
+    manaRegen: 'Mana Yenileme',
+    hpRegen: 'Can Yenileme',
+    cooldownReduction: 'Bekleme Azaltma',
+};
+
+const getStatName = (key: string): string => STAT_NAMES[key] || key;
+
 // ==============================================================
 // CRAFT MALZEMELERİ - BOSS'LARDAN DÜŞER
 // ==============================================================
@@ -558,7 +591,7 @@ const RecipeCraftingView: React.FC<RecipeCraftingViewProps> = ({ playerState, on
                                 <div className="grid grid-cols-2 gap-1">
                                     {Object.entries(selectedRecipe.resultItem.stats || {}).map(([key, val]) => (
                                         <div key={key} className="flex justify-between bg-black/30 px-2 py-0.5 rounded text-xs">
-                                            <span className="text-slate-400">{key}</span>
+                                            <span className="text-slate-400">{getStatName(key)}</span>
                                             <span className="text-white font-bold">+{val}</span>
                                         </div>
                                     ))}

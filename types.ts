@@ -59,6 +59,7 @@ export interface Item {
   image?: string; // URL/Path to custom icon
   visuals?: ItemVisuals; // Data-driven rendering
   classReq?: CharacterClass; // Class restriction
+  setId?: string; // Set bonus ID
 }
 
 export interface ItemStats {
@@ -135,6 +136,7 @@ export interface Item {
   classReq?: CharacterClass; // Class restriction
   levelReq?: number; // Level restriction
   description?: string;
+  setId?: string; // Set bonus ID for matching set pieces
   effect?: {
     type: 'heal' | 'mana' | 'combo' | 'buff' | 'cleanse';
     amount?: number;
@@ -150,15 +152,30 @@ export interface ItemStats {
   defense?: number;
   hp?: number;
   mana?: number;
-  strength?: number;     // STR
-  dexterity?: number;    // DEX
-  intelligence?: number; // INT
-  vitality?: number;     // VIT
-  critChance?: number;   // %
-  critDamage?: number;   // %
-  attackSpeed?: number;  // %
+  strength?: number;     // STR - Güç
+  dexterity?: number;    // DEX - Çeviklik
+  intelligence?: number; // INT - Zeka
+  vitality?: number;     // VIT - Dayanıklılık
+  luck?: number;         // LCK - Şans
+  critChance?: number;   // % - Kritik Şansı
+  critDamage?: number;   // % - Kritik Hasarı
+  attackSpeed?: number;  // % - Saldırı Hızı
+  speed?: number;        // Hareket Hızı
   bonusGold?: number;    // % (Premium)
   bonusExp?: number;     // % (Premium)
+  // Elemental
+  fireDamage?: number;
+  iceDamage?: number;
+  lightningDamage?: number;
+  voidDamage?: number;
+  fireResist?: number;
+  iceResist?: number;
+  lightningResist?: number;
+  // Special
+  lifesteal?: number;
+  manaRegen?: number;
+  hpRegen?: number;
+  cooldownReduction?: number;
 }
 
 export interface WingItem {

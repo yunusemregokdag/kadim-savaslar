@@ -196,7 +196,8 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onAdminLogin }) => {
 
             <div className="mt-8 text-center text-xs text-slate-500">
               Giriş yaparak Kullanıcı Sözleşmesi'ni kabul etmiş olursunuz.
-              <br />v1.2.3 - Reload Fix
+              <br />
+              <span className="text-yellow-500 font-bold">v1.2.4 - TEST MODE ACTIVE</span>
             </div>
           </>
         ) : (

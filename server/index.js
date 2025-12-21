@@ -36,9 +36,13 @@ mongoose.connect(MONGODB_URI)
 // ============================================
 
 // Kullanıcı Şeması
+// Kullanıcı Şeması
 const userSchema = new mongoose.Schema({
+    username: { type: String, unique: true }, // Google Login için gerekli
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String }, // Google Login'de şifre olmayabilir
+    googleId: { type: String }, // Google ID
+    avatar: { type: String }, // Google Profil Resmi
     createdAt: { type: Date, default: Date.now }
 });
 

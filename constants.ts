@@ -164,7 +164,7 @@ export const CLASSES: Record<CharacterClass, ClassData> = {
             { id: 'ak3', name: 'Buz Mızrağı', name_en: 'Ice Lance', description: 'Uzağa buz fırlatır.', description_en: 'Throws an ice lance.', cd: 8, manaCost: 20, levelReq: 5, type: 'damage', icon: '/models/icons/arctic_knight/icon_permafrost_lance_e.png', visual: 'arctic_shard', modelPath: '/models/skills/arctic_knight/fx_permafrost_lance.gltf' },
             { id: 'ak4', name: 'Donduran Bakış', name_en: 'Freezing Gaze', description: 'Düşmanları yavaşlatır.', description_en: 'Slows down enemies.', cd: 12, manaCost: 30, levelReq: 8, type: 'utility', icon: '/models/icons/arctic_knight/icon_frostbite_e.png', visual: 'arctic_freeze', modelPath: '/models/skills/arctic_knight/fx_frostbite.gltf' },
             { id: 'ak5', name: 'Çığ', name_en: 'Avalanche', description: 'Alana buz hasarı.', description_en: 'Area of effect ice damage.', cd: 15, manaCost: 40, levelReq: 3, type: 'damage', icon: '/models/icons/arctic_knight/icon_arctic_charge.png', visual: 'arctic_charge', modelPath: '/models/skills/arctic_knight/fx_arctic_charge.gltf' },
-            { id: 'ak7', name: 'Kar Fırtınası (Ulti)', name_en: 'Blizzard (Ulti)', description: 'Geniş alan dondurucu hasar.', description_en: 'Massive freezing AoE damage.', cd: 45, manaCost: 80, levelReq: 20, type: 'ultimate'', icon: '/models/icons/arctic_knight/icon_glacier_smash_e.png', visual: 'arctic_crater', modelPath: '/models/skills/arctic_knight/fx_ice_crater_big.gltf' },
+            { id: 'ak7', name: 'Kar Fırtınası (Ulti)', name_en: 'Blizzard (Ulti)', description: 'Geniş alan dondurucu hasar.', description_en: 'Massive freezing AoE damage.', cd: 45, manaCost: 80, levelReq: 20, type: 'ultimate', icon: '/models/icons/arctic_knight/icon_glacier_smash_e.png', visual: 'arctic_crater', modelPath: '/models/skills/arctic_knight/fx_ice_crater_big.gltf' },
         ]
     },
     gale_glaive: {
@@ -202,7 +202,7 @@ export const CLASSES: Record<CharacterClass, ClassData> = {
             { id: 'ar3', name: 'Avcı Odağı', name_en: 'Hunters Focus', description: 'Kritik şansını artırır.', description_en: 'Increases critical chance.', cd: 20, manaCost: 40, levelReq: 12, type: 'buff', icon: '/models/icons/archer/icon_hunters_focus.png', visual: 'hunters_focus', modelPath: '/models/skills/archer/hunters_focus_1.gltf' },
             { id: 'ar4', name: 'Rüzgar Kesiği', name_en: 'Wind Razor', description: 'Rüzgar hızıyla düşmanları keser.', description_en: 'Cuts enemies with wind speed.', cd: 12, manaCost: 35, type: 'damage', icon: '/models/icons/archer/icon_windrazor.png', visual: 'archer_volley', modelPath: '/models/skills/archer/archer_bow.gltf' },
             { id: 'ar5', name: 'Geri Adım', name_en: 'Backstep', description: 'Geriye doğru hızlıca kaç.', description_en: 'Quickly dash backwards.', cd: 15, manaCost: 20, type: 'utility', icon: '/models/icons/archer/icon_backstep.png', visual: 'backstep', modelPath: '/models/skills/archer/backstep_1.gltf' },
-            { id: 'ar6', name: 'Ejder Oku (Ulti)', name_en: 'Dragon Arrow (Ulti)', description: 'Ejderha gücüyle her şeyi deler.', description_en: 'Pierces everything with dragon power.', cd: 50, manaCost: 90, levelReq: 20, type: 'ultimate'', icon: '/models/icons/archer/icon_dragon_piercer.png', visual: 'dragon_arrow', modelPath: '/models/skills/archer/dragon_arrow.gltf' },
+            { id: 'ar6', name: 'Ejder Oku (Ulti)', name_en: 'Dragon Arrow (Ulti)', description: 'Ejderha gücüyle her şeyi deler.', description_en: 'Pierces everything with dragon power.', cd: 50, manaCost: 90, levelReq: 20, type: 'ultimate', icon: '/models/icons/archer/icon_dragon_piercer.png', visual: 'dragon_arrow', modelPath: '/models/skills/archer/dragon_arrow.gltf' },
         ]
     },
     archmage: {
@@ -221,7 +221,7 @@ export const CLASSES: Record<CharacterClass, ClassData> = {
             { id: 'am3', name: 'Polimorf', name_en: 'Polymorph', description: 'Düşmanı zararsız yapar.', description_en: 'Renders enemy harmless.', cd: 20, manaCost: 40, levelReq: 12, type: 'utility', icon: '/models/icons/archmage/icon_arcane_shield.png', visual: 'archmage_void', modelPath: '/models/skills/archmage/void_chains.gltf' },
             { id: 'am5', name: 'Yıldız Yağmuru', name_en: 'Starfall', description: 'Kozmik hasar.', description_en: 'Deals cosmic damage.', cd: 15, manaCost: 60, type: 'damage', icon: '/models/icons/archmage/icon_meteor_storm_e.png', visual: 'archmage_meteor', modelPath: '/models/skills/archmage/meteor_storm_meteor.gltf' },
             { id: 'am6', name: 'Mana Patlaması', name_en: 'Mana Burst', description: 'Alana ani hasar.', description_en: 'Burst AoE damage.', cd: 12, manaCost: 45, type: 'damage', icon: '/models/icons/archmage/icon_blizzard.png', visual: 'archmage_blizzard', modelPath: '/models/skills/archmage/ice_shard.gltf' },
-            { id: 'am7', name: 'Kıyamet (Ulti)', name_en: 'Apocalypse (Ulti)', description: 'Tüm elementlerin birleşimi.', description_en: 'Combination of all elements.', cd: 60, manaCost: 120, levelReq: 25, type: 'ultimate'', icon: '/models/icons/archmage/icon_arcane_devastation.png', visual: 'archmage_apocalypse', modelPath: '/models/skills/archmage/meteor_storm_magic_circle.gltf' },
+            { id: 'am7', name: 'Kıyamet (Ulti)', name_en: 'Apocalypse (Ulti)', description: 'Tüm elementlerin birleşimi.', description_en: 'Combination of all elements.', cd: 60, manaCost: 120, levelReq: 25, type: 'ultimate', icon: '/models/icons/archmage/icon_arcane_devastation.png', visual: 'archmage_apocalypse', modelPath: '/models/skills/archmage/meteor_storm_magic_circle.gltf' },
         ]
     },
     bard: {
@@ -240,7 +240,7 @@ export const CLASSES: Record<CharacterClass, ClassData> = {
             { id: 'bd3', name: 'Huzur Melodisi', name_en: 'Melody of Peace', description: 'Takımı iyileştirir.', description_en: 'Heals the team.', cd: 20, manaCost: 40, levelReq: 12, type: 'heal', icon: '/models/icons/bard/icon_angelic_serenade.png', visual: 'bard_light', modelPath: '/models/skills/bard/healing_aura.gltf' },
             { id: 'bd4', name: 'Uyku Ninnisi', name_en: 'Lullaby', description: 'Düşmanları uyutur (sersemletir).', description_en: 'Puts enemies to sleep (stun).', cd: 25, manaCost: 35, levelReq: 12, type: 'utility', icon: '/models/icons/bard/icon_shield_of_harmony_e.png', visual: 'bard_note', modelPath: '/models/skills/bard/black_strings.gltf' },
             { id: 'bd5', name: 'Hız Rapsodisi', name_en: 'Rhapsody of Speed', description: 'Hareket hızını artırır.', description_en: 'Increases movement speed.', cd: 18, manaCost: 30, levelReq: 10, type: 'buff', icon: '/models/icons/bard/icon_rhapsody_e.png', visual: 'bard_vibration', modelPath: '/models/skills/bard/cupid.gltf' },
-            { id: 'bd7', name: 'Destansı Final (Ulti)', name_en: 'Epic Finale (Ulti)', description: 'Tüm takıma devasa buff.', description_en: 'Massive buff to the team.', cd: 60, manaCost: 100, levelReq: 25, type: 'ultimate'', icon: '/models/icons/bard/icon_symphony_of_destruction_e.png', visual: 'bard_explosion', modelPath: '/models/skills/bard/ult_strings_1.gltf' },
+            { id: 'bd7', name: 'Destansı Final (Ulti)', name_en: 'Epic Finale (Ulti)', description: 'Tüm takıma devasa buff.', description_en: 'Massive buff to the team.', cd: 60, manaCost: 100, levelReq: 25, type: 'ultimate', icon: '/models/icons/bard/icon_symphony_of_destruction_e.png', visual: 'bard_explosion', modelPath: '/models/skills/bard/ult_strings_1.gltf' },
         ]
     },
     cleric: {
@@ -259,7 +259,7 @@ export const CLASSES: Record<CharacterClass, ClassData> = {
             { id: 'cl3', name: 'Kutsama', name_en: 'Blessing', description: 'Tüm statları artırır.', description_en: 'Increases all stats.', cd: 30, manaCost: 50, levelReq: 15, type: 'buff', icon: '/models/icons/cleric/icon_luminous_wave_e.png', visual: 'cleric_wave', modelPath: '/models/skills/cleric/god_embodiment.gltf' },
             { id: 'cl4', name: 'Işık Patlaması', name_en: 'Light Burst', description: 'Çevredeki düşmanları kör eder.', description_en: 'Blinds nearby enemies.', cd: 15, manaCost: 30, levelReq: 10, type: 'utility', icon: '/models/icons/cleric/icon_divine_immolation_e.png', visual: 'cleric_impact', modelPath: '/models/skills/cleric/divine_cross.gltf' },
             { id: 'cl5', name: 'Diriltme (Pasif)', name_en: 'Resurrection (Passive)', description: 'Ölümcül darbeden korur (Cooldown).', description_en: 'Protects from fatal blow (Cooldown).', cd: 120, manaCost: 0, type: 'utility', icon: '/models/icons/cleric/icon_dawnbringer_angel.png', visual: 'cleric_tear', modelPath: '/models/skills/cleric/dawnbringer_angel.gltf' },
-            { id: 'cl7', name: 'Tanrısal Müdahale (Ulti)', name_en: 'Divine Intervention (Ulti)', description: 'Tüm takımı tamamen iyileştirir.', description_en: 'Fully heals the entire team.', cd: 90, manaCost: 100, levelReq: 25, type: 'ultimate'', icon: '/models/icons/cleric/icon_divine_cross_e.png', visual: 'cleric_tear', modelPath: '/models/skills/cleric/tear_of_god.gltf' },
+            { id: 'cl7', name: 'Tanrısal Müdahale (Ulti)', name_en: 'Divine Intervention (Ulti)', description: 'Tüm takımı tamamen iyileştirir.', description_en: 'Fully heals the entire team.', cd: 90, manaCost: 100, levelReq: 25, type: 'ultimate', icon: '/models/icons/cleric/icon_divine_cross_e.png', visual: 'cleric_tear', modelPath: '/models/skills/cleric/tear_of_god.gltf' },
         ]
     },
     martial_artist: {
@@ -297,7 +297,7 @@ export const CLASSES: Record<CharacterClass, ClassData> = {
             { id: 'mk3', name: 'Ruh Darbesi', name_en: 'Soul Strike', description: 'Ruhsal hasar verir.', description_en: 'Deals spiritual damage.', cd: 8, manaCost: 20, levelReq: 5, type: 'damage', icon: '/models/icons/monk/icon_chi_blast_e.png', visual: 'monk_blast', modelPath: '/models/skills/monk/vfx_chi_blast.gltf' },
             { id: 'mk4', name: 'Huzur', name_en: 'Serenity', description: 'Düşranları sakinleştirir.', description_en: 'Calms enemies down.', cd: 20, manaCost: 30, type: 'utility', icon: '/models/icons/monk/icon_focus_chi_e.png', visual: 'monk_heal', modelPath: '/models/skills/monk/vfx_chi_heal.gltf' },
             { id: 'mk5', name: 'Bin El', name_en: 'Thousand Hands', description: 'Seri vuruşlar.', description_en: 'Rapid strikes.', cd: 12, manaCost: 40, type: 'damage', icon: '/models/icons/monk/icon_swift_strikes_e.png', visual: 'monk_punch', modelPath: '/models/skills/monk/vfx_swift_strikes_1.gltf' },
-            { id: 'mk7', name: 'Nirvana (Ulti)', name_en: 'Nirvana (Ulti)', description: 'Kısa süre ölümsüzlük ve güç.', description_en: 'Short invulnerability and power.', cd: 80, manaCost: 100, levelReq: 25, type: 'ultimate'', icon: '/models/icons/monk/icon_dragon_fists_e.png', visual: 'monk_palm', modelPath: '/models/skills/monk/vfx_monk_dragon_fists.gltf' },
+            { id: 'mk7', name: 'Nirvana (Ulti)', name_en: 'Nirvana (Ulti)', description: 'Kısa süre ölümsüzlük ve güç.', description_en: 'Short invulnerability and power.', cd: 80, manaCost: 100, levelReq: 25, type: 'ultimate', icon: '/models/icons/monk/icon_dragon_fists_e.png', visual: 'monk_palm', modelPath: '/models/skills/monk/vfx_monk_dragon_fists.gltf' },
         ]
     },
     reaper: {
@@ -316,7 +316,7 @@ export const CLASSES: Record<CharacterClass, ClassData> = {
             { id: 'rp3', name: 'Ruh Hasadı', name_en: 'Soul Harvest', description: 'Düşmandan can çalar.', description_en: 'Steals health from enemy.', cd: 12, manaCost: 30, levelReq: 8, type: 'heal', icon: '/models/icons/reaper/icon_soul_slice_e.png', visual: 'reaper_wave', modelPath: '/models/skills/reaper/soul_wave_1.json' },
             { id: 'rp4', name: 'Karanlık Geçit', name_en: 'Dark Passage', description: 'Gölgelerin içinden geçer.', description_en: 'Passes through shadows.', cd: 15, manaCost: 25, type: 'utility', icon: '/models/icons/reaper/icon_surge_e.png', visual: 'reaper_spin', modelPath: '/models/skills/reaper/death_spin.json' },
             { id: 'rp5', name: 'Korku', name_en: 'Fear', description: 'Düşmanları kaçırır.', description_en: 'Scares enemies away.', cd: 20, manaCost: 40, levelReq: 12, type: 'utility', icon: '/models/icons/reaper/icon_soul_collector_e.png', visual: 'reaper_cross', modelPath: '/models/skills/reaper/soul_cross_1.json' },
-            { id: 'rp7', name: 'Kıyamet Çağrısı (Ulti)', name_en: 'Call of Apocalypse (Ulti)', description: 'Tüm ruhları serbest bırakır.', description_en: 'Releases all souls.', cd: 60, manaCost: 100, levelReq: 25, type: 'ultimate'', icon: '/models/icons/reaper/icon_death_spin.png', visual: 'reaper_spin', modelPath: '/models/skills/reaper/soul_spin.json' },
+            { id: 'rp7', name: 'Kıyamet Çağrısı (Ulti)', name_en: 'Call of Apocalypse (Ulti)', description: 'Tüm ruhları serbest bırakır.', description_en: 'Releases all souls.', cd: 60, manaCost: 100, levelReq: 25, type: 'ultimate', icon: '/models/icons/reaper/icon_death_spin.png', visual: 'reaper_spin', modelPath: '/models/skills/reaper/soul_spin.json' },
         ]
     }
 };
@@ -690,42 +690,48 @@ export const LEVEL_XP_REQUIREMENTS: number[] = [
     2684354560000       // Level 30 (Max)
 ];
 
-// --- DEFAULT HUD LAYOUT (OPTIMIZED FOR ALL SCREENS - RESİMDEKİ DÜZEN) ---
+// ═══════════════════════════════════════════════════════════════════════════
+// DEFAULT HUD LAYOUT - KESİN VE FİNAL (RESİMDEKİ DÜZEN)
+// Bu düzen değiştirilmeyecek! Yeni oyuncular bu düzenle başlayacak.
+// ═══════════════════════════════════════════════════════════════════════════
 export const DEFAULT_HUD_LAYOUT: HUDLayout = {
     elements: {
-        // Profile - Sol üst köşe (HP/MP barları ile)
-        profile: { x: 3, y: 3, scale: 1, enabled: true },
+        // ═══════════ SOL TARAF ═══════════
+        // Profile - Sol üst köşe (Seviye, İsim, HP/MP barları)
+        profile: { x: 2, y: 2, scale: 1, enabled: true },
 
-        // Quest Tracker - Profilin altında sol tarafta
-        quest: { x: 3, y: 15, scale: 1, enabled: true },
+        // Quest Tracker - Profilin hemen altında
+        quest: { x: 2, y: 14, scale: 1, enabled: true },
 
-        // Chat - Quest'in altında sol tarafta (Genel/Parti/Klan)
-        chat: { x: 3, y: 35, scale: 1, enabled: true },
+        // Chat - Quest'in altında (Genel/Parti/Klan sekmeleri)
+        chat: { x: 2, y: 28, scale: 1, enabled: true },
 
-        // Joystick - Sol alt köşe
-        joystick: { x: 12, y: 85, scale: 1, enabled: true },
+        // Joystick - Sol alt köşe (sabit)
+        joystick: { x: 10, y: 78, scale: 1, enabled: true },
 
-        // Map + Menu Buttons - Sağ üst köşe
-        map: { x: 82, y: 3, scale: 1, enabled: true },
+        // ═══════════ SAĞ ÜST ═══════════
+        // Map + Menu Buttons - Sağ üst köşe (Minimap, Zone ismi, butonlar)
+        map: { x: 78, y: 2, scale: 1, enabled: true },
 
-        // Eye Button (Free Look) - Sağ ortada, skills'in üstünde
-        eye: { x: 92, y: 32, scale: 1, enabled: true },
+        // ═══════════ SAĞ TARAF SKİLL'LER ═══════════
+        // Eye Button (Free Look) - En üstte
+        eye: { x: 85, y: 40, scale: 1, enabled: true },
 
-        // HP/MP Potları - Sağ tarafta eye'ın altında
-        hp_pot: { x: 92, y: 42, scale: 0.9, enabled: true },
-        mp_pot: { x: 92, y: 50, scale: 0.9, enabled: true },
+        // HP/MP Potları - Eye'ın yanında
+        hp_pot: { x: 85, y: 50, scale: 0.85, enabled: true },
+        mp_pot: { x: 85, y: 58, scale: 0.85, enabled: true },
 
-        // Skills Arc - Sağ tarafta yukarıdan aşağı arc şeklinde
-        skill1: { x: 88, y: 38, scale: 1, enabled: true },
-        skill2: { x: 84, y: 45, scale: 1, enabled: true },
-        skill3: { x: 80, y: 52, scale: 1, enabled: true },
-        skill4: { x: 78, y: 60, scale: 1, enabled: true },
-        skill5: { x: 80, y: 68, scale: 1, enabled: true },
-        skill6: { x: 84, y: 75, scale: 1, enabled: true },
-        skill7: { x: 88, y: 82, scale: 1, enabled: true },
+        // Skills - Arc şeklinde sağ tarafta
+        skill1: { x: 78, y: 42, scale: 1, enabled: true },
+        skill2: { x: 74, y: 50, scale: 1, enabled: true },
+        skill3: { x: 72, y: 58, scale: 1, enabled: true },
+        skill4: { x: 72, y: 66, scale: 1, enabled: true },
+        skill5: { x: 74, y: 74, scale: 1, enabled: true },
+        skill6: { x: 78, y: 82, scale: 1, enabled: true },
 
-        // Attack Button - Sağ alt köşe (büyük)
-        attack: { x: 90, y: 82, scale: 1.2, enabled: true },
+        // ═══════════ SAĞ ALT ═══════════
+        // Attack Button - Sağ alt köşe (büyük kırmızı)
+        attack: { x: 88, y: 78, scale: 1.3, enabled: true },
     }
 };
 

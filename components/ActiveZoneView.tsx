@@ -1294,16 +1294,24 @@ const GameScene: React.FC<GameSceneProps> = ({
                 // 5. Geri hareket kontrolü (S tuşu)
                 const isMovingBackward = inputZ < -0.5 && Math.abs(inputX) < 0.3;
 
-                // 6. Karakter rotasyonunu ayarla - HER YÖNDE hareket yönüne baksın
+                // 6. Karakter rotasyonunu akıcı şekilde ayarla (LERP)
                 if (!isAttacking || !target) {
+                    let targetAngle: number;
                     if (isMovingBackward) {
-                        // S tuşu: Yüzü kameraya dönsün
-                        playerGroupRef.current.rotation.y = 0;
+                        targetAngle = 0;
                     } else {
-                        // W/A/D: Hareket yönüne baksın
-                        const targetAngle = Math.atan2(-dirX, dirZ) + Math.PI;
-                        playerGroupRef.current.rotation.y = targetAngle;
+                        targetAngle = Math.atan2(-dirX, dirZ) + Math.PI;
                     }
+
+                    // Akıcı rotasyon - ani dönüşü önle
+                    const currentAngle = playerGroupRef.current.rotation.y;
+                    let angleDiff = targetAngle - currentAngle;
+
+                    // En kısa yolu bul (360 derece wrap)
+                    while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+                    while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+
+                    playerGroupRef.current.rotation.y += angleDiff * 0.2; // Yumuşak dönüş
                 }
 
                 // 7. Hareket vektörünü uygula

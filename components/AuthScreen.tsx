@@ -158,6 +158,10 @@ if (mode === 'welcome') {
             </div>
           </div>
 
+          <GoogleLoginButton />
+
+          <div className="h-4"></div>
+
           <button
             onClick={handleQuickLogin}
             className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-slate-800/50 text-slate-400 rounded-lg font-medium border border-slate-700 hover:bg-slate-800 hover:text-white transition-all"

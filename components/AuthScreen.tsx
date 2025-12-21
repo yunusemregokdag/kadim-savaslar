@@ -138,13 +138,22 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onAdminLogin }) => {
               </div>
 
               {onAdminLogin && !showDevLogin && (
-                <button
-                  onClick={() => setShowDevLogin(true)}
-                  className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-red-900/30 text-red-400 border border-red-800/50 rounded-lg font-bold hover:bg-red-900/50 transition-all mt-8 opacity-50 hover:opacity-100"
-                >
-                  <Code size={16} />
-                  <span className="text-sm">Geliştirici Girişi</span>
-                </button>
+                <div className="mt-8 space-y-3">
+                  <button
+                    onClick={() => setShowDevLogin(true)}
+                    className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-red-900/30 text-red-400 border border-red-800/50 rounded-lg font-bold hover:bg-red-900/50 transition-all opacity-50 hover:opacity-100"
+                  >
+                    <Code size={16} />
+                    <span className="text-sm">Geliştirici Girişi</span>
+                  </button>
+
+                  <button
+                    onClick={onAdminLogin}
+                    className="w-full py-2 bg-slate-800 text-slate-400 text-xs rounded border border-slate-700 hover:bg-slate-700 hover:text-white transition-colors"
+                  >
+                    Test Modu (Sunucusuz Giriş)
+                  </button>
+                </div>
               )}
 
               {showDevLogin && (

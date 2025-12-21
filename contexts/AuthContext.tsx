@@ -32,13 +32,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             const token = getAuthToken();
             if (token) {
                 try {
-                    const data = await authAPI.me();
+                    // 3 saniyelik timeout ekle
+                    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000));
+                    const dataPromise = authAPI.me();
+
+                    const data: any = await Promise.race([dataPromise, timeoutPromise]);
                     setUser(data.user);
                 } catch (error) {
-                    // Token invalid, clear it
+                    // Token invalid or timeout, clear it
+                    console.warn("Auth check failed:", error);
                     setAuthToken(null);
                 }
             }
+            // Her durumda loading bitsin
             setLoading(false);
         };
 

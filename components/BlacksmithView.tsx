@@ -314,11 +314,11 @@ const BlacksmithView: React.FC<BlacksmithViewProps> = ({ playerState, onUpgrade,
                         </div>
 
                         {/* INVENTORY (Right) */}
-                        <div className="w-96 bg-[#120d16] border-l border-slate-800 p-6 flex flex-col">
-                            <h3 className="text-slate-400 font-bold mb-4 uppercase text-xs tracking-wider flex items-center gap-2">
+                        <div className="w-96 bg-[#120d16] border-l border-slate-800 p-6 flex flex-col h-full overflow-hidden">
+                            <h3 className="text-slate-400 font-bold mb-4 uppercase text-xs tracking-wider flex items-center gap-2 shrink-0">
                                 <Sword size={14} /> Geliştirilebilir Eşyalar
                             </h3>
-                            <div className="flex-1 overflow-y-auto mb-6 pr-2 custom-scrollbar space-y-2">
+                            <div className="flex-1 overflow-y-auto mb-4 pr-2 custom-scrollbar space-y-2 min-h-0">
                                 {upgradeableItems.length === 0 ? (
                                     <div className="text-slate-600 text-center py-8 text-sm italic">Uygun eşya yok.</div>
                                 ) : (
@@ -341,32 +341,34 @@ const BlacksmithView: React.FC<BlacksmithViewProps> = ({ playerState, onUpgrade,
                                 )}
                             </div>
 
-                            <div className="border-t border-slate-800 pt-4">
+                            <div className="border-t border-slate-800 pt-4 shrink-0">
                                 <h3 className="text-slate-400 font-bold mb-4 uppercase text-xs tracking-wider flex items-center gap-2">
                                     <Package size={14} /> Parşömenler
                                 </h3>
-                                {scrolls.length === 0 ? (
-                                    <div className="text-slate-600 text-center py-4 text-sm italic">
-                                        Parşömen yok.<br />
-                                        <span className="text-[10px] text-slate-700">Pazardan veya droplardan bulabilirsin.</span>
-                                    </div>
-                                ) : (
-                                    scrolls.map((item: any) => (
-                                        <div
-                                            key={item.id}
-                                            onClick={() => !isUpgrading && setSelectedScroll(item)}
-                                            className={`p-3 rounded border flex items-center gap-3 cursor-pointer transition-all ${selectedScroll?.id === item.id ? 'bg-blue-900/30 border-blue-500 ring-1 ring-blue-500' : 'bg-slate-900 border-slate-700 hover:bg-slate-800'}`}
-                                        >
-                                            <div className="w-10 h-10 rounded border border-blue-700 bg-blue-900/20 flex items-center justify-center text-blue-400">
-                                                <Package size={18} />
-                                            </div>
-                                            <div className="flex-1">
-                                                <div className="text-sm font-bold text-slate-200">{item.name}</div>
-                                                <div className="text-xs text-blue-400">T{item.tier} Yükseltme</div>
-                                            </div>
+                                <div className="max-h-48 overflow-y-auto pr-2 custom-scrollbar space-y-2">
+                                    {scrolls.length === 0 ? (
+                                        <div className="text-slate-600 text-center py-4 text-sm italic">
+                                            Parşömen yok.<br />
+                                            <span className="text-[10px] text-slate-700">Pazardan veya droplardan bulabilirsin.</span>
                                         </div>
-                                    ))
-                                )}
+                                    ) : (
+                                        scrolls.map((item: any) => (
+                                            <div
+                                                key={item.id}
+                                                onClick={() => !isUpgrading && setSelectedScroll(item)}
+                                                className={`p-3 rounded border flex items-center gap-3 cursor-pointer transition-all ${selectedScroll?.id === item.id ? 'bg-blue-900/30 border-blue-500 ring-1 ring-blue-500' : 'bg-slate-900 border-slate-700 hover:bg-slate-800'}`}
+                                            >
+                                                <div className="w-10 h-10 rounded border border-blue-700 bg-blue-900/20 flex items-center justify-center text-blue-400">
+                                                    <Package size={18} />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <div className="text-sm font-bold text-slate-200">{item.name}</div>
+                                                    <div className="text-xs text-blue-400">T{item.tier} Yükseltme</div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </>

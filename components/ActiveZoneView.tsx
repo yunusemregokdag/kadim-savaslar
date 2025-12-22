@@ -865,7 +865,7 @@ const GameScene: React.FC<GameSceneProps> = ({
     zoneId, entities, setEntities, onKill, onUpdatePlayer, addFloatingText, hasBase, borderLimit,
     lootBoxes, onCollectLootBox, portals, onPortalJump, isAttacking, skillEffects, isDead, setNearbyNPC, onLoot, zoneColor,
     target, lastDamageTimeRef, setTeleporting, spawnParticles, isFreeLook, teleporting, onSpawnParticle,
-    socketRef, lastSocketUpdate, remotePlayers, targetedPlayer, setTargetedPlayer, castingSkill // ADDED
+    socketRef, lastSocketUpdate, remotePlayers, targetedPlayer, setTargetedPlayer, castingSkill
 }) => {
 
     const { camera } = useThree();
@@ -1277,9 +1277,6 @@ const GameScene: React.FC<GameSceneProps> = ({
             // 2. Deadzone kontrolü (yanlış dokunmaları engelle)
             const DEADZONE = 0.1;
             const isMoving = Math.abs(inputX) > DEADZONE || Math.abs(inputZ) > DEADZONE;
-            
-            // Update movement state for animation
-            setPlayerIsMoving(isMoving);
 
             if (isMoving) {
                 // 3. Yön vektörünü oluştur
@@ -1341,21 +1338,16 @@ const GameScene: React.FC<GameSceneProps> = ({
                     isAttacking: isAttacking
                 });
             }
-        } else {
-            // Not moving - reset animation state
-            setPlayerIsMoving(false);
-            
-            if (socketRef.current && Date.now() - lastSocketUpdate.current > 200) {
-                // FIX: Send STOP signal if not moving (idle)
-                lastSocketUpdate.current = Date.now();
-                socketRef.current.emit('player_move', {
-                    x: playerGroupRef.current?.position.x || 0,
-                    y: playerGroupRef.current?.position.z || 0,
-                    rotation: playerGroupRef.current?.rotation.y || 0,
-                    isMoving: false,
-                    isAttacking: isAttacking
-                });
-            }
+        } else if (socketRef.current && Date.now() - lastSocketUpdate.current > 200) {
+            // FIX: Send STOP signal if not moving (idle)
+            lastSocketUpdate.current = Date.now();
+            socketRef.current.emit('player_move', {
+                x: playerGroupRef.current?.position.x || 0,
+                y: playerGroupRef.current?.position.z || 0,
+                rotation: playerGroupRef.current?.rotation.y || 0,
+                isMoving: false,
+                isAttacking: isAttacking
+            });
         }
 
         if (target && isAttacking && playerGroupRef.current) {
@@ -1457,21 +1449,21 @@ const GameScene: React.FC<GameSceneProps> = ({
                     <VoxelSpartan
                         charClass={playerStats.class || 'warrior'}
                         isAttacking={isAttacking}
-                        isMoving={playerIsMoving}
-                        isSpinning={skillEffects.whirlwind}
+                        isMoving={!!joystick && (Math.abs(joystick.x) > 0.1 || Math.abs(joystick.y) > 0.1)}
+                        isSpinning={skillEffects?.whirlwind}
                         isCastingSkill={castingSkill}
-                        wingType={playerStats.equippedWing}
-                        petType={playerStats.equippedPet}
-                        weaponItem={playerStats.equipment.weapon}
-                        armorItem={playerStats.equipment.armor}
-                        helmetItem={playerStats.equipment.helmet}
-                        pantsItem={playerStats.equipment.pants}
-                        necklaceItem={playerStats.equipment.necklace}
-                        earringItem={playerStats.equipment.earring}
+                        wingType={playerStats?.equippedWing || null}
+                        petType={playerStats?.equippedPet || null}
+                        weaponItem={playerStats?.equipment?.weapon || null}
+                        armorItem={playerStats?.equipment?.armor || null}
+                        helmetItem={playerStats?.equipment?.helmet || null}
+                        pantsItem={playerStats?.equipment?.pants || null}
+                        necklaceItem={playerStats?.equipment?.necklace || null}
+                        earringItem={playerStats?.equipment?.earring || null}
                     />
                 </React.Suspense>
 
-                {playerStats.settings.showNames && (
+                {playerStats?.settings?.showNames && (
                     <Html position={[0, 2.8, 0]} center zIndexRange={[50, 0]}>
                         <div className="flex flex-col items-center pointer-events-none whitespace-nowrap">
                             <div className="text-[10px] font-bold text-white bg-black/50 px-2 rounded backdrop-blur-sm border border-slate-600 mb-1">
@@ -1731,7 +1723,6 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     const [joystick, setJoystick] = useState<{ x: number, y: number } | null>(null);
     const [active3DEffects, setActive3DEffects] = useState<Active3DEffect[]>([]);
     const [isAttacking, setIsAttacking] = useState(false);
-    const [playerIsMoving, setPlayerIsMoving] = useState(false); // Track actual movement for animation
     const [skillEffects, setSkillEffects] = useState<any>({});
     const [cooldowns, setCooldowns] = useState<Record<string, number>>({});
     const [showInventory, setShowInventory] = useState(false);

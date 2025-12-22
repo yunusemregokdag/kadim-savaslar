@@ -643,35 +643,48 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
     );
 
     // ActiveZone görünümü - Ana return içinde koşullu olarak gösterilecek
+    // SAFETY: Ensure playerStats has all required fields before rendering 3D
+    const safePlayerStats = {
+        ...playerStats,
+        inventory: playerStats.inventory || [],
+        equipment: playerStats.equipment || { weapon: null, armor: null, helmet: null, pants: null, boots: null, necklace: null, earring: null },
+        ownedWings: playerStats.ownedWings || [],
+        ownedPets: playerStats.ownedPets || [],
+        achievements: playerStats.achievements || [],
+        settings: playerStats.settings || { pvpPriority: false, showNames: true, deviceMode: 'auto', skillBarMode: 'linear', hudScale: 1.0, buttonOpacity: 1.0, transparentMap: false, smallMap: false, minimizeQuest: false, hudLayout: null, nameColor: undefined, autoLoot: true }
+    };
+
     const activeZoneScreen = activeZone ? (
         <div className="relative w-full h-full">
-            <ActiveZoneView
-                zoneId={activeZone}
-                playerState={playerStats}
-                chatHistory={messages}
-                onSendChat={(msg) => handleSendMessage(msg, 'global')}
-                onReceiveChat={(msg) => setMessages(prev => [...prev, msg])}
-                onExit={() => { setActiveZone(null); setActiveTab('skills'); }}
-                onSwitchZone={(newZoneId) => setActiveZone(newZoneId)}
-                onLoot={handleLoot}
-                onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
-                onEquip={handleEquipItem}
-                onUnequip={handleUnequipItem}
-                onUseItem={handleUseItem}
-                socketRef={socketRef}
-                onQuestProgress={handleQuestProgress}
-                onClaimQuest={handleClaimQuest}
-                onOpenCrafting={() => setShowCrafting(true)}
-                onQuickPotion={() => { }}
-                onInteraction={(type, id) => { if (type === 'portal') setActiveZone(Number(id) || null); }}
-                isAdmin={isAdmin}
-            />
+            <ErrorBoundary>
+                <ActiveZoneView
+                    zoneId={activeZone}
+                    playerState={safePlayerStats}
+                    chatHistory={messages || []}
+                    onSendChat={(msg) => handleSendMessage(msg, 'global')}
+                    onReceiveChat={(msg) => setMessages(prev => [...prev, msg])}
+                    onExit={() => { setActiveZone(null); setActiveTab('skills'); }}
+                    onSwitchZone={(newZoneId) => setActiveZone(newZoneId)}
+                    onLoot={handleLoot}
+                    onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
+                    onEquip={handleEquipItem}
+                    onUnequip={handleUnequipItem}
+                    onUseItem={handleUseItem}
+                    socketRef={socketRef}
+                    onQuestProgress={handleQuestProgress}
+                    onClaimQuest={handleClaimQuest}
+                    onOpenCrafting={() => setShowCrafting(true)}
+                    onQuickPotion={() => { }}
+                    onInteraction={(type, id) => { if (type === 'portal') setActiveZone(Number(id) || null); }}
+                    isAdmin={isAdmin}
+                />
+            </ErrorBoundary>
 
             {/* Trade Modal Overlay */}
             {activeTrade && (
                 <TradeView
                     trade={activeTrade}
-                    playerState={playerStats}
+                    playerState={safePlayerStats}
                     onAddItem={handleAddTradeItem}
                     onSetGold={handleSetTradeGold}
                     onConfirm={handleConfirmTrade}
@@ -680,7 +693,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                 />
             )}
 
-            {showCrafting && <RecipeCraftingView playerState={playerStats} onCraft={() => { }} onClose={() => setShowCrafting(false)} />}
+            {showCrafting && <RecipeCraftingView playerState={safePlayerStats} onCraft={() => { }} onClose={() => setShowCrafting(false)} />}
         </div>
     ) : null;
 

@@ -303,12 +303,13 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
     const leftLegRef = useRef<THREE.Group>(null);
     const bodyRef = useRef<THREE.Group>(null);
 
-    const charClass = props.charClass || 'warrior';
-    const appearance = CLASS_APPEARANCE[charClass];
-    const weaponHold = WEAPON_HOLD[charClass];
+    // SAFETY: Ensure charClass is always valid
+    const charClass = props.charClass && CLASS_APPEARANCE[props.charClass] ? props.charClass : 'warrior';
+    const appearance = CLASS_APPEARANCE[charClass] || CLASS_APPEARANCE['warrior'];
+    const weaponHold = WEAPON_HOLD[charClass] || WEAPON_HOLD['warrior'];
 
-    // Load weapon model
-    const weaponPath = WEAPON_MAP[charClass];
+    // Load weapon model - SAFETY: Always fallback to warrior weapon
+    const weaponPath = WEAPON_MAP[charClass] || WEAPON_MAP['warrior'];
     const { scene: weaponScene } = useGLTF(weaponPath);
 
     // Clone and prepare weapon

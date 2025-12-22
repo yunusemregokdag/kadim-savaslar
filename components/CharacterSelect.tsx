@@ -80,6 +80,15 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
     const [characterToDelete, setCharacterToDelete] = useState<string | null>(null);
     const [showMobileClassList, setShowMobileClassList] = useState(false);
 
+    // Mobile detection using JavaScript (Tailwind breakpoints don't work in WebView)
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     // Debug Mode for character positioning - Karakter pozisyonu ayarlamak için aç
     const [debugMode, setDebugMode] = useState(false); // Debug kapalı - ayarlar kaydedildi
     const [debugOffsets, setDebugOffsets] = useState<CharacterOffsets>(DEFAULT_OFFSETS);
@@ -429,30 +438,32 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
     const activeClassData = CLASSES[selectedClass];
 
     return (
-        <div className="fixed inset-0 w-full h-full bg-slate-950 overflow-auto md:overflow-hidden flex flex-col md:flex-row">
+        <div className="fixed inset-0 w-full h-full bg-slate-950 overflow-hidden flex flex-col md:flex-row">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black opacity-80 z-0"></div>
 
-            {/* MOBILE: Back button and class selector toggle */}
-            <div className="md:hidden relative z-30 flex items-center justify-between p-4 bg-black/60 border-b border-slate-800">
-                <button
-                    onClick={() => setStep('faction')}
-                    className="flex items-center gap-2 text-slate-400"
-                >
-                    <ChevronLeft size={20} />
-                    <span className="text-sm">Geri</span>
-                </button>
-                <button
-                    onClick={() => setShowMobileClassList(!showMobileClassList)}
-                    className="px-4 py-2 bg-slate-800 text-yellow-400 rounded-lg text-sm font-bold"
-                >
-                    {cleanText(activeClassData.name)} ▼
-                </button>
-            </div>
+            {/* MOBILE ONLY: Top bar with back button and class selector */}
+            {isMobile && (
+                <div className="relative z-30 flex items-center justify-between p-3 bg-black/80 border-b border-slate-700 shrink-0">
+                    <button
+                        onClick={() => setStep('faction')}
+                        className="flex items-center gap-1 text-slate-400 text-sm"
+                    >
+                        <ChevronLeft size={18} />
+                        Geri
+                    </button>
+                    <button
+                        onClick={() => setShowMobileClassList(!showMobileClassList)}
+                        className="px-3 py-1.5 bg-yellow-600 text-white rounded-lg text-sm font-bold"
+                    >
+                        {cleanText(activeClassData.name)} ▼
+                    </button>
+                </div>
+            )}
 
-            {/* MOBILE: Class selector dropdown */}
+            {/* MOBILE ONLY: Class selector dropdown (full width overlay) */}
             {showMobileClassList && (
-                <div className="md:hidden relative z-40 bg-black/90 p-4 border-b border-slate-700">
-                    <div className="flex flex-wrap gap-2">
+                <div className="md:hidden absolute top-12 left-0 right-0 z-50 bg-black/95 p-3 border-b border-slate-600 max-h-[50vh] overflow-y-auto">
+                    <div className="grid grid-cols-2 gap-2">
                         {(Object.keys(CLASSES) as CharacterClass[]).map(cls => {
                             const clsData = CLASSES[cls];
                             const isSelected = selectedClass === cls;
@@ -462,7 +473,7 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
                                     onClick={() => { setSelectedClass(cls); setShowMobileClassList(false); }}
                                     className={`px-3 py-2 rounded-lg text-sm font-bold transition-all ${isSelected
                                         ? 'bg-yellow-600 text-white'
-                                        : 'bg-slate-800 text-slate-400'
+                                        : 'bg-slate-800 text-slate-300'
                                         }`}
                                 >
                                     {cleanText(clsData.name)}
@@ -473,45 +484,47 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
                 </div>
             )}
 
-            {/* --- LEFT SIDEBAR (Class List) - DESKTOP ONLY --- */}
-            <div className="relative z-20 w-80 h-full bg-black/40 backdrop-blur-md border-r border-slate-800/50 flex-col p-4 overflow-y-auto hidden md:flex">
-                <button
-                    onClick={() => setStep('faction')}
-                    className="flex items-center gap-2 text-slate-400 hover:text-white mb-6 transition-colors group"
-                >
-                    <div className="p-2 rounded-full bg-slate-800 group-hover:bg-slate-700 transition-colors">
-                        <ChevronLeft size={20} />
-                    </div>
-                    <span className="font-bold text-sm uppercase tracking-wider">{t.CHOOSE_SIDE}</span>
-                </button>
+            {/* DESKTOP ONLY: Left Sidebar (Class List) - Using JS check instead of Tailwind */}
+            {!isMobile && (
+                <div className="relative z-20 w-72 h-full bg-black/40 backdrop-blur-md border-r border-slate-800/50 flex flex-col p-4 overflow-y-auto shrink-0">
+                    <button
+                        onClick={() => setStep('faction')}
+                        className="flex items-center gap-2 text-slate-400 hover:text-white mb-6 transition-colors group"
+                    >
+                        <div className="p-2 rounded-full bg-slate-800 group-hover:bg-slate-700 transition-colors">
+                            <ChevronLeft size={20} />
+                        </div>
+                        <span className="font-bold text-sm uppercase tracking-wider">{t.CHOOSE_SIDE}</span>
+                    </button>
 
-                <h3 className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4 px-2">Sınıflar</h3>
-                {(Object.keys(CLASSES) as CharacterClass[]).map(cls => {
-                    const clsData = CLASSES[cls];
-                    const isSelected = selectedClass === cls;
-                    const displayName = language === 'en' ? (clsData.name_en || clsData.name) : clsData.name;
+                    <h3 className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4 px-2">Sınıflar</h3>
+                    {(Object.keys(CLASSES) as CharacterClass[]).map(cls => {
+                        const clsData = CLASSES[cls];
+                        const isSelected = selectedClass === cls;
+                        const displayName = language === 'en' ? (clsData.name_en || clsData.name) : clsData.name;
 
-                    return (
-                        <button
-                            key={cls}
-                            onClick={() => setSelectedClass(cls)}
-                            className={`
-                                w-full p-4 mb-2 rounded-xl text-left transition-all relative overflow-hidden group border
+                        return (
+                            <button
+                                key={cls}
+                                onClick={() => setSelectedClass(cls)}
+                                className={`
+                                w-full p-3 mb-2 rounded-xl text-left transition-all relative overflow-hidden group border
                                 ${isSelected
-                                    ? 'bg-yellow-500/10 border-yellow-500/50 text-white shadow-[0_0_15px_rgba(234,179,8,0.2)]'
-                                    : 'bg-slate-900/50 border-transparent text-slate-400 hover:bg-slate-800'}
+                                        ? 'bg-yellow-500/10 border-yellow-500/50 text-white shadow-[0_0_15px_rgba(234,179,8,0.2)]'
+                                        : 'bg-slate-900/50 border-transparent text-slate-400 hover:bg-slate-800'}
                             `}
-                        >
-                            <span className={`font-bold uppercase tracking-wide ${isSelected ? 'text-yellow-400' : 'group-hover:text-slate-200'}`}>
-                                {cleanText(displayName)}
-                            </span>
-                        </button>
-                    )
-                })}
-            </div>
+                            >
+                                <span className={`font-bold uppercase tracking-wide text-sm ${isSelected ? 'text-yellow-400' : 'group-hover:text-slate-200'}`}>
+                                    {cleanText(displayName)}
+                                </span>
+                            </button>
+                        )
+                    })}
+                </div>
+            )}
 
-            {/* --- CENTER (Character Display) --- */}
-            <div className="relative flex-1 z-10 h-48 md:h-full min-h-[200px]">
+            {/* CENTER: 3D Character Display - Takes remaining space */}
+            <div className="relative flex-1 z-10 min-h-[180px] md:min-h-0">
                 {/* Header Info - Hidden on mobile, shown on desktop */}
                 <div className="absolute top-2 md:top-8 left-0 w-full text-center z-50 pointer-events-none">
                     <h1 className="text-2xl md:text-7xl font-black text-white mb-1 md:mb-2 drop-shadow-2xl" style={{ fontFamily: 'Cinzel, serif' }}>
@@ -569,8 +582,8 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
                 </Canvas>
             </div>
 
-            {/* --- RIGHT SIDEBAR (Details & Confirm) - Scrollable on mobile --- */}
-            <div className="relative z-20 w-full md:w-96 bg-black/60 backdrop-blur-xl border-t md:border-t-0 md:border-l border-slate-700/50 p-4 md:p-6 flex flex-col md:justify-between">
+            {/* --- RIGHT SIDEBAR (Details & Confirm) - Compact on mobile --- */}
+            <div className="relative z-20 w-full md:w-80 bg-black/80 backdrop-blur-xl border-t md:border-t-0 md:border-l border-slate-700/50 p-3 md:p-5 flex flex-col shrink-0 max-h-[40vh] md:max-h-full overflow-y-auto">
                 {/* Description - Collapsed on mobile */}
                 <div className="hidden md:block">
                     <h2 className="text-2xl font-bold text-white mb-6 uppercase border-b border-slate-700 pb-4 flex items-center gap-2">

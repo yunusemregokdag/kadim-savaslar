@@ -1,7 +1,13 @@
+// IMPORTANT: Import Three.js FIRST to ensure proper initialization on mobile WebView
+import * as THREE from 'three';
+// Expose THREE globally for mobile compatibility
+(window as any).THREE = THREE;
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+
 
 console.log("Details: Starting index.tsx execution");
 
@@ -28,7 +34,14 @@ const reportCrash = (error: any) => {
 };
 
 window.onerror = (message, source, lineno, colno, error) => {
+  console.error("GLOBAL ERROR:", message, source, lineno, colno);
   reportCrash(error || message);
+};
+
+// Catch unhandled Promise rejections
+window.onunhandledrejection = (event) => {
+  console.error("UNHANDLED PROMISE REJECTION:", event.reason);
+  reportCrash(event.reason);
 };
 
 if (!rootElement) {

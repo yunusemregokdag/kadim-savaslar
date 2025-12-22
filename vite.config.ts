@@ -30,11 +30,41 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
+        // Fix Three.js imports for mobile
+        'three': 'three',
       },
-      dedupe: ['three']
+      dedupe: ['three', 'react', 'react-dom', '@react-three/fiber', '@react-three/drei']
     },
     optimizeDeps: {
-      include: ['three', '@react-three/fiber', '@react-three/drei', '@react-three/postprocessing']
+      include: ['three', '@react-three/fiber', '@react-three/drei', '@react-three/postprocessing', 'its-fine'],
+      exclude: ['@types/three'],
+      esbuildOptions: {
+        // Fix for mobile WebView
+        target: 'es2020',
+        supported: {
+          'top-level-await': true
+        }
+      }
+    },
+    build: {
+      target: 'es2020',
+      // Optimize for mobile
+      chunkSizeWarningLimit: 2000,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'three-vendor': ['three'],
+            'react-three': ['@react-three/fiber', '@react-three/drei'],
+          }
+        }
+      }
+    },
+    esbuild: {
+      // Ensure proper ES module handling
+      target: 'es2020',
+      supported: {
+        'top-level-await': true
+      }
     }
   };
 });

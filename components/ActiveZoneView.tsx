@@ -1277,6 +1277,9 @@ const GameScene: React.FC<GameSceneProps> = ({
             // 2. Deadzone kontrolü (yanlış dokunmaları engelle)
             const DEADZONE = 0.1;
             const isMoving = Math.abs(inputX) > DEADZONE || Math.abs(inputZ) > DEADZONE;
+            
+            // Update movement state for animation
+            setPlayerIsMoving(isMoving);
 
             if (isMoving) {
                 // 3. Yön vektörünü oluştur
@@ -1338,16 +1341,21 @@ const GameScene: React.FC<GameSceneProps> = ({
                     isAttacking: isAttacking
                 });
             }
-        } else if (socketRef.current && Date.now() - lastSocketUpdate.current > 200) {
-            // FIX: Send STOP signal if not moving (idle)
-            lastSocketUpdate.current = Date.now();
-            socketRef.current.emit('player_move', {
-                x: playerGroupRef.current?.position.x || 0,
-                y: playerGroupRef.current?.position.z || 0,
-                rotation: playerGroupRef.current?.rotation.y || 0,
-                isMoving: false,
-                isAttacking: isAttacking
-            });
+        } else {
+            // Not moving - reset animation state
+            setPlayerIsMoving(false);
+            
+            if (socketRef.current && Date.now() - lastSocketUpdate.current > 200) {
+                // FIX: Send STOP signal if not moving (idle)
+                lastSocketUpdate.current = Date.now();
+                socketRef.current.emit('player_move', {
+                    x: playerGroupRef.current?.position.x || 0,
+                    y: playerGroupRef.current?.position.z || 0,
+                    rotation: playerGroupRef.current?.rotation.y || 0,
+                    isMoving: false,
+                    isAttacking: isAttacking
+                });
+            }
         }
 
         if (target && isAttacking && playerGroupRef.current) {
@@ -1449,7 +1457,7 @@ const GameScene: React.FC<GameSceneProps> = ({
                     <VoxelSpartan
                         charClass={playerStats.class || 'warrior'}
                         isAttacking={isAttacking}
-                        isMoving={!!joystick}
+                        isMoving={playerIsMoving}
                         isSpinning={skillEffects.whirlwind}
                         isCastingSkill={castingSkill}
                         wingType={playerStats.equippedWing}
@@ -1723,6 +1731,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     const [joystick, setJoystick] = useState<{ x: number, y: number } | null>(null);
     const [active3DEffects, setActive3DEffects] = useState<Active3DEffect[]>([]);
     const [isAttacking, setIsAttacking] = useState(false);
+    const [playerIsMoving, setPlayerIsMoving] = useState(false); // Track actual movement for animation
     const [skillEffects, setSkillEffects] = useState<any>({});
     const [cooldowns, setCooldowns] = useState<Record<string, number>>({});
     const [showInventory, setShowInventory] = useState(false);

@@ -3015,11 +3015,23 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     // Güvenli Bölgede Doğma (Ücretsiz)
     const handleRespawnSafe = () => {
         const safeZone = getSafeZone();
+
+        // Reset player position to center of the safe zone (Ana Üs merkezi)
+        if (playerGroupRef.current) {
+            playerGroupRef.current.position.set(0, 0, 5); // Spawn just in front of the castle
+        }
+        playerPosRef.current = { x: 0, y: 5 };
+
         onUpdatePlayer({
             hp: playerState.maxHp,
             mana: playerState.maxMana
         });
+
+        // Switch to safe zone
         props.onSwitchZone(safeZone);
+
+        addFloatingText('🏰 Güvenli Bölgede Dirildin!', 0, 3, 5, 'text-green-400 font-bold');
+        soundManager.playSFX('portal');
     };
 
     const currentLevelStartXP = LEVEL_XP_REQUIREMENTS[playerState.level] || 0;

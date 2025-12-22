@@ -1291,19 +1291,15 @@ const GameScene: React.FC<GameSceneProps> = ({
                     dirZ /= magnitude;
                 }
 
-                // 5. Geri hareket kontrolü (S tuşu)
-                const isMovingBackward = inputZ < -0.5 && Math.abs(inputX) < 0.3;
-
-                // 6. Karakter rotasyonunu akıcı şekilde ayarla (LERP)
+                // 5. Karakter rotasyonunu hareket yönüne göre ayarla
+                // NOT: position.z = position.z - moveZ olduğu için, ileri gitmek z- yönüne gitmektir
+                // Bu yüzden rotasyonu buna göre hesaplıyoruz
                 if (!isAttacking || !target) {
-                    let targetAngle: number;
-                    if (isMovingBackward) {
-                        targetAngle = 0;
-                    } else {
-                        targetAngle = Math.atan2(-dirX, dirZ) + Math.PI;
-                    }
+                    // Hareket yönü: (dirX, -dirZ) çünkü z ekseni ters
+                    // atan2(x, z) yatay düzlemde açıyı verir
+                    const targetAngle = Math.atan2(dirX, dirZ);
 
-                    // Akıcı rotasyon - ani dönüşü önle
+                    // Akıcı rotasyon - ani dönüşü önle (LERP)
                     const currentAngle = playerGroupRef.current.rotation.y;
                     let angleDiff = targetAngle - currentAngle;
 
@@ -1311,15 +1307,16 @@ const GameScene: React.FC<GameSceneProps> = ({
                     while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
                     while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
 
-                    playerGroupRef.current.rotation.y += angleDiff * 0.2; // Yumuşak dönüş
+                    // Yumuşak dönüş - 0.15 hız (daha yavaş = daha yumuşak)
+                    playerGroupRef.current.rotation.y += angleDiff * 0.15;
                 }
 
-                // 7. Hareket vektörünü uygula
+                // 6. Hareket vektörünü uygula
                 const moveX = dirX * speed; // D=sağa (+X), A=sola (-X)
-                const moveZ = dirZ * speed;
+                const moveZ = dirZ * speed; // W=ileri (dünya -Z), S=geri (dünya +Z)
 
                 const newX = playerGroupRef.current.position.x + moveX;
-                const newZ = playerGroupRef.current.position.z - moveZ;
+                const newZ = playerGroupRef.current.position.z - moveZ; // Z ekseni ters
 
                 playerGroupRef.current.position.x = newX;
                 playerGroupRef.current.position.z = newZ;

@@ -349,7 +349,7 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
                         />
                     )}
 
-                    <Canvas shadows camera={{ position: [0, 2, 5], fov: 45 }}>
+                    <Canvas shadows camera={{ position: [0, 2, 5], fov: 45 }} dpr={Math.min(window.devicePixelRatio, 1.5)} gl={{ antialias: false, powerPreference: 'high-performance', failIfMajorPerformanceCaveat: false }}>
                         <ambientLight intensity={0.5} />
                         <spotLight position={[5, 10, 5]} angle={0.5} penumbra={1} intensity={2} castShadow />
                         <pointLight position={[-5, 5, -5]} intensity={1} color="#6366f1" />
@@ -552,7 +552,7 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
                 )}
 
                 {/* 3D Canvas */}
-                <Canvas shadows camera={{ position: [0, 2, 5], fov: 45 }}>
+                <Canvas shadows camera={{ position: [0, 2, 5], fov: 45 }} dpr={Math.min(window.devicePixelRatio, 1.5)} gl={{ antialias: false, powerPreference: 'high-performance', failIfMajorPerformanceCaveat: false }}>
                     <ambientLight intensity={0.5} />
                     <spotLight position={[5, 10, 5]} angle={0.5} penumbra={1} intensity={2} castShadow />
                     <pointLight position={[-5, 5, -5]} intensity={1} color="#6366f1" />

@@ -6,11 +6,22 @@ const getApiUrl = () => {
     if (import.meta.env.VITE_API_URL) {
         return import.meta.env.VITE_API_URL;
     }
-    // Local development (localhost) -> backend at port 3001
+
+    // --- MOBILE APP FIX (Capacitor) ---
+    // Mobil uygulama (APK) çalışırken her zaman gerçek sunucuya (Vercel) bağlansın.
+    // Telefonda 'localhost' kendi içine bakar ve hata verir.
+    // @ts-ignore
+    if (typeof window !== 'undefined' && window.Capacitor?.isNativePlatform()) {
+        return 'https://kadim-savaslar.vercel.app/api';
+    }
+
+    // Local development (localhost PC Browser) -> backend at port 3001
     if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
+        // Eğer tarayıcıdaysak localhost:3001 kullan
         return 'http://localhost:3001/api';
     }
-    // Production (Vercel) -> use relative /api path
+    
+    // Production (Web deployment) -> use relative /api path
     return '/api';
 };
 

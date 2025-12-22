@@ -3101,7 +3101,28 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
 
 
-            <Canvas camera={{ position: [0, 15, 15], fov: 50 }} shadows={settings.showShadows}>
+            <Canvas
+                camera={{ position: [0, 15, 15], fov: 50 }}
+                shadows={settings.showShadows}
+                dpr={Math.min(window.devicePixelRatio, 1.5)} // Limit pixel ratio for mobile performance
+                gl={{
+                    antialias: false, // Disable antialiasing for mobile performance
+                    powerPreference: 'high-performance', // Use dedicated GPU if available
+                    preserveDrawingBuffer: true, // Help prevent context loss
+                    failIfMajorPerformanceCaveat: false // Don't fail on low-end devices
+                }}
+                onCreated={({ gl }) => {
+                    // Handle WebGL context loss/restore
+                    const canvas = gl.domElement;
+                    canvas.addEventListener('webglcontextlost', (e) => {
+                        e.preventDefault();
+                        console.warn('WebGL context lost, will try to restore...');
+                    });
+                    canvas.addEventListener('webglcontextrestored', () => {
+                        console.log('WebGL context restored!');
+                    });
+                }}
+            >
                 <ZoomController />
                 <GameScene
                     joystick={joystick}

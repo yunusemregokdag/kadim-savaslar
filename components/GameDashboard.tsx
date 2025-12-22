@@ -780,7 +780,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                                     <div className="flex-1 flex flex-col items-center">
                                         <h2 className="text-2xl font-bold mb-4 text-white">{playerStats.nickname}</h2>
                                         <div className="w-full max-w-xs h-96 relative bg-slate-900 rounded-xl border border-slate-700 overflow-hidden">
-                                            <Canvas shadows camera={{ position: [0, 2, 5], fov: 45 }}>
+                                            <Canvas shadows camera={{ position: [0, 2, 5], fov: 45 }} dpr={Math.min(window.devicePixelRatio, 1.5)} gl={{ antialias: false, powerPreference: 'high-performance', failIfMajorPerformanceCaveat: false }}>
                                                 <ambientLight intensity={0.5} />
                                                 <spotLight position={[5, 10, 5]} angle={0.5} penumbra={1} intensity={2} castShadow />
                                                 <Suspense fallback={null}>

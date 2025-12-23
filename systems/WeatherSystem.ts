@@ -80,7 +80,7 @@ export const WEATHER_EFFECTS: { [key in WeatherType]: WeatherEffect } = {
         description: 'Yoğun sis, görüş mesafesi düşük',
         duration: 25,
         classBuffs: {
-            reaper: { damageMultiplier: 1.20, defenseMultiplier: 1.0, speedMultiplier: 1.10, specialEffect: 'Kritik hasar +%20, Görünmezlik süresi +%50' },
+            reaper: { damageMultiplier: 1.20, defenseMultiplier: 1.0, speedMultiplier: 1.10, specialEffect: 'Kritik hasar +%20, Gölge Hasarı +%25' },
             martial_artist: { damageMultiplier: 1.10, defenseMultiplier: 1.0, speedMultiplier: 1.15, specialEffect: 'Kaçınma +%10' },
         },
         ambientColor: '#94a3b8',

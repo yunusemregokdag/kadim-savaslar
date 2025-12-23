@@ -1298,11 +1298,20 @@ const GameScene: React.FC<GameSceneProps> = ({
                 // S (geri, dirZ=-1): atan2(0, 1) = 0 → yüz kameraya ✓
                 // D (sağ, dirX=1): atan2(1, 0) = PI/2 → sağa ✓
                 // A (sol, dirX=-1): atan2(-1, 0) = -PI/2 → sola ✓
+                // !! BU FORMÜL DEĞİŞMEMELİ - ÇALIŞIYOR !!
 
                 const targetAngle = Math.atan2(dirX, -dirZ);
 
-                // Doğrudan set et (anlık dönüş)
-                playerGroupRef.current.rotation.y = targetAngle;
+                // Yumuşak dönüş (LERP) - akıcı geçiş
+                const currentAngle = playerGroupRef.current.rotation.y;
+                let angleDiff = targetAngle - currentAngle;
+
+                // En kısa yolu bul (360 derece wrap)
+                while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+                while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+
+                // Yumuşak dönüş - 0.25 hız
+                playerGroupRef.current.rotation.y += angleDiff * 0.25;
 
                 // 6. Hareket vektörünü uygula
                 const moveX = dirX * speed; // D=sağa (+X), A=sola (-X)

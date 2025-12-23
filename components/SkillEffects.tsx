@@ -125,39 +125,50 @@ const applyVisualEnhancements = (scene: THREE.Object3D, visualType: string, colo
     });
 };
 
+// Helper: Detect if mobile device
+const isMobile = (): boolean => {
+    if (typeof window === 'undefined') return false;
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+        window.innerWidth < 768;
+};
+
 // Helper: Get skill-specific colors for sparkles and lights
+// Mobile devices get reduced particle counts to prevent GPU overload
 const getSkillColors = (visualType: string): { sparkle: string, light: string, count: number } => {
+    const mobile = isMobile();
+    const reduction = mobile ? 0.3 : 1; // Mobile gets 30% of particles
+
     if (visualType.includes('arctic') || visualType.includes('frost') || visualType.includes('ice')) {
-        return { sparkle: '#a5f3fc', light: '#00ffff', count: 40 };
+        return { sparkle: '#a5f3fc', light: '#00ffff', count: Math.floor(40 * reduction) };
     }
     if (visualType.includes('warrior')) {
-        return { sparkle: '#fca5a5', light: '#ff4500', count: 25 };
+        return { sparkle: '#fca5a5', light: '#ff4500', count: Math.floor(25 * reduction) };
     }
     if (visualType.includes('gale')) {
-        return { sparkle: '#5eead4', light: '#14b8a6', count: 35 };
+        return { sparkle: '#5eead4', light: '#14b8a6', count: Math.floor(35 * reduction) };
     }
     if (visualType.includes('archer') || visualType.includes('hunter') || visualType.includes('backstep') || visualType.includes('javelin') || visualType.includes('dragon_arrow')) {
-        return { sparkle: '#86efac', light: '#22c55e', count: 20 };
+        return { sparkle: '#86efac', light: '#22c55e', count: Math.floor(20 * reduction) };
     }
     if (visualType.includes('archmage') || visualType.includes('arcane') || visualType.includes('meteor') || visualType.includes('void')) {
-        return { sparkle: '#c4b5fd', light: '#8b5cf6', count: 45 };
+        return { sparkle: '#c4b5fd', light: '#8b5cf6', count: Math.floor(45 * reduction) };
     }
     if (visualType.includes('bard') || visualType.includes('note') || visualType.includes('string') || visualType.includes('vibration')) {
-        return { sparkle: '#fde68a', light: '#fbbf24', count: 30 };
+        return { sparkle: '#fde68a', light: '#fbbf24', count: Math.floor(30 * reduction) };
     }
     if (visualType.includes('cleric') || visualType.includes('divine') || visualType.includes('holy') || visualType.includes('tear')) {
-        return { sparkle: '#fef9c3', light: '#facc15', count: 35 };
+        return { sparkle: '#fef9c3', light: '#facc15', count: Math.floor(35 * reduction) };
     }
     if (visualType.includes('martial')) {
-        return { sparkle: '#fca5a5', light: '#dc2626', count: 25 };
+        return { sparkle: '#fca5a5', light: '#dc2626', count: Math.floor(25 * reduction) };
     }
     if (visualType.includes('monk') || visualType.includes('chi') || visualType.includes('meditation')) {
-        return { sparkle: '#fed7aa', light: '#f97316', count: 30 };
+        return { sparkle: '#fed7aa', light: '#f97316', count: Math.floor(30 * reduction) };
     }
     if (visualType.includes('reaper') || visualType.includes('death') || visualType.includes('soul')) {
-        return { sparkle: '#c4b5fd', light: '#7c3aed', count: 35 };
+        return { sparkle: '#c4b5fd', light: '#7c3aed', count: Math.floor(35 * reduction) };
     }
-    return { sparkle: '#bdbfff', light: '#ffffff', count: 20 };
+    return { sparkle: '#bdbfff', light: '#ffffff', count: Math.floor(20 * reduction) };
 };
 
 // --- PROCEDURAL HELPERS ---

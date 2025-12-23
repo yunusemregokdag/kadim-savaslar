@@ -37,8 +37,14 @@ export function WeatherParticles(): JSX.Element | null {
             return;
         }
 
+        // Mobile detection for reduced particles
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+            window.innerWidth < 768;
+        const mobileReduction = isMobile ? 0.25 : 1; // Mobile gets 25% of particles
+
         const newParticles: WeatherParticle[] = [];
-        const count = weather.type === 'foggy' ? Math.min(weather.particleCount, 80) : weather.particleCount;
+        const baseCount = weather.type === 'foggy' ? Math.min(weather.particleCount, 80) : weather.particleCount;
+        const count = Math.floor(baseCount * mobileReduction);
 
         for (let i = 0; i < count; i++) {
             // Sis için daha geniş alan, diğerleri için dar

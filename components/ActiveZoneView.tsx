@@ -1294,14 +1294,16 @@ const GameScene: React.FC<GameSceneProps> = ({
                 // 5. Karakter rotasyonunu hareket yönüne göre ayarla
                 // DÜNYA KOORDİNATLARI: position.z = position.z - moveZ
                 // Yani hareket dünya yönü: (dirX, -dirZ)
-                // Three.js: rotation.y = 0 → +Z bakış, PI → -Z bakış
+                // Three.js: rotation.y = 0 → model +Z'ye bakar
+                // Karakter modeli +Z'ye bakıyor (yüz +Z), ama ileri hareket -Z yönünde
+                // Bu yüzden Math.PI ekliyoruz
                 if (!isAttacking || !target) {
-                    // Dünya hareket yönü: (dirX, -dirZ) - Z ters olduğu için -dirZ
-                    // Math.atan2(x, z) → x sağa, z ileri yön
+                    // Dünya hareket yönü hesapla
                     const worldDirX = dirX;
-                    const worldDirZ = -dirZ; // Z ekseni ters!
+                    const worldDirZ = -dirZ; // Z ekseni ters çünkü ileri = -Z
 
-                    const targetAngle = Math.atan2(worldDirX, worldDirZ);
+                    // Math.atan2(x, z) açıyı verir, +PI ekliyoruz çünkü model +Z'ye bakıyor
+                    const targetAngle = Math.atan2(worldDirX, worldDirZ) + Math.PI;
 
                     // Akıcı rotasyon - ani dönüşü önle (LERP)
                     const currentAngle = playerGroupRef.current.rotation.y;
@@ -1311,8 +1313,8 @@ const GameScene: React.FC<GameSceneProps> = ({
                     while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
                     while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
 
-                    // Yumuşak dönüş - 0.25 hız (daha hızlı tepki)
-                    playerGroupRef.current.rotation.y += angleDiff * 0.25;
+                    // Yumuşak dönüş - 0.3 hız (hızlı tepki)
+                    playerGroupRef.current.rotation.y += angleDiff * 0.3;
                 }
 
                 // 6. Hareket vektörünü uygula

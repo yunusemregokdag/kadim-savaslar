@@ -38,18 +38,32 @@ export function WeatherParticles(): JSX.Element | null {
         }
 
         const newParticles: WeatherParticle[] = [];
-        for (let i = 0; i < weather.particleCount; i++) {
+        const count = weather.type === 'foggy' ? Math.min(weather.particleCount, 80) : weather.particleCount;
+
+        for (let i = 0; i < count; i++) {
+            // Sis için daha geniş alan, diğerleri için dar
+            const spread = weather.type === 'foggy' ? 80 : 60;
             newParticles.push({
                 id: i,
-                x: (Math.random() - 0.5) * 100,
-                y: Math.random() * 50 + 10,
-                z: (Math.random() - 0.5) * 100,
-                speed: 0.1 + Math.random() * 0.2,
-                size: weather.particleType === 'snow' ? 0.1 + Math.random() * 0.1 : 0.02 + Math.random() * 0.02
+                x: (Math.random() - 0.5) * spread,
+                y: weather.type === 'foggy'
+                    ? Math.random() * 8 + 1 // Sis için yerden - 1-9 metre yükseklikte
+                    : Math.random() * 40 + 15, // Yağmur/kar için yüksekten
+                z: (Math.random() - 0.5) * spread,
+                speed: weather.type === 'rainy' || weather.type === 'stormy'
+                    ? 0.5 + Math.random() * 0.5 // Yağmur hızlı düşer
+                    : weather.type === 'snowy'
+                        ? 0.08 + Math.random() * 0.08 // Kar yavaş düşer
+                        : 0.01 + Math.random() * 0.02, // Sis çok yavaş hareket eder
+                size: weather.type === 'snowy'
+                    ? 0.08 + Math.random() * 0.08 // Kar tanesi
+                    : weather.type === 'foggy'
+                        ? 1.5 + Math.random() * 2 // Büyük sis bulutu
+                        : 0.03 + Math.random() * 0.02 // İnce yağmur damlası
             });
         }
         setParticles(newParticles);
-    }, [weather.particleCount, weather.particleType]);
+    }, [weather.particleCount, weather.particleType, weather.type]);
 
     // Parçacık animasyonu
     useFrame(() => {
@@ -60,40 +74,51 @@ export function WeatherParticles(): JSX.Element | null {
         particles.forEach((particle, i) => {
             // Sis için özel hareket - düşmez, yatay sürüklenir
             if (weather.type === 'foggy') {
-                particle.x += Math.sin(Date.now() * 0.0003 + particle.id * 0.5) * 0.02;
-                particle.z += Math.cos(Date.now() * 0.0002 + particle.id * 0.3) * 0.015;
-                particle.y += Math.sin(Date.now() * 0.0001 + particle.id) * 0.005;
+                particle.x += Math.sin(Date.now() * 0.0002 + particle.id * 0.5) * 0.03;
+                particle.z += Math.cos(Date.now() * 0.00015 + particle.id * 0.3) * 0.025;
+                particle.y += Math.sin(Date.now() * 0.0001 + particle.id) * 0.008;
 
                 // Sınır kontrolü - yatay wrap
-                if (particle.x > 50) particle.x = -50;
-                if (particle.x < -50) particle.x = 50;
-                if (particle.z > 50) particle.z = -50;
-                if (particle.z < -50) particle.z = 50;
+                if (particle.x > 40) particle.x = -40;
+                if (particle.x < -40) particle.x = 40;
+                if (particle.z > 40) particle.z = -40;
+                if (particle.z < -40) particle.z = 40;
             } else {
                 // Normal düşme hareketi (kar, yağmur)
                 particle.y -= particle.speed;
 
-                // Rüzgar etkisi
+                // Rüzgar etkisi - fırtınada daha güçlü
                 if (weather.type === 'stormy') {
-                    particle.x += 0.05;
-                    particle.z += 0.02;
+                    particle.x += 0.15; // Güçlü yatay rüzgar
+                    particle.z += 0.05;
+                } else if (weather.type === 'rainy') {
+                    particle.x += 0.03; // Hafif rüzgar
                 }
 
                 // Kar için hafif sallanma
                 if (weather.type === 'snowy') {
-                    particle.x += Math.sin(Date.now() * 0.001 + particle.id) * 0.01;
+                    particle.x += Math.sin(Date.now() * 0.001 + particle.id) * 0.015;
+                    particle.z += Math.cos(Date.now() * 0.0008 + particle.id * 0.7) * 0.01;
                 }
 
                 // Yeniden spawn
                 if (particle.y < 0) {
-                    particle.y = 50;
-                    particle.x = (Math.random() - 0.5) * 100;
-                    particle.z = (Math.random() - 0.5) * 100;
+                    particle.y = 40 + Math.random() * 10;
+                    particle.x = (Math.random() - 0.5) * 60;
+                    particle.z = (Math.random() - 0.5) * 60;
                 }
             }
 
             dummy.position.set(particle.x, particle.y, particle.z);
-            dummy.scale.setScalar(particle.size);
+
+            // Yağmur için dikey uzatma
+            if (weather.type === 'rainy' || weather.type === 'stormy') {
+                dummy.scale.set(particle.size, particle.size * 8, particle.size); // Uzun ince damla
+                dummy.rotation.set(0, 0, weather.type === 'stormy' ? 0.3 : 0.1); // Hafif eğik
+            } else {
+                dummy.scale.setScalar(particle.size);
+            }
+
             dummy.updateMatrix();
             meshRef.current!.setMatrixAt(i, dummy.matrix);
         });
@@ -106,23 +131,24 @@ export function WeatherParticles(): JSX.Element | null {
     }
 
     const particleColor = weather.type === 'snowy' ? '#ffffff'
-        : weather.type === 'rainy' || weather.type === 'stormy' ? '#aaccff'
-            : weather.type === 'foggy' ? '#c8d6e5'
-                : '#cccccc';
+        : weather.type === 'rainy' ? '#a0c4e8'
+            : weather.type === 'stormy' ? '#7fa8cc'
+                : weather.type === 'foggy' ? '#b8c5d6'
+                    : '#cccccc';
 
     // Kar için küre, yağmur için silindir, sis için büyük yarı saydam küre
     const geometry = weather.type === 'snowy'
-        ? new THREE.SphereGeometry(1, 8, 8)
+        ? new THREE.SphereGeometry(1, 6, 6) // Kar tanesi
         : weather.type === 'foggy'
-            ? new THREE.SphereGeometry(1, 6, 6) // Sis için büyük dalgalı küreler
-            : new THREE.CylinderGeometry(0.02, 0.02, 0.5, 4);
+            ? new THREE.SphereGeometry(1, 4, 4) // Sis bulutu
+            : new THREE.CylinderGeometry(0.3, 0.1, 1, 4); // Yağmur damlası (konik silindir)
 
-    // Sis için özel opacity ve size
-    const fogOpacity = weather.type === 'foggy' ? 0.25 : 0.7;
+    // Sis için çok saydam, diğerleri için daha belirgin
+    const opacity = weather.type === 'foggy' ? 0.15 : weather.type === 'snowy' ? 0.9 : 0.6;
 
     return (
-        <instancedMesh ref={meshRef} args={[geometry, undefined, weather.particleCount]}>
-            <meshBasicMaterial color={particleColor} transparent opacity={fogOpacity} />
+        <instancedMesh ref={meshRef} args={[geometry, undefined, particles.length]}>
+            <meshBasicMaterial color={particleColor} transparent opacity={opacity} depthWrite={false} />
         </instancedMesh>
     );
 }

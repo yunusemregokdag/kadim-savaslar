@@ -1292,18 +1292,15 @@ const GameScene: React.FC<GameSceneProps> = ({
                 }
 
                 // 5. Karakter rotasyonunu hareket yönüne göre ayarla
-                // Basit mantık: Joystick yukarı = ileri = karakter sırtı kameraya dönük olmalı
-                // Three.js'te rotation.y = 0 → +Z yönüne bakar (kameraya doğru)
-                // rotation.y = PI → -Z yönüne bakar (kameradan uzağa)
+                // Karakter yüzü hareket ettiği yöne dönmeli
                 if (!isAttacking || !target) {
-                    // dirZ > 0 = ileri (joystick yukarı) → karakter -Z yönüne gitmeli → sırtı görünmeli
-                    // dirZ < 0 = geri (joystick aşağı) → karakter +Z yönüne gitmeli → yüzü görünmeli
-                    // dirX > 0 = sağ → karakter +X yönüne gitmeli → sağ profil
-                    // dirX < 0 = sol → karakter -X yönüne gitmeli → sol profil
+                    // Deneme: Basit atan2(dirX, dirZ) - Z ters olduğu için tersi olabilir
+                    // İleri (dirZ > 0): karakter sırtı kameraya dönük olmalı (rotation.y = PI)
+                    // Geri (dirZ < 0): karakter yüzü kameraya dönük olmalı (rotation.y = 0)
 
-                    // Hareket ve bakış yönü AYNI olmalı
-                    // atan2(x, -z) verir çünkü dünyada z = -moveZ
-                    const targetAngle = Math.atan2(dirX, -dirZ);
+                    // Bu formül: dirZ > 0 → atan2(0, 1) = 0 → yüz +Z → YANLIŞ
+                    // Tersini deneyelim: dirZ pozitifken PI olmalı
+                    const targetAngle = Math.atan2(-dirX, dirZ);
 
                     // Akıcı rotasyon - ani dönüşü önle (LERP)
                     const currentAngle = playerGroupRef.current.rotation.y;
@@ -1313,8 +1310,8 @@ const GameScene: React.FC<GameSceneProps> = ({
                     while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
                     while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
 
-                    // Hızlı dönüş - 0.35
-                    playerGroupRef.current.rotation.y += angleDiff * 0.35;
+                    // Hızlı dönüş - 0.4
+                    playerGroupRef.current.rotation.y += angleDiff * 0.4;
                 }
 
                 // 6. Hareket vektörünü uygula

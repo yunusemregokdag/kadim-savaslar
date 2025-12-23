@@ -1292,35 +1292,17 @@ const GameScene: React.FC<GameSceneProps> = ({
                 }
 
                 // 5. Karakter rotasyonunu hareket yönüne göre ayarla
-                // GERÇEK MANTIK:
-                // - Model varsayılanda +Z yönüne bakıyor (kameraya doğru, yüz görünür)
-                // - rotation.y = 0 → yüz kameraya
-                // - rotation.y = PI → sırt kameraya
-                // İstenen davranış:
-                // - İleri (dirZ > 0) → karakter sırtı görünmeli → rotation = PI
-                // - Geri (dirZ < 0) → karakter yüzü görünmeli → rotation = 0
-                // - Sağ (dirX > 0) → sağ profil → rotation = PI/2
-                // - Sol (dirX < 0) → sol profil → rotation = -PI/2
-                if (!isAttacking || !target) {
-                    // atan2(dirX, dirZ) sonuçları:
-                    // İleri (0, 1) → 0   - AMA biz PI istiyoruz
-                    // Geri (0, -1) → PI  - AMA biz 0 istiyoruz
-                    // Sağ (1, 0) → PI/2  - DOĞRU
-                    // Sol (-1, 0) → -PI/2 - DOĞRU
-                    // Yani atan2 + PI yapmalıyız!
-                    const targetAngle = Math.atan2(dirX, dirZ) + Math.PI;
+                // atan2(dirX, dirZ) + PI formülü:
+                // İleri (0, 1) → 0 + PI = PI → sırt kameraya ✓
+                // Geri (0, -1) → PI + PI = 2PI = 0 → yüz kameraya ✓
+                // Sağ (1, 0) → PI/2 + PI = 3PI/2 → sağa ✓
+                // Sol (-1, 0) → -PI/2 + PI = PI/2 → sola ✓
 
-                    // Akıcı rotasyon - ani dönüşü önle (LERP)
-                    const currentAngle = playerGroupRef.current.rotation.y;
-                    let angleDiff = targetAngle - currentAngle;
+                // Koşulsuz - her durumda dönsün
+                const targetAngle = Math.atan2(dirX, dirZ) + Math.PI;
 
-                    // En kısa yolu bul (360 derece wrap)
-                    while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
-                    while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
-
-                    // Hızlı dönüş - 0.4
-                    playerGroupRef.current.rotation.y += angleDiff * 0.4;
-                }
+                // Doğrudan set et (anlık dönüş) - test için
+                playerGroupRef.current.rotation.y = targetAngle;
 
                 // 6. Hareket vektörünü uygula
                 const moveX = dirX * speed; // D=sağa (+X), A=sola (-X)

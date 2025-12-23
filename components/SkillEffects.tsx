@@ -28,20 +28,89 @@ const applyVisualEnhancements = (scene: THREE.Object3D, visualType: string, colo
             const m = (child as unknown as THREE.Mesh).material as THREE.MeshStandardMaterial;
             if (m) {
                 m.transparent = true;
-                m.alphaTest = 0.5; // FIX: Renders transparent pixels correctly (removes white box)
-                m.side = THREE.DoubleSide; // Render both sides
+                m.alphaTest = 0.5; // FIX: Renders transparent pixels correctly
+                m.side = THREE.DoubleSide;
+                m.toneMapped = false;
 
-                if (visualType.includes('arctic') || visualType.includes('frost') || visualType.includes('ice') || colorOverride === '#38bdf8') {
-                    const iceColor = new THREE.Color('#00ffff'); // Cyan/Ice Blue
+                // === ARCTIC KNIGHT (Ice Blue/Cyan) ===
+                if (visualType.includes('arctic') || visualType.includes('frost') || visualType.includes('ice')) {
+                    const iceColor = new THREE.Color('#00ffff');
                     m.emissive = iceColor;
-                    m.emissiveIntensity = 2.0; // Reduce bloom slightly
-                    m.color.lerp(iceColor, 0.5); // Tint texture slightly blue
-                } else if (colorOverride) {
+                    m.emissiveIntensity = 2.5;
+                    m.color.lerp(iceColor, 0.5);
+                }
+                // === WARRIOR (Fiery Red/Orange) ===
+                else if (visualType.includes('warrior')) {
+                    const fireColor = new THREE.Color('#ff4500');
+                    m.emissive = fireColor;
+                    m.emissiveIntensity = 2.0;
+                    m.color.lerp(fireColor, 0.4);
+                }
+                // === GALE GLAIVE (Teal/Wind Green) ===
+                else if (visualType.includes('gale')) {
+                    const windColor = new THREE.Color('#14b8a6');
+                    m.emissive = windColor;
+                    m.emissiveIntensity = 2.0;
+                    m.color.lerp(windColor, 0.4);
+                }
+                // === ARCHER (Forest Green) ===
+                else if (visualType.includes('archer') || visualType.includes('hunter') || visualType.includes('backstep') || visualType.includes('javelin') || visualType.includes('dragon_arrow')) {
+                    const forestColor = new THREE.Color('#22c55e');
+                    m.emissive = forestColor;
+                    m.emissiveIntensity = 1.8;
+                    m.color.lerp(forestColor, 0.3);
+                }
+                // === ARCHMAGE (Mystical Purple) ===
+                else if (visualType.includes('archmage') || visualType.includes('arcane') || visualType.includes('meteor') || visualType.includes('void')) {
+                    const arcaneColor = new THREE.Color('#8b5cf6');
+                    m.emissive = arcaneColor;
+                    m.emissiveIntensity = 2.5;
+                    m.color.lerp(arcaneColor, 0.5);
+                }
+                // === BARD (Golden/Musical) ===
+                else if (visualType.includes('bard') || visualType.includes('note') || visualType.includes('string') || visualType.includes('vibration')) {
+                    const goldColor = new THREE.Color('#fbbf24');
+                    m.emissive = goldColor;
+                    m.emissiveIntensity = 2.0;
+                    m.color.lerp(goldColor, 0.4);
+                }
+                // === CLERIC (Holy White/Gold) ===
+                else if (visualType.includes('cleric') || visualType.includes('divine') || visualType.includes('holy') || visualType.includes('tear')) {
+                    const holyColor = new THREE.Color('#fef3c7');
+                    m.emissive = holyColor;
+                    m.emissiveIntensity = 3.0;
+                    m.color.lerp(new THREE.Color('#facc15'), 0.3);
+                }
+                // === MARTIAL ARTIST (Crimson Red) ===
+                else if (visualType.includes('martial')) {
+                    const crimsonColor = new THREE.Color('#dc2626');
+                    m.emissive = crimsonColor;
+                    m.emissiveIntensity = 2.0;
+                    m.color.lerp(crimsonColor, 0.4);
+                }
+                // === MONK (Warm Orange/Chi) ===
+                else if (visualType.includes('monk') || visualType.includes('chi') || visualType.includes('meditation')) {
+                    const chiColor = new THREE.Color('#f97316');
+                    m.emissive = chiColor;
+                    m.emissiveIntensity = 2.2;
+                    m.color.lerp(chiColor, 0.4);
+                }
+                // === REAPER (Dark Purple/Death) ===
+                else if (visualType.includes('reaper') || visualType.includes('death') || visualType.includes('soul')) {
+                    const deathColor = new THREE.Color('#7c3aed');
+                    m.emissive = deathColor;
+                    m.emissiveIntensity = 2.5;
+                    m.color.lerp(new THREE.Color('#1a1a2e'), 0.3);
+                }
+                // === COLOR OVERRIDE (from config) ===
+                else if (colorOverride) {
                     const c = new THREE.Color(colorOverride);
                     m.emissive = c;
                     m.color.lerp(c, 0.3);
                     m.emissiveIntensity = 2.0;
-                } else {
+                }
+                // === DEFAULT GLOW ===
+                else {
                     if (m.map) {
                         m.emissive = new THREE.Color(0xffffff);
                         m.emissiveMap = m.map;
@@ -51,10 +120,44 @@ const applyVisualEnhancements = (scene: THREE.Object3D, visualType: string, colo
                         m.emissiveIntensity = 4.0;
                     }
                 }
-                m.toneMapped = false;
             }
         }
     });
+};
+
+// Helper: Get skill-specific colors for sparkles and lights
+const getSkillColors = (visualType: string): { sparkle: string, light: string, count: number } => {
+    if (visualType.includes('arctic') || visualType.includes('frost') || visualType.includes('ice')) {
+        return { sparkle: '#a5f3fc', light: '#00ffff', count: 40 };
+    }
+    if (visualType.includes('warrior')) {
+        return { sparkle: '#fca5a5', light: '#ff4500', count: 25 };
+    }
+    if (visualType.includes('gale')) {
+        return { sparkle: '#5eead4', light: '#14b8a6', count: 35 };
+    }
+    if (visualType.includes('archer') || visualType.includes('hunter') || visualType.includes('backstep') || visualType.includes('javelin') || visualType.includes('dragon_arrow')) {
+        return { sparkle: '#86efac', light: '#22c55e', count: 20 };
+    }
+    if (visualType.includes('archmage') || visualType.includes('arcane') || visualType.includes('meteor') || visualType.includes('void')) {
+        return { sparkle: '#c4b5fd', light: '#8b5cf6', count: 45 };
+    }
+    if (visualType.includes('bard') || visualType.includes('note') || visualType.includes('string') || visualType.includes('vibration')) {
+        return { sparkle: '#fde68a', light: '#fbbf24', count: 30 };
+    }
+    if (visualType.includes('cleric') || visualType.includes('divine') || visualType.includes('holy') || visualType.includes('tear')) {
+        return { sparkle: '#fef9c3', light: '#facc15', count: 35 };
+    }
+    if (visualType.includes('martial')) {
+        return { sparkle: '#fca5a5', light: '#dc2626', count: 25 };
+    }
+    if (visualType.includes('monk') || visualType.includes('chi') || visualType.includes('meditation')) {
+        return { sparkle: '#fed7aa', light: '#f97316', count: 30 };
+    }
+    if (visualType.includes('reaper') || visualType.includes('death') || visualType.includes('soul')) {
+        return { sparkle: '#c4b5fd', light: '#7c3aed', count: 35 };
+    }
+    return { sparkle: '#bdbfff', light: '#ffffff', count: 20 };
 };
 
 // --- PROCEDURAL HELPERS ---
@@ -181,8 +284,8 @@ const GltfModelEffect: React.FC<LoadedModelProps> = ({ path, position, targetPos
                     }
                 }
             }} />
-            <Sparkles count={isIce ? 40 : 20} scale={3 * scale} size={isIce ? 6 : 4} speed={0.4} opacity={0.8} color={isIce ? "#a5f3fc" : "#bdbfff"} />
-            <pointLight distance={8} intensity={8} color={isIce ? "#00ffff" : "#ffffff"} />
+            {(() => { const colors = getSkillColors(visualType); return <Sparkles count={colors.count} scale={3 * scale} size={5} speed={0.4} opacity={0.8} color={colors.sparkle} />; })()}
+            {(() => { const colors = getSkillColors(visualType); return <pointLight distance={8} intensity={8} color={colors.light} />; })()}
         </group>
     );
 };
@@ -248,8 +351,8 @@ const JsonModelEffect: React.FC<LoadedModelProps> = ({ path, position, targetPos
     return (
         <group position={position} ref={groupRef}>
             <primitive object={scene} />
-            <Sparkles count={isIce ? 40 : 20} scale={3 * scale} size={isIce ? 6 : 4} speed={0.4} opacity={0.8} color={isIce ? "#a5f3fc" : "#bdbffff"} />
-            <pointLight distance={8} intensity={8} color={isIce ? "#00ffff" : "#ffffff"} />
+            {(() => { const colors = getSkillColors(visualType); return <Sparkles count={colors.count} scale={3 * scale} size={5} speed={0.4} opacity={0.8} color={colors.sparkle} />; })()}
+            {(() => { const colors = getSkillColors(visualType); return <pointLight distance={8} intensity={8} color={colors.light} />; })()}
         </group>
     );
 };
@@ -316,7 +419,8 @@ const AnimatedGltfEffect: React.FC<{
     return (
         <group position={position} ref={groupRef}>
             <primitive object={frames[currentFrame]} />
-            <pointLight distance={5} intensity={5} color={config.color || "#ffffff"} />
+            {(() => { const colors = getSkillColors(visualType); return <Sparkles count={colors.count} scale={3 * (config.scale || 1)} size={5} speed={0.4} opacity={0.8} color={colors.sparkle} />; })()}
+            {(() => { const colors = getSkillColors(visualType); return <pointLight distance={6} intensity={6} color={colors.light} />; })()}
         </group>
     );
 };
@@ -397,7 +501,8 @@ const AnimatedJsonEffect: React.FC<{
             {frames.map((frame, i) => (
                 <primitive key={i} object={frame} visible={currentFrame === i} />
             ))}
-            <pointLight distance={5} intensity={5} color={config.color || "#ffffff"} />
+            {(() => { const colors = getSkillColors(visualType); return <Sparkles count={colors.count} scale={3 * (config.scale || 1)} size={5} speed={0.4} opacity={0.8} color={colors.sparkle} />; })()}
+            {(() => { const colors = getSkillColors(visualType); return <pointLight distance={6} intensity={6} color={colors.light} />; })()}
         </group>
     );
 };

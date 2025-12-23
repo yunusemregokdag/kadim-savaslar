@@ -1292,14 +1292,14 @@ const GameScene: React.FC<GameSceneProps> = ({
                 }
 
                 // 5. Karakter rotasyonunu hareket yönüne göre ayarla
-                // Karakter yüzü hareket yönüne bakmalı (PI OLMADAN)
-                // D (sağ): atan2(1, 0) = PI/2 → sağa bak
-                // A (sol): atan2(-1, 0) = -PI/2 → sola bak
-                // W (ileri): atan2(0, 1) = 0 → ileri bak
-                // S (geri): atan2(0, -1) = PI → geriye bak
+                // HAREKET: position.z = position.z - moveZ (Z ters!)
+                // Bu yüzden rotasyonda da Z'yi ters çevirmeliyiz: atan2(dirX, -dirZ)
+                // W (ileri, dirZ=1): atan2(0, -1) = PI → sırt kameraya ✓
+                // S (geri, dirZ=-1): atan2(0, 1) = 0 → yüz kameraya ✓
+                // D (sağ, dirX=1): atan2(1, 0) = PI/2 → sağa ✓
+                // A (sol, dirX=-1): atan2(-1, 0) = -PI/2 → sola ✓
 
-                // Koşulsuz - her durumda dönsün
-                const targetAngle = Math.atan2(dirX, dirZ);
+                const targetAngle = Math.atan2(dirX, -dirZ);
 
                 // Doğrudan set et (anlık dönüş)
                 playerGroupRef.current.rotation.y = targetAngle;

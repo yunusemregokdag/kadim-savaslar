@@ -1292,15 +1292,23 @@ const GameScene: React.FC<GameSceneProps> = ({
                 }
 
                 // 5. Karakter rotasyonunu hareket yönüne göre ayarla
-                // Karakter yüzü hareket ettiği yöne dönmeli
+                // GERÇEK MANTIK:
+                // - Model varsayılanda +Z yönüne bakıyor (kameraya doğru, yüz görünür)
+                // - rotation.y = 0 → yüz kameraya
+                // - rotation.y = PI → sırt kameraya
+                // İstenen davranış:
+                // - İleri (dirZ > 0) → karakter sırtı görünmeli → rotation = PI
+                // - Geri (dirZ < 0) → karakter yüzü görünmeli → rotation = 0
+                // - Sağ (dirX > 0) → sağ profil → rotation = PI/2
+                // - Sol (dirX < 0) → sol profil → rotation = -PI/2
                 if (!isAttacking || !target) {
-                    // Deneme: Basit atan2(dirX, dirZ) - Z ters olduğu için tersi olabilir
-                    // İleri (dirZ > 0): karakter sırtı kameraya dönük olmalı (rotation.y = PI)
-                    // Geri (dirZ < 0): karakter yüzü kameraya dönük olmalı (rotation.y = 0)
-
-                    // Bu formül: dirZ > 0 → atan2(0, 1) = 0 → yüz +Z → YANLIŞ
-                    // Tersini deneyelim: dirZ pozitifken PI olmalı
-                    const targetAngle = Math.atan2(-dirX, dirZ);
+                    // atan2(dirX, dirZ) sonuçları:
+                    // İleri (0, 1) → 0   - AMA biz PI istiyoruz
+                    // Geri (0, -1) → PI  - AMA biz 0 istiyoruz
+                    // Sağ (1, 0) → PI/2  - DOĞRU
+                    // Sol (-1, 0) → -PI/2 - DOĞRU
+                    // Yani atan2 + PI yapmalıyız!
+                    const targetAngle = Math.atan2(dirX, dirZ) + Math.PI;
 
                     // Akıcı rotasyon - ani dönüşü önle (LERP)
                     const currentAngle = playerGroupRef.current.rotation.y;

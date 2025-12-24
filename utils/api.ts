@@ -7,35 +7,41 @@ const getApiUrl = () => {
         return import.meta.env.VITE_API_URL;
     }
 
-    // --- MOBILE APP FIX (Capacitor) ---
-    // Mobil uygulama (APK) çalışırken her zaman gerçek sunucuya (Vercel) bağlansın.
-    // Telefonda 'localhost' kendi içine bakar ve hata verir.
-    // @ts-ignore
-    if (typeof window !== 'undefined' && window.Capacitor?.isNativePlatform()) {
-        return 'https://kadim-savaslar.vercel.app/api';
+    // --- MOBILE APP & BUILD FIX ---
+    const isNative = (typeof window !== 'undefined' && (window as any).Capacitor?.isNativePlatform());
+
+    if (isNative) {
+        // APK/Mobile App connects to your PC's IP address.
+        // REPLACE 'YOUR_PC_IP_ADDRESS' WITH YOUR ACTUAL LOCAL IP (e.g., 192.168.1.35)
+        return 'http://YOUR_PC_IP_ADDRESS:3001/api';
     }
 
     // Local development (localhost PC Browser) -> backend at port 3001
     if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
-        // Eğer tarayıcıdaysak localhost:3001 kullan
         return 'http://localhost:3001/api';
     }
     
-    // Production (Web deployment) -> use relative /api path
+    // Production (Web deployment on Vercel) -> use relative /api path
     return '/api';
 };
 
 const API_BASE_URL = getApiUrl();
 
 // Token management
-let authToken: string | null = localStorage.getItem('authToken');
+let authToken: string | null = null;
+if (typeof window !== 'undefined') {
+    authToken = localStorage.getItem('authToken');
+}
+
 
 export const setAuthToken = (token: string | null) => {
     authToken = token;
-    if (token) {
-        localStorage.setItem('authToken', token);
-    } else {
-        localStorage.removeItem('authToken');
+    if (typeof window !== 'undefined') {
+        if (token) {
+            localStorage.setItem('authToken', token);
+        } else {
+            localStorage.removeItem('authToken');
+        }
     }
 };
 
@@ -58,7 +64,6 @@ const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
             headers,
         });
 
-        // Check for 429 specifically immediately
         if (response.status === 429) {
             throw new Error('Çok fazla istek gönderildi. Lütfen biraz bekleyin.');
         }
@@ -68,13 +73,10 @@ const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
         if (contentType && contentType.includes("application/json")) {
             data = await response.json();
         } else {
-            // Check if we can read text
             const text = await response.text();
             try {
-                // Try parsing anyway just in case header is wrong, but unlikely
                 data = JSON.parse(text);
             } catch {
-                // Not JSON, throw error with the text content (masked if too long)
                 throw new Error(`Server Error (${response.status}): ${text.substring(0, 100)}`);
             }
         }
@@ -129,6 +131,9 @@ export const authAPI = {
         return data;
     },
 };
+
+// ... (rest of the API functions remain the same)
+
 
 // =====================
 // CHARACTER API

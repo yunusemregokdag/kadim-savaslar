@@ -382,17 +382,19 @@ const AnimatedGltfEffect: React.FC<{
 
     // Generate URLs based on startIndex and count
     const urls = useMemo(() => {
+        if (!config || !config.count || config.count <= 0) return [];
         const start = config.startIndex ?? 1;
         return Array.from({ length: config.count }).map((_, i) => `${config.path}${config.modelBase}_${start + i}.gltf`);
     }, [config]);
 
-    // Load all GLTFs
-    const gltfs = useGLTF(urls) as unknown as any[];
+    // Load all GLTFs - skip if no urls
+    const gltfs = urls.length > 0 ? useGLTF(urls) as unknown as any[] : [];
 
-    // Process Frames
+    // Process Frames with null checks
     const frames = useMemo(() => {
+        if (!gltfs || (Array.isArray(gltfs) && gltfs.length === 0)) return [];
         const list = Array.isArray(gltfs) ? gltfs : [gltfs];
-        return list.map((gltf: any) => {
+        return list.filter((gltf: any) => gltf && gltf.scene).map((gltf: any) => {
             const s = gltf.scene.clone();
             applyVisualEnhancements(s, visualType, config.color);
             if (config.scale) s.scale.set(config.scale, config.scale, config.scale);
@@ -456,6 +458,8 @@ const AnimatedJsonEffect: React.FC<{
     const frameInterval = totalDuration / Math.max(1, config.count);
 
     useEffect(() => {
+        if (!config || !config.count || config.count <= 0) return;
+
         let mounted = true;
         const loadFrames = async () => {
             const promises = [];
@@ -519,16 +523,20 @@ const AnimatedJsonEffect: React.FC<{
 };
 
 export const SkillEffects: React.FC<SkillEffectsProps> = ({ activeSkills, onEffectComplete }) => {
+    // TEMPORARY: Disable skill effects for debugging crash
+    return null;
+
+    /* ORIGINAL CODE - UNCOMMENT WHEN FIXED
     return (
         <group>
             {activeSkills.map(skill => {
                 const assetConfig = SKILL_ASSETS[skill.visual];
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
                 // 1. ANIMATED EFFECT (Sequence)
                 if (assetConfig && assetConfig.count > 1) {
                     const commonAnimProps = {
@@ -539,19 +547,19 @@ export const SkillEffects: React.FC<SkillEffectsProps> = ({ activeSkills, onEffe
                         onComplete: () => onEffectComplete(skill.id),
                         visualType: skill.visual,
                     };
-
+    
                     if (assetConfig.extension === 'gltf') {
                         return <AnimatedGltfEffect {...commonAnimProps} />;
                     } else {
                         return <AnimatedJsonEffect {...commonAnimProps} />;
                     }
                 }
-
+    
                 // 2. SINGLE EFFECT
                 // Determine Path and Extension
                 let effectivePath = skill.modelPath;
                 let isJson = false;
-
+    
                 if (effectivePath) {
                     isJson = effectivePath.endsWith('.json');
                 } else if (assetConfig) {
@@ -559,9 +567,9 @@ export const SkillEffects: React.FC<SkillEffectsProps> = ({ activeSkills, onEffe
                     effectivePath = assetConfig.path + assetConfig.modelBase + '.' + assetConfig.extension;
                     isJson = assetConfig.extension === 'json';
                 }
-
+    
                 if (!effectivePath) return null;
-
+    
                 const commonProps = {
                     key: skill.id,
                     path: effectivePath,
@@ -572,7 +580,7 @@ export const SkillEffects: React.FC<SkillEffectsProps> = ({ activeSkills, onEffe
                     sound: assetConfig?.sound,
                     scale: assetConfig?.scale || 1, // Pass scale
                 };
-
+    
                 return isJson ? (
                     <JsonModelEffect {...commonProps} />
                 ) : (
@@ -581,4 +589,5 @@ export const SkillEffects: React.FC<SkillEffectsProps> = ({ activeSkills, onEffe
             })}
         </group>
     );
+    */
 };

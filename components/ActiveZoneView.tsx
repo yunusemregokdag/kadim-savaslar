@@ -36,6 +36,7 @@ import { SettingsView, useSettings } from './SettingsView';
 import { CLASS_COMBAT_CONFIG, performAttack, isMeleeClass, logCombat } from '../utils/combatSystem';
 import { WeatherParticles, WeatherIndicator, WeatherChangeNotification, FogEffect } from './WeatherEffects';
 import { weatherManager } from '../systems/WeatherSystem';
+import { monitor } from '../utils/diagnostics/PerformanceMonitor';
 
 // --- PRELOAD ASSETS (NO FREEZE ON SPAWN) ---
 const PRELOAD_MODELS = [
@@ -741,7 +742,7 @@ const VoxelMob: React.FC<{ position: [number, number, number], color: string, le
                     <div className={`text-[8px] font-bold ${isNPC ? 'text-yellow-400 text-xs' : isBoss ? 'text-red-500 text-sm mb-1 uppercase tracking-widest' : isElite ? 'text-purple-400 text-xs' : 'text-white'} drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] whitespace-nowrap`}>
                         {isHostile ? `[Lv.${level}]` : ''} {name}
                     </div>
-                    {isHostile && (
+                    {isHostile && (isSelected || !isBoss) && (
                         <div className={`bg-gray-900 rounded-full overflow-hidden border border-gray-600 ${isBoss ? 'w-32 h-4' : 'w-12 h-1.5'}`}>
                             <div className={`h-full transition-all duration-200 ${isBoss ? 'bg-gradient-to-r from-red-600 to-orange-600' : 'bg-red-500'}`} style={{ width: `${hpPct}%` }} />
                         </div>
@@ -762,6 +763,13 @@ const VoxelMob: React.FC<{ position: [number, number, number], color: string, le
                     <VoxelSlime color={color} isHostile={isHostile} />
                 ) : modelPath ? (
                     <GLTFMob modelPath={modelPath} isBoss={isBoss} />
+                ) : type === 'player' ? (
+                    <VoxelSpartan
+                        charClass={name.includes('Büyücü') ? 'archmage' : name.includes('Okçu') ? 'archer' : 'warrior'}
+                        isMoving={true}
+                        isAttacking={true}
+                        weaponItem={{ id: 'bot_sword', name: 'Bot Kılıcı', type: 'weapon', tier: level > 10 ? 2 : 1, rarity: 'common', value: 0, icon: '⚔️' }}
+                    />
                 ) : (
                     // Default generic cube mob
                     <group position={[0, 0.5, 0]}>
@@ -1008,10 +1016,36 @@ const GameScene: React.FC<GameSceneProps> = ({
         const interval = setInterval(() => {
             setEntities((prev: GameEntity[]) => {
                 const hostiles = prev.filter(e => e.isHostile);
+
+                // DESPAWN LOGIC: Remove far away mobs to cycle new ones
+                const playerX = playerGroupRef.current ? playerGroupRef.current.position.x : 0;
+                const playerZ = playerGroupRef.current ? playerGroupRef.current.position.z : 0;
+
+                // Filter out mobs that are too far (> 60 units) or out of bounds
+                const activeMobs = prev.filter(e => {
+                    const ex = e.x / 15;
+                    const ez = e.y / 15;
+                    const dist = Math.sqrt(Math.pow(ex - playerX, 2) + Math.pow(ez - playerZ, 2));
+
+                    // Always keep bosses
+                    if (e.type === 'boss' || e.name.includes('BOSS')) return true;
+
+                    // Despawn if > 60 units away or out of border
+                    if (dist > 60) return false;
+                    if (Math.abs(ex) > borderLimit || Math.abs(ez) > borderLimit) return false;
+
+                    return true;
+                });
+
+                // If we removed some mobs, update immediately before adding new ones
+                if (activeMobs.length < prev.length) {
+                    // Update state in next cycle to avoid conflicts, or just use filtered list for count
+                }
+
                 if (hostiles.length < 5) {
                     // DUNGEON LOGIC (Zone 99)
                     if (zoneId === 99) {
-                        const hasBoss = prev.some(e => e.type === 'slime' && e.color === 'rainbow');
+                        const hasBoss = activeMobs.some(e => e.type === 'slime' && e.color === 'rainbow');
                         const newDungeonMobs: GameEntity[] = [];
 
                         // 1. Spawn Boss if missing
@@ -1044,11 +1078,11 @@ const GameScene: React.FC<GameSceneProps> = ({
                                 });
                             }
                         }
-                        return [...prev, ...newDungeonMobs];
+                        return [...activeMobs, ...newDungeonMobs];
                     }
 
                     const zoneData = ZONE_CONFIG[zoneId];
-                    if (!zoneData || !zoneData.enemies.length) return prev;
+                    if (!zoneData || !zoneData.enemies.length) return activeMobs;
 
                     const newMobs: GameEntity[] = [];
                     // CZ (44) Modu: %80 Bot ihtimali, Diğer yerler %20
@@ -1056,40 +1090,69 @@ const GameScene: React.FC<GameSceneProps> = ({
                     const spawnEnemyPlayer = Math.random() < (isCZ ? 0.8 : 0.2);
 
                     if (spawnEnemyPlayer) {
-                        let x = (Math.random() * borderLimit * 2 - borderLimit) * 15;
-                        let y = (Math.random() * borderLimit * 2 - borderLimit) * 15;
+                        // Spawn closer to player but not on top (between 15 and 40 units)
+                        const angle = Math.random() * Math.PI * 2;
+                        const dist = 15 + Math.random() * 25;
+                        const spawnX = (playerX + Math.cos(angle) * dist) * 15;
+                        const spawnZ = (playerZ + Math.sin(angle) * dist) * 15;
+
+                        // Ensure inside border
                         const zoneBaseLevel = zoneData.minLevel || 1;
                         // CZ'de botlar oyuncudan +5 level yüksek ve en az 30 level olsun
-                        const levelBoost = isCZ ? 5 : 2;
-                        const minBotLvl = isCZ ? 30 : zoneBaseLevel;
-                        const botLevel = Math.max(minBotLvl, playerStats.level + levelBoost);
+                        // FIX: Level cap to 30 (Max Level)
+                        const levelBoost = isCZ ? 2 : 0;
+                        const minBotLvl = isCZ ? 20 : zoneBaseLevel;
+                        const maxBotLevel = 30; // Game Max Level
+
+                        let botLevel = Math.max(minBotLvl, Math.min(maxBotLevel, playerStats.level + levelBoost));
+                        if (botLevel > 30) botLevel = 30;
 
                         const botNames = ['Ares', 'Hades', 'Thor', 'Loki', 'Achilles', 'Leonidas', 'Spartacus', 'Maximus'];
                         const botName = isCZ
                             ? `[Gladyatör] ${botNames[Math.floor(Math.random() * botNames.length)]}`
                             : '[Rakip] Savaşçı';
 
+                        // Bot has VoxelSpartan defined appearance implicitly via 'player' type handling in render
                         newMobs.push({
                             id: uuidv4(), type: 'player', name: botName,
-                            x, y, hp: 1500 * botLevel, maxHp: 1500 * botLevel, level: botLevel,
+                            x: spawnX, y: spawnZ,
+                            hp: 800 * botLevel, maxHp: 800 * botLevel, level: botLevel,
                             isHostile: true, color: '#fb923c',
-                            // Bot players have high defense and damage
-                            defense: botLevel * 8,
-                            damage: botLevel * 15
+                            defense: botLevel * 5,
+                            damage: botLevel * 10
                         });
                     } else {
+                        // FIX: SAFE ZONE SPAWN LOGIC
+                        // If safe zone, force spawn AWAY from center (Base)
+                        const isSafeZone = !!zoneData.isSafeZone;
+                        const safeRadius = 40; // Safe area radius
+
                         for (let i = 0; i < 2; i++) {
                             const template = zoneData.enemies[Math.floor(Math.random() * zoneData.enemies.length)];
                             let x = 0, y = 0;
-                            if (hasBase) {
+
+                            if (hasBase || isSafeZone) {
+                                // Spawn FAR from center
                                 const angle = Math.random() * Math.PI * 2;
-                                const dist = 15 + Math.random() * (borderLimit - 15);
-                                x = Math.cos(angle) * dist * 15;
-                                y = Math.sin(angle) * dist * 15;
+                                const minSpawnDist = isSafeZone ? safeRadius + 5 : 15;
+                                const dist = minSpawnDist + Math.random() * 20;
+
+                                x = (playerX + Math.cos(angle) * dist) * 15;
+                                y = (playerZ + Math.sin(angle) * dist) * 15;
+
+                                // Double check if inside safe circle
+                                if (isSafeZone && Math.sqrt(x * x + y * y) < safeRadius * 15) {
+                                    // Push out
+                                    x = (x > 0 ? 1 : -1) * (safeRadius + 5) * 15;
+                                }
+
                             } else {
-                                x = (Math.random() * borderLimit * 2 - borderLimit) * 15;
-                                y = (Math.random() * borderLimit * 2 - borderLimit) * 15;
+                                const angle = Math.random() * Math.PI * 2;
+                                const dist = 10 + Math.random() * 30;
+                                x = (playerX + Math.cos(angle) * dist) * 15;
+                                y = (playerZ + Math.sin(angle) * dist) * 15;
                             }
+
                             let type: EntityType = 'mob';
                             if (template.name && (template.name.includes('[BOSS]') || template.name.includes('Boss'))) {
                                 type = 'boss';
@@ -1099,15 +1162,14 @@ const GameScene: React.FC<GameSceneProps> = ({
                                 id: uuidv4(), type: type, name: template.name || 'Düşman',
                                 x, y, hp: template.hp || 100, maxHp: template.maxHp || 100,
                                 level: template.level || 1, isHostile: true, color: template.color || 'red',
-                                // Defense scales with level: Level 1 = 5 def, Level 10 = 50 def, Level 30 = 150 def
                                 defense: template.defense ?? Math.floor((template.level || 1) * 5),
                                 damage: template.damage ?? Math.floor((template.level || 1) * 10)
                             });
                         }
                     }
-                    return [...prev, ...newMobs];
+                    return [...activeMobs, ...newMobs];
                 }
-                return prev;
+                return activeMobs;
             });
         }, 3000);
         return () => clearInterval(interval);
@@ -1150,7 +1212,7 @@ const GameScene: React.FC<GameSceneProps> = ({
         return true;
     };
 
-    import { monitor } from '../utils/diagnostics/PerformanceMonitor';
+
 
     // ... inside ActiveZoneView ...
 
@@ -1212,13 +1274,19 @@ const GameScene: React.FC<GameSceneProps> = ({
 
                 entities.forEach(ent => {
                     if (ent.isHostile) {
+                        // SAFE ZONE PROTECTION: Check if player is in Safe Zone Radius (40 units)
+                        const zoneData = ZONE_CONFIG[zoneId];
+                        const isSafeZone = !!zoneData?.isSafeZone;
+                        const distToCenter = Math.sqrt(px * px + pz * pz);
+
+                        if (isSafeZone && distToCenter < 40) return; // NO DAMAGE IN SAFE ZONE
+
                         const dist = Math.sqrt(Math.pow(ent.x / 15 - px, 2) + Math.pow(ent.y / 15 - pz, 2));
                         if (dist < 2.5) {
                             const rawDmg = 20 + (ent.level * 5) + (ent.level > 20 ? 50 : 0);
                             const defenseMitigation = playerStats.defense * 0.5; // 1 Def = 0.5 DMG blocked
                             const actualDmg = Math.max(1, Math.floor(rawDmg - defenseMitigation));
 
-                            damageTaken += actualDmg;
                             damageTaken += actualDmg;
                             addFloatingText(`-${actualDmg}`, px, 2 + Math.random(), pz, 'text-red-600 font-bold text-2xl');
                             soundManager.playSFX('hit');

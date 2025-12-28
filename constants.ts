@@ -483,14 +483,21 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
         ]
     },
     17: {
-        name: 'Ejderha Yuvası (1-7)', bg: '#450a0a', factionOwner: 'marsu', minLevel: 11, enemies: [{ name: 'Kadim Ejder', level: 25, hp: 30000 }], npcs: [],
+        name: 'Ejderha Yuvası (1-7)', bg: '#450a0a', factionOwner: 'marsu', minLevel: 11,
+        enemies: [
+            { name: 'Kadim Ejder', level: 25, hp: 30000 },
+            { name: '[BOSS] Ateş Ejderi (Parrot Boss)', level: 30, hp: 500000 }
+        ],
+        npcs: [],
         portals: [
             { id: 'p_17_16', x: -40, z: 0, targetZone: 16, levelReq: 11, name: 'Geri: 1-6' },
             { id: 'p_17_18', x: 40, z: 0, targetZone: 18, levelReq: 12, name: 'İleri: 1-8' }
         ]
     },
     18: {
-        name: 'Yanardağ Çekirdeği (1-8)', bg: '#000000', factionOwner: 'marsu', minLevel: 12, enemies: [{ name: '[BOSS] Ateş Ejderi (Parrot Boss)', level: 30, hp: 500000 }], npcs: [],
+        name: 'Yanardağ Çekirdeği (1-8)', bg: '#000000', factionOwner: 'marsu', isSafeZone: true, minLevel: 12, // X-8 SAFE ZONE
+        enemies: [{ name: 'Ateş Böceği', level: 1, hp: 100 }], // Low Level Mobs
+        npcs: [],
         portals: [
             { id: 'p_18_17', x: 0, z: 40, targetZone: 17, levelReq: 11, name: 'Geri: 1-7' }
         ]
@@ -532,14 +539,21 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
         ]
     },
     27: {
-        name: 'Batık Şehir (2-7)', bg: '#172554', factionOwner: 'terya', minLevel: 11, enemies: [{ name: 'Poseidon Muhafızı', level: 25, hp: 30000 }], npcs: [],
+        name: 'Batık Şehir (2-7)', bg: '#172554', factionOwner: 'terya', minLevel: 11,
+        enemies: [
+            { name: 'Poseidon Muhafızı', level: 25, hp: 30000 },
+            { name: '[BOSS] Okyanus Pengueni', level: 30, hp: 500000 }
+        ],
+        npcs: [],
         portals: [
             { id: 'p_27_26', x: -40, z: 0, targetZone: 26, levelReq: 11, name: 'Geri: 2-6' },
             { id: 'p_27_28', x: 40, z: 0, targetZone: 28, levelReq: 12, name: 'İleri: 2-8' }
         ]
     },
     28: {
-        name: 'Poseidon Tahtı (2-8)', bg: '#000000', factionOwner: 'terya', minLevel: 12, enemies: [{ name: '[BOSS] Okyanus Pengueni', level: 30, hp: 500000 }], npcs: [],
+        name: 'Poseidon Tahtı (2-8)', bg: '#000000', factionOwner: 'terya', isSafeZone: true, minLevel: 12, // X-8 SAFE ZONE
+        enemies: [{ name: 'Su Kabarcığı', level: 1, hp: 100 }], // Low Level Mobs
+        npcs: [],
         portals: [
             { id: 'p_28_27', x: 0, z: 40, targetZone: 27, levelReq: 11, name: 'Geri: 2-7' }
         ]
@@ -581,14 +595,21 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
         ]
     },
     37: {
-        name: 'Fısıldayan Vadi (3-7)', bg: '#14532d', factionOwner: 'venu', minLevel: 11, enemies: [{ name: 'Vahşi Druid', level: 25, hp: 30000 }], npcs: [],
+        name: 'Fısıldayan Vadi (3-7)', bg: '#14532d', factionOwner: 'venu', minLevel: 11,
+        enemies: [
+            { name: 'Vahşi Druid', level: 25, hp: 30000 },
+            { name: '[BOSS] Armadillo Kral', level: 30, hp: 500000 }
+        ],
+        npcs: [],
         portals: [
             { id: 'p_37_36', x: -40, z: 0, targetZone: 36, levelReq: 11, name: 'Geri: 3-6' },
             { id: 'p_37_38', x: 40, z: 0, targetZone: 38, levelReq: 12, name: 'İleri: 3-8' }
         ]
     },
     38: {
-        name: 'Gaia Tapınağı (3-8)', bg: '#000000', factionOwner: 'venu', minLevel: 12, enemies: [{ name: '[BOSS] Armadillo Kral', level: 30, hp: 500000 }], npcs: [],
+        name: 'Gaia Tapınağı (3-8)', bg: '#000000', factionOwner: 'venu', isSafeZone: true, minLevel: 12, // X-8 SAFE ZONE
+        enemies: [{ name: 'Kök Parçası', level: 1, hp: 100 }], // Low Level Mobs
+        npcs: [],
         portals: [
             { id: 'p_38_37', x: 0, z: 40, targetZone: 37, levelReq: 11, name: 'Geri: 3-7' }
         ]

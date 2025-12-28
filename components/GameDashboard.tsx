@@ -377,6 +377,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
     };
 
     const [playerStats, setPlayerStats] = useState<PlayerState>(getInitialState());
+    const [activeTab, setActiveTab] = useState<string>('character');
 
     // --- LOAD DATA ---
     useEffect(() => {

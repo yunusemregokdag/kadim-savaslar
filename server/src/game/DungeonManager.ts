@@ -148,7 +148,7 @@ export class DungeonManager {
         if (inst) inst.worker.postMessage({ type: 'INPUT', playerId, input });
     }
 
-    private handleMessage(instanceId: string, msg: any) {
+    private handleMessage(_instanceId: string, msg: any) {
         if (msg.type === 'SNAPSHOT') {
             // Broadcast logic would go here
             // this.io.to(instanceId).emit('w_update', msg);

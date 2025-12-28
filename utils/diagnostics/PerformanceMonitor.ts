@@ -56,6 +56,13 @@ class PerformanceMonitor {
 
         // Start periodic sampling (every 1s)
         setInterval(() => this.sample(), 1000);
+
+        // EXPOSE TO CONSOLE (Fix for "console commands not working")
+        if (typeof window !== 'undefined') {
+            (window as any).generatePerfReport = () => this.stopAndGenerateReport();
+            (window as any).monitor = this;
+            console.log("👉 Console Access: Type 'generatePerfReport()' or 'monitor' to inspect.");
+        }
     }
 
     public stopAndGenerateReport() {

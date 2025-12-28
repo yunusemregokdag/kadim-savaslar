@@ -631,6 +631,7 @@ const VoxelMob: React.FC<{ position: [number, number, number], color: string, le
     // 2. STATE & REFS
     const groupRef = useRef<any>(null);
     const [visualHp, setVisualHp] = useState(hp);
+    const [botState, setBotState] = useState({ isMoving: false, isAttacking: false });
 
     // 3. INITIAL SETUP
     useEffect(() => {
@@ -653,9 +654,13 @@ const VoxelMob: React.FC<{ position: [number, number, number], color: string, le
         const pz = playerRef.current.position.z;
         const mx = groupRef.current.position.x;
         const mz = groupRef.current.position.z;
+        let moving = false;
+        let attacking = false;
+
         const dist = Math.sqrt(Math.pow(mx - px, 2) + Math.pow(mz - pz, 2));
 
         if (dist < 15 && dist > 2) {
+            moving = true;
             const angle = Math.atan2(pz - mz, px - mx);
             const speed = 2.5 * delta;
             const newX = mx + Math.cos(angle) * speed;
@@ -670,6 +675,20 @@ const VoxelMob: React.FC<{ position: [number, number, number], color: string, le
             entity.y = newZ * 15;
             entity.targetX = newX * 15; // Sync target for AI
             entity.targetY = newZ * 15;
+        } else if (dist <= 2.5) {
+            // Attack range
+            attacking = true;
+            // Face player
+            const angle = Math.atan2(pz - mz, px - mx);
+            groupRef.current.rotation.y = -angle + Math.PI / 2;
+        }
+
+        // Throttle state updates to avoid React render spam (every 200ms approx via frame count or time)
+        // Optimization: Only update if changed
+        if (type === 'player') {
+            if (botState.isMoving !== moving || botState.isAttacking !== attacking) {
+                setBotState({ isMoving: moving, isAttacking: attacking });
+            }
         }
     });
 
@@ -714,7 +733,8 @@ const VoxelMob: React.FC<{ position: [number, number, number], color: string, le
     const activeModelPath = modelPath || autoModelPath;
 
     let bodyScale = 1;
-    if (isNPC) bodyScale = 0.8;
+    if (type === 'player') bodyScale = 1.0; // SCALE FIX: Players always 1.0
+    else if (isNPC) bodyScale = 0.8;
     else if (activeModelPath) bodyScale = isBoss ? 2.5 : 1.5;
     else {
         if (isBoss) bodyScale = 3;
@@ -766,8 +786,8 @@ const VoxelMob: React.FC<{ position: [number, number, number], color: string, le
                 ) : type === 'player' ? (
                     <VoxelSpartan
                         charClass={name.includes('Büyücü') ? 'archmage' : name.includes('Okçu') ? 'archer' : 'warrior'}
-                        isMoving={true}
-                        isAttacking={true}
+                        isMoving={botState.isMoving}
+                        isAttacking={botState.isAttacking}
                         weaponItem={{ id: 'bot_sword', name: 'Bot Kılıcı', type: 'weapon', tier: level > 10 ? 2 : 1, rarity: 'common', value: 0, icon: '⚔️' }}
                     />
                 ) : (
@@ -848,6 +868,13 @@ const GameScene: React.FC<GameSceneProps> = ({
 
     const lastPortalCheck = useRef(0);
     const lastAIUpdate = useRef(0);
+
+    // PERFORMANCE MONITOR START
+    useEffect(() => {
+        monitor.start();
+        // Also attach to window here as a backup
+        if (typeof window !== 'undefined') (window as any).monitor = monitor;
+    }, []);
     const lastUIUpdate = useRef(0); // THROTTLE UI UPDATES
 
     const [decorations, setDecorations] = useState<any[]>([]);
@@ -1932,6 +1959,9 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
         const handleGameUpdate = (data: any) => {
             if (!socket) return;
+            // MONITOR NETWORK
+            monitor.onPacket(JSON.stringify(data).length);
+
             const others = data.players.filter((p: any) => p.id !== socket.id);
             setRemotePlayers(others);
             lastSocketUpdate.current = Date.now();

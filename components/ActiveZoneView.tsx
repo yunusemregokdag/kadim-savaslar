@@ -2977,6 +2977,43 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             }]);
         }
 
+        // --- BARD SPECIAL MECHANICS ---
+        if (skill.id === 'bd3') {
+            // Defense Break (Yıkım Notası)
+            const range = 10;
+            setEntities(prev => prev.map(ent => {
+                const dist = Math.sqrt(Math.pow(ent.x / 15 - playerPosRef.current.x, 2) + Math.pow(ent.y / 15 - playerPosRef.current.y, 2));
+                const isTarget = effectiveTarget && effectiveTarget.id === ent.id;
+
+                if (isTarget && dist < range) {
+                    // Visual
+                    spawnVisualEffect(ent.x / 15, ent.y / 15, '#1e293b'); // Dark Blue/Black
+                    addFloatingText("SAVUNMA KIRILDI!", ent.x / 15, 3, ent.y / 15, "text-red-500 font-bold");
+
+                    // Apply Break (30% Def Reduction)
+                    const originalDef = ent.defense || 0;
+                    const newDef = Math.floor(originalDef * 0.7);
+
+                    // Revert after 5s
+                    setTimeout(() => {
+                        setEntities(curr => curr.map(e => e.id === ent.id ? { ...e, defense: originalDef } : e));
+                    }, 5000);
+
+                    return { ...ent, defense: newDef };
+                }
+                return ent;
+            }));
+            // Continue to damage logic? No, type is utility.
+            if (skill.type === 'utility') return;
+        }
+
+        if (skill.id === 'bd7') {
+            // Bard Ultimate Buff Visual and Logic
+            addFloatingText("TAKIM GÜÇLENDİ!", playerPosRef.current.x, 3, playerPosRef.current.y, "text-purple-400 font-bold text-xl");
+            spawnVisualEffect(playerPosRef.current.x, playerPosRef.current.y, '#a855f7');
+            // Damage logic continues below as type is 'ultimate'
+        }
+
         if (skill.type === 'damage' || skill.type === 'ultimate') {
             const range = 10;
             const factor = skill.type === 'ultimate' ? 3 : 1.5;

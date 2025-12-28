@@ -349,7 +349,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
 
             return {
                 nickname: `[GM] ${nickname}`, class: charClass, faction: faction, guildName: 'YÖNETİM',
-                level: 60, exp: LEVEL_XP_REQUIREMENTS[30], maxExp: LEVEL_XP_REQUIREMENTS[30],
+                level: 30, exp: LEVEL_XP_REQUIREMENTS[29], maxExp: LEVEL_XP_REQUIREMENTS[29],
                 credits: 99000000, gems: 99000000, honor: 500000000, rankPoints: 500000000, rank: 19,
                 questStage: 10, hp: 99999, maxHp: 99999, mana: 99999, maxMana: 99999, damage: 9999, defense: 9999,
                 strength: baseStats.str + 500, dexterity: baseStats.dex + 500, intelligence: baseStats.int + 500, vitality: baseStats.vit + 500, statPoints: 100,

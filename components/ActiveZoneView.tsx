@@ -3008,10 +3008,33 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         }
 
         if (skill.id === 'bd7') {
-            // Bard Ultimate Buff Visual and Logic
+            // Bard Ultimate Buff Logic (Destansı Final)
+            // Effect: +50% All Stats for 20s
             addFloatingText("TAKIM GÜÇLENDİ!", playerPosRef.current.x, 3, playerPosRef.current.y, "text-purple-400 font-bold text-xl");
             spawnVisualEffect(playerPosRef.current.x, playerPosRef.current.y, '#a855f7');
-            // Damage logic continues below as type is 'ultimate'
+
+            // Apply Buff to Player
+            const duration = skill.duration || 20;
+            const originalStats = { ...playerState }; // Snapshot
+
+            // Update Player Data (Optimistic)
+            handleUpdatePlayerSafe({
+                damage: Math.floor(playerState.damage * 1.5),
+                defense: Math.floor(playerState.defense * 1.5),
+                // Add explicit visible feedback
+            });
+
+            // Revert after Duration
+            setTimeout(() => {
+                handleUpdatePlayerSafe({
+                    damage: originalStats.damage,
+                    defense: originalStats.defense
+                });
+                addFloatingText("BUFF BİTTİ", playerPosRef.current.x, 3, playerPosRef.current.y, "text-slate-400 font-bold");
+            }, duration * 1000);
+
+            // TODO: In a real multiplayer scenario, emit socket event to buff party members
+            // if (socketRef.current) socketRef.current.emit('cast_buff', { skillId: 'bd7', duration });
         }
 
         if (skill.type === 'damage' || skill.type === 'ultimate') {

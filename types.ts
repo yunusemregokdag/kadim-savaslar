@@ -24,6 +24,7 @@ export interface Skill {
   visual: string; // Effect key
   modelPath?: string; // Path to GLTF skill effect model
   isAoE?: boolean; // If true, affects all targets in range. If false, only selected target.
+  duration?: number; // Duration of effect in seconds (for buffs/debuffs)
 }
 
 export interface ClassData {

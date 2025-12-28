@@ -4,7 +4,7 @@ import { AssetLoader } from '../utils/AssetLoader';
 import { PlayerState, CharacterClass, Item, Equipment, Faction, Quest, Rank, WingItem, PetItem, HUDLayout, CraftingRecipe, DailyLoginState, Achievement, DailyLoginReward, Party, PartyMember, Guild, Trade } from '../types';
 import { CLASSES, LEVEL_XP_REQUIREMENTS, FACTIONS, QUEST_DATA, ZONE_CONFIG, RANKS, MOCK_LEADERBOARD, WINGS_DATA, PETS_DATA, CLASS_BASE_STATS, DEFAULT_HUD_LAYOUT, CLASS_STARTER_ITEMS } from '../constants';
 import SkillTree from './SkillTree';
-import ActiveZoneView from './ActiveZoneView';
+const ActiveZoneView = React.lazy(() => import('./ActiveZoneView')); // Lazy load to prevent immediate preload of assets
 import MarketView from './MarketView';
 import NpcShopView from './NpcShopView';
 import BlacksmithView from './BlacksmithView';
@@ -31,7 +31,23 @@ import ChatSystem from './ChatSystem';
 import { ChatMessage } from '../types';
 import { VoxelSpartan } from './VoxelSpartan';
 import { Canvas } from '@react-three/fiber';
-import { Environment } from '@react-three/drei';
+import { Environment, useGLTF, useProgress } from '@react-three/drei';
+
+// --- ASSET PRELOAD LIST ---
+// These are loaded AFTER character selection, during the loading screen
+const PRELOAD_MODELS = [
+    '/models/enemies/bosses/parrot%20bosses%20premium.gltf',
+    '/models/enemies/bosses/armadillo%20bosses%20premium.gltf',
+    '/models/enemies/bosses/axolotl%20bosses%20premium.gltf',
+    '/models/enemies/bosses/cat%20bosses%20premium.gltf',
+    '/models/enemies/bosses/crab%20bosses%20premium.gltf',
+    '/models/enemies/bosses/penguin%20bosses%20premium.gltf',
+    '/models/enemies/mobs/parrot%20normal.gltf',
+    '/models/enemies/mobs/cat%20normal.gltf',
+    '/models/enemies/mobs/cat%20medium.gltf',
+    '/models/enemies/mobs/axolotl%20normal.gltf',
+    '/models/enemies/mobs/axolotl%20medium.gltf',
+];
 import { io, Socket } from 'socket.io-client';
 import { characterAPI, guildAPI, partyAPI, tradeAPI } from '../utils/api';
 import PartyView from './PartyView';
@@ -156,6 +172,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
     const [showControls, setShowControls] = useState(false);
     const [showMounts, setShowMounts] = useState(false);
     const { shouldShow: showTutorial } = useTutorial();
+    const { progress } = useProgress();
     const socketRef = React.useRef<Socket | null>(null);
 
     // Initialize Socket
@@ -206,15 +223,53 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
         };
 
         if (isAdmin) {
+            // ADMIN / TEST BUILDER
+            const adminInventory: Item[] = [];
+
+            // 1. All Upgrade Scrolls (x10 each)
+            for (let i = 0; i < 10; i++) {
+                adminInventory.push({ id: uuidv4(), name: 'Kutsal Parşömen', tier: 1, type: 'upgrade_scroll' as any, rarity: 'rare', value: 1000, plus: 0 });
+                adminInventory.push({ id: uuidv4(), name: 'Kadim Parşömen', tier: 2, type: 'upgrade_scroll' as any, rarity: 'epic', value: 5000, plus: 0 });
+                adminInventory.push({ id: uuidv4(), name: 'Efsanevi Parşömen', tier: 3, type: 'upgrade_scroll' as any, rarity: 'legendary', value: 20000, plus: 0 });
+            }
+
+            // 2. Test Weapons (Different Types, +0)
+            const weaponTypes = [
+                { name: 'Acemi Kılıcı', tier: 1 },
+                { name: 'Savaşçı Baltası', tier: 2 },
+                { name: 'Kraliyet Kılıcı', tier: 3 },
+                { name: 'Ejderha Mızrağı', tier: 4 }
+            ];
+            weaponTypes.forEach(w => {
+                adminInventory.push({
+                    id: uuidv4(), name: w.name, tier: w.tier,
+                    type: 'weapon', rarity: 'rare',
+                    value: 1000 * w.tier, plus: 0
+                });
+            });
+
+            // 3. Consumables
+            adminInventory.push({ id: uuidv4(), name: 'Can İksiri (Büyük)', tier: 3, type: 'consumable', rarity: 'rare', value: 100, plus: 0 });
+
+            // 4. Starter +12 Item
+            const godWeapon: Item = {
+                id: uuidv4(), name: 'GOD SLAYER TESTER', tier: 4,
+                type: 'weapon', rarity: 'legendary',
+                value: 999999, plus: 12
+            };
+
             return {
                 nickname: `[GM] ${nickname}`, class: charClass, faction: faction, guildName: 'YÖNETİM',
                 level: 30, exp: LEVEL_XP_REQUIREMENTS[30], maxExp: LEVEL_XP_REQUIREMENTS[30],
                 credits: 99000000, gems: 99000000, honor: 500000000, rankPoints: 500000000, rank: 19,
                 questStage: 10, hp: 99999, maxHp: 99999, mana: 99999, maxMana: 99999, damage: 9999, defense: 9999,
                 strength: baseStats.str + 500, dexterity: baseStats.dex + 500, intelligence: baseStats.int + 500, vitality: baseStats.vit + 500, statPoints: 100,
-                inventory: [], equipment: { weapon: null, armor: null, helmet: null, pants: null, boots: null, necklace: null, earring: null },
+                inventory: adminInventory,
+                equipment: { weapon: godWeapon, armor: null, helmet: null, pants: null, boots: null, necklace: null, earring: null },
                 ownedWings: WINGS_DATA, equippedWing: WINGS_DATA[4], ownedPets: PETS_DATA, equippedPet: PETS_DATA[4],
-                ownedSkins: [], equippedSkin: null, activeQuest: null, settings: defaultSettings
+                ownedSkins: [], equippedSkin: null, activeQuest: null, settings: defaultSettings,
+                dailyLogin: { lastLoginDate: '', consecutiveDays: 0, claimedToday: false, totalLogins: 0 },
+                achievements: DEFAULT_ACHIEVEMENTS
             };
         }
 
@@ -237,6 +292,10 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
     // --- LOAD DATA ---
     useEffect(() => {
         const loadCharacterData = async () => {
+            // FIRE ASSET PRELOADS IMMEDIATELY
+            console.log("🚀 Starting Asset Preload (Background)...");
+            PRELOAD_MODELS.forEach(path => useGLTF.preload(path));
+
             if (characterId && characterId !== 'temp_id') {
                 try {
                     setLoading(true);
@@ -252,7 +311,10 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                         setPlayerStats(recalculateStats(loadedState));
                     }
                 } catch (err) { console.error("Load failed:", err); } finally { setLoading(false); }
-            } else { setLoading(false); }
+            } else {
+                // Creating new character, just fake a small wait for assets
+                setTimeout(() => setLoading(false), 800);
+            }
         };
         if (!isAdmin) loadCharacterData(); else setLoading(false);
     }, [characterId, isAdmin]);
@@ -633,12 +695,79 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
     // NOT: Early return kullanmıyoruz çünkü React Hook kurallarını ihlal eder (Error #310)
     // Bunun yerine aşağıda conditional rendering kullanıyoruz
 
-    // Loading durumu - Ana return içinde koşullu olarak gösterilecek
+    // --- PREMIUM LOADING SCREEN ---
+    const GAME_TIPS = [
+        "💡 İPUCU: Demirci'de eşyalarını güçlendirebilirsin, ancak +7'den sonra eşyan yanabilir!",
+        "💡 İPUCU: Boss savaşlarında kırmızı alanlardan kaçmayı unutma!",
+        "💡 İPUCU: Arkadaşlarını partiye davet ederek daha fazla deneyim puanı kazanabilirsin.",
+        "💡 İPUCU: Nadir eşyalar sadece Boss sandıklarından düşer.",
+        "💡 İPUCU: Pazar alanında diğer oyuncularla ticaret yapabilirsin.",
+        "💡 İPUCU: 'Test Modu' ile girdiysen sunucu özellikleri sınırlı olabilir.",
+    ];
+    const [currentTip, setCurrentTip] = useState(0);
+
+    // Rotate tips
+    useEffect(() => {
+        if (!loading && !activeZone) return; // Only run if needed
+        const interval = setInterval(() => {
+            setCurrentTip(prev => (prev + 1) % GAME_TIPS.length);
+        }, 4000);
+        return () => clearInterval(interval);
+    }, [loading, activeZone]);
+
     const loadingScreen = (
-        <div className="h-full w-full flex flex-col items-center justify-center bg-slate-950 text-white">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-500 mb-4"></div>
-            <h2 className="text-xl font-bold animate-pulse">Kadim Evren Yükleniyor...</h2>
-            <div className="text-slate-500 text-sm mt-2">Karakter verileri senkronize ediliyor</div>
+        <div className="h-full w-full flex flex-col items-center justify-center bg-slate-950 relative overflow-hidden">
+            {/* Background Atmosphere */}
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-20 animate-pulse"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 via-slate-900/80 to-slate-950"></div>
+
+            {/* Central Content */}
+            <div className="relative z-10 flex flex-col items-center text-center max-w-lg px-4">
+                {/* Logo / Icon Area */}
+                <div className="mb-8 relative">
+                    <div className="w-32 h-32 rounded-full bg-gradient-to-tr from-yellow-600 to-amber-800 animate-spin-slow flex items-center justify-center shadow-[0_0_50px_rgba(234,179,8,0.3)]">
+                        <div className="w-28 h-28 rounded-full bg-slate-950 flex items-center justify-center">
+                            <span className="text-4xl">⚔️</span>
+                        </div>
+                    </div>
+                    {/* Pulsing Ring */}
+                    <div className="absolute inset-0 rounded-full border-2 border-yellow-500/30 animate-ping"></div>
+                </div>
+
+                <h2 className="text-3xl rpg-font text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-500 to-yellow-200 mb-2 tracking-wider">
+                    KADİM EVREN
+                </h2>
+                <div className="text-yellow-500/60 text-xs uppercase tracking-[0.3em] mb-12">Yükleniyor...</div>
+
+                {/* Progress Bar Container */}
+                <div className="w-full relative group">
+                    <div className="flex justify-between text-xs text-yellow-500/80 mb-2 font-mono">
+                        <span>Veri Senkronizasyonu</span>
+                        <span>%{Math.round(progress)}</span>
+                    </div>
+                    <div className="h-2 w-full bg-slate-900 rounded-full border border-slate-700/50 overflow-hidden relative shadow-inner">
+                        <div
+                            className="h-full bg-gradient-to-r from-yellow-900 via-yellow-600 to-yellow-400 transition-all duration-300 ease-out relative"
+                            style={{ width: `${Math.max(5, progress)}%` }}
+                        >
+                            {/* Shine Effect */}
+                            <div className="absolute top-0 right-0 bottom-0 w-20 bg-gradient-to-r from-transparent via-white/30 to-transparent transform translate-x-full animate-shimmer"></div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Tip Box */}
+                <div className="mt-12 min-h-[60px] flex items-center justify-center">
+                    <p className="text-slate-400 text-sm italic transition-opacity duration-500 animate-fade-in-up">
+                        {GAME_TIPS[currentTip]}
+                    </p>
+                </div>
+            </div>
+
+            {/* Version / Info Footer */}
+            <div className="absolute bottom-4 text-[10px] text-slate-600 font-mono">
+                v1.2.0-beta • Assets by Kenney & Google Poly
+            </div>
         </div>
     );
 
@@ -657,27 +786,29 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
     const activeZoneScreen = activeZone ? (
         <div className="relative w-full h-full">
             <ErrorBoundary>
-                <ActiveZoneView
-                    zoneId={activeZone}
-                    playerState={safePlayerStats}
-                    chatHistory={messages || []}
-                    onSendChat={(msg) => handleSendMessage(msg, 'global')}
-                    onReceiveChat={(msg) => setMessages(prev => [...prev, msg])}
-                    onExit={() => { setActiveZone(null); setActiveTab('skills'); }}
-                    onSwitchZone={(newZoneId) => setActiveZone(newZoneId)}
-                    onLoot={handleLoot}
-                    onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
-                    onEquip={handleEquipItem}
-                    onUnequip={handleUnequipItem}
-                    onUseItem={handleUseItem}
-                    socketRef={socketRef}
-                    onQuestProgress={handleQuestProgress}
-                    onClaimQuest={handleClaimQuest}
-                    onOpenCrafting={() => setShowCrafting(true)}
-                    onQuickPotion={() => { }}
-                    onInteraction={(type, id) => { if (type === 'portal') setActiveZone(Number(id) || null); }}
-                    isAdmin={isAdmin}
-                />
+                <Suspense fallback={loadingScreen}>
+                    <ActiveZoneView
+                        zoneId={activeZone}
+                        playerState={safePlayerStats}
+                        chatHistory={messages || []}
+                        onSendChat={(msg) => handleSendMessage(msg, 'global')}
+                        onReceiveChat={(msg) => setMessages(prev => [...prev, msg])}
+                        onExit={() => { setActiveZone(null); setActiveTab('skills'); }}
+                        onSwitchZone={(newZoneId) => setActiveZone(newZoneId)}
+                        onLoot={handleLoot}
+                        onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
+                        onEquip={handleEquipItem}
+                        onUnequip={handleUnequipItem}
+                        onUseItem={handleUseItem}
+                        socketRef={socketRef}
+                        onQuestProgress={handleQuestProgress}
+                        onClaimQuest={handleClaimQuest}
+                        onOpenCrafting={() => setShowCrafting(true)}
+                        onQuickPotion={() => { }}
+                        onInteraction={(type, id) => { if (type === 'portal') setActiveZone(Number(id) || null); }}
+                        isAdmin={isAdmin}
+                    />
+                </Suspense>
             </ErrorBoundary>
 
             {/* Trade Modal Overlay */}

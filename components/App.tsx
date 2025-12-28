@@ -4,6 +4,7 @@ import AuthScreen from './AuthScreen';
 import CharacterSelect from './CharacterSelect';
 import GameDashboard from './GameDashboard';
 import { CharacterClass, Faction } from './types';
+import { Loader } from '@react-three/drei';
 
 type GameState = 'auth' | 'char_select' | 'playing';
 
@@ -53,6 +54,7 @@ function App() {
           onLogout={handleLogout}
         />
       )}
+      <Loader />
     </div>
   );
 }

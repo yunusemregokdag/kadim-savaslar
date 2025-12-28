@@ -16,6 +16,10 @@ import InventoryModal from './InventoryModal';
 import MarketModal from './MarketModal';
 import { PlayerStall } from './PlayerStall';
 import { PlayerStallData } from './MarketTypes';
+import { VoxelSlime } from './VoxelMobs/VoxelSlime';
+import { VoxelAxolotl } from './VoxelMobs/VoxelAxolotl';
+import { VoxelPenguin } from './VoxelMobs/VoxelPenguin';
+import { VoxelCrab } from './VoxelMobs/VoxelCrab';
 import { SkillEffects } from './SkillEffects';
 import { SKILL_ASSETS } from './SkillAssetRegistry';
 import { CharacterClass } from '../types';
@@ -32,6 +36,30 @@ import { SettingsView, useSettings } from './SettingsView';
 import { CLASS_COMBAT_CONFIG, performAttack, isMeleeClass, logCombat } from '../utils/combatSystem';
 import { WeatherParticles, WeatherIndicator, WeatherChangeNotification, FogEffect } from './WeatherEffects';
 import { weatherManager } from '../systems/WeatherSystem';
+
+// --- PRELOAD ASSETS (NO FREEZE ON SPAWN) ---
+const PRELOAD_MODELS = [
+    '/models/enemies/bosses/parrot%20bosses%20premium.gltf',
+    '/models/enemies/bosses/armadillo%20bosses%20premium.gltf',
+    '/models/enemies/bosses/axolotl%20bosses%20premium.gltf',
+    '/models/enemies/bosses/cat%20bosses%20premium.gltf',
+    '/models/enemies/bosses/crab%20bosses%20premium.gltf',
+    '/models/enemies/bosses/penguin%20bosses%20premium.gltf',
+    '/models/enemies/mobs/parrot%20normal.gltf',
+    '/models/enemies/mobs/parrot%20medium.gltf',
+    '/models/enemies/mobs/cat%20normal.gltf',
+    '/models/enemies/mobs/cat%20medium.gltf',
+    '/models/enemies/mobs/axolotl%20normal.gltf',
+    '/models/enemies/mobs/axolotl%20medium.gltf',
+];
+
+try {
+    // Only preload explicitly defined/confirmed models to avoid 404 crashes
+    // PRELOAD_MODELS.forEach(path => useGLTF.preload(path));
+    console.log("✅ Models Preloading SKIPPED for performance");
+} catch (e) {
+    console.warn("⚠️ Model Preload Warning:", e);
+}
 
 const MOCK_STALLS: PlayerStallData[] = [];
 
@@ -548,74 +576,7 @@ const ParticleEffect: React.FC<{ position: [number, number, number], color: stri
     )
 }
 
-const VoxelSlime: React.FC<{ color: string, isHostile: boolean }> = ({ color, isHostile }) => {
-    const isRainbow = color === 'rainbow';
-    const groupRef = useRef<THREE.Group>(null);
 
-    useFrame((state) => {
-        if (isRainbow && groupRef.current) {
-            const time = state.clock.getElapsedTime();
-            const hue = (time * 0.5) % 1;
-            const colorObj = new THREE.Color().setHSL(hue, 1, 0.5);
-
-            groupRef.current.children.forEach((child: any) => {
-                if (child.material) {
-                    if (Array.isArray(child.material)) {
-                        child.material.forEach((m: any) => m.color.set(colorObj));
-                    } else {
-                        // Don't change eye color (black)
-                        if (child.material.color.getHex() !== 0x000000) {
-                            child.material.color.set(colorObj);
-                            child.material.emissive.setHSL(hue, 1, 0.2);
-                        }
-                    }
-                }
-            });
-        }
-    });
-
-    return (
-        <group ref={groupRef}>
-            {/* Base (Feet) */}
-            <mesh position={[0, 0.1, 0]}>
-                <boxGeometry args={[0.5, 0.2, 0.5]} />
-                <meshStandardMaterial color={isRainbow ? 'white' : color} />
-            </mesh>
-            {/* Body (Center) */}
-            <mesh position={[0, 0.4, 0]}>
-                <boxGeometry args={[0.3, 0.4, 0.3]} />
-                <meshStandardMaterial color={isRainbow ? 'white' : color} emissive={isRainbow ? 'white' : color} emissiveIntensity={0.2} />
-            </mesh>
-            {/* Head (Top) */}
-            <mesh position={[0, 0.7, 0]}>
-                <boxGeometry args={[0.4, 0.3, 0.4]} />
-                <meshStandardMaterial color={isRainbow ? 'white' : color} />
-            </mesh>
-            {/* Eyes */}
-            <mesh position={[0.1, 0.7, 0.21]}>
-                <boxGeometry args={[0.08, 0.08, 0.05]} />
-                <meshStandardMaterial color="black" />
-            </mesh>
-            <mesh position={[-0.1, 0.7, 0.21]}>
-                <boxGeometry args={[0.08, 0.08, 0.05]} />
-                <meshStandardMaterial color="black" />
-            </mesh>
-            {/* Floating Sword Icon (if hostile) */}
-            {isHostile && (
-                <group position={[0.4, 0.6, 0.2]} rotation={[0, 0, Math.PI / 4]}>
-                    <mesh>
-                        <boxGeometry args={[0.05, 0.4, 0.05]} />
-                        <meshStandardMaterial color="#94a3b8" />
-                    </mesh>
-                    <mesh position={[0, 0.1, 0]}>
-                        <boxGeometry args={[0.15, 0.05, 0.05]} />
-                        <meshStandardMaterial color="#cbd5e1" />
-                    </mesh>
-                </group>
-            )}
-        </group>
-    );
-};
 
 const GLTFMob: React.FC<{ modelPath: string, scale?: number, isBoss?: boolean }> = ({ modelPath, scale = 1, isBoss }) => {
     const { scene } = useGLTF(modelPath);
@@ -659,19 +620,71 @@ const GLTFMob: React.FC<{ modelPath: string, scale?: number, isBoss?: boolean }>
     );
 };
 
-const VoxelMob: React.FC<{ position: [number, number, number], color: string, level: number, name: string, isHostile: boolean, isSelected: boolean, type: string, hitFlash?: number, hp: number, maxHp: number, modelPath?: string }> = ({ position, color, level, name, isHostile, isSelected, type, hitFlash, hp, maxHp, modelPath }) => {
-    const isEnemyPlayer = type === 'player';
-    const isBoss = type === 'boss' || type.includes('boss'); // Expanded check
+const VoxelMob: React.FC<{ position: [number, number, number], color: string, level: number, name: string, isHostile: boolean, isSelected: boolean, type: string, hitFlash?: number, hp: number, maxHp: number, modelPath?: string, playerRef?: any, entity?: any }> = ({ position, color, level, name, isHostile, isSelected, type, hitFlash, hp, maxHp, modelPath, playerRef, entity }) => {
+    // 1. CONSTANTS & DEFINITIONS (Moved to top to fix scope issues)
+    const isBoss = type === 'boss' || type.includes('boss') || (entity && entity.bossData);
     const isElite = type === 'elite';
-    const isSlime = type === 'slime';
+    const isNPC = type === 'npc';
+    const nameLower = name.toLowerCase();
+
+    // 2. STATE & REFS
+    const groupRef = useRef<any>(null);
+    const [visualHp, setVisualHp] = useState(hp);
+
+    // 3. INITIAL SETUP
+    useEffect(() => {
+        if (groupRef.current) {
+            groupRef.current.position.set(position[0], 0, position[2]);
+        }
+    }, []);
+
+    // 4. FRAME LOOP (Movement & HP Sync)
+    useFrame((state, delta) => {
+        // Sync Visual HP with Entity Ref HP (Polling)
+        if (entity && entity.hp !== visualHp) {
+            setVisualHp(entity.hp);
+        }
+
+        if (!isHostile || !playerRef?.current || !groupRef.current || !entity) return;
+        if (isNPC) return; // NPCs don't move
+
+        const px = playerRef.current.position.x;
+        const pz = playerRef.current.position.z;
+        const mx = groupRef.current.position.x;
+        const mz = groupRef.current.position.z;
+        const dist = Math.sqrt(Math.pow(mx - px, 2) + Math.pow(mz - pz, 2));
+
+        if (dist < 15 && dist > 2) {
+            const angle = Math.atan2(pz - mz, px - mx);
+            const speed = 2.5 * delta;
+            const newX = mx + Math.cos(angle) * speed;
+            const newZ = mz + Math.sin(angle) * speed;
+
+            groupRef.current.position.x = newX;
+            groupRef.current.position.z = newZ;
+            groupRef.current.rotation.y = -angle + Math.PI / 2;
+
+            // Ref Update (No React State Trigger)
+            entity.x = newX * 15;
+            entity.y = newZ * 15;
+            entity.targetX = newX * 15; // Sync target for AI
+            entity.targetY = newZ * 15;
+        }
+    });
+
+    // 5. VISUAL CALCULATIONS
     const isFlashing = hitFlash && (Date.now() - hitFlash < 100);
-    const hpPct = Math.max(0, (hp / maxHp) * 100);
+    const hpPct = Math.max(0, (visualHp / maxHp) * 100);
+
+    const isAxolotl = nameLower.includes('aksolotl') || nameLower.includes('axolotl');
+    const isPenguin = nameLower.includes('penguen') || nameLower.includes('penguin') || nameLower.includes('papağan') || nameLower.includes('parrot');
+    const isCrab = nameLower.includes('yengeç') || nameLower.includes('crab');
+    const isSlime = type === 'slime' || nameLower.includes('slime');
 
     // Dynamic Model Mapping
     const getMobModel = () => {
         const n = name.toLowerCase();
-
-        // --- BOSSES ---
+        // ... BOSSES ...
         if (isBoss) {
             if (n.includes('ateş ejderi') || n.includes('parrot boss')) return '/models/enemies/bosses/parrot%20bosses%20premium.gltf';
             if (n.includes('armadillo') || n.includes('armadil')) return '/models/enemies/bosses/armadillo%20bosses%20premium.gltf';
@@ -680,28 +693,17 @@ const VoxelMob: React.FC<{ position: [number, number, number], color: string, le
             if (n.includes('crab') || n.includes('yengeç') || n.includes('dev yengeç')) return '/models/enemies/bosses/crab%20bosses%20premium.gltf';
             if (n.includes('parrot') || n.includes('papağan') || n.includes('gardiyan')) return '/models/enemies/bosses/parrot%20bosses%20premium.gltf';
             if (n.includes('penguin') || n.includes('penguen')) return '/models/enemies/bosses/penguin%20bosses%20premium.gltf';
-            // Default boss
             return '/models/enemies/bosses/armadillo%20bosses%20premium.gltf';
         }
 
-        // --- MOBS (TURKISH SUPPORT & VARIATIONS) ---
+        // ... MOBS ...
         const useMedium = level >= 10;
         const variant = useMedium ? 'medium' : 'normal';
 
-        // Parrot / Papağan family
-        if (n.includes('papağan') || n.includes('parrot') || n.includes('ateş papağanı'))
-            return `/models/enemies/mobs/parrot%20${variant}.gltf`;
+        if (n.includes('papağan') || n.includes('parrot') || n.includes('ateş papağanı')) return `/models/enemies/mobs/parrot%20${variant}.gltf`;
+        if (n.includes('kedi') || n.includes('cat') || n.includes('kızıl kedi') || n.includes('buz kedisi') || n.includes('abyss kedisi')) return `/models/enemies/mobs/cat%20${variant}.gltf`;
+        if (n.includes('aksolotl') || n.includes('axolotl') || n.includes('su aksolotlu') || n.includes('derin aksolotl')) return `/models/enemies/mobs/axolotl%20${variant}.gltf`;
 
-        // Cat / Kedi family
-        if (n.includes('kedi') || n.includes('cat') || n.includes('kızıl kedi') || n.includes('buz kedisi') || n.includes('abyss kedisi'))
-            return `/models/enemies/mobs/cat%20${variant}.gltf`;
-
-        // Axolotl / Aksolotl family
-        if (n.includes('aksolotl') || n.includes('axolotl') || n.includes('su aksolotlu') || n.includes('derin aksolotl'))
-            return `/models/enemies/mobs/axolotl%20${variant}.gltf`;
-
-        // --- RANDOM FALLBACK for unknown mobs ---
-        // Pick random from available models based on level
         const mobTypes = ['axolotl', 'cat', 'parrot'];
         const randomType = mobTypes[Math.floor(Math.random() * mobTypes.length)];
         return `/models/enemies/mobs/${randomType}%20${variant}.gltf`;
@@ -709,66 +711,32 @@ const VoxelMob: React.FC<{ position: [number, number, number], color: string, le
 
     const autoModelPath = getMobModel();
     const activeModelPath = modelPath || autoModelPath;
-    const isNPC = type === 'npc';
 
     let bodyScale = 1;
-    if (isNPC) bodyScale = 0.8; // NPCs are smaller than mobs
-    else if (activeModelPath) bodyScale = isBoss ? 2.5 : 1.5; // Scale up GLTF models
+    if (isNPC) bodyScale = 0.8;
+    else if (activeModelPath) bodyScale = isBoss ? 2.5 : 1.5;
     else {
         if (isBoss) bodyScale = 3;
         else if (isElite) bodyScale = 1.6;
-        else if (isSlime) bodyScale = color === 'rainbow' ? 4 : 1.2;
+        else if (isSlime) bodyScale = color === 'rainbow' ? 3 : 1.2;
     }
 
-    // NPC Humanoid Fallback Component
+    const useVoxel = isAxolotl || isPenguin || isCrab || isSlime;
+
+    // NPC Humanoid Fallback
     const NPCHumanoid = () => (
         <group position={[0, 0.7, 0]} scale={[0.8, 0.8, 0.8]}>
-            {/* Head */}
-            <mesh position={[0, 0.6, 0]} castShadow>
-                <boxGeometry args={[0.35, 0.35, 0.35]} />
-                <meshStandardMaterial color={color || '#fbbf24'} />
-            </mesh>
-            {/* Eyes */}
-            <mesh position={[0.08, 0.65, 0.18]}>
-                <boxGeometry args={[0.06, 0.06, 0.02]} />
-                <meshStandardMaterial color="white" />
-            </mesh>
-            <mesh position={[-0.08, 0.65, 0.18]}>
-                <boxGeometry args={[0.06, 0.06, 0.02]} />
-                <meshStandardMaterial color="white" />
-            </mesh>
-            {/* Body */}
-            <mesh position={[0, 0.15, 0]} castShadow>
-                <boxGeometry args={[0.4, 0.5, 0.25]} />
-                <meshStandardMaterial color={color || '#3b82f6'} />
-            </mesh>
-            {/* Left Arm */}
-            <mesh position={[-0.3, 0.15, 0]} castShadow>
-                <boxGeometry args={[0.12, 0.45, 0.12]} />
-                <meshStandardMaterial color={color || '#fbbf24'} />
-            </mesh>
-            {/* Right Arm */}
-            <mesh position={[0.3, 0.15, 0]} castShadow>
-                <boxGeometry args={[0.12, 0.45, 0.12]} />
-                <meshStandardMaterial color={color || '#fbbf24'} />
-            </mesh>
-            {/* Left Leg */}
-            <mesh position={[-0.1, -0.35, 0]} castShadow>
-                <boxGeometry args={[0.15, 0.4, 0.15]} />
-                <meshStandardMaterial color="#334155" />
-            </mesh>
-            {/* Right Leg */}
-            <mesh position={[0.1, -0.35, 0]} castShadow>
-                <boxGeometry args={[0.15, 0.4, 0.15]} />
-                <meshStandardMaterial color="#334155" />
-            </mesh>
+            <mesh position={[0, 0.6, 0]} castShadow><boxGeometry args={[0.35, 0.35, 0.35]} /><meshStandardMaterial color={color || '#fbbf24'} /></mesh>
+            <mesh position={[0.08, 0.65, 0.18]}><boxGeometry args={[0.06, 0.06, 0.02]} /><meshStandardMaterial color="white" /></mesh>
+            <mesh position={[-0.08, 0.65, 0.18]}><boxGeometry args={[0.06, 0.06, 0.02]} /><meshStandardMaterial color="white" /></mesh>
+            <mesh position={[0, 0.15, 0]} castShadow><boxGeometry args={[0.4, 0.5, 0.25]} /><meshStandardMaterial color={color || '#3b82f6'} /></mesh>
         </group>
     );
 
     return (
-        <group position={[position[0], 0, position[2]]} scale={[bodyScale, bodyScale, bodyScale]}>
+        <group ref={groupRef} position={[position[0], 0, position[2]]} scale={[bodyScale, bodyScale, bodyScale]}>
             {/* Health Bar / Name Label */}
-            <Html position={[0, isNPC ? 2.0 : (activeModelPath ? 2.5 : 1.2), 0]} center style={{ pointerEvents: 'none' }}>
+            <Html position={[0, isNPC ? 2.0 : 2.0, 0]} center style={{ pointerEvents: 'none' }}>
                 <div className="flex flex-col items-center">
                     <div className={`text-[8px] font-bold ${isNPC ? 'text-yellow-400 text-xs' : isBoss ? 'text-red-500 text-sm mb-1 uppercase tracking-widest' : isElite ? 'text-purple-400 text-xs' : 'text-white'} drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] whitespace-nowrap`}>
                         {isHostile ? `[Lv.${level}]` : ''} {name}
@@ -781,34 +749,25 @@ const VoxelMob: React.FC<{ position: [number, number, number], color: string, le
                 </div>
             </Html>
 
-            {/* Model Selection */}
-            <Suspense fallback={<mesh><boxGeometry args={[0.5, 0.5, 0.5]} /><meshStandardMaterial color="gray" /></mesh>}>
-                {activeModelPath ? (
-                    <GLTFMob modelPath={activeModelPath} isBoss={isBoss} />
-                ) : isNPC ? (
+            <Suspense fallback={null}>
+                {isNPC ? (
                     <NPCHumanoid />
+                ) : isAxolotl ? (
+                    <VoxelAxolotl color={color} isHostile={isHostile} />
+                ) : isPenguin ? (
+                    <VoxelPenguin isHostile={isHostile} variety={nameLower.includes('ateş') || nameLower.includes('fire') ? 'emperor' : 'normal'} />
+                ) : isCrab ? (
+                    <VoxelCrab color={color} isHostile={isHostile} />
                 ) : isSlime ? (
-                    <group onClick={() => console.log('Clicked slime')} position={[0, 0.5, 0]}> {/* Adjust Y for voxel models */}
-                        <VoxelSlime color={color} isHostile={isHostile} />
-                    </group>
+                    <VoxelSlime color={color} isHostile={isHostile} />
+                ) : modelPath ? (
+                    <GLTFMob modelPath={modelPath} isBoss={isBoss} />
                 ) : (
+                    // Default generic cube mob
                     <group position={[0, 0.5, 0]}>
-                        <mesh onClick={() => console.log('Clicked mob')}>
-                            <boxGeometry args={[0.5, 0.5, 0.5]} />
-                            <meshStandardMaterial
-                                color={isFlashing ? 'white' : color}
-                                emissive={isBoss ? '#ef4444' : isElite ? '#a855f7' : color}
-                                emissiveIntensity={isBoss ? 2 : isElite ? 1 : 0.2}
-                            />
-                        </mesh>
-                        <mesh position={[0.15, 0.1, 0.26]}>
-                            <boxGeometry args={[0.1, 0.1, 0.05]} />
-                            <meshStandardMaterial color={isBoss ? "yellow" : "white"} emissive="white" emissiveIntensity={1} />
-                        </mesh>
-                        <mesh position={[-0.1, 0.1, 0.26]}>
-                            <boxGeometry args={[0.1, 0.1, 0.05]} />
-                            <meshStandardMaterial color={isBoss ? "yellow" : "white"} emissive="white" emissiveIntensity={1} />
-                        </mesh>
+                        <mesh castShadow><boxGeometry args={[0.5, 0.5, 0.5]} /><meshStandardMaterial color={color} /></mesh>
+                        <mesh position={[0.15, 0.1, 0.26]}><boxGeometry args={[0.1, 0.1, 0.05]} /><meshStandardMaterial color="white" /></mesh>
+                        <mesh position={[-0.1, 0.1, 0.26]}><boxGeometry args={[0.1, 0.1, 0.05]} /><meshStandardMaterial color="white" /></mesh>
                     </group>
                 )}
             </Suspense>
@@ -858,15 +817,22 @@ interface GameSceneProps {
     setTargetedPlayer: (player: any | null) => void; // ADDED
     // SKILL ANIMATION
     castingSkill?: number | null;
+    setIsLoading: (loading: boolean) => void;
+    entitiesRef: React.MutableRefObject<GameEntity[]>;
+    setLootBoxes: any;
 }
+
+
 
 const GameScene: React.FC<GameSceneProps> = ({
     joystick, playerGroupRef, playerPosRef, setPlayerPosUI, playerStats, projectiles, setProjectiles,
     zoneId, entities, setEntities, onKill, onUpdatePlayer, addFloatingText, hasBase, borderLimit,
     lootBoxes, onCollectLootBox, portals, onPortalJump, isAttacking, skillEffects, isDead, setNearbyNPC, onLoot, zoneColor,
     target, lastDamageTimeRef, setTeleporting, spawnParticles, isFreeLook, teleporting, onSpawnParticle,
-    socketRef, lastSocketUpdate, remotePlayers, targetedPlayer, setTargetedPlayer, castingSkill
+    socketRef, lastSocketUpdate, remotePlayers, targetedPlayer, setTargetedPlayer, castingSkill, setIsLoading, entitiesRef, setLootBoxes
 }) => {
+
+
 
     const { camera } = useThree();
     const controlsRef = useRef<any>(null);
@@ -874,8 +840,28 @@ const GameScene: React.FC<GameSceneProps> = ({
 
     const lastPortalCheck = useRef(0);
     const lastAIUpdate = useRef(0);
+    const lastUIUpdate = useRef(0); // THROTTLE UI UPDATES
 
     const [decorations, setDecorations] = useState<any[]>([]);
+
+    // 1️⃣ ZONE SYSTEM: Reset & Preload
+    useEffect(() => {
+        // Trigger Loading Screen
+        setIsLoading(true);
+
+        // CLEANUP: Remove old zone entities completely
+        setEntities([]);
+        // Force ref reset to prevent ghost updates in useFrame
+        entitiesRef.current = [];
+        setProjectiles([]);
+        setLootBoxes([]); // Clear stale loot
+
+        // ASSET PRELOAD MOCK: In a real scenario, useGLTF.preload(zoneAssets[zoneId]) would go here.
+        // For now, we rely on global preloads and the generic loading screen.
+
+        const t = setTimeout(() => setIsLoading(false), 1000); // 1s Loading Time
+        return () => clearTimeout(t);
+    }, [zoneId]);
 
     useEffect(() => {
         const items: any[] = [];
@@ -1238,6 +1224,12 @@ const GameScene: React.FC<GameSceneProps> = ({
             }
         }
 
+        /* 
+         * PERFORMANCE FIX: DISABLED GLOBAL SETENTITIES LOOP
+         * Mob movement is now handled locally in VoxelMob component via useFrame.
+         * This prevents 'Black Screen' freeze caused by massive re-renders.
+         */
+        /*
         if (Date.now() - lastAIUpdate.current > 100) {
             lastAIUpdate.current = Date.now();
             setEntities((prev: GameEntity[]) => {
@@ -1259,6 +1251,7 @@ const GameScene: React.FC<GameSceneProps> = ({
                 });
             });
         }
+        */
 
         if (joystick && playerGroupRef.current) {
             if (teleporting && (Math.abs(joystick.x) > 0.1 || Math.abs(joystick.y) > 0.1)) {
@@ -1358,8 +1351,21 @@ const GameScene: React.FC<GameSceneProps> = ({
         if (playerGroupRef.current && !isFreeLook) {
             const px = playerGroupRef.current.position.x;
             const pz = playerGroupRef.current.position.z;
-            camera.position.lerp(new THREE.Vector3(px, 15, pz + 15), 0.15); // Increased from 0.1 for smoother camera
-            camera.lookAt(px, 0, pz);
+
+            // MOBILE STYLE CAMERA: Fixed Offset, Smooth Follow
+            // Camera position is always OFFSET from player, does NOT rotate with player
+            const targetCamPos = new THREE.Vector3(px, 18, pz + 18); // High angle, 3rd person
+
+            // LERP for smooth follow
+            camera.position.lerp(targetCamPos, 0.1);
+
+            // Always look at player's feet/center
+            // We use a slight offset in lookAt to keep character lower on screen
+            controlsRef.current.target.lerp(new THREE.Vector3(px, 0, pz), 0.1);
+            controlsRef.current.update();
+
+            // FORCE CAMERA UP-VECTOR to prevent flipping
+            camera.up.set(0, 1, 0);
         }
 
         if (projectiles.length > 0) {
@@ -1371,11 +1377,15 @@ const GameScene: React.FC<GameSceneProps> = ({
         }
 
         if (playerGroupRef.current) {
-            setPlayerPosUI({
-                x: playerGroupRef.current.position.x,
-                y: playerGroupRef.current.position.z,
-                rotation: playerGroupRef.current.rotation.y
-            });
+            // THROTTLE UI (Minimap) UPDATE - 10 FPS
+            if (Date.now() - lastUIUpdate.current > 100) {
+                lastUIUpdate.current = Date.now();
+                setPlayerPosUI({
+                    x: playerGroupRef.current.position.x,
+                    y: playerGroupRef.current.position.z,
+                    rotation: playerGroupRef.current.rotation.y
+                });
+            }
             if (state.clock.getElapsedTime() % 0.5 < 0.1) {
                 let foundNPC: GameEntity | null = null;
                 entities.forEach(ent => {
@@ -1538,6 +1548,8 @@ const GameScene: React.FC<GameSceneProps> = ({
                     hp={ent.hp}
                     maxHp={ent.maxHp}
                     modelPath={ent.modelPath}
+                    playerRef={playerGroupRef}
+                    entity={ent}
                 />
             ))}
         </>
@@ -1705,6 +1717,23 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     });
 
     const [entities, setEntities] = useState<GameEntity[]>([]);
+
+    // --- PERFORMANCE OPTIMİZASYONU: Ref Based Entity Tracking ---
+    const entitiesRef = useRef<GameEntity[]>([]);
+    // Sadece spawn/kill durumunda state değişir, bu da ref'i günceller
+    useEffect(() => {
+        entitiesRef.current = entities;
+    }, [entities]);
+
+    // --- LOADING SCREEN ---
+    const [isLoading, setIsLoading] = useState(true);
+    useEffect(() => {
+        // Asset loading süresi + kullanıcı algısı için
+        // Gerçekte useGLTF.preload yukarıda yapıldı, burada sadece bekliyoruz.
+        const t = setTimeout(() => setIsLoading(false), 2000);
+        return () => clearTimeout(t);
+    }, []);
+
     const [lootBoxes, setLootBoxes] = useState<LootBox[]>([]);
     const [projectiles, setProjectiles] = useState<any[]>([]);
     const [floatingTexts, setFloatingTexts] = useState<FloatingText[]>([]);
@@ -1720,7 +1749,6 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     // Removed redundant chat state (handled by ChatSystem)
 
     const [joystick, setJoystick] = useState<{ x: number, y: number } | null>(null);
-    const [active3DEffects, setActive3DEffects] = useState<Active3DEffect[]>([]);
     const [isAttacking, setIsAttacking] = useState(false);
     const [skillEffects, setSkillEffects] = useState<any>({});
     const [cooldowns, setCooldowns] = useState<Record<string, number>>({});
@@ -1744,8 +1772,8 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     // Visual Effects
     const [particles, setParticles] = useState<any[]>([]);
 
-    // Skill Casting State - hangi skill kullanılıyor (1-6), null = kullanılmıyor
     const [castingSkill, setCastingSkill] = useState<number | null>(null);
+    const [active3DEffects, setActive3DEffects] = useState<Active3DEffect[]>([]);
 
     // HUD Editor
     const [isHudEditing, setIsHudEditing] = useState(false);
@@ -2414,12 +2442,24 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             baseDamage += userRank.bonusDamage;
         }
 
-        setEntities((prev: GameEntity[]) => prev.map(ent => {
-            if (!ent.isHostile) return ent;
+        // --- OPTIMIZED REF-BASED ATTACK LOGIC (NO RE-RENDER ON HIT) ---
+        const currentEntities = entitiesRef.current;
+        let deathOccurred = false;
+        const nextEntities: GameEntity[] = [];
 
-            // PvP Level Restriksiyonu (Lv.7+)
+        // Loop manual to avoid map/filter overhead
+        for (let i = 0; i < currentEntities.length; i++) {
+            const ent = currentEntities[i];
+
+            if (!ent.isHostile) {
+                nextEntities.push(ent);
+                continue;
+            }
+
+            // PvP Level Check (Lv.7+)
             if (ent.type === 'player' && playerState.level < 7) {
-                return ent;
+                nextEntities.push(ent);
+                continue;
             }
 
             const ex = ent.x / 15;
@@ -2432,45 +2472,54 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 const dot = (dx * vx + dz * vz) / dist;
 
                 if (dot > 0.8 || (target && target.id === ent.id)) {
-                    // Get enemy defense (default 0 for mobs, can be expanded)
+                    // Get enemy defense
                     const enemyDefense = ent.defense || 0;
 
-                    // Calculate damage with new combat system
                     const combatResult = performAttack(
                         playerState.class as CharacterClass,
                         baseDamage,
                         enemyDefense,
-                        0, // bonus crit chance from equipment
-                        0  // bonus crit damage from equipment
+                        0, 0
                     );
 
                     const finalDamage = combatResult.damage;
-                    const newHp = ent.hp - finalDamage;
 
-                    // Show damage text with crit indicator
+                    // --- CRITICAL PERFORMANCE FIX ---
+                    // Directly mutate the entity in the REF. Do NOT trigger setEntities.
+                    // The VoxelMob component listens to 'entity.hp' diff via useFrame.
+                    ent.hp -= finalDamage;
+                    ent.hitFlash = Date.now();
+
+                    // Show damage text
                     if (combatResult.isCritical) {
                         addFloatingText(`💥 ${finalDamage}`, ex, 2.5, ey, 'text-orange-400 font-bold text-lg');
                         soundManager.playSFX('hit');
                     } else {
                         addFloatingText(`${finalDamage}`, ex, 2, ey, 'text-yellow-400');
-                        soundManager.playSFX('hit');
+                        soundManager.playSFX('hit'); // Simple hit sound
                     }
-
-                    // Log combat for debugging
-                    logCombat(playerState.nickname, ent.name, baseDamage, combatResult);
 
                     spawnVisualEffect(ex, ey, combatResult.isCritical ? '#f97316' : '#fca5a5');
 
-                    if (newHp <= 0) {
-                        setTimeout(() => handleKill(ent, ent.x / 15, ent.y / 15), 0);
+                    // Check Death
+                    if (ent.hp <= 0) {
+                        // Kill Logic
+                        handleKill(ent, ex, ey);
                         if (target?.id === ent.id) setTarget(null);
-                        return { ...ent, hp: 0 };
+                        deathOccurred = true;
+                        // Do NOT add to nextEntities -> effectively removed
+                        continue;
                     }
-                    return { ...ent, hp: newHp, hitFlash: Date.now() };
                 }
             }
-            return ent;
-        }).filter(e => e.hp > 0));
+            // Keep alive entity
+            nextEntities.push(ent);
+        }
+
+        // Only update React state if a death occurred (list size changed)
+        if (deathOccurred) {
+            setEntities(nextEntities);
+        }
 
         // PVP DUEL ATTACK (if in active duel, also attack the remote player)
         if (activeDuel && socketRef.current) {
@@ -3141,7 +3190,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                     playerPosRef={playerPosRef}
                     setPlayerPosUI={setPlayerPosUI}
                     entities={entities} setEntities={setEntities}
-                    lootBoxes={lootBoxes} onCollectLootBox={handleCollectLootBox}
+                    lootBoxes={lootBoxes} onCollectLootBox={handleCollectLootBox} setLootBoxes={setLootBoxes}
                     projectiles={projectiles} setProjectiles={setProjectiles}
                     isAttacking={isAttacking}
                     zoneColor={zoneData?.bg || '#000'}
@@ -3167,7 +3216,11 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                     targetedPlayer={targetedPlayer}
                     setTargetedPlayer={setTargetedPlayer}
                     castingSkill={castingSkill}
+                    setIsLoading={setIsLoading}
+                    entitiesRef={entitiesRef}
                 />
+
+
                 {settings.showDamageNumbers && floatingTexts.map(ft => <FloatingTextComponent key={ft.id} data={ft} />)}
                 {settings.showPostProcessing && (
                     <EffectComposer>
@@ -3824,6 +3877,22 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 />
             )}
 
+            {/* LOADING OVERLAY - OYUN AÇILIŞINDA */}
+            {isLoading && (
+                <div className="fixed inset-0 z-[99999] bg-[#0f0a06] flex flex-col items-center justify-center pointer-events-auto">
+                    <h1 className="text-5xl rpg-font text-yellow-500 mb-8 animate-pulse drop-shadow-[0_0_30px_rgba(234,179,8,0.3)] tracking-widest">KADİM SAVAŞLAR</h1>
+                    <div className="w-96 h-1 bg-slate-800 rounded-full overflow-hidden relative">
+                        <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-yellow-600 to-red-600 w-1/3 animate-[spin_1s_linear_infinite]" style={{ width: '40%', animationName: 'slide' }} />
+                    </div>
+                    <div className="mt-6 text-slate-500 font-mono text-[10px] tracking-[0.3em] uppercase">Varlıklar Yükleniyor</div>
+                    <style>{`
+                        @keyframes slide {
+                            0% { left: -40%; }
+                            100% { left: 140%; }
+                        }
+                    `}</style>
+                </div>
+            )}
         </div>
     );
 };

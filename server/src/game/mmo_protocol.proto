@@ -1,0 +1,30 @@
+
+syntax = "proto3";
+package mmo;
+
+// MMO Binary Protocol
+// Optimized for Bandwidth: Uses quantized integers instead of floats.
+
+message WorldSnapshot {
+    uint32 t = 1; // Timestamp (Server Time)
+    repeated EntityUpdate mobs = 2;
+    repeated EntityUpdate players = 3;
+    repeated GameEvent events = 4;
+}
+
+message EntityUpdate {
+    uint32 id = 1;      // Unique Numeric ID
+    uint32 type = 2;    // Config Index (Mapped to MobDefinitions on client)
+    sint32 x = 3;       // Position X * 10 (Quantized)
+    sint32 y = 4;       // Position Y * 10 (Quantized)
+    uint32 hp = 5;      // Current HP
+    uint32 state = 6;   // Enum (0:Idle, 1:Move, 2:Attack, 3:Dead)
+}
+
+message GameEvent {
+    uint32 type = 1;    // Event Type (1:Damage, 2:Heal, 3:Effect)
+    uint32 src = 2;     // Source Entity ID
+    uint32 dst = 3;     // Target Entity ID (if any)
+    int32 val = 4;      // Value (Damage amount, Heal amount)
+    string meta = 5;    // Optional metadata (e.g., Skill Config ID)
+}

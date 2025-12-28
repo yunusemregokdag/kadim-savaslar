@@ -7,7 +7,7 @@ import { DynamicPet } from './DynamicPet';
 import { getGlowEffect, getClassParticleType, CLASS_COLORS, GlowEffect } from '../systems/GlowEffects';
 
 // --- WEAPON REGISTRY ---
-const WEAPON_MAP: Record<CharacterClass, string> = {
+export const WEAPON_MAP: Record<CharacterClass, string> = {
     warrior: '/models/items/weapons/warrior/warrior_sword_shiny.gltf',
     arctic_knight: '/models/items/weapons/arctic_knight/frigid_lance_arctic_knight.gltf',
     gale_glaive: '/models/items/weapons/gale_glaive/gale_glaive_windreaver_ancient.gltf',

@@ -1,11 +1,17 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows, Html } from '@react-three/drei';
+import { OrbitControls, Environment, ContactShadows, Html, useGLTF } from '@react-three/drei';
 import { CLASSES, FACTIONS } from '../constants';
 import { CharacterClass, Faction } from '../types';
-import { VoxelSpartan } from './VoxelSpartan';
+import { VoxelSpartan, WEAPON_MAP } from './VoxelSpartan';
+
+// --- PRELOAD MODELS ---
+// Preloading weapons here ensures character models appear instantly during selection
+Object.values(WEAPON_MAP).forEach(path => {
+    useGLTF.preload(path);
+});
 import { CharacterDebugPanel, DEFAULT_OFFSETS, CharacterOffsets } from './CharacterDebugPanel';
-import { Shield, Zap, Heart, Crosshair, ChevronRight, Hash, Trophy, Sword, Info, Globe, Users, ChevronLeft, Plus, Play, Trash2 } from 'lucide-react';
+import { Shield, Zap, Heart, Crosshair, ChevronRight, Hash, Trophy, Sword, Info, Globe, Users, ChevronLeft, Plus, Play, Trash2, Skull, Music, Snowflake, Wind, Target, Wand2, HandMetal } from 'lucide-react';
 import { cleanText } from '../utils/TextUtils';
 import { characterAPI } from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -80,10 +86,13 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
     const [characterToDelete, setCharacterToDelete] = useState<string | null>(null);
     const [showMobileClassList, setShowMobileClassList] = useState(false);
 
-    // Mobile detection using JavaScript (Tailwind breakpoints don't work in WebView)
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    // Mobile detection using JavaScript
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
+        // Initial check
+        setIsMobile(window.innerWidth < 768);
+
         const handleResize = () => setIsMobile(window.innerWidth < 768);
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
@@ -435,233 +444,162 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
     }
 
     // STEP 2: CLASS SELECTION
+    // STEP 2: CLASS SELECTION (ICON LAYOUT REDESIGN)
     const activeClassData = CLASSES[selectedClass];
 
+    // Helper to get class icon
+    const getClassIcon = (cls: CharacterClass) => {
+        switch (cls) {
+            case 'warrior': return <Sword size={24} />;
+            case 'arctic_knight': return <Snowflake size={24} />;
+            case 'gale_glaive': return <Wind size={24} />;
+            case 'archer': return <Target size={24} />;
+            case 'archmage': return <Wand2 size={24} />;
+            case 'bard': return <Music size={24} />;
+            case 'cleric': return <Heart size={24} />;
+            case 'reaper': return <Skull size={24} />;
+            case 'martial_artist': return <HandMetal size={24} />;
+            case 'monk': return <Zap size={24} />;
+            default: return <Sword size={24} />;
+        }
+    };
+
     return (
-        <div className="fixed inset-0 w-full h-full bg-slate-950 overflow-hidden flex flex-col md:flex-row">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black opacity-80 z-0"></div>
+        <div className="fixed inset-0 w-full h-full bg-slate-950 overflow-hidden flex flex-col">
+            {/* Background - Dark Red/Black Gradient as in screenshot */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#2a0e0e] via-[#0f0505] to-[#000000] z-0"></div>
 
-            {/* MOBILE ONLY: Top bar with back button and class selector */}
-            {isMobile && (
-                <div className="relative z-30 flex items-center justify-between p-3 bg-black/80 border-b border-slate-700 shrink-0">
-                    <button
-                        onClick={() => setStep('faction')}
-                        className="flex items-center gap-1 text-slate-400 text-sm"
-                    >
-                        <ChevronLeft size={18} />
-                        Geri
-                    </button>
-                    <button
-                        onClick={() => setShowMobileClassList(!showMobileClassList)}
-                        className="px-3 py-1.5 bg-yellow-600 text-white rounded-lg text-sm font-bold"
-                    >
-                        {cleanText(activeClassData.name)} ▼
-                    </button>
-                </div>
-            )}
+            {/* Back Button (Top Left) */}
+            <button
+                onClick={() => setStep('faction')}
+                className="absolute top-6 left-6 z-50 p-3 rounded-full bg-black/40 text-white/50 hover:bg-black/60 hover:text-white transition-all border border-white/10"
+            >
+                <ChevronLeft size={24} />
+            </button>
 
-            {/* MOBILE ONLY: Class selector dropdown (full width overlay) */}
-            {showMobileClassList && (
-                <div className="md:hidden absolute top-12 left-0 right-0 z-50 bg-black/95 p-3 border-b border-slate-600 max-h-[50vh] overflow-y-auto">
-                    <div className="grid grid-cols-2 gap-2">
-                        {(Object.keys(CLASSES) as CharacterClass[]).map(cls => {
-                            const clsData = CLASSES[cls];
-                            const isSelected = selectedClass === cls;
-                            return (
-                                <button
-                                    key={cls}
-                                    onClick={() => { setSelectedClass(cls); setShowMobileClassList(false); }}
-                                    className={`px-3 py-2 rounded-lg text-sm font-bold transition-all ${isSelected
-                                        ? 'bg-yellow-600 text-white'
-                                        : 'bg-slate-800 text-slate-300'
-                                        }`}
-                                >
-                                    {cleanText(clsData.name)}
-                                </button>
-                            );
-                        })}
-                    </div>
-                </div>
-            )}
+            {/* MAIN CONTENT CONTAINER */}
+            <div className="relative z-10 w-full h-full flex">
 
-            {/* DESKTOP ONLY: Left Sidebar (Class List) - Using JS check instead of Tailwind */}
-            {!isMobile && (
-                <div className="relative z-20 w-72 h-full bg-black/40 backdrop-blur-md border-r border-slate-800/50 flex flex-col p-4 overflow-y-auto shrink-0">
-                    <button
-                        onClick={() => setStep('faction')}
-                        className="flex items-center gap-2 text-slate-400 hover:text-white mb-6 transition-colors group"
-                    >
-                        <div className="p-2 rounded-full bg-slate-800 group-hover:bg-slate-700 transition-colors">
-                            <ChevronLeft size={20} />
-                        </div>
-                        <span className="font-bold text-sm uppercase tracking-wider">{t.CHOOSE_SIDE}</span>
-                    </button>
-
-                    <h3 className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4 px-2">Sınıflar</h3>
+                {/* LEFT SIDEBAR: Circular Class Icons */}
+                <div className="w-32 h-full flex flex-col items-center justify-center gap-5 pl-10 pt-20 z-20">
                     {(Object.keys(CLASSES) as CharacterClass[]).map(cls => {
-                        const clsData = CLASSES[cls];
                         const isSelected = selectedClass === cls;
-                        const displayName = language === 'en' ? (clsData.name_en || clsData.name) : clsData.name;
-
                         return (
                             <button
                                 key={cls}
                                 onClick={() => setSelectedClass(cls)}
                                 className={`
-                                w-full p-3 mb-2 rounded-xl text-left transition-all relative overflow-hidden group border
-                                ${isSelected
-                                        ? 'bg-yellow-500/10 border-yellow-500/50 text-white shadow-[0_0_15px_rgba(234,179,8,0.2)]'
-                                        : 'bg-slate-900/50 border-transparent text-slate-400 hover:bg-slate-800'}
-                            `}
+                                    w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 relative group
+                                    ${isSelected
+                                        ? 'bg-gradient-to-br from-yellow-500 to-amber-700 text-white scale-110 shadow-[0_0_20px_rgba(234,179,8,0.5)] ring-2 ring-yellow-400/50'
+                                        : 'bg-slate-900/80 text-slate-500 hover:text-slate-200 hover:bg-slate-800 border border-slate-700'}
+                                `}
                             >
-                                <span className={`font-bold uppercase tracking-wide text-sm ${isSelected ? 'text-yellow-400' : 'group-hover:text-slate-200'}`}>
-                                    {cleanText(displayName)}
-                                </span>
+                                {getClassIcon(cls)}
+
+                                {/* Hover Tooltip */}
+                                <div className="absolute left-20 bg-black/90 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-slate-700">
+                                    {cleanText(language === 'en' ? (CLASSES[cls].name_en || CLASSES[cls].name) : CLASSES[cls].name)}
+                                </div>
                             </button>
-                        )
+                        );
                     })}
                 </div>
-            )}
 
-            {/* CENTER: 3D Character Display - Takes remaining space */}
-            <div className="relative flex-1 z-10 min-h-[180px] md:min-h-0">
-                {/* Header Info - Hidden on mobile, shown on desktop */}
-                <div className="absolute top-2 md:top-8 left-0 w-full text-center z-50 pointer-events-none">
-                    <h1 className="text-2xl md:text-7xl font-black text-white mb-1 md:mb-2 drop-shadow-2xl" style={{ fontFamily: 'Cinzel, serif' }}>
-                        {cleanText(language === 'en' ? (activeClassData.name_en || activeClassData.name) : activeClassData.name)}
-                    </h1>
-                    <div className="hidden md:flex items-center justify-center gap-4">
-                        <div className="h-px w-16 bg-yellow-500/50" />
-                        <div className="text-lg md:text-xl text-yellow-400 font-bold tracking-[0.3em] uppercase drop-shadow-md">
+                {/* CENTER: Character & Header & Bottom Inputs */}
+                <div className="flex-1 flex flex-col items-center relative">
+
+                    {/* TOP HEADER: Class Name & Role */}
+                    <div className="mt-8 text-center z-10">
+                        <h1 className="text-4xl md:text-5xl font-black text-white mb-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" style={{ fontFamily: 'Cinzel, serif' }}>
+                            {cleanText(language === 'en' ? (activeClassData.name_en || activeClassData.name) : activeClassData.name)}
+                        </h1>
+                        <div className="text-yellow-500 font-bold uppercase tracking-widest text-sm md:text-base drop-shadow-md">
                             {cleanText(language === 'en' ? (activeClassData.role_en || activeClassData.role) : activeClassData.role)}
                         </div>
-                        <div className="h-px w-16 bg-yellow-500/50" />
                     </div>
-                    <div className="md:hidden text-sm text-yellow-400 font-bold">
-                        {cleanText(activeClassData.role)}
-                    </div>
-                </div>
 
-                {/* Debug Panel */}
-                {debugMode && (
-                    <CharacterDebugPanel
-                        offsets={debugOffsets}
-                        onChange={setDebugOffsets}
-                        onApply={() => { }}
-                    />
-                )}
+                    {/* MIDDLE: 3D Character Canvas */}
+                    <div className="flex-1 w-full relative -mt-10 md:-mt-0">
+                        {/* Background Logo/Effect behind character */}
+                        <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
+                            <Sword size={400} className="text-white" />
+                        </div>
 
-                {/* 3D Canvas */}
-                <Canvas shadows camera={{ position: [0, 2, 5], fov: 45 }} dpr={Math.min(window.devicePixelRatio, 1.5)} gl={{ antialias: false, powerPreference: 'high-performance', failIfMajorPerformanceCaveat: false }}>
-                    <ambientLight intensity={0.5} />
-                    <spotLight position={[5, 10, 5]} angle={0.5} penumbra={1} intensity={2} castShadow />
-                    <pointLight position={[-5, 5, -5]} intensity={1} color="#6366f1" />
-
-                    <Suspense fallback={null}>
-                        <group position={[0, -1, 0]}>
-                            <VoxelSpartan
-                                charClass={selectedClass}
-                                rotation={[0, Math.PI, 0]}
-                                isMoving={false}
-                                isAttacking={false}
-                                weaponItem={null}
-                                debugOffsets={debugMode ? debugOffsets : undefined}
+                        {/* Debug Panel */}
+                        {debugMode && (
+                            <CharacterDebugPanel
+                                offsets={debugOffsets}
+                                onChange={setDebugOffsets}
+                                onApply={() => { }}
                             />
-                            <ContactShadows opacity={0.5} scale={10} blur={2} far={4} />
-                        </group>
-                    </Suspense>
-                    <OrbitControls
-                        enablePan={false}
-                        enableZoom={false}
-                        minPolarAngle={Math.PI / 2.5}
-                        maxPolarAngle={Math.PI / 2}
-                        autoRotate={true}
-                        autoRotateSpeed={0.5}
-                    />
-                    <Environment preset="city" />
-                </Canvas>
-            </div>
+                        )}
 
-            {/* --- RIGHT SIDEBAR (Details & Confirm) - Compact on mobile --- */}
-            <div className="relative z-20 w-full md:w-80 bg-black/80 backdrop-blur-xl border-t md:border-t-0 md:border-l border-slate-700/50 p-3 md:p-5 flex flex-col shrink-0 max-h-[40vh] md:max-h-full overflow-y-auto">
-                {/* Description - Collapsed on mobile */}
-                <div className="hidden md:block">
-                    <h2 className="text-2xl font-bold text-white mb-6 uppercase border-b border-slate-700 pb-4 flex items-center gap-2">
-                        <Info size={20} />
-                        {cleanText(activeClassData.name)}
-                    </h2>
+                        <Canvas shadows camera={{ position: [0, 1.5, 4.5], fov: 40 }} dpr={Math.min(window.devicePixelRatio, 1.5)} gl={{ antialias: false, powerPreference: 'high-performance' }}>
+                            <ambientLight intensity={0.6} />
+                            <spotLight position={[5, 10, 5]} angle={0.5} penumbra={1} intensity={2} castShadow />
+                            <pointLight position={[-5, 5, -5]} intensity={1} color="#ef4444" /> {/* Reddish rim light */}
 
-                    <p className="text-slate-300 text-base leading-relaxed mb-8">
-                        {cleanText(language === 'en' ? (activeClassData.description_en || activeClassData.description) : activeClassData.description)}
-                    </p>
-                </div>
-
-                {/* Stats - Compact on mobile */}
-                <div className="space-y-3 md:space-y-6 mb-4">
-                    <div>
-                        <div className="flex justify-between text-xs font-black text-slate-400 mb-1 tracking-wider">
-                            <span>{t.DAMAGE}</span>
-                            <span className="text-yellow-400">{'★'.repeat(selectedClass === 'reaper' || selectedClass === 'archmage' ? 5 : 3)}</span>
-                        </div>
-                        <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400" style={{ width: selectedClass === 'reaper' ? '90%' : selectedClass === 'archmage' ? '85%' : '60%' }}></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div className="flex justify-between text-xs font-black text-slate-400 mb-1 tracking-wider">
-                            <span>{t.SURVIVAL}</span>
-                            <span className="text-blue-400">{'★'.repeat(selectedClass === 'warrior' ? 5 : 2)}</span>
-                        </div>
-                        <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-blue-700 to-blue-400" style={{ width: selectedClass === 'warrior' ? '90%' : '40%' }}></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div className="flex justify-between text-xs font-black text-slate-400 mb-1 tracking-wider">
-                            <span>{t.DIFFICULTY}</span>
-                            <span className="text-red-400">{'★'.repeat(selectedClass === 'cleric' ? 4 : 2)}</span>
-                        </div>
-                        <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-red-700 to-red-500" style={{ width: selectedClass === 'cleric' ? '70%' : '30%' }}></div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Name input and button */}
-                <div className="space-y-3">
-                    <div className="bg-slate-900/50 rounded-xl p-3 md:p-4 border border-slate-700">
-                        <label className="text-xs text-slate-400 font-bold uppercase mb-1 block">{t.HERO_NAME}</label>
-                        <input
-                            type="text"
-                            value={nickname}
-                            onChange={(e) => setNickname(e.target.value)}
-                            placeholder={t.ENTER_NAME}
-                            className="bg-transparent w-full text-white text-lg font-bold outline-none placeholder:text-slate-600"
-                            maxLength={12}
-                        />
+                            <Suspense fallback={null}>
+                                <group position={[0, -1.2, 0]}>
+                                    <VoxelSpartan
+                                        charClass={selectedClass}
+                                        rotation={[0, 0, 0]} // Face forward
+                                        isMoving={false}
+                                        isAttacking={false}
+                                        weaponItem={null}
+                                        debugOffsets={debugMode ? debugOffsets : undefined}
+                                    />
+                                    <ContactShadows opacity={0.6} scale={10} blur={2.5} far={4} color="#000000" />
+                                </group>
+                            </Suspense>
+                            <OrbitControls
+                                enablePan={false}
+                                enableZoom={false}
+                                minPolarAngle={Math.PI / 2.2}
+                                maxPolarAngle={Math.PI / 1.9}
+                                // Allow slight rotation but keep focused
+                                minAzimuthAngle={-Math.PI / 4}
+                                maxAzimuthAngle={Math.PI / 4}
+                                autoRotate={false}
+                            />
+                            <Environment preset="city" />
+                        </Canvas>
                     </div>
 
-                    {error && (
-                        <div className="text-red-400 text-sm text-center bg-red-900/20 p-2 rounded">
-                            {error}
+                    {/* BOTTOM: Input & Play Button */}
+                    <div className="w-full max-w-md px-4 pb-12 z-20 flex flex-col gap-3">
+                        <div className="relative">
+                            <input
+                                type="text"
+                                value={nickname}
+                                onChange={(e) => setNickname(e.target.value)}
+                                placeholder={t.ENTER_NAME}
+                                className="w-full bg-slate-900/80 border border-slate-700 text-white text-center py-4 rounded-xl focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-all font-bold placeholder:text-slate-600 uppercase tracking-widest"
+                                maxLength={12}
+                            />
                         </div>
-                    )}
 
-                    <button
-                        onClick={handleCreateWrapper}
-                        disabled={nickname.length < 3 || loading}
-                        className={`
-                            w-full py-4 rounded-xl font-bold text-lg uppercase tracking-wider transition-all
-                            ${nickname.length >= 3
-                                ? 'bg-yellow-600 text-white hover:bg-yellow-500 shadow-lg shadow-yellow-900/20'
-                                : 'bg-slate-800 text-slate-500 cursor-not-allowed'}
-                        `}
-                    >
-                        {loading ? '...' : t.START_ADVENTURE}
-                    </button>
-                    <button onClick={() => setStep('faction')} className="w-full text-slate-500 text-sm hover:text-white transition-colors py-2">
-                        ← {t.CHOOSE_SIDE}
-                    </button>
+                        {error && (
+                            <div className="text-red-400 text-xs text-center font-bold">
+                                {error}
+                            </div>
+                        )}
+
+                        <button
+                            onClick={handleCreateWrapper}
+                            disabled={nickname.length < 3 || loading}
+                            className={`
+                                w-full py-4 rounded-xl font-bold uppercase tracking-[0.2em] transition-all
+                                ${nickname.length >= 3
+                                    ? 'bg-slate-700 hover:bg-slate-600 text-white border border-slate-500 shadow-lg'
+                                    : 'bg-slate-800/50 text-slate-600 border border-slate-800 cursor-not-allowed'}
+                            `}
+                        >
+                            {loading ? '...' : t.START_ADVENTURE}
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </div>

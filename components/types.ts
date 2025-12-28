@@ -2,7 +2,7 @@
 
 
 
-export type CharacterClass = 'warrior' | 'mage' | 'shaman' | 'ranger' | 'assassin';
+export type CharacterClass = 'warrior' | 'mage' | 'shaman' | 'ranger' | 'assassin' | 'arctic_knight' | 'gale_glaive' | 'archer' | 'archmage' | 'bard' | 'cleric' | 'martial_artist' | 'monk' | 'reaper';
 export type Faction = 'marsu' | 'terya' | 'venu';
 
 export enum SkillPathType {

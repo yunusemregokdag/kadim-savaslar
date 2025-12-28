@@ -762,7 +762,7 @@ const VoxelMob: React.FC<{ position: [number, number, number], color: string, le
                     <div className={`text-[8px] font-bold ${isNPC ? 'text-yellow-400 text-xs' : isBoss ? 'text-red-500 text-sm mb-1 uppercase tracking-widest' : isElite ? 'text-purple-400 text-xs' : 'text-white'} drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] whitespace-nowrap`}>
                         {isHostile ? `[Lv.${level}]` : ''} {name}
                     </div>
-                    {isHostile && (isSelected || !isBoss) && (
+                    {isHostile && (isSelected || visualHp < maxHp) && (
                         <div className={`bg-gray-900 rounded-full overflow-hidden border border-gray-600 ${isBoss ? 'w-32 h-4' : 'w-12 h-1.5'}`}>
                             <div className={`h-full transition-all duration-200 ${isBoss ? 'bg-gradient-to-r from-red-600 to-orange-600' : 'bg-red-500'}`} style={{ width: `${hpPct}%` }} />
                         </div>

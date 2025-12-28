@@ -288,6 +288,17 @@ const InventoryModal: React.FC<InventoryModalProps> = ({ playerState, onClose, i
                                                                             {item.stats.damage && <span className="text-red-400 font-bold">+{item.stats.damage} Hasar</span>}
                                                                             {item.stats.defense && <span className="text-blue-400 font-bold">+{item.stats.defense} Zırh</span>}
                                                                             {item.stats.hp && <span className="text-green-400 font-bold">+{item.stats.hp} Can</span>}
+                                                                            {item.stats.mana && <span className="text-blue-300 font-bold">+{item.stats.mana} Mana</span>}
+
+                                                                            {/* Attributes */}
+                                                                            {item.stats.strength && <span className="text-orange-400 font-bold">+{item.stats.strength} GÜÇ</span>}
+                                                                            {item.stats.dexterity && <span className="text-emerald-400 font-bold">+{item.stats.dexterity} ÇEV</span>}
+                                                                            {item.stats.intelligence && <span className="text-cyan-300 font-bold">+{item.stats.intelligence} ZEK</span>}
+                                                                            {item.stats.vitality && <span className="text-pink-400 font-bold">+{item.stats.vitality} DAY</span>}
+
+                                                                            {/* Secondary Stats */}
+                                                                            {item.stats.critChance && <span className="text-yellow-400 font-bold">+{item.stats.critChance}% Kritik</span>}
+                                                                            {item.stats.attackSpeed && <span className="text-white font-bold">+{item.stats.attackSpeed}% Saldırı Hızı</span>}
                                                                         </>
                                                                     ) : (
                                                                         <>

@@ -1150,19 +1150,28 @@ const GameScene: React.FC<GameSceneProps> = ({
         return true;
     };
 
+    import { monitor } from '../utils/diagnostics/PerformanceMonitor';
+
+    // ... inside ActiveZoneView ...
+
     useFrame((state, delta) => {
-        if (isDead) return;
+        // PERF MONITOR TICK
+        monitor.tickFrame(performance.now());
+        monitor.updateRenderStats(entities.length, projectiles.length + spawnParticles.length);
+        monitor.beginLoop(); // Start profiling CPU logic
+
+        if (isDead) { monitor.endLoop(); return; }
         const speed = 8 * delta; // Reduced from 10 to 8 for smoother movement
 
         if (playerGroupRef.current) {
             const px = playerGroupRef.current.position.x;
             const pz = playerGroupRef.current.position.z;
 
-            if (controlsRef.current && !isFreeLook) {
-                // Standard Mode: Camera rotates character
-                const angle = controlsRef.current.getAzimuthalAngle();
-                playerGroupRef.current.rotation.y = angle + Math.PI;
-            }
+            // FIXED: Removed force camera rotation override. Character should ONLY rotate based on movement input.
+            // if (controlsRef.current && !isFreeLook) {
+            //    const angle = controlsRef.current.getAzimuthalAngle();
+            //    playerGroupRef.current.rotation.y = angle + Math.PI;
+            // }
 
             if (Math.abs(px) >= borderLimit - 0.5 || Math.abs(pz) >= borderLimit - 0.5) {
                 const now = Date.now();
@@ -1413,6 +1422,7 @@ const GameScene: React.FC<GameSceneProps> = ({
                 }
             }
         }
+        monitor.endLoop();
     });
 
     return (

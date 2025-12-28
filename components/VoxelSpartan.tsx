@@ -787,19 +787,7 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                 </group>
             )}
 
-            {/* Trail Efekti (+11 ve üzeri, hareket halindeyken) */}
-            {glowEffect?.trailEnabled && props.isMoving && (
-                <Trail
-                    width={0.8}
-                    length={6}
-                    color={glowEffect.color}
-                    attenuation={(t) => t * t}
-                >
-                    <mesh ref={trailTargetRef} visible={false}>
-                        <sphereGeometry args={[0.1]} />
-                    </mesh>
-                </Trail>
-            )}
+            {/* Trail Effect REMOVED as per user request */}
 
             {/* =========== WINGS =========== */}
             {props.wingType && (
@@ -814,11 +802,13 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
             )}
 
             {/* =========== PET =========== */}
+            {/* =========== PET =========== */}
             {props.petType && (
-                <group position={[1.0, 0.3, -0.8]}>
+                <group position={[-0.8, 0, -0.5]} rotation={[0, Math.PI, 0]}> {/* Sol taraf, arkada, 180 derece dönük */}
                     <DynamicPet
                         modelPath={(props.petType as any).modelPath || '/models/pets/cubee-jungle.gltf'}
                         color={props.petType.color}
+                        scale={0.8}
                     />
                 </group>
             )}

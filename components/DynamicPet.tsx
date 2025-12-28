@@ -103,6 +103,8 @@ function GltfPet({ modelPath, color, scale = 1 }: DynamicPetProps) {
     }, [actions, animations]);
 
     // Make pet look at camera
+    // DISABLED: Keep pet rotation relative to player owner, not camera
+    /*
     useFrame((state) => {
         if (groupRef.current) {
             // Get camera position
@@ -113,6 +115,7 @@ function GltfPet({ modelPath, color, scale = 1 }: DynamicPetProps) {
             groupRef.current.rotation.y = angle;
         }
     });
+    */
 
     return (
         <group ref={groupRef}>

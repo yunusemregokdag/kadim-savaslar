@@ -144,9 +144,25 @@ const TabButton = ({ id, icon: Icon, label, activeTab, onClick }: any) => (
     </button>
 );
 
+import { monitor } from '../utils/diagnostics/PerformanceMonitor';
+
+// ... (existing imports)
+
 const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, faction, isAdmin = false, onLogout, characterId }) => {
-    // STATES
-    const [activeTab, setActiveTab] = useState<'active_zone' | 'npc_shop' | 'character' | 'skills' | 'map' | 'inventory' | 'guild' | 'quests' | 'leaderboard' | 'companions' | 'market' | 'blacksmith' | 'premium_shop' | 'party'>('skills');
+    // START PERFORMANCE MONITOR ON MOUNT
+    useEffect(() => {
+        monitor.start();
+        monitor.setStage("GameDashboard");
+
+        // Expose global command for manual check
+        (window as any).perfReport = () => monitor.stopAndGenerateReport();
+
+        return () => {
+            monitor.stopAndGenerateReport(); // Auto-report on exit
+        };
+    }, []);
+
+    // ... (rest of component)
     const startingMap = faction === 'marsu' ? 11 : faction === 'terya' ? 21 : 31;
     const [activeZone, setActiveZone] = useState<number | null>(startingMap);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -202,6 +218,53 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
     }, []);
 
     /* INITIAL STATE & HELPERS PLACEHOLDER */
+    // --- ITEM GENERATOR SYSTEM ---
+    const generateRandomStats = (type: Item['type'], tier: number, rarity: Item['rarity'], charClass: CharacterClass): any => {
+        const isWeapon = type === 'weapon';
+        const isArmor = ['armor', 'helmet', 'pants', 'boots'].includes(type);
+        const isAccessory = ['necklace', 'earring'].includes(type);
+
+        const stats: any = {};
+        const multiplier = tier * (rarity === 'legendary' ? 1.5 : rarity === 'epic' ? 1.3 : 1.0);
+
+        // Base Stats
+        if (isWeapon) stats.damage = Math.floor(50 * multiplier) + Math.floor(Math.random() * 20);
+        if (isArmor) {
+            stats.defense = Math.floor(20 * multiplier) + Math.floor(Math.random() * 10);
+            stats.hp = Math.floor(100 * multiplier);
+        }
+        if (isAccessory) {
+            stats.hp = Math.floor(50 * multiplier);
+            stats.mana = Math.floor(30 * multiplier);
+        }
+
+        // Random Attribute Bonuses (STR, DEX, INT, VIT)
+        const bonusCount = rarity === 'legendary' ? 4 : rarity === 'epic' ? 3 : rarity === 'rare' ? 2 : 1;
+        const attributes = ['strength', 'dexterity', 'intelligence', 'vitality'];
+
+        // Class Bias (Warrior gets STR, Mage gets INT etc.)
+        let primaryAttr = 'strength';
+        if (['archmage', 'bard', 'cleric'].includes(charClass)) primaryAttr = 'intelligence';
+        if (['archer', 'gale_glaive', 'reaper'].includes(charClass)) primaryAttr = 'dexterity';
+
+        // Ensure primary stat is present for high tier items
+        if (Math.random() > 0.3) {
+            stats[primaryAttr] = Math.floor(10 * multiplier) + Math.floor(Math.random() * 10);
+        }
+
+        for (let i = 0; i < bonusCount; i++) {
+            const attr = attributes[Math.floor(Math.random() * attributes.length)];
+            const currentVal = stats[attr] || 0;
+            stats[attr] = currentVal + Math.floor(5 * multiplier) + Math.floor(Math.random() * 5);
+        }
+
+        // Crit / Speed for high tiers
+        if (tier >= 3 && Math.random() < 0.3) stats.critChance = Math.floor(Math.random() * 5) + 1;
+        if (tier >= 4 && Math.random() < 0.2) stats.attackSpeed = Math.floor(Math.random() * 5) + 1;
+
+        return stats;
+    };
+
     const getClassStarterItems = (cClass: CharacterClass): Item[] => {
         const common: Item[] = [
             { id: uuidv4(), name: 'Ekmek', tier: 1, type: 'consumable', rarity: 'common', value: 50, plus: 0 },
@@ -210,7 +273,13 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
             { id: uuidv4(), name: 'Kutsal Parşömen', tier: 1, type: 'upgrade_scroll' as any, rarity: 'rare', value: 1000, plus: 0 }
         ];
         const starters = CLASS_STARTER_ITEMS[cClass] || [];
-        const startersWithIds = starters.map(item => ({ ...item, id: uuidv4(), plus: 0 }));
+        // Add minimal stats to starters
+        const startersWithIds = starters.map(item => ({
+            ...item,
+            id: uuidv4(),
+            plus: 0,
+            stats: generateRandomStats(item.type, 1, 'common', cClass)
+        }));
         return [...startersWithIds, ...common];
     };
 
@@ -233,7 +302,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                 adminInventory.push({ id: uuidv4(), name: 'Efsanevi Parşömen', tier: 3, type: 'upgrade_scroll' as any, rarity: 'legendary', value: 20000, plus: 0 });
             }
 
-            // 2. Test Weapons (Different Types, +0)
+            // 2. Test Weapons (Different Types, +0 and +7)
             const weaponTypes = [
                 { name: 'Acemi Kılıcı', tier: 1 },
                 { name: 'Savaşçı Baltası', tier: 2 },
@@ -241,26 +310,46 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                 { name: 'Ejderha Mızrağı', tier: 4 }
             ];
             weaponTypes.forEach(w => {
+                // +0 Version
                 adminInventory.push({
                     id: uuidv4(), name: w.name, tier: w.tier,
                     type: 'weapon', rarity: 'rare',
-                    value: 1000 * w.tier, plus: 0
+                    value: 1000 * w.tier, plus: 0,
+                    stats: generateRandomStats('weapon', w.tier, 'rare', charClass)
                 });
             });
 
-            // 3. Consumables
-            adminInventory.push({ id: uuidv4(), name: 'Can İksiri (Büyük)', tier: 3, type: 'consumable', rarity: 'rare', value: 100, plus: 0 });
+            // 3. FULL SET OF +12 ITEMS For Testing
+            const setTypes: Item['type'][] = ['helmet', 'armor', 'pants', 'boots', 'necklace', 'earring'];
+            setTypes.forEach(t => {
+                adminInventory.push({
+                    id: uuidv4(), name: `GOD ${t.toUpperCase()} +12`, tier: 5,
+                    type: t, rarity: 'ancient',
+                    value: 999999, plus: 12, // +12 Requested!
+                    stats: generateRandomStats(t, 5, 'ancient', charClass)
+                });
+            });
 
-            // 4. Starter +12 Item
+            // 4. Starter +12 Item (The God Slayer)
             const godWeapon: Item = {
-                id: uuidv4(), name: 'GOD SLAYER TESTER', tier: 4,
-                type: 'weapon', rarity: 'legendary',
-                value: 999999, plus: 12
+                id: uuidv4(), name: 'GOD SLAYER TESTER +12', tier: 5,
+                type: 'weapon', rarity: 'ancient',
+                value: 999999, plus: 12,
+                stats: {
+                    damage: 9999,
+                    strength: 999,
+                    dexterity: 999,
+                    intelligence: 999,
+                    vitality: 999,
+                    critChance: 100,
+                    attackSpeed: 50
+                }
             };
+            adminInventory.push(godWeapon); // Add to inventory too
 
             return {
                 nickname: `[GM] ${nickname}`, class: charClass, faction: faction, guildName: 'YÖNETİM',
-                level: 30, exp: LEVEL_XP_REQUIREMENTS[30], maxExp: LEVEL_XP_REQUIREMENTS[30],
+                level: 60, exp: LEVEL_XP_REQUIREMENTS[30], maxExp: LEVEL_XP_REQUIREMENTS[30],
                 credits: 99000000, gems: 99000000, honor: 500000000, rankPoints: 500000000, rank: 19,
                 questStage: 10, hp: 99999, maxHp: 99999, mana: 99999, maxMana: 99999, damage: 9999, defense: 9999,
                 strength: baseStats.str + 500, dexterity: baseStats.dex + 500, intelligence: baseStats.int + 500, vitality: baseStats.vit + 500, statPoints: 100,
@@ -737,7 +826,9 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                 <h2 className="text-3xl rpg-font text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-500 to-yellow-200 mb-2 tracking-wider">
                     KADİM EVREN
                 </h2>
-                <div className="text-yellow-500/60 text-xs uppercase tracking-[0.3em] mb-12">Yükleniyor...</div>
+                <div className="text-yellow-500/60 text-xs uppercase tracking-[0.3em] mb-12">
+                    {progress === 100 ? "Dünya Hazırlanıyor..." : "Varlıklar Yükleniyor..."}
+                </div>
 
                 {/* Progress Bar Container */}
                 <div className="w-full relative group">

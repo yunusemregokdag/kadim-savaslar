@@ -431,52 +431,54 @@ export const RANKS: Rank[] = [
 ];
 
 export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwner?: Faction, minLevel: number, isSafeZone?: boolean, enemies: Partial<GameEntity>[], npcs: Partial<GameEntity>[], portals: Portal[] }> = {
-    // --- MARSU (ATEŞ) LOW LEVEL 1-1 TO 1-4 ---
+    // --- MARSU (ATEŞ) KRALLIĞI ---
     11: {
-        name: 'Kül Vadisi (1-1)', bg: '#450a0a', factionOwner: 'marsu', isSafeZone: true, minLevel: 1, // X-1
-        enemies: [{ name: 'Ateş Papağanı', level: 1, hp: 200 }],
+        name: 'Kül Vadisi (1-1)', bg: '#450a0a', factionOwner: 'marsu', isSafeZone: true, minLevel: 1,
+        enemies: [{ name: 'Ateş Papağanı', level: 1, hp: 200, attack: 15, defense: 40, exp: 40, gold: 15, diamond: 0 }],
         npcs: [
             { type: 'npc', npcType: 'quest_giver', name: 'Görev Ustası Kemal', level: 0, hp: 999, maxHp: 999, isHostile: false, x: 30, y: 10, color: '#fbbf24', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_paladin.gltf' },
             { type: 'npc', npcType: 'guild_master', name: 'Lonca Ustası', level: 0, hp: 999, maxHp: 999, isHostile: false, x: -30, y: 15, color: '#3b82f6', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_acolyte.gltf' }
         ],
-        portals: [{ id: 'p_11_12', x: 40, z: -40, targetZone: 12, levelReq: 1, name: 'İleri: 1-2' }] // Level 1 can access 1-2
+        portals: [{ id: 'p_11_12', x: 40, z: -40, targetZone: 12, levelReq: 1, name: 'İleri: 1-2' }]
     },
     12: {
-        name: 'Yanık Topraklar (1-2)', bg: '#7f1d1d', factionOwner: 'marsu', minLevel: 1, // X-2
-        enemies: [{ name: 'Kızıl Kedi', level: 3, hp: 400 }],
+        name: 'Yanık Topraklar (1-2)', bg: '#7f1d1d', factionOwner: 'marsu', minLevel: 1,
+        enemies: [{ name: 'Kızıl Kedi', level: 3, hp: 400, attack: 30, defense: 80, exp: 80, gold: 35, diamond: 0 }],
         npcs: [],
         portals: [
             { id: 'p_12_11', x: -40, z: 40, targetZone: 11, levelReq: 1, name: 'Geri: 1-1' },
             { id: 'p_12_13', x: 40, z: -40, targetZone: 13, levelReq: 2, name: 'İleri: 1-3' },
-            { id: 'p_12_14', x: 0, z: -40, targetZone: 14, levelReq: 2, name: 'İleri: 1-4' } // Split Path
+            { id: 'p_12_14', x: 0, z: -40, targetZone: 14, levelReq: 2, name: 'İleri: 1-4' }
         ]
     },
     13: {
-        name: 'Magma Geçidi (1-3)', bg: '#991b1b', factionOwner: 'marsu', minLevel: 2, // X-3 (Level 2 req)
-        enemies: [{ name: 'Çöl Akrebi', level: 6, hp: 800 }],
+        name: 'Magma Geçidi (1-3)', bg: '#991b1b', factionOwner: 'marsu', minLevel: 2,
+        enemies: [{ name: 'Çöl Akrebi', level: 6, hp: 800, attack: 55, defense: 160, exp: 160, gold: 80, diamond: 0 }],
         npcs: [],
-        portals: [{ id: 'p_13_12', x: -40, z: 20, targetZone: 12, levelReq: 1, name: 'Geri: 1-2' }, { id: 'p_13_14', x: 20, z: -20, targetZone: 14, levelReq: 2, name: 'İleri: 1-4' }] // Level 2 for 1-4
+        portals: [{ id: 'p_13_12', x: -40, z: 20, targetZone: 12, levelReq: 1, name: 'Geri: 1-2' }, { id: 'p_13_14', x: 20, z: -20, targetZone: 14, levelReq: 2, name: 'İleri: 1-4' }]
     },
     14: {
-        name: 'Ejderha Sırtı (1-4)', bg: '#b91c1c', factionOwner: 'marsu', minLevel: 2, // X-4 (Level 2 req)
-        enemies: [{ name: 'Genç Ejder', level: 9, hp: 1500 }],
+        name: 'Ejderha Sırtı (1-4)', bg: '#b91c1c', factionOwner: 'marsu', minLevel: 2,
+        enemies: [{ name: 'Genç Ejder', level: 9, hp: 1500, attack: 110, defense: 350, exp: 320, gold: 180, diamond: 1 }],
         npcs: [],
         portals: [
             { id: 'p_14_13', x: -40, z: 20, targetZone: 13, levelReq: 2, name: 'Geri: 1-3' },
             { id: 'p_14_41', x: 20, z: -20, targetZone: 41, levelReq: 8, name: 'ARENA KAPISI (4-1)' }
         ]
     },
-
-    // --- MARSU HIGH LEVEL 1-5 TO 1-8 ---
     15: {
-        name: 'Karanlık Mahzen (1-5)', bg: '#2f0505', factionOwner: 'marsu', minLevel: 10, enemies: [{ name: 'Karanlık Şövalye', level: 16, hp: 8000 }], npcs: [],
+        name: 'Karanlık Mahzen (1-5)', bg: '#2f0505', factionOwner: 'marsu', minLevel: 10,
+        enemies: [{ name: 'Karanlık Şövalye', level: 16, hp: 8000, attack: 420, defense: 2400, exp: 1200, gold: 650, diamond: 2 }],
+        npcs: [],
         portals: [
-            { id: 'p_15_44', x: -40, z: 40, targetZone: 44, levelReq: 9, name: 'Geri: 4-4 SAVAŞ ALANI' }, // To Central/PvP
+            { id: 'p_15_44', x: -40, z: 40, targetZone: 44, levelReq: 9, name: 'Geri: 4-4 SAVAŞ ALANI' },
             { id: 'p_15_16', x: 40, z: -40, targetZone: 16, levelReq: 11, name: 'İleri: 1-6' }
         ]
     },
     16: {
-        name: 'Cehennem Kapısı (1-6)', bg: '#450a0a', factionOwner: 'marsu', minLevel: 11, enemies: [{ name: 'Gardiyan Papağan', level: 20, hp: 15000 }], npcs: [],
+        name: 'Cehennem Kapısı (1-6)', bg: '#450a0a', factionOwner: 'marsu', minLevel: 11,
+        enemies: [{ name: 'Gardiyan Papağan', level: 20, hp: 15000, attack: 750, defense: 5000, exp: 2400, gold: 1400, diamond: 4 }],
+        npcs: [],
         portals: [
             { id: 'p_16_15', x: -40, z: 0, targetZone: 15, levelReq: 10, name: 'Geri: 1-5' },
             { id: 'p_16_17', x: 40, z: 0, targetZone: 17, levelReq: 11, name: 'İleri: 1-7' }
@@ -485,8 +487,7 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
     17: {
         name: 'Ejderha Yuvası (1-7)', bg: '#450a0a', factionOwner: 'marsu', minLevel: 11,
         enemies: [
-            { name: 'Kadim Ejder', level: 25, hp: 30000 },
-            { name: '[BOSS] Ateş Ejderi (Parrot Boss)', level: 30, hp: 500000 }
+            { name: 'Kadim Ejder', level: 25, hp: 30000, attack: 1400, defense: 10000, exp: 4800, gold: 3000, diamond: 8 }
         ],
         npcs: [],
         portals: [
@@ -495,44 +496,58 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
         ]
     },
     18: {
-        name: 'Yanardağ Çekirdeği (1-8)', bg: '#000000', factionOwner: 'marsu', isSafeZone: true, minLevel: 12, // X-8 SAFE ZONE
-        enemies: [{ name: 'Ateş Böceği', level: 1, hp: 100 }], // Low Level Mobs
+        name: 'Yanardağ Çekirdeği (1-8)', bg: '#000000', factionOwner: 'marsu', isSafeZone: true, minLevel: 12,
+        enemies: [{ name: '[BOSS] Ateş Ejderi', level: 30, hp: 500000, attack: 6500, defense: 180000, exp: 120000, gold: 80000, diamond: 120 }],
         npcs: [],
         portals: [
             { id: 'p_18_17', x: 0, z: 40, targetZone: 17, levelReq: 11, name: 'Geri: 1-7' }
         ]
     },
 
-
-    // --- TERYA (SU) LOW LEVEL 2-1 TO 2-4 ---
+    // --- TERYA (SU) KRALLIĞI ---
     21: {
         name: 'Kristal Nehir (2-1)', bg: '#172554', factionOwner: 'terya', isSafeZone: true, minLevel: 1,
-        enemies: [{ name: 'Su Aksolotlu', level: 1, hp: 200 }],
+        enemies: [{ name: 'Su Aksolotlu', level: 1, hp: 200, attack: 14, defense: 45, exp: 40, gold: 15, diamond: 0 }],
         npcs: [
             { type: 'npc', npcType: 'quest_giver', name: 'Görev Ustası Su', level: 0, hp: 999, maxHp: 999, isHostile: false, x: 25, y: -20, color: '#3b82f6', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_fortuneteller.gltf' },
             { type: 'npc', npcType: 'guild_master', name: 'Lonca Ustası Dalga', level: 0, hp: 999, maxHp: 999, isHostile: false, x: -25, y: -15, color: '#06b6d4', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_acolyte.gltf' }
         ],
         portals: [{ id: 'p_21_22', x: 40, z: -40, targetZone: 22, levelReq: 1, name: 'İleri: 2-2' }]
     },
-    22: { name: 'Buzul Mağarası (2-2)', bg: '#1e3a8a', factionOwner: 'terya', minLevel: 1, enemies: [{ name: 'Buz Kedisi', level: 3, hp: 400 }], npcs: [], portals: [{ id: 'p_22_21', x: -40, z: 40, targetZone: 21, levelReq: 1, name: 'Geri: 2-1' }, { id: 'p_22_23', x: 40, z: -40, targetZone: 23, levelReq: 2, name: 'İleri: 2-3' }, { id: 'p_22_24', x: 0, z: -40, targetZone: 24, levelReq: 2, name: 'İleri: 2-4' }] },
-    23: { name: 'Derin Okyanus (2-3)', bg: '#1e40af', factionOwner: 'terya', minLevel: 2, enemies: [{ name: 'Derin Aksolotl', level: 6, hp: 800 }], npcs: [], portals: [{ id: 'p_23_22', x: -40, z: 20, targetZone: 22, levelReq: 1, name: 'Geri: 2-2' }, { id: 'p_23_24', x: 20, z: -20, targetZone: 24, levelReq: 2, name: 'İleri: 2-4' }] },
+    22: {
+        name: 'Buzul Mağarası (2-2)', bg: '#1e3a8a', factionOwner: 'terya', minLevel: 1,
+        enemies: [{ name: 'Buz Kedisi', level: 3, hp: 400, attack: 28, defense: 90, exp: 80, gold: 35, diamond: 0 }],
+        npcs: [],
+        portals: [{ id: 'p_22_21', x: -40, z: 40, targetZone: 21, levelReq: 1, name: 'Geri: 2-1' }, { id: 'p_22_23', x: 40, z: -40, targetZone: 23, levelReq: 2, name: 'İleri: 2-3' }, { id: 'p_22_24', x: 0, z: -40, targetZone: 24, levelReq: 2, name: 'İleri: 2-4' }]
+    },
+    23: {
+        name: 'Derin Okyanus (2-3)', bg: '#1e40af', factionOwner: 'terya', minLevel: 2,
+        enemies: [{ name: 'Derin Aksolotl', level: 6, hp: 800, attack: 55, defense: 180, exp: 160, gold: 80, diamond: 0 }],
+        npcs: [],
+        portals: [{ id: 'p_23_22', x: -40, z: 20, targetZone: 22, levelReq: 1, name: 'Geri: 2-2' }, { id: 'p_23_24', x: 20, z: -20, targetZone: 24, levelReq: 2, name: 'İleri: 2-4' }]
+    },
     24: {
-        name: 'Atlantis (2-4)', bg: '#1d4ed8', factionOwner: 'terya', minLevel: 2, enemies: [{ name: 'Mızraklı Naga', level: 9, hp: 1500 }], npcs: [], portals: [
+        name: 'Atlantis (2-4)', bg: '#1d4ed8', factionOwner: 'terya', minLevel: 2,
+        enemies: [{ name: 'Mızraklı Naga', level: 9, hp: 1500, attack: 120, defense: 400, exp: 320, gold: 180, diamond: 1 }],
+        npcs: [],
+        portals: [
             { id: 'p_24_23', x: -40, z: 20, targetZone: 23, levelReq: 2, name: 'Geri: 2-3' },
             { id: 'p_24_42', x: 20, z: -20, targetZone: 42, levelReq: 8, name: 'ARENA KAPISI (4-2)' }
         ]
     },
-
-    // --- TERYA HIGH LEVEL 2-5 TO 2-8 ---
     25: {
-        name: 'Abyss (2-5)', bg: '#020617', factionOwner: 'terya', minLevel: 10, enemies: [{ name: 'Abyss Kedisi', level: 16, hp: 8000 }], npcs: [],
+        name: 'Abyss (2-5)', bg: '#020617', factionOwner: 'terya', minLevel: 10,
+        enemies: [{ name: 'Abyss Kedisi', level: 16, hp: 8000, attack: 450, defense: 2800, exp: 1200, gold: 650, diamond: 2 }],
+        npcs: [],
         portals: [
             { id: 'p_25_44', x: 0, z: 40, targetZone: 44, levelReq: 9, name: 'Geri: 4-4 SAVAŞ ALANI' },
             { id: 'p_25_26', x: 40, z: 0, targetZone: 26, levelReq: 11, name: 'İleri: 2-6' }
         ]
     },
     26: {
-        name: 'Mercan Resifi (2-6)', bg: '#172554', factionOwner: 'terya', minLevel: 11, enemies: [{ name: 'Kraken Yavrusu', level: 20, hp: 15000 }], npcs: [],
+        name: 'Mercan Resifi (2-6)', bg: '#172554', factionOwner: 'terya', minLevel: 11,
+        enemies: [{ name: 'Kraken Yavrusu', level: 20, hp: 15000, attack: 820, defense: 5500, exp: 2400, gold: 1400, diamond: 4 }],
+        npcs: [],
         portals: [
             { id: 'p_26_25', x: -40, z: 0, targetZone: 25, levelReq: 10, name: 'Geri: 2-5' },
             { id: 'p_26_27', x: 40, z: 0, targetZone: 27, levelReq: 11, name: 'İleri: 2-7' }
@@ -541,8 +556,7 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
     27: {
         name: 'Batık Şehir (2-7)', bg: '#172554', factionOwner: 'terya', minLevel: 11,
         enemies: [
-            { name: 'Poseidon Muhafızı', level: 25, hp: 30000 },
-            { name: '[BOSS] Okyanus Pengueni', level: 30, hp: 500000 }
+            { name: 'Poseidon Muhafızı', level: 25, hp: 30000, attack: 1500, defense: 11000, exp: 4800, gold: 3000, diamond: 8 }
         ],
         npcs: [],
         portals: [
@@ -551,44 +565,41 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
         ]
     },
     28: {
-        name: 'Poseidon Tahtı (2-8)', bg: '#000000', factionOwner: 'terya', isSafeZone: true, minLevel: 12, // X-8 SAFE ZONE
-        enemies: [{ name: 'Su Kabarcığı', level: 1, hp: 100 }], // Low Level Mobs
+        name: 'Poseidon Tahtı (2-8)', bg: '#000000', factionOwner: 'terya', isSafeZone: true, minLevel: 12,
+        enemies: [{ name: '[BOSS] Okyanus Pengueni', level: 30, hp: 500000, attack: 6200, defense: 200000, exp: 120000, gold: 80000, diamond: 120 }],
         npcs: [],
         portals: [
             { id: 'p_28_27', x: 0, z: 40, targetZone: 27, levelReq: 11, name: 'Geri: 2-7' }
         ]
     },
 
-
-    // --- VENU (DOĞA) LOW LEVEL 3-1 TO 3-4 ---
+    // --- VENU (DOĞA) KRALLIĞI ---
     31: {
         name: 'Kadim Orman (3-1)', bg: '#14532d', factionOwner: 'venu', isSafeZone: true, minLevel: 1,
-        enemies: [{ name: 'Orman Kedisi', level: 1, hp: 200 }],
+        enemies: [{ name: 'Orman Kedisi', level: 1, hp: 200, attack: 13, defense: 50, exp: 40, gold: 15, diamond: 0 }],
         npcs: [
             { type: 'npc', npcType: 'quest_giver', name: 'Görev Ustası Yaprak', level: 0, hp: 999, maxHp: 999, isHostile: false, x: 20, y: 25, color: '#22c55e', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_tinkerer.gltf' },
             { type: 'npc', npcType: 'guild_master', name: 'Lonca Ustası Kök', level: 0, hp: 999, maxHp: 999, isHostile: false, x: -20, y: 20, color: '#16a34a', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_acolyte.gltf' }
         ],
         portals: [{ id: 'p_31_32', x: 40, z: -40, targetZone: 32, levelReq: 1, name: 'İleri: 3-2' }]
     },
-    32: { name: 'Bataklık (3-2)', bg: '#166534', factionOwner: 'venu', minLevel: 1, enemies: [{ name: 'Bataklık Papağanı', level: 3, hp: 400 }], npcs: [], portals: [{ id: 'p_32_31', x: -40, z: 40, targetZone: 31, levelReq: 1, name: 'Geri: 3-1' }, { id: 'p_32_33', x: 40, z: -40, targetZone: 33, levelReq: 2, name: 'İleri: 3-3' }, { id: 'p_32_34', x: 0, z: -40, targetZone: 34, levelReq: 2, name: 'İleri: 3-4' }] },
-    33: { name: 'Unutulmuş Vadi (3-3)', bg: '#15803d', factionOwner: 'venu', minLevel: 2, enemies: [{ name: 'Yabani Aksolotl', level: 6, hp: 800 }], npcs: [], portals: [{ id: 'p_33_32', x: -40, z: 20, targetZone: 32, levelReq: 1, name: 'Geri: 3-2' }, { id: 'p_33_34', x: 20, z: -20, targetZone: 34, levelReq: 2, name: 'İleri: 3-4' }] },
+    32: { name: 'Bataklık (3-2)', bg: '#166534', factionOwner: 'venu', minLevel: 1, enemies: [{ name: 'Bataklık Papağanı', level: 3, hp: 400, attack: 30, defense: 100, exp: 80, gold: 35, diamond: 0 }], npcs: [], portals: [{ id: 'p_32_31', x: -40, z: 40, targetZone: 31, levelReq: 1, name: 'Geri: 3-1' }, { id: 'p_32_33', x: 40, z: -40, targetZone: 33, levelReq: 2, name: 'İleri: 3-3' }, { id: 'p_32_34', x: 0, z: -40, targetZone: 34, levelReq: 2, name: 'İleri: 3-4' }] },
+    33: { name: 'Unutulmuş Vadi (3-3)', bg: '#15803d', factionOwner: 'venu', minLevel: 2, enemies: [{ name: 'Yabani Aksolotl', level: 6, hp: 800, attack: 60, defense: 200, exp: 160, gold: 80, diamond: 0 }], npcs: [], portals: [{ id: 'p_33_32', x: -40, z: 20, targetZone: 32, levelReq: 1, name: 'Geri: 3-2' }, { id: 'p_33_34', x: 20, z: -20, targetZone: 34, levelReq: 2, name: 'İleri: 3-4' }] },
     34: {
-        name: 'Kristal Mağara (3-4)', bg: '#16a34a', factionOwner: 'venu', minLevel: 2, enemies: [{ name: 'Kristal İskelet', level: 9, hp: 1500 }], npcs: [], portals: [
+        name: 'Kristal Mağara (3-4)', bg: '#16a34a', factionOwner: 'venu', minLevel: 2, enemies: [{ name: 'Kristal İskelet', level: 9, hp: 1500, attack: 130, defense: 450, exp: 320, gold: 180, diamond: 1 }], npcs: [], portals: [
             { id: 'p_34_33', x: -40, z: 20, targetZone: 33, levelReq: 2, name: 'Geri: 3-3' },
             { id: 'p_34_43', x: 0, z: 40, targetZone: 43, levelReq: 8, name: 'ARENA KAPISI (4-3)' }
         ]
     },
-
-    // --- VENU HIGH LEVEL 3-5 TO 3-8 ---
     35: {
-        name: 'Yasak Bölge (3-5)', bg: '#052e16', factionOwner: 'venu', minLevel: 10, enemies: [{ name: 'Kadim Ent', level: 16, hp: 8000 }], npcs: [],
+        name: 'Yasak Bölge (3-5)', bg: '#052e16', factionOwner: 'venu', minLevel: 10, enemies: [{ name: 'Kadim Ent', level: 16, hp: 8000, attack: 500, defense: 3200, exp: 1200, gold: 650, diamond: 2 }], npcs: [],
         portals: [
             { id: 'p_35_44', x: 0, z: 40, targetZone: 44, levelReq: 9, name: 'Geri: 4-4 SAVAŞ ALANI' },
             { id: 'p_35_36', x: 40, z: -40, targetZone: 36, levelReq: 11, name: 'İleri: 3-6' }
         ]
     },
     36: {
-        name: 'Ruhlar Ormanı (3-6)', bg: '#14532d', factionOwner: 'venu', minLevel: 11, enemies: [{ name: 'Orman Ruhu', level: 20, hp: 15000 }], npcs: [],
+        name: 'Ruhlar Ormanı (3-6)', bg: '#14532d', factionOwner: 'venu', minLevel: 11, enemies: [{ name: 'Orman Ruhu', level: 20, hp: 15000, attack: 900, defense: 6000, exp: 2400, gold: 1400, diamond: 4 }], npcs: [],
         portals: [
             { id: 'p_36_35', x: -40, z: 0, targetZone: 35, levelReq: 10, name: 'Geri: 3-5' },
             { id: 'p_36_37', x: 40, z: 0, targetZone: 37, levelReq: 11, name: 'İleri: 3-7' }
@@ -597,8 +608,7 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
     37: {
         name: 'Fısıldayan Vadi (3-7)', bg: '#14532d', factionOwner: 'venu', minLevel: 11,
         enemies: [
-            { name: 'Vahşi Druid', level: 25, hp: 30000 },
-            { name: '[BOSS] Armadillo Kral', level: 30, hp: 500000 }
+            { name: 'Vahşi Druid', level: 25, hp: 30000, attack: 1600, defense: 12000, exp: 4800, gold: 3000, diamond: 8 }
         ],
         npcs: [],
         portals: [
@@ -607,71 +617,77 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
         ]
     },
     38: {
-        name: 'Gaia Tapınağı (3-8)', bg: '#000000', factionOwner: 'venu', isSafeZone: true, minLevel: 12, // X-8 SAFE ZONE
-        enemies: [{ name: 'Kök Parçası', level: 1, hp: 100 }], // Low Level Mobs
+        name: 'Gaia Tapınağı (3-8)', bg: '#000000', factionOwner: 'venu', isSafeZone: true, minLevel: 12,
+        enemies: [{ name: '[BOSS] Armadillo Kral', level: 30, hp: 500000, attack: 6800, defense: 220000, exp: 120000, gold: 80000, diamond: 120 }],
         npcs: [],
         portals: [
             { id: 'p_38_37', x: 0, z: 40, targetZone: 37, levelReq: 11, name: 'Geri: 3-7' }
         ]
     },
 
-    // --- PVP GATEWAYS (TRANSIT & ARENA ACCESS) ---
-    // 4-1: Marsu Gateway 
+    // --- ARENA & GEÇİŞ BÖLGELERİ ---
+    // 4-1: Marsu Kapısı
     41: {
-        name: 'MARSU ARENA GİRİŞİ (4-1)', bg: '#854d0e', minLevel: 8, enemies: [{ name: 'Paralı Asker', level: 14, hp: 3000 }], npcs: [], portals: [
+        name: 'MARSU ARENA GİRİŞİ (4-1)', bg: '#854d0e', minLevel: 8,
+        enemies: [{ name: 'Paralı Asker', level: 14, hp: 3000, attack: 250, defense: 900, exp: 600, gold: 300, diamond: 1 }],
+        npcs: [],
+        portals: [
             { id: 'p_41_14', x: -50, z: -50, targetZone: 14, levelReq: 2, name: 'GERİ: Marsu 1-4' },
             { id: 'p_41_44', x: 50, z: 0, targetZone: 44, levelReq: 9, name: 'SAVAŞ ALANI (ARENA)' },
-            // Transit
             { id: 'p_41_42', x: 0, z: 50, targetZone: 42, levelReq: 8, name: 'GEÇİŞ: TERYA (4-2)' },
             { id: 'p_41_43', x: 50, z: 50, targetZone: 43, levelReq: 8, name: 'GEÇİŞ: VENU (4-3)' }
         ]
     },
 
-    // 4-2: Terya Gateway
+    // 4-2: Terya Kapısı
     42: {
-        name: 'TERYA ARENA GİRİŞİ (4-2)', bg: '#854d0e', minLevel: 8, enemies: [{ name: 'Kaçak Büyücü', level: 14, hp: 3000 }], npcs: [], portals: [
+        name: 'TERYA ARENA GİRİŞİ (4-2)', bg: '#854d0e', minLevel: 8,
+        enemies: [{ name: 'Kaçak Büyücü', level: 14, hp: 3000, attack: 280, defense: 800, exp: 600, gold: 300, diamond: 1 }],
+        npcs: [],
+        portals: [
             { id: 'p_42_24', x: 50, z: -50, targetZone: 24, levelReq: 2, name: 'GERİ: Terya 2-4' },
             { id: 'p_42_44', x: -50, z: 0, targetZone: 44, levelReq: 9, name: 'SAVAŞ ALANI (ARENA)' },
-            // Transit
             { id: 'p_42_41', x: 0, z: 50, targetZone: 41, levelReq: 8, name: 'GEÇİŞ: MARSU (4-1)' },
             { id: 'p_42_43', x: 50, z: 50, targetZone: 43, levelReq: 8, name: 'GEÇİŞ: VENU (4-3)' }
         ]
     },
 
-    // 4-3: Venu Gateway
+    // 4-3: Venu Kapısı
     43: {
-        name: 'VENU ARENA GİRİŞİ (4-3)', bg: '#854d0e', minLevel: 8, enemies: [{ name: 'Vahşi Barbar', level: 14, hp: 3000 }], npcs: [], portals: [
+        name: 'VENU ARENA GİRİŞİ (4-3)', bg: '#854d0e', minLevel: 8,
+        enemies: [{ name: 'Vahşi Barbar', level: 14, hp: 3000, attack: 300, defense: 1000, exp: 600, gold: 300, diamond: 1 }],
+        npcs: [],
+        portals: [
             { id: 'p_43_34', x: 0, z: 50, targetZone: 34, levelReq: 2, name: 'GERİ: Venu 3-4' },
             { id: 'p_43_44', x: 0, z: -50, targetZone: 44, levelReq: 9, name: 'SAVAŞ ALANI (ARENA)' },
-            // Transit
             { id: 'p_43_41', x: 50, z: 0, targetZone: 41, levelReq: 8, name: 'GEÇİŞ: MARSU (4-1)' },
             { id: 'p_43_42', x: -50, z: 0, targetZone: 42, levelReq: 8, name: 'GEÇİŞ: TERYA (4-2)' }
         ]
     },
 
-    // 4-4: ISOLATED ARENA / WAR ZONE
+    // 4-4: SAVAŞ MEYDANI (ARENA)
     44: {
         name: 'Savaş Meydanı (4-4)', bg: '#713f12', minLevel: 9,
-        enemies: [{ name: '[BOSS] Yengeç Lordu', level: 25, hp: 100000 }],
+        enemies: [{ name: '[BOSS] Yengeç Lordu', level: 25, hp: 100000, attack: 2000, defense: 35000, exp: 150000, gold: 10000, diamond: 20 }],
         npcs: [
             { type: 'npc', npcType: 'arena_master', name: 'Arena Ustası Kılıç', level: 0, hp: 999, maxHp: 999, isHostile: false, x: 0, y: 0, color: '#ef4444', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_assassin.gltf' }
         ],
         portals: [
-            // Only Backwards portals to Gateways
             { id: 'p_44_41', x: -40, z: -40, targetZone: 41, levelReq: 8, name: 'ÇIKIŞ: MARSU CAPE' },
             { id: 'p_44_42', x: 40, z: -40, targetZone: 42, levelReq: 8, name: 'ÇIKIŞ: TERYA CAPE' },
             { id: 'p_44_43', x: 0, z: 40, targetZone: 43, levelReq: 8, name: 'ÇIKIŞ: VENU CAPE' },
-
-            // High Level Access (Forwards - THE ONLY WAY)
             { id: 'p_44_15', x: -50, z: 0, targetZone: 15, levelReq: 10, name: 'MARSU ELİT (1-5)' },
             { id: 'p_44_25', x: 50, z: 0, targetZone: 25, levelReq: 10, name: 'TERYA ELİT (2-5)' },
             { id: 'p_44_35', x: 0, z: 50, targetZone: 35, levelReq: 10, name: 'VENU ELİT (3-5)' },
         ]
     },
 
-    // 4-5: Extra High Level
+    // 4-5: SOLUCAN DELİĞİ (GİZLİ BOSS)
     45: {
-        name: 'Solucan Deliği (4-5)', bg: '#000000', minLevel: 25, enemies: [{ name: '[BOSS] Axolotl İmparator', level: 30, hp: 200000 }], npcs: [], portals: [
+        name: 'Solucan Deliği (4-5)', bg: '#000000', minLevel: 25,
+        enemies: [{ name: '[BOSS] Axolotl İmparator', level: 30, hp: 200000, attack: 3500, defense: 70000, exp: 300000, gold: 20000, diamond: 40 }],
+        npcs: [],
+        portals: [
             { id: 'p_45_44', x: 0, z: 0, targetZone: 44, levelReq: 9, name: 'Geri: Arena' }
         ]
     }

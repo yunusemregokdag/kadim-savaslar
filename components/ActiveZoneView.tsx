@@ -2987,16 +2987,30 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             setEntities((prev: GameEntity[]) => {
                 // Check Mobs/NPCs
                 const newEntities = prev.map(ent => {
-                    const isDuelOpponent = activeDuel && activeDuel.opponentId === ent.id; // If mapped to entity
+                    const isDuelOpponent = activeDuel && activeDuel.opponentId === ent.id;
                     if (!ent.isHostile && !isDuelOpponent) return ent;
-                    const dist = Math.sqrt(Math.pow(ent.x / 15 - playerPosRef.current.x, 2) + Math.pow(ent.y / 15 - playerPosRef.current.y, 2));
 
-                    // Damage Target OR Nearby Enemies (AoE)
-                    // If we have a target, damage IT primarily. If AoE, damage everything in range?
-                    // For now: Damage specific target strongly, others weakly? Or just simple range check.
-                    if (isDuelOpponent) {
-                        // PVP Logic: Emit attack to server, do NOT apply local entity damage (unless we simulate it)
-                        // For now, only emit.
+                    const ex = ent.x / 15;
+                    const ey = ent.y / 15;
+                    const dist = Math.sqrt(Math.pow(ex - playerPosRef.current.x, 2) + Math.pow(ey - playerPosRef.current.y, 2));
+
+                    // LOGIC:
+                    // 1. If AoE: Hit anything in range.
+                    // 2. If Single Target: Hit ONLY the effectiveTarget.
+
+                    const isTarget = effectiveTarget && effectiveTarget.id === ent.id;
+                    const inRange = dist < range;
+
+                    let shouldHit = false;
+
+                    if (skill.isAoE) {
+                        shouldHit = inRange;
+                    } else {
+                        shouldHit = isTarget && inRange;
+                    }
+
+                    if (isDuelOpponent && shouldHit) {
+                        // PVP Logic
                         console.log("Attacking Duel Opponent:", activeDuel?.opponentId);
                         if (socketRef.current) {
                             socketRef.current.emit('attack_player', {
@@ -3008,13 +3022,13 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         return ent;
                     }
 
-                    if ((effectiveTarget && effectiveTarget.id === ent.id) || dist < range) {
+                    if (shouldHit) {
                         const dmg = Math.floor(playerState.damage * factor);
-                        addFloatingText(`${dmg}`, ent.x / 15, 2, ent.y / 15, 'text-yellow-400 font-bold text-2xl');
-                        spawnVisualEffect(ent.x / 15, ent.y / 15, '#3b82f6'); // Blue hit effect
+                        addFloatingText(`${dmg}`, ex, 2, ey, 'text-yellow-400 font-bold text-2xl');
+                        spawnVisualEffect(ex, ey, '#3b82f6'); // Blue hit effect
 
                         if (ent.hp - dmg <= 0) {
-                            setTimeout(() => handleKill(ent, ent.x / 15, ent.y / 15), 0);
+                            setTimeout(() => handleKill(ent, ex, ey), 0);
                             if (effectiveTarget?.id === ent.id) setTarget(null);
                             return { ...ent, hp: 0 };
                         }

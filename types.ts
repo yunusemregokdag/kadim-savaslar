@@ -23,6 +23,7 @@ export interface Skill {
   icon: string; // Lucide icon name placeholder
   visual: string; // Effect key
   modelPath?: string; // Path to GLTF skill effect model
+  isAoE?: boolean; // If true, affects all targets in range. If false, only selected target.
 }
 
 export interface ClassData {

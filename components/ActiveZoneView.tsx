@@ -1750,9 +1750,12 @@ const LocalZoneMap: React.FC<{ zoneId: number, playerPos: { x: number, y: number
 
                         {/* PORTALS */}
                         {config.portals.map(portal => (
-                            <div key={portal.id} className="absolute w-8 h-8 -ml-4 -mt-4 flex flex-col items-center justify-center cursor-pointer hover:scale-110 transition-transform z-10 pointer-events-auto" style={{ left: `${getPos(portal.x)}%`, top: `${getPos(portal.z)}%` }} onClick={() => onZoneSwitch(portal.targetZone)}>
+                            <div key={portal.id} className="absolute w-8 h-8 -ml-4 -mt-4 flex flex-col items-center justify-center cursor-help z-10 pointer-events-auto group" style={{ left: `${getPos(portal.x)}%`, top: `${getPos(portal.z)}%` }} title={`Oraya yürüyerek gidin: ${portal.name}`}>
                                 <div className="w-4 h-4 rounded-full bg-purple-500 animate-pulse shadow-[0_0_10px_purple]" />
                                 <div className="bg-black/80 text-purple-200 text-[9px] px-2 py-1 rounded whitespace-nowrap border border-purple-800 mt-1 max-w-[120px] text-center">{portal.name}</div>
+                                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-red-900/90 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity border border-red-500 pointer-events-none z-50">
+                                    Işınlanmak için oraya git!
+                                </div>
                             </div>
                         ))}
 
@@ -1948,7 +1951,32 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         return (playerState.settings as any).buttonOpacity || 1;
     });
 
-    const playerPosRef = useRef({ x: 0, y: 0 });
+    const playerPosRef = useRef({
+        x: playerState.lastPosition?.x ?? 0,
+        y: playerState.lastPosition?.z ?? 0
+    });
+
+    // Periyodik Pozisyon Kaydetme (Her 1 saniyede bir) - Kaldığı yerden devam etmesi için
+    useEffect(() => {
+        const saveInterval = setInterval(() => {
+            if (playerPosRef.current) {
+                // UI'daki Y aslında oyundaki Z düzlemidir
+                const currentX = playerPosRef.current.x;
+                const currentZ = playerPosRef.current.y;
+
+                // Gereksiz update'den kaçın (hareket etmediyse kaydetme)
+                if (Math.abs(currentX - (playerState.lastPosition?.x || 0)) > 1 ||
+                    Math.abs(currentZ - (playerState.lastPosition?.z || 0)) > 1) {
+
+                    onUpdatePlayer({
+                        lastPosition: { x: currentX, y: 0, z: currentZ }
+                    });
+                }
+            }
+        }, 1000);
+
+        return () => clearInterval(saveInterval);
+    }, [playerState.lastPosition]); // lastPosition değiştikçe referansı güncelle (aslında gerek yok ama güvenli)
     const playerGroupRef = useRef<THREE.Group>(null);
     const lastDamageTimeRef = useRef(0);
     const keysPressed = useRef<{ [key: string]: boolean }>({});

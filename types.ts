@@ -259,8 +259,9 @@ export interface Settings {
 
 export interface PlayerState {
   nickname: string;
-  class: CharacterClass | null;
-  faction: Faction | null;
+  class: CharacterClass | null; // Allow null during creation
+  faction: Faction | null;      // Allow null
+  lastPosition?: { x: number, y: number, z: number }; // Persist location
   guildName: string | null;
   level: number;
   exp: number;

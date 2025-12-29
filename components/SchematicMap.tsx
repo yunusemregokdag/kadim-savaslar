@@ -268,9 +268,9 @@ const SchematicMap: React.FC<SchematicMapProps> = ({ activeZone, onZoneSelect, r
                     return (
                         <g
                             key={n.id}
-                            onClick={() => onZoneSelect(n.id)}
-                            className="cursor-pointer hover:opacity-80 transition-opacity"
+                            className="cursor-help hover:opacity-80 transition-opacity" // Changed from cursor-pointer
                         >
+                            <title>Bu bölgeye gitmek için en yakın portala ilerleyin.</title>
                             {/* Glow if Active */}
                             {isActive && (
                                 <polygon points={getHexPoints(n.x, n.y, r + 2)} fill={color} opacity="0.4" filter="url(#glow)" />

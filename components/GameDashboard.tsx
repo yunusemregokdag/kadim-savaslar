@@ -69,6 +69,7 @@ import BossTimerView from './BossTimerView';
 import ReferralView from './ReferralView';
 import AuctionHouseView from './AuctionHouseView';
 import WorldMapView from './WorldMapView';
+import { PixelGoldUser } from './ui/PixelVip';
 import ControlsGuideView from './ControlsGuideView';
 import MountSystemView from './MountSystemView';
 
@@ -1131,9 +1132,16 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                     <div className="flex items-center gap-3">
                         <div className="relative w-10 h-10 rounded bg-slate-800 flex items-center justify-center border border-slate-600 text-yellow-500 font-bold text-lg rpg-font">{playerStats.level}</div>
                         <div>
-                            <h1 className="font-bold text-white text-sm leading-tight flex items-center gap-2">
-                                {playerStats.nickname} <span className="text-[9px] px-1 py-0.5 rounded border border-slate-700 bg-slate-800 text-slate-400">{faction.toUpperCase()}</span>
-                            </h1>
+                            <div className="flex items-center gap-2">
+                                <PixelGoldUser
+                                    name={playerStats.nickname}
+                                    isVip={(playerStats.vipUntil || 0) > Date.now()}
+                                    className="text-sm md:text-base leading-tight truncate drop-shadow-sm tracking-wide"
+                                />
+                                <div className={`text-[10px] px-1.5 py-0.5 rounded border ${faction === 'marsu' ? 'bg-red-900/50 border-red-800 text-red-300' : faction === 'terya' ? 'bg-blue-900/50 border-blue-800 text-blue-300' : 'bg-green-900/50 border-green-800 text-green-300'}`}>
+                                    {faction?.toUpperCase()}
+                                </div>
+                            </div>
                             <div className="flex items-center gap-2 mt-0.5">
                                 <RankBadge rankIndex={playerStats.rank} title={RANKS[playerStats.rank]?.title || 'Acemi'} showTitle={true} />
                             </div>
@@ -1570,8 +1578,9 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                         // Handle buyout purchase
                     }}
                     onCreateListing={(item, startPrice, buyoutPrice, duration) => {
-                        // Remove item from inventory
+                        // Logic handled in view via onUpdatePlayer
                     }}
+                    onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
                 />
             )}
 

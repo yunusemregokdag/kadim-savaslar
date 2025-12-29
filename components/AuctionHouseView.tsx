@@ -58,6 +58,7 @@ interface AuctionHouseViewProps {
     onBid: (listingId: string, amount: number) => void;
     onBuyout: (listingId: string) => void;
     onCreateListing: (item: Item, startPrice: number, buyoutPrice: number, duration: number) => void;
+    onUpdatePlayer: (updates: Partial<PlayerState>) => void;
 }
 
 export const AuctionHouseView: React.FC<AuctionHouseViewProps> = ({
@@ -66,7 +67,11 @@ export const AuctionHouseView: React.FC<AuctionHouseViewProps> = ({
     onBid,
     onBuyout,
     onCreateListing,
+    onUpdatePlayer,
 }) => {
+    const isVip = (playerState.vipUntil || 0) > Date.now();
+    const LISTING_FEE_PERCENT = 0.05; // %5 Fee
+
     const [listings, setListings] = useState<AuctionListing[]>(() => {
         const saved = localStorage.getItem('auctionListings');
         if (saved) {
@@ -206,6 +211,20 @@ export const AuctionHouseView: React.FC<AuctionHouseViewProps> = ({
             return;
         }
 
+        // Fee Calculation
+        const potentialFee = Math.floor(startPrice * LISTING_FEE_PERCENT);
+        const fee = isVip ? 0 : potentialFee;
+
+        if (playerState.credits < fee) {
+            setMessage({ type: 'error', text: `Listeleme ücreti için ${fee - playerState.credits} altına daha ihtiyacınız var!` });
+            return;
+        }
+
+        // Deduct Fee
+        if (fee > 0) {
+            onUpdatePlayer({ credits: playerState.credits - fee });
+        }
+
         const newListing: AuctionListing = {
             id: uuidv4(),
             sellerId: playerState.nickname,
@@ -221,7 +240,7 @@ export const AuctionHouseView: React.FC<AuctionHouseViewProps> = ({
 
         setListings(prev => [newListing, ...prev]);
         onCreateListing(selectedItem, startPrice, buyoutPrice, duration);
-        setMessage({ type: 'success', text: 'İlan oluşturuldu!' });
+        setMessage({ type: 'success', text: isVip ? 'VIP İlan oluşturuldu (Ücretsiz)!' : `İlan oluşturuldu (${fee} altın komisyon alındı)!` });
         setSelectedItem(null);
         setActiveTab('my_listings');
     };
@@ -276,8 +295,8 @@ export const AuctionHouseView: React.FC<AuctionHouseViewProps> = ({
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex-1 min-w-[80px] py-3 px-2 md:px-4 text-xs md:text-sm font-medium flex items-center justify-center gap-1 md:gap-2 transition-colors whitespace-nowrap ${activeTab === tab.id
-                                    ? 'bg-slate-800 text-amber-400 border-b-2 border-amber-400'
-                                    : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                                ? 'bg-slate-800 text-amber-400 border-b-2 border-amber-400'
+                                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
                                 }`}
                         >
                             {tab.icon}
@@ -438,8 +457,8 @@ export const AuctionHouseView: React.FC<AuctionHouseViewProps> = ({
                                                 key={item.id}
                                                 onClick={() => setSelectedItem(item)}
                                                 className={`p-2 rounded cursor-pointer border-2 transition-colors ${selectedItem?.id === item.id
-                                                        ? 'border-amber-500 bg-amber-900/30'
-                                                        : 'border-transparent hover:border-slate-600'
+                                                    ? 'border-amber-500 bg-amber-900/30'
+                                                    : 'border-transparent hover:border-slate-600'
                                                     }`}
                                             >
                                                 <div className="text-center text-xl">{getTypeIcon(item.type)}</div>
@@ -480,6 +499,22 @@ export const AuctionHouseView: React.FC<AuctionHouseViewProps> = ({
                                         <option value={24}>24 Saat</option>
                                         <option value={48}>48 Saat</option>
                                     </select>
+                                </div>
+
+                                <div className="bg-slate-900/50 p-3 rounded-lg border border-slate-700">
+                                    <div className="flex justify-between items-center text-sm mb-1">
+                                        <span className="text-slate-400">Listeleme Ücreti (%5)</span>
+                                        {isVip ? (
+                                            <span className="text-amber-400 font-bold flex items-center gap-1">
+                                                0 G <span className="text-[10px] bg-amber-500/20 text-amber-500 px-1.5 rounded uppercase">VIP</span>
+                                            </span>
+                                        ) : (
+                                            <span className="text-white font-mono">{Math.floor(startPrice * LISTING_FEE_PERCENT)} G</span>
+                                        )}
+                                    </div>
+                                    <div className="text-[10px] text-slate-500 text-right">
+                                        {isVip ? 'VIP üyeler komisyon ödemez!' : 'Satıştan ayrıca %5 kesinti yapılır.'}
+                                    </div>
                                 </div>
 
                                 <button

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, MessageCircle, Hammer, ShoppingBag, Scroll, Swords, Building, Coins, ChevronRight } from 'lucide-react';
+import { X, MessageCircle, Hammer, ShoppingBag, Scroll, Swords, Building, Coins, ChevronRight, Sparkles } from 'lucide-react';
 import { NPCData, NPCType, PlayerState, Quest, Item } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -38,6 +38,18 @@ export const NPC_REGISTRY: Record<string, NPCData> = {
             'Klan kurmak ister misin?',
             'Birlikte daha güçlüyüz!',
             'Klan savaşları yakında başlıyor.'
+        ],
+        zoneId: 11
+    },
+    craftmaster: {
+        id: 'npc_craftmaster',
+        name: 'Usta Demirci',
+        type: 'craftmaster',
+        modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_paladin.gltf',
+        dialogues: [
+            'Efsanevi eşyalar üretmek ister misin?',
+            'T4 ve T5 eşyalar sadece benim elimden çıkar!',
+            'Boss Özü ve Boşluk Parçası getir, sana mucizeler yaratayım.'
         ],
         zoneId: 11
     }
@@ -92,6 +104,7 @@ interface NPCInteractionModalProps {
     onAcceptQuest: (quest: Quest) => void;
     onOpenGuild: () => void;
     onOpenArena: () => void;
+    onOpenCraftmaster?: () => void;
 }
 
 export const NPCInteractionModal: React.FC<NPCInteractionModalProps> = ({
@@ -102,7 +115,8 @@ export const NPCInteractionModal: React.FC<NPCInteractionModalProps> = ({
     onOpenShop,
     onAcceptQuest,
     onOpenGuild,
-    onOpenArena
+    onOpenArena,
+    onOpenCraftmaster
 }) => {
     const [currentDialogue, setCurrentDialogue] = useState(0);
     const [showQuests, setShowQuests] = useState(false);
@@ -114,6 +128,7 @@ export const NPCInteractionModal: React.FC<NPCInteractionModalProps> = ({
             case 'quest_giver': return Scroll;
             case 'arena_master': return Swords;
             case 'guild_master': return Building;
+            case 'craftmaster': return Sparkles;
             default: return MessageCircle;
         }
     };
@@ -125,6 +140,7 @@ export const NPCInteractionModal: React.FC<NPCInteractionModalProps> = ({
             case 'quest_giver': return 'from-yellow-900/50 to-amber-900/50';
             case 'arena_master': return 'from-red-900/50 to-purple-900/50';
             case 'guild_master': return 'from-blue-900/50 to-indigo-900/50';
+            case 'craftmaster': return 'from-purple-900/50 to-violet-900/50';
             default: return 'from-slate-900/50 to-slate-800/50';
         }
     };
@@ -152,6 +168,10 @@ export const NPCInteractionModal: React.FC<NPCInteractionModalProps> = ({
                 onOpenGuild();
                 onClose();
                 break;
+            case 'craftmaster':
+                if (onOpenCraftmaster) onOpenCraftmaster();
+                onClose();
+                break;
         }
     };
 
@@ -162,6 +182,7 @@ export const NPCInteractionModal: React.FC<NPCInteractionModalProps> = ({
             case 'quest_giver': return 'Görevlere Bak';
             case 'arena_master': return 'Arenaya Gir';
             case 'guild_master': return 'Klana Bak';
+            case 'craftmaster': return 'Efsanevi Üretim';
             default: return 'Devam Et';
         }
     };

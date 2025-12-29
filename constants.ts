@@ -431,300 +431,313 @@ export const RANKS: Rank[] = [
 ];
 
 export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwner?: Faction, minLevel: number, isSafeZone?: boolean, enemies: Partial<GameEntity>[], npcs: Partial<GameEntity>[], portals: Portal[] }> = {
-    // --- MARSU (ATEŞ) KRALLIĞI ---
+    // ================= MARSU (ATEŞ) KRALLIĞI =================
     11: {
         name: 'Kül Vadisi (1-1)', bg: '#450a0a', factionOwner: 'marsu', isSafeZone: true, minLevel: 1,
-        enemies: [{ name: 'Ateş Papağanı', level: 1, hp: 200, attack: 15, defense: 40, exp: 40, gold: 15, diamond: 0 }],
+        enemies: [{ name: 'Ateş Piyonu', level: 1, hp: 250, damage: 15, defense: 5, exp: 50, gold: 15, diamond: 0 }],
         npcs: [
-            { type: 'npc', npcType: 'quest_giver', name: 'Görev Ustası Kemal', level: 0, hp: 999, maxHp: 999, isHostile: false, x: 30, y: 10, color: '#fbbf24', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_paladin.gltf' },
-            { type: 'npc', npcType: 'guild_master', name: 'Lonca Ustası', level: 0, hp: 999, maxHp: 999, isHostile: false, x: -30, y: 15, color: '#3b82f6', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_acolyte.gltf' }
+            { type: 'npc', npcType: 'quest_giver', name: 'Yüzbaşı Ateş', level: 30, hp: 9999, maxHp: 9999, isHostile: false, x: 30, y: 10, color: '#fbbf24', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_paladin.gltf' },
+            { type: 'npc', npcType: 'craftmaster', name: 'Usta Demirci Kael', level: 30, hp: 9999, maxHp: 9999, isHostile: false, x: -30, y: 15, color: '#a855f7', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_paladin.gltf' },
         ],
-        portals: [{ id: 'p_11_12', x: 40, z: -40, targetZone: 12, levelReq: 1, name: 'İleri: 1-2' }]
+        portals: [{ id: 'p_11_12', x: 40, z: -40, targetZone: 12, target: 12, levelReq: 1, name: 'İleri: 1-2' }]
     },
     12: {
-        name: 'Yanık Topraklar (1-2)', bg: '#7f1d1d', factionOwner: 'marsu', minLevel: 1,
-        enemies: [{ name: 'Kızıl Kedi', level: 3, hp: 400, attack: 30, defense: 80, exp: 80, gold: 35, diamond: 0 }],
+        name: 'Yanık Topraklar (1-2)', bg: '#7f1d1d', factionOwner: 'marsu', minLevel: 3,
+        enemies: [{ name: 'Vahşi Ateş Köpeği', level: 4, hp: 600, damage: 30, defense: 20, exp: 90, gold: 25, diamond: 0 }],
         npcs: [],
         portals: [
-            { id: 'p_12_11', x: -40, z: 40, targetZone: 11, levelReq: 1, name: 'Geri: 1-1' },
-            { id: 'p_12_13', x: 40, z: -40, targetZone: 13, levelReq: 2, name: 'İleri: 1-3' },
-            { id: 'p_12_14', x: 0, z: -40, targetZone: 14, levelReq: 2, name: 'İleri: 1-4' }
+            { id: 'p_12_11', x: -40, z: 40, targetZone: 11, target: 11, levelReq: 1, name: 'Geri: 1-1' },
+            { id: 'p_12_13', x: 40, z: -40, targetZone: 13, target: 13, levelReq: 5, name: 'İleri: 1-3' }
         ]
     },
     13: {
-        name: 'Magma Geçidi (1-3)', bg: '#991b1b', factionOwner: 'marsu', minLevel: 2,
-        enemies: [{ name: 'Çöl Akrebi', level: 6, hp: 800, attack: 55, defense: 160, exp: 160, gold: 80, diamond: 0 }],
-        npcs: [],
-        portals: [{ id: 'p_13_12', x: -40, z: 20, targetZone: 12, levelReq: 1, name: 'Geri: 1-2' }, { id: 'p_13_14', x: 20, z: -20, targetZone: 14, levelReq: 2, name: 'İleri: 1-4' }]
-    },
-    14: {
-        name: 'Ejderha Sırtı (1-4)', bg: '#b91c1c', factionOwner: 'marsu', minLevel: 2,
-        enemies: [{ name: 'Genç Ejder', level: 9, hp: 1500, attack: 110, defense: 350, exp: 320, gold: 180, diamond: 1 }],
+        name: 'Magma Geçidi (1-3)', bg: '#991b1b', factionOwner: 'marsu', minLevel: 6,
+        enemies: [{ name: 'Zırhlı Akrep', level: 8, hp: 2500, damage: 120, defense: 80, exp: 600, gold: 200, diamond: 0 }],
         npcs: [],
         portals: [
-            { id: 'p_14_13', x: -40, z: 20, targetZone: 13, levelReq: 2, name: 'Geri: 1-3' },
-            { id: 'p_14_41', x: 20, z: -20, targetZone: 41, levelReq: 8, name: 'ARENA KAPISI (4-1)' }
+            { id: 'p_13_12', x: -40, z: 20, targetZone: 12, target: 12, levelReq: 3, name: 'Geri: 1-2' },
+            { id: 'p_13_14', x: 20, z: -20, targetZone: 14, target: 14, levelReq: 9, name: 'İleri: 1-4' }
+        ]
+    },
+    14: {
+        name: 'Ejderha Sırtı (1-4)', bg: '#b91c1c', factionOwner: 'marsu', minLevel: 9,
+        enemies: [{ name: 'Genç Ejder', level: 12, hp: 6000, damage: 250, defense: 150, exp: 1200, gold: 400, diamond: 0 }],
+        npcs: [],
+        portals: [
+            { id: 'p_14_13', x: -40, z: 20, targetZone: 13, target: 13, levelReq: 6, name: 'Geri: 1-3' },
+            { id: 'p_14_41', x: 20, z: -20, targetZone: 41, target: 41, levelReq: 12, name: 'ARENA (PvP)' },
+            { id: 'p_14_15', x: 0, z: -40, targetZone: 15, target: 15, levelReq: 15, name: 'İleri: 1-5' }
         ]
     },
     15: {
-        name: 'Karanlık Mahzen (1-5)', bg: '#2f0505', factionOwner: 'marsu', minLevel: 10,
-        enemies: [{ name: 'Karanlık Şövalye', level: 16, hp: 8000, attack: 420, defense: 2400, exp: 1200, gold: 650, diamond: 2 }],
+        name: 'Karanlık Mahzen (1-5)', bg: '#2f0505', factionOwner: 'marsu', minLevel: 15,
+        enemies: [{ name: 'Lav Golemi', level: 17, hp: 15000, damage: 500, defense: 400, exp: 4000, gold: 1000, diamond: 1 }],
         npcs: [],
         portals: [
-            { id: 'p_15_44', x: -40, z: 40, targetZone: 44, levelReq: 9, name: 'Geri: 4-4 SAVAŞ ALANI' },
-            { id: 'p_15_16', x: 40, z: -40, targetZone: 16, levelReq: 11, name: 'İleri: 1-6' }
+            { id: 'p_15_14', x: -40, z: 40, targetZone: 14, target: 14, levelReq: 9, name: 'Geri: 1-4' },
+            { id: 'p_15_16', x: 40, z: -40, targetZone: 16, target: 16, levelReq: 18, name: 'İleri: 1-6' }
         ]
     },
     16: {
-        name: 'Cehennem Kapısı (1-6)', bg: '#450a0a', factionOwner: 'marsu', minLevel: 11,
-        enemies: [{ name: 'Gardiyan Papağan', level: 20, hp: 15000, attack: 750, defense: 5000, exp: 2400, gold: 1400, diamond: 4 }],
+        name: 'Cehennem Kapısı (1-6)', bg: '#450a0a', factionOwner: 'marsu', minLevel: 18,
+        enemies: [{ name: 'Karanlık Şövalye', level: 22, hp: 35000, damage: 900, defense: 900, exp: 12000, gold: 2500, diamond: 3 }],
         npcs: [],
         portals: [
-            { id: 'p_16_15', x: -40, z: 0, targetZone: 15, levelReq: 10, name: 'Geri: 1-5' },
-            { id: 'p_16_17', x: 40, z: 0, targetZone: 17, levelReq: 11, name: 'İleri: 1-7' }
+            { id: 'p_16_15', x: -40, z: 0, targetZone: 15, target: 15, levelReq: 15, name: 'Geri: 1-5' },
+            { id: 'p_16_17', x: 40, z: 0, targetZone: 17, target: 17, levelReq: 21, name: 'İleri: 1-7' }
         ]
     },
     17: {
-        name: 'Ejderha Yuvası (1-7)', bg: '#450a0a', factionOwner: 'marsu', minLevel: 11,
+        name: 'Ejderha Yuvası (1-7)', bg: '#450a0a', factionOwner: 'marsu', minLevel: 21,
         enemies: [
-            { name: 'Kadim Ejder', level: 25, hp: 30000, attack: 1400, defense: 10000, exp: 4800, gold: 3000, diamond: 8 }
+            { name: 'Cehennem Bekçisi', level: 26, hp: 80000, damage: 1800, defense: 2500, exp: 30000, gold: 6000, diamond: 8 }
         ],
         npcs: [],
         portals: [
-            { id: 'p_17_16', x: -40, z: 0, targetZone: 16, levelReq: 11, name: 'Geri: 1-6' },
-            { id: 'p_17_18', x: 40, z: 0, targetZone: 18, levelReq: 12, name: 'İleri: 1-8' }
+            { id: 'p_17_16', x: -40, z: 0, targetZone: 16, target: 16, levelReq: 18, name: 'Geri: 1-6' },
+            { id: 'p_17_18', x: 40, z: 0, targetZone: 18, target: 18, levelReq: 25, name: 'İleri: 1-8 (BOSS)' }
         ]
     },
     18: {
-        name: 'Yanardağ Çekirdeği (1-8)', bg: '#000000', factionOwner: 'marsu', isSafeZone: true, minLevel: 12,
-        enemies: [{ name: '[BOSS] Ateş Ejderi', level: 30, hp: 500000, attack: 6500, defense: 180000, exp: 120000, gold: 80000, diamond: 120 }],
+        name: 'Yanardağ Çekirdeği (1-8)', bg: '#000000', factionOwner: 'marsu', isSafeZone: false, minLevel: 25,
+        enemies: [{ name: '[BOSS] Ateş Ejderi', level: 30, hp: 2000000, damage: 5000, defense: 10000, exp: 500000, gold: 100000, diamond: 100 }],
         npcs: [],
         portals: [
-            { id: 'p_18_17', x: 0, z: 40, targetZone: 17, levelReq: 11, name: 'Geri: 1-7' }
+            { id: 'p_18_17', x: 0, z: 40, targetZone: 17, target: 17, levelReq: 21, name: 'Geri: 1-7' }
         ]
     },
 
-    // --- TERYA (SU) KRALLIĞI ---
+    // ================= TERYA (SU) KRALLIĞI =================
     21: {
         name: 'Kristal Nehir (2-1)', bg: '#172554', factionOwner: 'terya', isSafeZone: true, minLevel: 1,
-        enemies: [{ name: 'Su Aksolotlu', level: 1, hp: 200, attack: 14, defense: 45, exp: 40, gold: 15, diamond: 0 }],
+        enemies: [{ name: 'Su Piyonu', level: 1, hp: 250, damage: 15, defense: 5, exp: 50, gold: 15, diamond: 0 }],
         npcs: [
-            { type: 'npc', npcType: 'quest_giver', name: 'Görev Ustası Su', level: 0, hp: 999, maxHp: 999, isHostile: false, x: 25, y: -20, color: '#3b82f6', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_fortuneteller.gltf' },
-            { type: 'npc', npcType: 'guild_master', name: 'Lonca Ustası Dalga', level: 0, hp: 999, maxHp: 999, isHostile: false, x: -25, y: -15, color: '#06b6d4', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_acolyte.gltf' }
+            { type: 'npc', npcType: 'quest_giver', name: 'Bilge Su', level: 30, hp: 9999, maxHp: 9999, isHostile: false, x: 25, y: -20, color: '#3b82f6', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_fortuneteller.gltf' },
+            { type: 'npc', npcType: 'guild_master', name: 'Dalga Ustası', level: 30, hp: 9999, maxHp: 9999, isHostile: false, x: -25, y: -15, color: '#06b6d4', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_acolyte.gltf' },
+            { type: 'npc', npcType: 'craftmaster', name: 'Usta Demirci Mira', level: 30, hp: 9999, maxHp: 9999, isHostile: false, x: -35, y: 20, color: '#a855f7', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_paladin.gltf' }
         ],
-        portals: [{ id: 'p_21_22', x: 40, z: -40, targetZone: 22, levelReq: 1, name: 'İleri: 2-2' }]
+        portals: [{ id: 'p_21_22', x: 40, z: -40, targetZone: 22, target: 22, levelReq: 1, name: 'İleri: 2-2' }]
     },
     22: {
-        name: 'Buzul Mağarası (2-2)', bg: '#1e3a8a', factionOwner: 'terya', minLevel: 1,
-        enemies: [{ name: 'Buz Kedisi', level: 3, hp: 400, attack: 28, defense: 90, exp: 80, gold: 35, diamond: 0 }],
-        npcs: [],
-        portals: [{ id: 'p_22_21', x: -40, z: 40, targetZone: 21, levelReq: 1, name: 'Geri: 2-1' }, { id: 'p_22_23', x: 40, z: -40, targetZone: 23, levelReq: 2, name: 'İleri: 2-3' }, { id: 'p_22_24', x: 0, z: -40, targetZone: 24, levelReq: 2, name: 'İleri: 2-4' }]
-    },
-    23: {
-        name: 'Derin Okyanus (2-3)', bg: '#1e40af', factionOwner: 'terya', minLevel: 2,
-        enemies: [{ name: 'Derin Aksolotl', level: 6, hp: 800, attack: 55, defense: 180, exp: 160, gold: 80, diamond: 0 }],
-        npcs: [],
-        portals: [{ id: 'p_23_22', x: -40, z: 20, targetZone: 22, levelReq: 1, name: 'Geri: 2-2' }, { id: 'p_23_24', x: 20, z: -20, targetZone: 24, levelReq: 2, name: 'İleri: 2-4' }]
-    },
-    24: {
-        name: 'Atlantis (2-4)', bg: '#1d4ed8', factionOwner: 'terya', minLevel: 2,
-        enemies: [{ name: 'Mızraklı Naga', level: 9, hp: 1500, attack: 120, defense: 400, exp: 320, gold: 180, diamond: 1 }],
+        name: 'Buzul Mağarası (2-2)', bg: '#1e3a8a', factionOwner: 'terya', minLevel: 3,
+        enemies: [{ name: 'Buz Kedisi', level: 6, hp: 600, damage: 30, defense: 20, exp: 90, gold: 25, diamond: 0 }],
         npcs: [],
         portals: [
-            { id: 'p_24_23', x: -40, z: 20, targetZone: 23, levelReq: 2, name: 'Geri: 2-3' },
-            { id: 'p_24_42', x: 20, z: -20, targetZone: 42, levelReq: 8, name: 'ARENA KAPISI (4-2)' }
+            { id: 'p_22_21', x: -40, z: 40, targetZone: 21, target: 21, levelReq: 1, name: 'Geri: 2-1' },
+            { id: 'p_22_23', x: 40, z: -40, targetZone: 23, target: 23, levelReq: 5, name: 'İleri: 2-3' }
+        ]
+    },
+    23: {
+        name: 'Derin Okyanus (2-3)', bg: '#1e40af', factionOwner: 'terya', minLevel: 6,
+        enemies: [{ name: 'Mızraklı Naga', level: 8, hp: 2500, damage: 120, defense: 80, exp: 600, gold: 200, diamond: 0 }],
+        npcs: [],
+        portals: [
+            { id: 'p_23_22', x: -40, z: 20, targetZone: 22, target: 22, levelReq: 3, name: 'Geri: 2-2' },
+            { id: 'p_23_24', x: 20, z: -20, targetZone: 24, target: 24, levelReq: 9, name: 'İleri: 2-4' }
+        ]
+    },
+    24: {
+        name: 'Atlantis (2-4)', bg: '#1d4ed8', factionOwner: 'terya', minLevel: 9,
+        enemies: [{ name: 'Derin Muhafız', level: 12, hp: 6000, damage: 250, defense: 150, exp: 1200, gold: 400, diamond: 0 }],
+        npcs: [],
+        portals: [
+            { id: 'p_24_23', x: -40, z: 20, targetZone: 23, target: 23, levelReq: 6, name: 'Geri: 2-3' },
+            { id: 'p_24_42', x: 20, z: -20, targetZone: 42, target: 42, levelReq: 12, name: 'ARENA (PvP)' },
+            { id: 'p_24_25', x: 0, z: -40, targetZone: 25, target: 25, levelReq: 15, name: 'İleri: 2-5' }
         ]
     },
     25: {
-        name: 'Abyss (2-5)', bg: '#020617', factionOwner: 'terya', minLevel: 10,
-        enemies: [{ name: 'Abyss Kedisi', level: 16, hp: 8000, attack: 450, defense: 2800, exp: 1200, gold: 650, diamond: 2 }],
+        name: 'Abyss (2-5)', bg: '#020617', factionOwner: 'terya', minLevel: 15,
+        enemies: [{ name: 'Abyss Yaratığı', level: 17, hp: 15000, damage: 500, defense: 400, exp: 4000, gold: 1000, diamond: 1 }],
         npcs: [],
         portals: [
-            { id: 'p_25_44', x: 0, z: 40, targetZone: 44, levelReq: 9, name: 'Geri: 4-4 SAVAŞ ALANI' },
-            { id: 'p_25_26', x: 40, z: 0, targetZone: 26, levelReq: 11, name: 'İleri: 2-6' }
+            { id: 'p_25_24', x: 0, z: 40, targetZone: 24, target: 24, levelReq: 9, name: 'Geri: 2-4' },
+            { id: 'p_25_26', x: 40, z: 0, targetZone: 26, target: 26, levelReq: 18, name: 'İleri: 2-6' }
         ]
     },
     26: {
-        name: 'Mercan Resifi (2-6)', bg: '#172554', factionOwner: 'terya', minLevel: 11,
-        enemies: [{ name: 'Kraken Yavrusu', level: 20, hp: 15000, attack: 820, defense: 5500, exp: 2400, gold: 1400, diamond: 4 }],
+        name: 'Mercan Resifi (2-6)', bg: '#172554', factionOwner: 'terya', minLevel: 18,
+        enemies: [{ name: 'Kraken Yavrusu', level: 22, hp: 35000, damage: 900, defense: 900, exp: 12000, gold: 2500, diamond: 3 }],
         npcs: [],
         portals: [
-            { id: 'p_26_25', x: -40, z: 0, targetZone: 25, levelReq: 10, name: 'Geri: 2-5' },
-            { id: 'p_26_27', x: 40, z: 0, targetZone: 27, levelReq: 11, name: 'İleri: 2-7' }
+            { id: 'p_26_25', x: -40, z: 0, targetZone: 25, target: 25, levelReq: 15, name: 'Geri: 2-5' },
+            { id: 'p_26_27', x: 40, z: 0, targetZone: 27, target: 27, levelReq: 21, name: 'İleri: 2-7' }
         ]
     },
     27: {
-        name: 'Batık Şehir (2-7)', bg: '#172554', factionOwner: 'terya', minLevel: 11,
+        name: 'Batık Şehir (2-7)', bg: '#172554', factionOwner: 'terya', minLevel: 21,
         enemies: [
-            { name: 'Poseidon Muhafızı', level: 25, hp: 30000, attack: 1500, defense: 11000, exp: 4800, gold: 3000, diamond: 8 }
+            { name: 'Poseidon Muhafızı', level: 26, hp: 80000, damage: 1800, defense: 2500, exp: 30000, gold: 6000, diamond: 8 }
         ],
         npcs: [],
         portals: [
-            { id: 'p_27_26', x: -40, z: 0, targetZone: 26, levelReq: 11, name: 'Geri: 2-6' },
-            { id: 'p_27_28', x: 40, z: 0, targetZone: 28, levelReq: 12, name: 'İleri: 2-8' }
+            { id: 'p_27_26', x: -40, z: 0, targetZone: 26, target: 26, levelReq: 18, name: 'Geri: 2-6' },
+            { id: 'p_27_28', x: 40, z: 0, targetZone: 28, target: 28, levelReq: 25, name: 'İleri: 2-8 (BOSS)' }
         ]
     },
     28: {
-        name: 'Poseidon Tahtı (2-8)', bg: '#000000', factionOwner: 'terya', isSafeZone: true, minLevel: 12,
-        enemies: [{ name: '[BOSS] Okyanus Pengueni', level: 30, hp: 500000, attack: 6200, defense: 200000, exp: 120000, gold: 80000, diamond: 120 }],
+        name: 'Poseidon Tahtı (2-8)', bg: '#000000', factionOwner: 'terya', isSafeZone: false, minLevel: 25,
+        enemies: [{ name: '[BOSS] Okyanus Lordu', level: 30, hp: 2000000, damage: 5000, defense: 10000, exp: 500000, gold: 100000, diamond: 100 }],
         npcs: [],
         portals: [
-            { id: 'p_28_27', x: 0, z: 40, targetZone: 27, levelReq: 11, name: 'Geri: 2-7' }
+            { id: 'p_28_27', x: 0, z: 40, targetZone: 27, target: 27, levelReq: 21, name: 'Geri: 2-7' }
         ]
     },
 
-    // --- VENU (DOĞA) KRALLIĞI ---
+    // ================= VENU (DOĞA) KRALLIĞI =================
     31: {
         name: 'Kadim Orman (3-1)', bg: '#14532d', factionOwner: 'venu', isSafeZone: true, minLevel: 1,
-        enemies: [{ name: 'Orman Kedisi', level: 1, hp: 200, attack: 13, defense: 50, exp: 40, gold: 15, diamond: 0 }],
+        enemies: [{ name: 'Orman Piyonu', level: 1, hp: 250, damage: 15, defense: 5, exp: 50, gold: 15, diamond: 0 }],
         npcs: [
-            { type: 'npc', npcType: 'quest_giver', name: 'Görev Ustası Yaprak', level: 0, hp: 999, maxHp: 999, isHostile: false, x: 20, y: 25, color: '#22c55e', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_tinkerer.gltf' },
-            { type: 'npc', npcType: 'guild_master', name: 'Lonca Ustası Kök', level: 0, hp: 999, maxHp: 999, isHostile: false, x: -20, y: 20, color: '#16a34a', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_acolyte.gltf' }
+            { type: 'npc', npcType: 'quest_giver', name: 'Druid Yaprak', level: 30, hp: 9999, maxHp: 9999, isHostile: false, x: 20, y: 25, color: '#22c55e', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_tinkerer.gltf' },
+            { type: 'npc', npcType: 'guild_master', name: 'Kök Ustası', level: 30, hp: 9999, maxHp: 9999, isHostile: false, x: -20, y: 20, color: '#16a34a', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_acolyte.gltf' },
+            { type: 'npc', npcType: 'craftmaster', name: 'Usta Demirci Thorne', level: 30, hp: 9999, maxHp: 9999, isHostile: false, x: -35, y: 30, color: '#a855f7', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_paladin.gltf' }
         ],
-        portals: [{ id: 'p_31_32', x: 40, z: -40, targetZone: 32, levelReq: 1, name: 'İleri: 3-2' }]
+        portals: [{ id: 'p_31_32', x: 40, z: -40, targetZone: 32, target: 32, levelReq: 1, name: 'İleri: 3-2' }]
     },
-    32: { name: 'Bataklık (3-2)', bg: '#166534', factionOwner: 'venu', minLevel: 1, enemies: [{ name: 'Bataklık Papağanı', level: 3, hp: 400, attack: 30, defense: 100, exp: 80, gold: 35, diamond: 0 }], npcs: [], portals: [{ id: 'p_32_31', x: -40, z: 40, targetZone: 31, levelReq: 1, name: 'Geri: 3-1' }, { id: 'p_32_33', x: 40, z: -40, targetZone: 33, levelReq: 2, name: 'İleri: 3-3' }, { id: 'p_32_34', x: 0, z: -40, targetZone: 34, levelReq: 2, name: 'İleri: 3-4' }] },
-    33: { name: 'Unutulmuş Vadi (3-3)', bg: '#15803d', factionOwner: 'venu', minLevel: 2, enemies: [{ name: 'Yabani Aksolotl', level: 6, hp: 800, attack: 60, defense: 200, exp: 160, gold: 80, diamond: 0 }], npcs: [], portals: [{ id: 'p_33_32', x: -40, z: 20, targetZone: 32, levelReq: 1, name: 'Geri: 3-2' }, { id: 'p_33_34', x: 20, z: -20, targetZone: 34, levelReq: 2, name: 'İleri: 3-4' }] },
+    32: { name: 'Bataklık (3-2)', bg: '#166534', factionOwner: 'venu', minLevel: 3, enemies: [{ name: 'Bataklık Papağanı', level: 4, hp: 600, damage: 30, defense: 20, exp: 90, gold: 25, diamond: 0 }], npcs: [], portals: [{ id: 'p_32_31', x: -40, z: 40, targetZone: 31, target: 31, levelReq: 1, name: 'Geri: 3-1' }, { id: 'p_32_33', x: 40, z: -40, targetZone: 33, target: 33, levelReq: 5, name: 'İleri: 3-3' }] },
+    33: { name: 'Unutulmuş Vadi (3-3)', bg: '#15803d', factionOwner: 'venu', minLevel: 6, enemies: [{ name: 'Yabani Aksolotl', level: 8, hp: 2500, damage: 120, defense: 80, exp: 600, gold: 200, diamond: 0 }], npcs: [], portals: [{ id: 'p_33_32', x: -40, z: 20, targetZone: 32, target: 32, levelReq: 3, name: 'Geri: 3-2' }, { id: 'p_33_34', x: 20, z: -20, targetZone: 34, target: 34, levelReq: 9, name: 'İleri: 3-4' }] },
     34: {
-        name: 'Kristal Mağara (3-4)', bg: '#16a34a', factionOwner: 'venu', minLevel: 2, enemies: [{ name: 'Kristal İskelet', level: 9, hp: 1500, attack: 130, defense: 450, exp: 320, gold: 180, diamond: 1 }], npcs: [], portals: [
-            { id: 'p_34_33', x: -40, z: 20, targetZone: 33, levelReq: 2, name: 'Geri: 3-3' },
-            { id: 'p_34_43', x: 0, z: 40, targetZone: 43, levelReq: 8, name: 'ARENA KAPISI (4-3)' }
+        name: 'Kristal Mağara (3-4)', bg: '#16a34a', factionOwner: 'venu', minLevel: 9, enemies: [{ name: 'Kristal İskelet', level: 12, hp: 6000, damage: 250, defense: 150, exp: 1200, gold: 400, diamond: 0 }], npcs: [], portals: [
+            { id: 'p_34_33', x: -40, z: 20, targetZone: 33, target: 33, levelReq: 6, name: 'Geri: 3-3' },
+            { id: 'p_34_43', x: 0, z: 40, targetZone: 43, target: 43, levelReq: 12, name: 'ARENA (PvP)' },
+            { id: 'p_34_35', x: 40, z: -20, targetZone: 35, target: 35, levelReq: 15, name: 'İleri: 3-5' }
         ]
     },
     35: {
-        name: 'Yasak Bölge (3-5)', bg: '#052e16', factionOwner: 'venu', minLevel: 10, enemies: [{ name: 'Kadim Ent', level: 16, hp: 8000, attack: 500, defense: 3200, exp: 1200, gold: 650, diamond: 2 }], npcs: [],
+        name: 'Yasak Bölge (3-5)', bg: '#052e16', factionOwner: 'venu', minLevel: 15, enemies: [{ name: 'Yasak Bölge Bekçisi', level: 17, hp: 15000, damage: 500, defense: 400, exp: 4000, gold: 1000, diamond: 1 }], npcs: [],
         portals: [
-            { id: 'p_35_44', x: 0, z: 40, targetZone: 44, levelReq: 9, name: 'Geri: 4-4 SAVAŞ ALANI' },
-            { id: 'p_35_36', x: 40, z: -40, targetZone: 36, levelReq: 11, name: 'İleri: 3-6' }
+            { id: 'p_35_34', x: 0, z: 40, targetZone: 34, target: 34, levelReq: 9, name: 'Geri: 3-4' },
+            { id: 'p_35_36', x: 40, z: -40, targetZone: 36, target: 36, levelReq: 18, name: 'İleri: 3-6' }
         ]
     },
     36: {
-        name: 'Ruhlar Ormanı (3-6)', bg: '#14532d', factionOwner: 'venu', minLevel: 11, enemies: [{ name: 'Orman Ruhu', level: 20, hp: 15000, attack: 900, defense: 6000, exp: 2400, gold: 1400, diamond: 4 }], npcs: [],
+        name: 'Ruhlar Ormanı (3-6)', bg: '#14532d', factionOwner: 'venu', minLevel: 18, enemies: [{ name: 'Orman Ruhu', level: 22, hp: 35000, damage: 900, defense: 900, exp: 12000, gold: 2500, diamond: 3 }], npcs: [],
         portals: [
-            { id: 'p_36_35', x: -40, z: 0, targetZone: 35, levelReq: 10, name: 'Geri: 3-5' },
-            { id: 'p_36_37', x: 40, z: 0, targetZone: 37, levelReq: 11, name: 'İleri: 3-7' }
+            { id: 'p_36_35', x: -40, z: 0, targetZone: 35, target: 35, levelReq: 15, name: 'Geri: 3-5' },
+            { id: 'p_36_37', x: 40, z: 0, targetZone: 37, target: 37, levelReq: 21, name: 'İleri: 3-7' }
         ]
     },
     37: {
-        name: 'Fısıldayan Vadi (3-7)', bg: '#14532d', factionOwner: 'venu', minLevel: 11,
+        name: 'Fısıldayan Vadi (3-7)', bg: '#14532d', factionOwner: 'venu', minLevel: 21,
         enemies: [
-            { name: 'Vahşi Druid', level: 25, hp: 30000, attack: 1600, defense: 12000, exp: 4800, gold: 3000, diamond: 8 }
+            { name: 'Vahşi Druid', level: 26, hp: 80000, damage: 1800, defense: 2500, exp: 30000, gold: 6000, diamond: 8 }
         ],
         npcs: [],
         portals: [
-            { id: 'p_37_36', x: -40, z: 0, targetZone: 36, levelReq: 11, name: 'Geri: 3-6' },
-            { id: 'p_37_38', x: 40, z: 0, targetZone: 38, levelReq: 12, name: 'İleri: 3-8' }
+            { id: 'p_37_36', x: -40, z: 0, targetZone: 36, target: 36, levelReq: 18, name: 'Geri: 3-6' },
+            { id: 'p_37_38', x: 40, z: 0, targetZone: 38, target: 38, levelReq: 25, name: 'İleri: 3-8 (BOSS)' }
         ]
     },
     38: {
-        name: 'Gaia Tapınağı (3-8)', bg: '#000000', factionOwner: 'venu', isSafeZone: true, minLevel: 12,
-        enemies: [{ name: '[BOSS] Armadillo Kral', level: 30, hp: 500000, attack: 6800, defense: 220000, exp: 120000, gold: 80000, diamond: 120 }],
+        name: 'Gaia Tapınağı (3-8)', bg: '#000000', factionOwner: 'venu', isSafeZone: false, minLevel: 25,
+        enemies: [{ name: '[BOSS] Armadillo Kral', level: 30, hp: 2000000, damage: 5000, defense: 10000, exp: 500000, gold: 100000, diamond: 100 }],
         npcs: [],
         portals: [
-            { id: 'p_38_37', x: 0, z: 40, targetZone: 37, levelReq: 11, name: 'Geri: 3-7' }
+            { id: 'p_38_37', x: 0, z: 40, targetZone: 37, target: 37, levelReq: 21, name: 'Geri: 3-7' }
         ]
     },
 
-    // --- ARENA & GEÇİŞ BÖLGELERİ ---
+    // ================= ARENA & GEÇİŞ BÖLGELERİ =================
     // 4-1: Marsu Kapısı
     41: {
-        name: 'MARSU ARENA GİRİŞİ (4-1)', bg: '#854d0e', minLevel: 8,
-        enemies: [{ name: 'Paralı Asker', level: 14, hp: 3000, attack: 250, defense: 900, exp: 600, gold: 300, diamond: 1 }],
+        name: 'MARSU ARENA GİRİŞİ (4-1)', bg: '#854d0e', minLevel: 9,
+        enemies: [{ name: 'Paralı Asker', level: 14, hp: 5500, damage: 220, defense: 150, exp: 600, gold: 300, diamond: 1 }],
         npcs: [],
         portals: [
-            { id: 'p_41_14', x: -50, z: -50, targetZone: 14, levelReq: 2, name: 'GERİ: Marsu 1-4' },
-            { id: 'p_41_44', x: 50, z: 0, targetZone: 44, levelReq: 9, name: 'SAVAŞ ALANI (ARENA)' },
-            { id: 'p_41_42', x: 0, z: 50, targetZone: 42, levelReq: 8, name: 'GEÇİŞ: TERYA (4-2)' },
-            { id: 'p_41_43', x: 50, z: 50, targetZone: 43, levelReq: 8, name: 'GEÇİŞ: VENU (4-3)' }
+            { id: 'p_41_14', x: -50, z: -50, targetZone: 14, target: 14, levelReq: 9, name: 'GERİ: Marsu 1-4' },
+            { id: 'p_41_44', x: 50, z: 0, targetZone: 44, target: 44, levelReq: 12, name: 'SAVAŞ ALANI (ARENA)' },
+            { id: 'p_41_42', x: 0, z: 50, targetZone: 42, target: 42, levelReq: 9, name: 'GEÇİŞ: TERYA (4-2)' },
+            { id: 'p_41_43', x: 50, z: 50, targetZone: 43, target: 43, levelReq: 9, name: 'GEÇİŞ: VENU (4-3)' }
         ]
     },
 
     // 4-2: Terya Kapısı
     42: {
-        name: 'TERYA ARENA GİRİŞİ (4-2)', bg: '#854d0e', minLevel: 8,
-        enemies: [{ name: 'Kaçak Büyücü', level: 14, hp: 3000, attack: 280, defense: 800, exp: 600, gold: 300, diamond: 1 }],
+        name: 'TERYA ARENA GİRİŞİ (4-2)', bg: '#854d0e', minLevel: 9,
+        enemies: [{ name: 'Kaçak Büyücü', level: 14, hp: 5500, damage: 250, defense: 120, exp: 600, gold: 300, diamond: 1 }],
         npcs: [],
         portals: [
-            { id: 'p_42_24', x: 50, z: -50, targetZone: 24, levelReq: 2, name: 'GERİ: Terya 2-4' },
-            { id: 'p_42_44', x: -50, z: 0, targetZone: 44, levelReq: 9, name: 'SAVAŞ ALANI (ARENA)' },
-            { id: 'p_42_41', x: 0, z: 50, targetZone: 41, levelReq: 8, name: 'GEÇİŞ: MARSU (4-1)' },
-            { id: 'p_42_43', x: 50, z: 50, targetZone: 43, levelReq: 8, name: 'GEÇİŞ: VENU (4-3)' }
+            { id: 'p_42_24', x: 50, z: -50, targetZone: 24, target: 24, levelReq: 9, name: 'GERİ: Terya 2-4' },
+            { id: 'p_42_44', x: -50, z: 0, targetZone: 44, target: 44, levelReq: 12, name: 'SAVAŞ ALANI (ARENA)' },
+            { id: 'p_42_41', x: 0, z: 50, targetZone: 41, target: 41, levelReq: 9, name: 'GEÇİŞ: MARSU (4-1)' },
+            { id: 'p_42_43', x: 50, z: 50, targetZone: 43, target: 43, levelReq: 9, name: 'GEÇİŞ: VENU (4-3)' }
         ]
     },
 
     // 4-3: Venu Kapısı
     43: {
-        name: 'VENU ARENA GİRİŞİ (4-3)', bg: '#854d0e', minLevel: 8,
-        enemies: [{ name: 'Vahşi Barbar', level: 14, hp: 3000, attack: 300, defense: 1000, exp: 600, gold: 300, diamond: 1 }],
+        name: 'VENU ARENA GİRİŞİ (4-3)', bg: '#854d0e', minLevel: 9,
+        enemies: [{ name: 'Vahşi Barbar', level: 14, hp: 6000, damage: 200, defense: 180, exp: 600, gold: 300, diamond: 1 }],
         npcs: [],
         portals: [
-            { id: 'p_43_34', x: 0, z: 50, targetZone: 34, levelReq: 2, name: 'GERİ: Venu 3-4' },
-            { id: 'p_43_44', x: 0, z: -50, targetZone: 44, levelReq: 9, name: 'SAVAŞ ALANI (ARENA)' },
-            { id: 'p_43_41', x: 50, z: 0, targetZone: 41, levelReq: 8, name: 'GEÇİŞ: MARSU (4-1)' },
-            { id: 'p_43_42', x: -50, z: 0, targetZone: 42, levelReq: 8, name: 'GEÇİŞ: TERYA (4-2)' }
+            { id: 'p_43_34', x: 0, z: 50, targetZone: 34, target: 34, levelReq: 9, name: 'GERİ: Venu 3-4' },
+            { id: 'p_43_44', x: 0, z: -50, targetZone: 44, target: 44, levelReq: 12, name: 'SAVAŞ ALANI (ARENA)' },
+            { id: 'p_43_41', x: 50, z: 0, targetZone: 41, target: 41, levelReq: 9, name: 'GEÇİŞ: MARSU (4-1)' },
+            { id: 'p_43_42', x: -50, z: 0, targetZone: 42, target: 42, levelReq: 9, name: 'GEÇİŞ: TERYA (4-2)' }
         ]
     },
 
     // 4-4: SAVAŞ MEYDANI (ARENA)
     44: {
-        name: 'Savaş Meydanı (4-4)', bg: '#713f12', minLevel: 9,
-        enemies: [{ name: '[BOSS] Yengeç Lordu', level: 25, hp: 100000, attack: 2000, defense: 35000, exp: 150000, gold: 10000, diamond: 20 }],
+        name: 'Savaş Meydanı (4-4)', bg: '#713f12', minLevel: 12,
+        enemies: [{ name: '[BOSS] Yengeç Lordu', level: 20, hp: 100000, damage: 3000, defense: 10000, exp: 150000, gold: 20000, diamond: 50 }],
         npcs: [
             { type: 'npc', npcType: 'arena_master', name: 'Arena Ustası Kılıç', level: 0, hp: 999, maxHp: 999, isHostile: false, x: 0, y: 0, color: '#ef4444', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_assassin.gltf' }
         ],
         portals: [
-            { id: 'p_44_41', x: -40, z: -40, targetZone: 41, levelReq: 8, name: 'ÇIKIŞ: MARSU CAPE' },
-            { id: 'p_44_42', x: 40, z: -40, targetZone: 42, levelReq: 8, name: 'ÇIKIŞ: TERYA CAPE' },
-            { id: 'p_44_43', x: 0, z: 40, targetZone: 43, levelReq: 8, name: 'ÇIKIŞ: VENU CAPE' },
-            { id: 'p_44_15', x: -50, z: 0, targetZone: 15, levelReq: 10, name: 'MARSU ELİT (1-5)' },
-            { id: 'p_44_25', x: 50, z: 0, targetZone: 25, levelReq: 10, name: 'TERYA ELİT (2-5)' },
-            { id: 'p_44_35', x: 0, z: 50, targetZone: 35, levelReq: 10, name: 'VENU ELİT (3-5)' },
+            { id: 'p_44_41', x: -40, z: -40, targetZone: 41, target: 41, levelReq: 9, name: 'ÇIKIŞ: MARSU CAPE' },
+            { id: 'p_44_42', x: 40, z: -40, targetZone: 42, target: 42, levelReq: 9, name: 'ÇIKIŞ: TERYA CAPE' },
+            { id: 'p_44_43', x: 0, z: 40, targetZone: 43, target: 43, levelReq: 9, name: 'ÇIKIŞ: VENU CAPE' },
+            { id: 'p_44_15', x: -50, z: 0, targetZone: 15, target: 15, levelReq: 15, name: 'MARSU ELİT (1-5)' },
+            { id: 'p_44_25', x: 50, z: 0, targetZone: 25, target: 25, levelReq: 15, name: 'TERYA ELİT (2-5)' },
+            { id: 'p_44_35', x: 0, z: 50, targetZone: 35, target: 35, levelReq: 15, name: 'VENU ELİT (3-5)' },
         ]
     },
 
     // 4-5: SOLUCAN DELİĞİ (GİZLİ BOSS)
     45: {
-        name: 'Solucan Deliği (4-5)', bg: '#000000', minLevel: 25,
-        enemies: [{ name: '[BOSS] Axolotl İmparator', level: 30, hp: 200000, attack: 3500, defense: 70000, exp: 300000, gold: 20000, diamond: 40 }],
+        name: 'Solucan Deliği (4-5)', bg: '#000000', minLevel: 30,
+        enemies: [{ name: '[BOSS] Axolotl İmparator', level: 30, hp: 5000000, damage: 8000, defense: 20000, exp: 1000000, gold: 250000, diamond: 500 }],
         npcs: [],
         portals: [
-            { id: 'p_45_44', x: 0, z: 0, targetZone: 44, levelReq: 9, name: 'Geri: Arena' }
+            { id: 'p_45_44', x: 0, z: 0, targetZone: 44, target: 44, levelReq: 12, name: 'Geri: Arena' }
         ]
     }
 };
 
 export const LEVEL_XP_REQUIREMENTS: number[] = [
-    0,
-    0,                  // Level 1
-    10000,              // Level 2 (User: 10.000)
-    20000,              // Level 3 (User: 20.000)
-    40000,              // Level 4 (User: 40.000)
-    80000,              // Level 5 (User: 80.000)
-    160000,             // Level 6 (User: 160.000)
-    20000,              // Level 7 (User: 320.000)
-    40000,              // Level 8 (User: 640.000)
-    80000,              // Level 9 (User: 1.280.000)
-    10000000,           // Level 10 (HARD GATE: 10.000.000)
-    20000000,           // Level 11
-    10240000,           // Level 12 (User: 10.240.000)
-    20480000,           // Level 13 (User: 20.480.000)
-    40960000,           // Level 14 (User: 40.960.000)
-    81920000,           // Level 15 (User: 81.920.000)
-    163840000,          // Level 16 (User: 163.840.000)
-    327680000,          // Level 17 (User: 327.680.000)
-    655360000,          // Level 18 (User: 655.360.000)
-    1310720000,         // Level 19 (User: 1.310.720.000)
-    2621440000,         // Level 20 (User: 2.621.440.000)
-    5242880000,         // Level 21 (User: 5.242.880.000)
-    10485760000,        // Level 22 (User: 10.485.760.000)
-    20971520000,        // Level 23 (User: 20.971.520.000)
-    41943040000,        // Level 24 (User: 41.943.040.000)
-    83886080000,        // Level 25 (User: 83.886.080.000)
-    167772160000,       // Level 26 (User: 167.772.160.000)
-    335544320000,       // Level 27 (User: 335.544.320.000)
-    671088640000,       // Level 28 (User: 671.088.640.000)
-    1342177280000,      // Level 29 (User: 1.342.177.280.000)
-    2684354560000       // Level 30 (Max)
+    0,                          // Index 0 (unused)
+    0,                          // Level 1
+    10000,                      // Level 2
+    20000,                      // Level 3
+    40000,                      // Level 4
+    80000,                      // Level 5
+    160000,                     // Level 6
+    320000,                     // Level 7
+    640000,                     // Level 8
+    1280000,                    // Level 9
+    2560000,                    // Level 10
+    5120000,                    // Level 11
+    10240000,                   // Level 12
+    20480000,                   // Level 13
+    40960000,                   // Level 14
+    81920000,                   // Level 15
+    163840000,                  // Level 16
+    327680000,                  // Level 17
+    655360000,                  // Level 18
+    1310720000,                 // Level 19
+    2621440000,                 // Level 20
+    5242880000,                 // Level 21
+    10485760000,                // Level 22
+    20971520000,                // Level 23
+    41943040000,                // Level 24
+    83886080000,                // Level 25
+    167772160000,               // Level 26
+    335544320000,               // Level 27
+    671088640000,               // Level 28
+    1342177280000,              // Level 29
+    2684354560000,              // Level 30 (MAX)
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -744,31 +757,31 @@ export const DEFAULT_HUD_LAYOUT: HUDLayout = {
         chat: { x: 2, y: 28, scale: 1, enabled: true },
 
         // Joystick - Sol alt köşe (sabit)
-        joystick: { x: 10, y: 78, scale: 1, enabled: true },
+        joystick: { x: 8, y: 75, scale: 1, enabled: true },
 
         // ═══════════ SAĞ ÜST ═══════════
         // Map + Menu Buttons - Sağ üst köşe (Minimap, Zone ismi, butonlar)
-        map: { x: 78, y: 2, scale: 1, enabled: true },
+        map: { x: 72, y: 2, scale: 1, enabled: true },
 
         // ═══════════ SAĞ TARAF SKİLL'LER ═══════════
-        // Eye Button (Free Look) - En üstte
-        eye: { x: 85, y: 40, scale: 1, enabled: true },
+        // Eye Button (Free Look) - Sağ orta
+        eye: { x: 92, y: 30, scale: 1, enabled: true },
 
-        // HP/MP Potları - Eye'ın yanında
-        hp_pot: { x: 85, y: 50, scale: 0.85, enabled: true },
-        mp_pot: { x: 85, y: 58, scale: 0.85, enabled: true },
+        // HP/MP Potları - Eye'ın altında
+        hp_pot: { x: 92, y: 38, scale: 0.85, enabled: true },
+        mp_pot: { x: 92, y: 46, scale: 0.85, enabled: true },
 
-        // Skills - Arc şeklinde sağ tarafta
-        skill1: { x: 78, y: 42, scale: 1, enabled: true },
-        skill2: { x: 74, y: 50, scale: 1, enabled: true },
-        skill3: { x: 72, y: 58, scale: 1, enabled: true },
-        skill4: { x: 72, y: 66, scale: 1, enabled: true },
-        skill5: { x: 74, y: 74, scale: 1, enabled: true },
-        skill6: { x: 78, y: 82, scale: 1, enabled: true },
+        // Skills - Dikey sıralı, sağ tarafta (ekran içinde)
+        skill1: { x: 70, y: 30, scale: 1, enabled: true },
+        skill2: { x: 70, y: 38, scale: 1, enabled: true },
+        skill3: { x: 70, y: 46, scale: 1, enabled: true },
+        skill4: { x: 70, y: 54, scale: 1, enabled: true },
+        skill5: { x: 70, y: 62, scale: 1, enabled: true },
+        skill6: { x: 70, y: 70, scale: 1, enabled: true },
 
         // ═══════════ SAĞ ALT ═══════════
-        // Attack Button - Sağ alt köşe (büyük kırmızı)
-        attack: { x: 88, y: 78, scale: 1.3, enabled: true },
+        // Attack Button - Sağ alt köşe (büyük kırmızı, ekran içinde)
+        attack: { x: 85, y: 75, scale: 1.2, enabled: true },
     }
 };
 
@@ -875,7 +888,7 @@ export const ALL_ARMOR_ITEMS: Item[] = ARMOR_SETS;
 
 // --- ZONE REWARDS CONFIG ---
 export const ZONE_REWARDS: Record<number, { minGold: number, maxGold: number, honor: number, maxTier: number, dropChance: number }> = {
-    // TIER 1 ZONES (1-1 to 1-4, 2-1 to 2-4, 3-1 to 3-4)
+    // TIER 1 ZONES (Beginner)
     11: { minGold: 10, maxGold: 30, honor: 1, maxTier: 1, dropChance: 0.1 },
     12: { minGold: 20, maxGold: 40, honor: 2, maxTier: 1, dropChance: 0.1 },
     13: { minGold: 30, maxGold: 50, honor: 3, maxTier: 2, dropChance: 0.1 },
@@ -889,27 +902,30 @@ export const ZONE_REWARDS: Record<number, { minGold: number, maxGold: number, ho
     33: { minGold: 30, maxGold: 50, honor: 3, maxTier: 2, dropChance: 0.1 },
     34: { minGold: 40, maxGold: 60, honor: 4, maxTier: 2, dropChance: 0.1 },
 
-    // GATEWAYS (4-1, 4-2, 4-3)
-    41: { minGold: 50, maxGold: 80, honor: 10, maxTier: 2, dropChance: 0.12 },
-    42: { minGold: 50, maxGold: 80, honor: 10, maxTier: 2, dropChance: 0.12 },
-    43: { minGold: 50, maxGold: 80, honor: 10, maxTier: 2, dropChance: 0.12 },
-
-    // ARENA (4-4)
-    44: { minGold: 100, maxGold: 200, honor: 50, maxTier: 3, dropChance: 0.15 },
+    // GATEWAYS (4-1, 4-2, 4-3) - Mid Game
+    41: { minGold: 50, maxGold: 100, honor: 10, maxTier: 2, dropChance: 0.15 },
+    42: { minGold: 50, maxGold: 100, honor: 10, maxTier: 2, dropChance: 0.15 },
+    43: { minGold: 50, maxGold: 100, honor: 10, maxTier: 2, dropChance: 0.15 },
 
     // HIGH LEVEL ZONES (1-5 to 1-8, etc)
-    15: { minGold: 80, maxGold: 120, honor: 15, maxTier: 3, dropChance: 0.1 },
-    16: { minGold: 100, maxGold: 150, honor: 20, maxTier: 3, dropChance: 0.1 },
-    17: { minGold: 150, maxGold: 250, honor: 30, maxTier: 4, dropChance: 0.1 },
-    18: { minGold: 500, maxGold: 1000, honor: 100, maxTier: 5, dropChance: 0.2 }, // BOSS
-    25: { minGold: 80, maxGold: 120, honor: 15, maxTier: 3, dropChance: 0.1 },
-    26: { minGold: 100, maxGold: 150, honor: 20, maxTier: 3, dropChance: 0.1 },
-    27: { minGold: 150, maxGold: 250, honor: 30, maxTier: 4, dropChance: 0.1 },
-    28: { minGold: 500, maxGold: 1000, honor: 100, maxTier: 5, dropChance: 0.2 }, // BOSS
-    35: { minGold: 80, maxGold: 120, honor: 15, maxTier: 3, dropChance: 0.1 },
-    36: { minGold: 100, maxGold: 150, honor: 20, maxTier: 3, dropChance: 0.1 },
-    37: { minGold: 150, maxGold: 250, honor: 30, maxTier: 4, dropChance: 0.1 },
-    38: { minGold: 500, maxGold: 1000, honor: 100, maxTier: 5, dropChance: 0.2 }, // BOSS
+    15: { minGold: 80, maxGold: 150, honor: 15, maxTier: 3, dropChance: 0.1 },
+    16: { minGold: 100, maxGold: 200, honor: 20, maxTier: 3, dropChance: 0.1 },
+    17: { minGold: 150, maxGold: 300, honor: 30, maxTier: 3, dropChance: 0.1 },
+    18: { minGold: 500, maxGold: 1000, honor: 100, maxTier: 3, dropChance: 0.3 }, // BOSS (T3 Only)
+
+    25: { minGold: 80, maxGold: 150, honor: 15, maxTier: 3, dropChance: 0.1 },
+    26: { minGold: 100, maxGold: 200, honor: 20, maxTier: 3, dropChance: 0.1 },
+    27: { minGold: 150, maxGold: 300, honor: 30, maxTier: 3, dropChance: 0.1 },
+    28: { minGold: 500, maxGold: 1000, honor: 100, maxTier: 3, dropChance: 0.3 }, // BOSS (T3 Only)
+
+    35: { minGold: 80, maxGold: 150, honor: 15, maxTier: 3, dropChance: 0.1 },
+    36: { minGold: 100, maxGold: 200, honor: 20, maxTier: 3, dropChance: 0.1 },
+    37: { minGold: 150, maxGold: 300, honor: 30, maxTier: 3, dropChance: 0.1 },
+    38: { minGold: 500, maxGold: 1000, honor: 100, maxTier: 3, dropChance: 0.3 }, // BOSS (T3 Only)
+
+    // ARENA & PVP BOSSES
+    44: { minGold: 200, maxGold: 500, honor: 50, maxTier: 3, dropChance: 0.2 },
+    45: { minGold: 1000, maxGold: 5000, honor: 500, maxTier: 3, dropChance: 0.5 },
 };
 
 export const DEFAULT_ZONE_REWARD = { minGold: 5, maxGold: 15, honor: 0, maxTier: 1, dropChance: 0.05 };
@@ -1149,5 +1165,50 @@ export const POTIONS: Item[] = [
         description: '30 dk boyunca %50 fazla altın kazanılır.'
     },
 ];
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CRAFTING SYSTEM (T4 / T5 = CRAFT ONLY)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export const CRAFTING_MATERIALS = {
+    BOSS_ESSENCE: 'boss_essence',
+    VOID_SHARD: 'void_shard',
+} as const;
+
+export const MATERIAL_DEFINITIONS = [
+    { id: 'boss_essence', name: 'Boss Özü', type: 'material' as const, tier: 4, rarity: 'epic' as const, value: 1000, icon: '💀', description: 'Lv25+ Boss\'lardan düşer.', stackable: true },
+    { id: 'void_shard', name: 'Boşluk Parçası', type: 'material' as const, tier: 5, rarity: 'legendary' as const, value: 5000, icon: '🌀', description: 'Sadece Gizli Boss\'tan düşer.', stackable: true },
+];
+
+export interface CraftingRecipe {
+    id: string;
+    name: string;
+    resultTier: 4 | 5;
+    resultSlot: 'weapon' | 'helmet' | 'armor' | 'pants' | 'boots' | 'necklace' | 'earring';
+    requirements: { itemTier: number; itemSlot: string; itemCount: number; bossEssence: number; voidShard: number };
+    cost: { gold: number; diamond: number };
+    resultBaseStats: Record<string, number>;
+}
+
+export const CRAFTING_RECIPES: CraftingRecipe[] = [
+    // T4 RECIPES
+    { id: 't4_weapon', name: 'Kadim Silah', resultTier: 4, resultSlot: 'weapon', requirements: { itemTier: 3, itemSlot: 'weapon', itemCount: 3, bossEssence: 5, voidShard: 0 }, cost: { gold: 50000, diamond: 50 }, resultBaseStats: { damage: 150, strength: 20, critChance: 5 } },
+    { id: 't4_helmet', name: 'Kadim Miğfer', resultTier: 4, resultSlot: 'helmet', requirements: { itemTier: 3, itemSlot: 'helmet', itemCount: 3, bossEssence: 5, voidShard: 0 }, cost: { gold: 50000, diamond: 50 }, resultBaseStats: { defense: 80, hp: 300, vitality: 15 } },
+    { id: 't4_armor', name: 'Kadim Zırh', resultTier: 4, resultSlot: 'armor', requirements: { itemTier: 3, itemSlot: 'armor', itemCount: 3, bossEssence: 5, voidShard: 0 }, cost: { gold: 50000, diamond: 50 }, resultBaseStats: { defense: 120, hp: 500, vitality: 20 } },
+    { id: 't4_pants', name: 'Kadim Pantolon', resultTier: 4, resultSlot: 'pants', requirements: { itemTier: 3, itemSlot: 'pants', itemCount: 3, bossEssence: 5, voidShard: 0 }, cost: { gold: 50000, diamond: 50 }, resultBaseStats: { defense: 60, hp: 200, dexterity: 15 } },
+    { id: 't4_boots', name: 'Kadim Çizme', resultTier: 4, resultSlot: 'boots', requirements: { itemTier: 3, itemSlot: 'boots', itemCount: 3, bossEssence: 5, voidShard: 0 }, cost: { gold: 50000, diamond: 50 }, resultBaseStats: { defense: 40, speed: 10, dexterity: 10 } },
+    { id: 't4_necklace', name: 'Kadim Kolye', resultTier: 4, resultSlot: 'necklace', requirements: { itemTier: 3, itemSlot: 'necklace', itemCount: 3, bossEssence: 5, voidShard: 0 }, cost: { gold: 50000, diamond: 50 }, resultBaseStats: { intelligence: 25, mana: 200, critDamage: 10 } },
+    { id: 't4_earring', name: 'Kadim Küpe', resultTier: 4, resultSlot: 'earring', requirements: { itemTier: 3, itemSlot: 'earring', itemCount: 3, bossEssence: 5, voidShard: 0 }, cost: { gold: 50000, diamond: 50 }, resultBaseStats: { intelligence: 15, mana: 100, attackSpeed: 5 } },
+    // T5 RECIPES
+    { id: 't5_weapon', name: 'Efsanevi Silah', resultTier: 5, resultSlot: 'weapon', requirements: { itemTier: 4, itemSlot: 'weapon', itemCount: 1, bossEssence: 10, voidShard: 1 }, cost: { gold: 200000, diamond: 200 }, resultBaseStats: { damage: 300, strength: 40, critChance: 10, critDamage: 25 } },
+    { id: 't5_helmet', name: 'Efsanevi Miğfer', resultTier: 5, resultSlot: 'helmet', requirements: { itemTier: 4, itemSlot: 'helmet', itemCount: 1, bossEssence: 10, voidShard: 1 }, cost: { gold: 200000, diamond: 200 }, resultBaseStats: { defense: 160, hp: 800, vitality: 30 } },
+    { id: 't5_armor', name: 'Efsanevi Zırh', resultTier: 5, resultSlot: 'armor', requirements: { itemTier: 4, itemSlot: 'armor', itemCount: 1, bossEssence: 10, voidShard: 1 }, cost: { gold: 200000, diamond: 200 }, resultBaseStats: { defense: 250, hp: 1200, vitality: 40 } },
+    { id: 't5_pants', name: 'Efsanevi Pantolon', resultTier: 5, resultSlot: 'pants', requirements: { itemTier: 4, itemSlot: 'pants', itemCount: 1, bossEssence: 10, voidShard: 1 }, cost: { gold: 200000, diamond: 200 }, resultBaseStats: { defense: 120, hp: 500, dexterity: 30 } },
+    { id: 't5_boots', name: 'Efsanevi Çizme', resultTier: 5, resultSlot: 'boots', requirements: { itemTier: 4, itemSlot: 'boots', itemCount: 1, bossEssence: 10, voidShard: 1 }, cost: { gold: 200000, diamond: 200 }, resultBaseStats: { defense: 80, speed: 20, dexterity: 25 } },
+    { id: 't5_necklace', name: 'Efsanevi Kolye', resultTier: 5, resultSlot: 'necklace', requirements: { itemTier: 4, itemSlot: 'necklace', itemCount: 1, bossEssence: 10, voidShard: 1 }, cost: { gold: 200000, diamond: 200 }, resultBaseStats: { intelligence: 50, mana: 500, critDamage: 25 } },
+    { id: 't5_earring', name: 'Efsanevi Küpe', resultTier: 5, resultSlot: 'earring', requirements: { itemTier: 4, itemSlot: 'earring', itemCount: 1, bossEssence: 10, voidShard: 1 }, cost: { gold: 200000, diamond: 200 }, resultBaseStats: { intelligence: 35, mana: 250, attackSpeed: 10 } },
+];
+
 
 

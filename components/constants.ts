@@ -507,26 +507,47 @@ export const LEVEL_XP_REQUIREMENTS: number[] = [
     2684354560000       // Level 30 (Max XP needed to reach here)
 ];
 
-// --- DEFAULT HUD LAYOUT (MOBILE ARC PRESET) ---
+// --- DEFAULT HUD LAYOUT (SYNCED WITH MAIN CONSTANTS) ---
 export const DEFAULT_HUD_LAYOUT: HUDLayout = {
     elements: {
-        joystick: { x: 20, y: 78, scale: 1, enabled: true }, // Left-Bottom (Shifted right to avoid Chat)
-        attack: { x: 88, y: 80, scale: 1.2, enabled: true },
+        // ═══════════ SOL TARAF ═══════════
+        // Profile - Sol üst köşe (Seviye, İsim, HP/MP barları)
+        profile: { x: 2, y: 2, scale: 1, enabled: true },
 
-        // Compact Arc around Attack Button (Bottom-Right)
-        skill1: { x: 78, y: 88, scale: 1, enabled: true },
-        skill2: { x: 70, y: 88, scale: 1, enabled: true },
-        skill3: { x: 72, y: 78, scale: 1, enabled: true },
-        skill4: { x: 77, y: 68, scale: 1, enabled: true },
-        skill5: { x: 86, y: 62, scale: 1, enabled: true },
-        skill6: { x: 94, y: 62, scale: 1, enabled: true },
-        skill7: { x: 62, y: 80, scale: 1, enabled: true },
+        // Quest Tracker - Profilin hemen altında
+        quest: { x: 2, y: 14, scale: 1, enabled: true },
 
-        potions: { x: 94, y: 45, scale: 0.9, enabled: true },
-        chat: { x: 2, y: 65, scale: 1, enabled: true }, // Bottom-Left (Above Joystick area)
-        quest: { x: 0, y: 20, scale: 1, enabled: true }, // Left Side (Below Profile)
-        map: { x: 88, y: 2, scale: 1, enabled: true },   // Top-Right Corner
-        profile: { x: 0, y: 0, scale: 1, enabled: true } // Top-Left Corner
+        // Chat - Quest'in altında (Genel/Parti/Klan sekmeleri)
+        chat: { x: 2, y: 28, scale: 1, enabled: true },
+
+        // Joystick - Sol alt köşe (sabit)
+        joystick: { x: 8, y: 75, scale: 1, enabled: true },
+
+        // ═══════════ SAĞ ÜST ═══════════
+        // Map + Menu Buttons - Sağ üst köşe (Minimap, Zone ismi, butonlar)
+        map: { x: 72, y: 2, scale: 1, enabled: true },
+
+        // ═══════════ SAĞ TARAF SKİLL'LER ═══════════
+        // Eye Button (Free Look) - Sağ orta
+        eye: { x: 92, y: 30, scale: 1, enabled: true },
+
+        // HP/MP Potları - Eye'ın altında
+        hp_pot: { x: 92, y: 38, scale: 0.85, enabled: true },
+        mp_pot: { x: 92, y: 46, scale: 0.85, enabled: true },
+        potions: { x: 92, y: 38, scale: 0.9, enabled: true },
+
+        // Skills - Dikey sıralı, sağ tarafta (ekran içinde)
+        skill1: { x: 70, y: 30, scale: 1, enabled: true },
+        skill2: { x: 70, y: 38, scale: 1, enabled: true },
+        skill3: { x: 70, y: 46, scale: 1, enabled: true },
+        skill4: { x: 70, y: 54, scale: 1, enabled: true },
+        skill5: { x: 70, y: 62, scale: 1, enabled: true },
+        skill6: { x: 70, y: 70, scale: 1, enabled: true },
+        skill7: { x: 70, y: 78, scale: 1, enabled: true },
+
+        // ═══════════ SAĞ ALT ═══════════
+        // Attack Button - Sağ alt köşe (büyük kırmızı, ekran içinde)
+        attack: { x: 85, y: 75, scale: 1.2, enabled: true },
     }
 };
 

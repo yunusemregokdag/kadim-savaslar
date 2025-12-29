@@ -13,8 +13,8 @@ import { Swords, Shield, Zap, ShoppingBag, Backpack, X, Wind, Skull, Target, Dro
 import { v4 as uuidv4 } from 'uuid';
 import { VoxelSpartan } from './VoxelSpartan';
 import InventoryModal from './InventoryModal';
-import MarketModal from './MarketModal';
 import { PlayerStall } from './PlayerStall';
+import { BlacksmithView } from './BlacksmithView';
 import { PlayerStallData } from './MarketTypes';
 import { VoxelSlime } from './VoxelMobs/VoxelSlime';
 import { VoxelAxolotl } from './VoxelMobs/VoxelAxolotl';
@@ -37,6 +37,13 @@ import { CLASS_COMBAT_CONFIG, performAttack, isMeleeClass, logCombat } from '../
 import { WeatherParticles, WeatherIndicator, WeatherChangeNotification, FogEffect } from './WeatherEffects';
 import { weatherManager } from '../systems/WeatherSystem';
 import { monitor } from '../utils/diagnostics/PerformanceMonitor';
+import { generateDrop, generateBossMaterialDrop } from '../utils/generateDrop';
+import { createAntiBotState, updateAntiBotOnKill, getRewardMultipliers, AntiBotState } from '../utils/antiBotSystem';
+import { ExpBarCompact } from './ui/ExpBar';
+import { HonorDisplayCompact } from './ui/HonorDisplay';
+import { canGainHonor, getHonorValue, recordKill } from '../utils/rankSystem';
+import { getVipBonus } from '../utils/vipSystem';
+import { addDailyHonor, addDailyKill } from '../utils/dailyLeaderboard';
 
 // --- PRELOAD ASSETS (NO FREEZE ON SPAWN) ---
 const PRELOAD_MODELS = [
@@ -99,6 +106,7 @@ interface ActiveZoneViewProps {
     onOpenCrafting: () => void;
     onQuickPotion: (type: 'hp' | 'mp') => void;
     onInteraction: (type: 'npc' | 'portal', id: string) => void;
+    onOpenMarket?: () => void;
     isAdmin?: boolean;
     onReceiveChat?: (msg: ChatMessage) => void;
     socketRef: React.MutableRefObject<Socket | null>; // ADDED
@@ -117,14 +125,37 @@ const DraggableHUDElement: React.FC<DraggableHUDElementProps> = ({ id, element, 
     // If not enabled and not editing, hide it. If editing, show it even if disabled (to allow enabling/moving) - or keep logic simple:
     if (!element.enabled && !isEditing) return null;
 
+    // Clamp positions to prevent overflow - max 95% to keep elements visible
+    const clampedX = Math.min(Math.max(element.x, 0), 95);
+    const clampedY = Math.min(Math.max(element.y, 0), 95);
+
+    // For right-side elements (x > 50%), anchor from right instead of left
+    // For bottom elements (y > 50%), anchor from bottom instead of top  
+    const isRightSide = clampedX > 50;
+    const isBottomSide = clampedY > 50;
+
+    const positionStyle: React.CSSProperties = {
+        touchAction: 'none'
+    };
+
+    if (isRightSide) {
+        positionStyle.right = `${100 - clampedX}%`;
+    } else {
+        positionStyle.left = `${clampedX}%`;
+    }
+
+    if (isBottomSide) {
+        positionStyle.bottom = `${100 - clampedY}%`;
+    } else {
+        positionStyle.top = `${clampedY}%`;
+    }
+
     return (
         <div
             className={`absolute transition-transform origin-center select-none ${isEditing ? 'z-[100] cursor-move' : 'z-50'}`}
             style={{
-                left: `${element.x}%`,
-                top: `${element.y}%`,
-                transform: `scale(${element.scale}) translate(-50%, -50%)`,
-                touchAction: 'none'
+                ...positionStyle,
+                transform: `scale(${element.scale})`,
             }}
             onMouseDown={(e) => isEditing && onDragStart(e, id)}
             onTouchStart={(e) => isEditing && onDragStart(e, id)}
@@ -1810,7 +1841,7 @@ const GlobalMapModal: React.FC<{ onClose: () => void, currentZone: number, onSwi
 }
 
 const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
-    const { playerState, zoneId, onLoot, onQuestProgress, onUpdatePlayer, onExit, onOpenCrafting, socketRef, onReceiveChat } = props;
+    const { playerState, zoneId, onLoot, onQuestProgress, onUpdatePlayer, onExit, onOpenCrafting, onOpenMarket, socketRef, onReceiveChat } = props;
 
     // Get settings from context
     const { settings } = useSettings();
@@ -1843,6 +1874,14 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     const [projectiles, setProjectiles] = useState<any[]>([]);
     const [floatingTexts, setFloatingTexts] = useState<FloatingText[]>([]);
 
+    // ANTI-BOT SYSTEM
+    const antiBotRef = useRef<AntiBotState>(createAntiBotState());
+
+    // Reset anti-bot on zone change
+    useEffect(() => {
+        antiBotRef.current = createAntiBotState();
+    }, [zoneId]);
+
     // MULTIPLAYER STATE
     const [remotePlayers, setRemotePlayers] = useState<any[]>([]);
     // socketRef comes from props now
@@ -1858,7 +1897,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     const [skillEffects, setSkillEffects] = useState<any>({});
     const [cooldowns, setCooldowns] = useState<Record<string, number>>({});
     const [showInventory, setShowInventory] = useState(false);
-    const [showMarket, setShowMarket] = useState(false);
+    const [blacksmithState, setBlacksmithState] = useState<{ isOpen: boolean, tab: 'repair' | 'enhance' | 'craft' | 'market' }>({ isOpen: false, tab: 'market' });
     const [showMap, setShowMap] = useState(false);
     const [showChat, setShowChat] = useState(true);
     const [showGlobalMap, setShowGlobalMap] = useState(false);
@@ -1867,6 +1906,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     const [showFullSettings, setShowFullSettings] = useState(false);
     const [showAchievements, setShowAchievements] = useState(false);
     const [showDailyReward, setShowDailyReward] = useState(false);
+
     const [nearbyNPC, setNearbyNPC] = useState<GameEntity | null>(null);
     const [interactingNPC, setInteractingNPC] = useState<NPCData | null>(null);
     const [playerPosUI, setPlayerPosUI] = useState({ x: 0, y: 0, rotation: 0 });
@@ -2405,6 +2445,25 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 setTeleporting(null);
                 addFloatingText("HASAR ALDIN! İPTAL!", playerPosRef.current.x, 3, playerPosRef.current.y, 'text-red-600 font-bold');
             }
+
+            // ARMOR DURABILITY (20% Chance)
+            if (Math.random() < 0.2) {
+                const armorSlots: (keyof Equipment)[] = ['helmet', 'armor', 'pants', 'boots'];
+                const randomSlot = armorSlots[Math.floor(Math.random() * armorSlots.length)];
+                const item = playerState.equipment[randomSlot];
+                if (item) {
+                    const currentDur = item.durability ?? item.maxDurability ?? 100;
+                    if (currentDur > 0) {
+                        const newDur = Math.max(0, currentDur - 1);
+                        const newEquipment = { ...playerState.equipment, [randomSlot]: { ...item, durability: newDur } };
+                        updates.equipment = newEquipment;
+                        if (newDur === 0) {
+                            addFloatingText("ZIRHIN HASAR GÖRDÜ!", playerPosRef.current.x, 3.5, playerPosRef.current.y, "text-orange-500 font-bold");
+                            soundManager.playSFX('break');
+                        }
+                    }
+                }
+            }
         }
         onUpdatePlayer(updates);
     };
@@ -2486,6 +2545,22 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         setIsAttacking(true);
         setTimeout(() => setIsAttacking(false), 300);
 
+        // WEAPON DURABILITY (10% Chance)
+        if (playerState.equipment.weapon) {
+            const w = playerState.equipment.weapon;
+            const currentDur = w.durability ?? w.maxDurability ?? 100;
+            if (Math.random() < 0.1 && currentDur > 0) {
+                const newDur = Math.max(0, currentDur - 1);
+                const newEquipment = { ...playerState.equipment, weapon: { ...w, durability: newDur } };
+                onUpdatePlayer({ equipment: newEquipment }); // Separate update
+                if (newDur === 0) {
+                    soundManager.playSFX('break');
+                    addFloatingText("SİLAHIN KIRILDI!", playerPosRef.current.x, 3, playerPosRef.current.y, "text-red-500 font-bold");
+                }
+            }
+        }
+        setTimeout(() => setIsAttacking(false), 300);
+
         // Play Attack Sound
         if (['archmage', 'cleric', 'bard'].includes(playerState.class)) {
             soundManager.playSFX('attack_magic');
@@ -2533,6 +2608,11 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
         // Calculate Total Damage with Bonuses
         let baseDamage = playerState.damage;
+
+        // Broken Weapon Penalty
+        if (playerState.equipment.weapon && (playerState.equipment.weapon.durability ?? 100) <= 0) {
+            baseDamage = Math.floor(baseDamage * 0.5);
+        }
 
         // Wing Bonuses
         if (playerState.equippedWing) {
@@ -2747,10 +2827,29 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         // 1. DETERMINE ZONE REWARDS
         const rewardConfig = ZONE_REWARDS[zoneId] || DEFAULT_ZONE_REWARD;
 
-        // 2. CALCULATE GOLD & XP & HONOR
+        // 2. CALCULATE GOLD & XP
         let xp = ent.level * 50;
         let gold = Math.floor(Math.random() * (rewardConfig.maxGold - rewardConfig.minGold + 1)) + rewardConfig.minGold;
-        let honor = ent.type === 'player' ? 150 : rewardConfig.honor;
+
+        // 3. CALCULATE HONOR (NEW SYSTEM)
+        let honor = 0;
+        const isBoss = ent.type === 'boss' || (ent as any).bossData !== undefined;
+        const isElite = ent.name.includes('Elit') || ent.name.includes('[ELITE]');
+        const isPvP = ent.type === 'player';
+
+        // Determine kill type for honor
+        const killType = isPvP ? 'player' : (isBoss ? 'boss' : (isElite ? 'elite' : 'normal'));
+        const targetId = ent.id;
+
+        // Check Anti-Abuse Rules
+        if (canGainHonor(playerState, targetId, isPvP ? 'player' : 'npc')) {
+            honor = getHonorValue(killType);
+
+            // Record kill for cooldown tracking
+            if (isPvP) recordKill(playerState.nickname, targetId);
+        } else {
+            if (isPvP) addFloatingText('⏱️ Honor yok (Limit/CD)', x, 5, z, 'text-red-400');
+        }
 
         // Apply Pet & Wing Bonuses
         if (playerState.equippedPet?.bonusExpRate) {
@@ -2763,107 +2862,93 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             honor += Math.floor(honor * (playerState.equippedWing.bonusHonorRate / 100));
         }
 
-        // ====== PREMIUM BONUSES ======
-        if (playerState.premiumBenefits) {
-            // EXP Multiplier (1.1x - 2.0x)
-            xp = Math.floor(xp * playerState.premiumBenefits.expMultiplier);
-            // Gold Multiplier (1.1x - 2.0x)
-            gold = Math.floor(gold * playerState.premiumBenefits.goldMultiplier);
+        // ====== VIP BONUSES (NEW) ======
+        const vipExpBonus = getVipBonus(playerState, 'EXP_BONUS');     // e.g. 0.20
+        const vipGoldBonus = getVipBonus(playerState, 'GOLD_BONUS');   // e.g. 0.20
+
+        if (vipExpBonus > 0) xp += Math.floor(xp * vipExpBonus);
+        if (vipGoldBonus > 0) gold += Math.floor(gold * vipGoldBonus);
+
+        // 5. UPDATE DAILY LEADERBOARD
+        if (honor > 0) {
+            addDailyHonor(playerState.nickname, playerState.nickname, honor);
+        }
+        addDailyKill(playerState.nickname, playerState.nickname);
+
+        // 3. ITEM DROP LOGIC (V3.0 - generateDrop utility)
+        // ANTI-BOT CHECK
+        const { newState, stageChanged } = updateAntiBotOnKill(antiBotRef.current, x, z);
+        antiBotRef.current = newState;
+        const { dropMultiplier, expMultiplier, warningMessage } = getRewardMultipliers(antiBotRef.current);
+
+        // Show warning on stage change
+        if (stageChanged && warningMessage) {
+            addFloatingText(warningMessage, x, 5, z, 'text-yellow-400 font-bold text-lg');
         }
 
-        // 3. ITEM DROP LOGIC
+        // Apply anti-bot multipliers
+        gold = Math.floor(gold * dropMultiplier);
+        honor = Math.floor(honor * dropMultiplier);
+        xp = Math.floor(xp * expMultiplier);
+
         let droppedItem: Item | undefined = undefined;
         let boxColor = 'green';
         let lootTier = 1;
 
-        // Box Tier Roll - Apply premium drop rate bonus
-        let boxRoll = Math.random();
-        // Premium drop rate bonus: Improves tier rolls
-        if (playerState.premiumBenefits?.dropRateBonus) {
-            // Shift the roll down to increase chances of higher tiers
-            boxRoll = Math.max(0, boxRoll - (playerState.premiumBenefits.dropRateBonus / 200));
-        }
+        // Only generate drops if not penalized
+        if (dropMultiplier > 0) {
+            const dropResult = generateDrop(zoneId, ent.level);
 
-        if (boxRoll < 0.60) { lootTier = 1; boxColor = 'green'; } // T1
-        else if (boxRoll < 0.85) { lootTier = 2; boxColor = 'blue'; } // T2
-        else if (boxRoll < 0.95) { lootTier = 3; boxColor = 'purple'; } // T3
-        else { lootTier = 4; boxColor = 'orange'; } // T4
-
-        const itemRoll = Math.random();
-        const hasItem = lootTier >= 4 ? itemRoll < 0.8 : lootTier === 3 ? itemRoll < 0.5 : itemRoll < 0.15;
-
-        if (hasItem) {
-            let maxPossibleTier = 3; // Cap regular drops at T3
-            let isHighTierDrop = false;
-
-            // UNLOCK T4/T5 only in High Tier Boxes with VERY LOW CHANCE (0.9%)
-            if (lootTier >= 3) {
-                if (Math.random() < 0.009) {
-                    maxPossibleTier = 5;
-                    isHighTierDrop = true;
-                }
-            }
-
-            // Select potential items
-            let potentialItems = ALL_CLASS_ITEMS.filter(i => i.tier <= maxPossibleTier);
-
-            // If we hit the jackpot (T4/T5), prioritize giving those
-            if (isHighTierDrop) {
-                const highTierItems = ALL_CLASS_ITEMS.filter(i => i.tier >= 4);
-                if (highTierItems.length > 0) potentialItems = highTierItems;
-            }
-
-            if (potentialItems.length > 0) {
-                const baseItem = potentialItems[Math.floor(Math.random() * potentialItems.length)];
-
-                // STAT SCALING LOGIC
-                let finalStats = { ...baseItem.stats };
-                let finalLevelReq = baseItem.levelReq;
-                let namePrefix = "";
-                const scaleRefLevel = 60; // Max level assumption
-
-                // Only scale if the item is high tier but player is low level
-                if (baseItem.tier >= 4 && playerState.level < scaleRefLevel) {
-                    const scaleFactor = Math.max(0.2, playerState.level / scaleRefLevel);
-
-                    namePrefix = "(Eski) "; // Lore friendly: "Ancient/Old" implies it lost power
-                    finalLevelReq = 1; // Make it usable immediately
-
-                    // Scale stats
-                    if (finalStats.damage) finalStats.damage = Math.floor(finalStats.damage * scaleFactor);
-                    if (finalStats.defense) finalStats.defense = Math.floor(finalStats.defense * scaleFactor);
-                    if (finalStats.hp) finalStats.hp = Math.floor(finalStats.hp * scaleFactor);
-                    if (finalStats.strength) finalStats.strength = Math.floor(finalStats.strength * scaleFactor);
-                    if (finalStats.dexterity) finalStats.dexterity = Math.floor(finalStats.dexterity * scaleFactor);
-                    if (finalStats.intelligence) finalStats.intelligence = Math.floor(finalStats.intelligence * scaleFactor);
-                }
+            if (dropResult) {
+                lootTier = dropResult.tier;
+                boxColor = dropResult.color;
 
                 droppedItem = {
-                    ...baseItem,
-                    id: uuidv4(),
-                    name: namePrefix + baseItem.name,
-                    levelReq: finalLevelReq,
-                    stats: finalStats,
-                    plus: isHighTierDrop ? 0 : (lootTier >= 3 ? Math.floor(Math.random() * 3) : 0)
+                    id: dropResult.id,
+                    name: dropResult.name,
+                    tier: dropResult.tier,
+                    type: dropResult.type as any,
+                    rarity:
+                        dropResult.quality === 'premium'
+                            ? 'epic'
+                            : dropResult.quality === 'medium'
+                                ? 'rare'
+                                : 'common',
+                    stats: dropResult.stats,
+                    value: dropResult.tier * 50,
                 };
             }
-        } else {
-            // Fallback to Materials
-            if (Math.random() < 0.5) { // Increased chance for mats
-                const roll = Math.random();
-                if (roll < 0.5) {
-                    droppedItem = { id: `leather_scrap_${uuidv4()}`, name: 'Deri Parçası', type: 'material', tier: 1, rarity: 'common', value: 10, icon: '🛡️', description: 'Zırh yapımında kullanılır.' };
-                } else if (roll < 0.8) {
-                    droppedItem = { id: `herb_green_${uuidv4()}`, name: 'Şifalı Ot', type: 'material', tier: 1, rarity: 'common', value: 5, icon: '🌿', description: 'İksir yapımında kullanılır.' };
-                } else {
-                    droppedItem = { id: `iron_ore_${uuidv4()}`, name: 'Demir Cevheri', type: 'material', tier: 1, rarity: 'uncommon', value: 15, icon: '🪨' };
-                }
+
+            // BOSS MATERIAL DROP - Check if entity is a boss
+            const isBoss = ent.type === 'boss' || (ent as any).bossData !== undefined;
+            const materialDrop = generateBossMaterialDrop(ent.level, isBoss, isElite);
+            if (materialDrop) {
+                // Add material to inventory via onUpdatePlayer
+                const materialItem: Item = {
+                    id: materialDrop.id,
+                    name: materialDrop.name,
+                    tier: materialDrop.tier,
+                    type: 'material',
+                    rarity: materialDrop.rarity,
+                    value: materialDrop.value,
+                };
+                onUpdatePlayer({ inventory: [...playerState.inventory, materialItem] });
+                addFloatingText(`${materialDrop.icon} ${materialDrop.name}!`, x, 5, z, 'text-purple-500 font-bold text-lg');
             }
         }
 
         // Override box color if we got a super legendary item? No, stick to the visual roll for consistency.
 
         onLoot(gold, xp, honor, droppedItem);
+
+        // DIAMOND DROP - Read from entity data
+        const baseDiamond = (ent as any).diamond || 0;
+        const diamondDrop = Math.floor(baseDiamond * dropMultiplier);
+        if (diamondDrop > 0) {
+            onUpdatePlayer({ gems: playerState.gems + diamondDrop });
+            addFloatingText(`+${diamondDrop} 💎`, x, 4.5, z, 'text-cyan-400 font-bold');
+        }
+
         setTimeout(() => {
             checkAchievements('kill', 1);
             checkAchievements('gold', playerState.credits + gold);
@@ -2875,16 +2960,18 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
         onQuestProgress(ent.name);
 
-        // Always spawn box with the determined color
-        const box: LootBox = {
-            id: uuidv4(),
-            x, y: 0.5, z,
-            color: boxColor,
-            tier: lootTier,
-            ownerId: playerState.nickname,
-            createdAt: Date.now()
-        };
-        setLootBoxes(prev => [...prev, box]);
+        // Only spawn loot box if drops are enabled
+        if (dropMultiplier > 0) {
+            const box: LootBox = {
+                id: uuidv4(),
+                x, y: 0.5, z,
+                color: boxColor,
+                tier: lootTier,
+                ownerId: playerState.nickname,
+                createdAt: Date.now()
+            };
+            setLootBoxes(prev => [...prev, box]);
+        }
     };
 
 
@@ -3264,11 +3351,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         soundManager.playSFX('portal');
     };
 
-    const currentLevelStartXP = LEVEL_XP_REQUIREMENTS[playerState.level] || 0;
-    const nextLevelReqXP = LEVEL_XP_REQUIREMENTS[playerState.level + 1] || playerState.maxExp;
-    const xpInLevel = playerState.exp - currentLevelStartXP;
-    const xpNeeded = nextLevelReqXP - currentLevelStartXP;
-    const xpPercent = Math.min(100, Math.max(0, (xpInLevel / xpNeeded) * 100));
+    // EXP progress now handled by ExpBarCompact component
 
     const hpPotCount = playerState.inventory.filter(i => i.name.includes('Can')).length;
     const mpPotCount = playerState.inventory.filter(i => i.name.includes('Mana')).length;
@@ -3550,7 +3633,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             {['skill1', 'skill2', 'skill3', 'skill4', 'skill5', 'skill6'].map((key, i) => (
                 <DraggableHUDElement key={key} id={key} element={hudLayout.elements[key]} isEditing={isHudEditing} onDragStart={handleDragStart}>
                     <div style={{ opacity: localButtonOpacity, transform: `scale(${localHudScale})` }}>
-                        {playerState.class && CLASSES[playerState.class].skills[i]
+                        {playerState.class && CLASSES[playerState.class]?.skills?.[i]
                             ? renderSkillButton(CLASSES[playerState.class].skills[i], i)
                             : <div className="w-12 h-12 bg-slate-800 rounded-full border border-slate-600 opacity-30" />
                         }
@@ -3594,7 +3677,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                                     {playerState.premiumBenefits?.badge && <span className="mr-1">{playerState.premiumBenefits.badge}</span>}
                                     {playerState.nickname}
                                 </span>
-                                <span className="text-[10px] text-yellow-500 flex items-center gap-1"><Crown size={10} /> {RANKS[playerState.rank].title}</span>
+                                <span className="text-[10px] text-yellow-500 flex items-center gap-1"><Crown size={10} /> {RANKS[playerState.rank]?.title || 'Acemi'}</span>
                             </div>
                             <div className="relative h-4 w-full bg-slate-900 rounded-sm border border-slate-800">
                                 <div className="h-full bg-gradient-to-r from-red-700 to-red-500 transition-all duration-300" style={{ width: `${(playerState.hp / playerState.maxHp) * 100}%` }} />
@@ -3604,6 +3687,9 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                                 <div className="h-full bg-gradient-to-r from-blue-700 to-blue-500 transition-all duration-300" style={{ width: `${(playerState.mana / playerState.maxMana) * 100}%` }} />
                                 <div className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-white shadow-black drop-shadow-md">{playerState.mana} / {playerState.maxMana} MP</div>
                             </div>
+                            {/* EXP BAR */}
+                            <ExpBarCompact level={playerState.level} exp={playerState.exp} className="mt-1" />
+
                         </div>
                     </div>
                 </div>
@@ -3622,6 +3708,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                             <div className="bg-black/50 px-3 py-2 rounded text-white font-bold backdrop-blur-sm border border-slate-700 text-xs hidden md:block">{zoneData?.name}</div>
                             <button title="Sohbet" onClick={() => setShowChat(!showChat)} className={`p-2 rounded border border-slate-700 hover:text-white ${showChat ? 'bg-yellow-900/80 text-yellow-500' : 'bg-slate-900/80 text-slate-400'}`}><MessageSquare size={20} /></button>
                             <button title="Envanter" onClick={() => setShowInventory(true)} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-yellow-500 hover:text-white"><Backpack size={20} /></button>
+                            <button title="Demirci & Pazar" onClick={() => setBlacksmithState({ isOpen: true, tab: 'market' })} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-green-400 hover:text-white"><ShoppingBag size={20} /></button>
                             <button title="Ayarlar" onClick={() => setShowSettings(true)} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-slate-400 hover:text-white"><SettingsIcon size={20} /></button>
                             <button title="Başarımlar" onClick={() => setShowAchievements(true)} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-yellow-500 hover:text-white"><Trophy size={20} /></button>
                             <button title="Çıkış" onClick={onExit} className="bg-slate-900/80 text-red-400 p-2 rounded border border-slate-700 hover:bg-slate-800 hover:text-red-200"><X size={20} /></button>
@@ -3935,26 +4022,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
             {/* INTERACTION MODALS */}
             {showInventory && <InventoryModal playerState={playerState} isOverlay={true} onClose={() => setShowInventory(false)} onEquip={props.onEquip} onUnequip={props.onUnequip} onUse={props.onUseItem} />}
-            {showMarket && <MarketModal
-                playerCredits={playerState.credits}
-                inventory={playerState.inventory}
-                onClose={() => setShowMarket(false)}
-                onBuy={(cost, item) => {
-                    if (playerState.credits >= cost) {
-                        onUpdatePlayer({ credits: playerState.credits - cost });
-                        onLoot(0, 0, 0, item);
-                        addFloatingText(`Satın alındı: ${item.name}`, 0, 0, 0, 'text-green-400');
-                    }
-                }}
-                onSell={(value, itemId) => {
-                    const newInventory = playerState.inventory.filter(i => i.id !== itemId);
-                    onUpdatePlayer({
-                        credits: playerState.credits + value,
-                        inventory: newInventory
-                    });
-                    addFloatingText(`Satıldı: +${value} G`, 0, 0, 0, 'text-yellow-400 font-bold');
-                }}
-            />}
+
             {showAchievements && (
                 <AchievementsModal
                     playerAchievements={playerState.achievements || []}
@@ -4024,7 +4092,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                     playerState={playerState}
                     onClose={() => setInteractingNPC(null)}
                     onOpenBlacksmith={() => props.onOpenCrafting()}
-                    onOpenShop={() => setShowMarket(true)}
+                    onOpenShop={() => setBlacksmithState({ isOpen: true, tab: 'market' })}
                     onAcceptQuest={(quest) => {
                         props.onUpdatePlayer({ activeQuest: quest });
                         setInteractingNPC(null);
@@ -4056,8 +4124,21 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
                         setInteractingNPC(null);
                     }}
+                    onOpenCraftmaster={() => {
+                        setBlacksmithState({ isOpen: true, tab: 'craft' });
+                        setInteractingNPC(null);
+                    }}
                 />
             )}
+
+            {/* T4/T5 Legendary Crafting Modal */}
+            {/* BLACKSMITH & MARKET SYSTEM */}
+            <BlacksmithView
+                isOpen={blacksmithState.isOpen}
+                onClose={() => setBlacksmithState(prev => ({ ...prev, isOpen: false }))}
+                playerState={playerState}
+                onUpdatePlayer={onUpdatePlayer}
+            />
 
             {/* LOADING OVERLAY - OYUN AÇILIŞINDA */}
             {isLoading && (

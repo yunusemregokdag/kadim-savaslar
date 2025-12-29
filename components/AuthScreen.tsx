@@ -84,8 +84,14 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onAdminLogin }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <div className="absolute inset-0 bg-[url('https://picsum.photos/1920/1080?grayscale&blur=2')] bg-cover bg-center opacity-20" />
+    <div className="min-h-screen flex items-center justify-center relative">
+      {/* Full-screen fixed background image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/images/login_bg.jpg')" }}
+      />
+      {/* Dark overlay for better readability */}
+      <div className="absolute inset-0 bg-black/50" />
 
       <div className="relative z-10 w-full max-w-md p-8 bg-slate-900/90 border border-slate-700 rounded-xl shadow-2xl backdrop-blur-md">
         {mode === 'welcome' ? (

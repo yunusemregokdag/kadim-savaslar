@@ -1,7 +1,9 @@
 
 import React from 'react';
 import { PlayerState, Item, Equipment } from '../types';
-import { X, Droplet, Box, Bird, Feather, Shirt } from 'lucide-react';
+import { X, Shirt } from 'lucide-react';
+import { renderItemIcon } from './ui/ItemIcons';
+import { ItemTooltip } from './ui/ItemTooltip';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei';
 import { VoxelSpartan } from './VoxelSpartan';
@@ -17,109 +19,9 @@ interface InventoryModalProps {
 }
 
 
-// Minecraft-style Pixel Art Icons
-const PixelHelmet = ({ color = '#6b7280' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
-        <rect x="3" y="2" width="10" height="3" fill={color} />
-        <rect x="2" y="5" width="12" height="6" fill={color} />
-        <rect x="3" y="11" width="10" height="3" fill={color} />
-        <rect x="4" y="8" width="3" height="3" fill="#1a1a1a" />
-        <rect x="9" y="8" width="3" height="3" fill="#1a1a1a" />
-    </svg>
-);
-
-const PixelChestplate = ({ color = '#6b7280' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
-        <rect x="3" y="1" width="10" height="2" fill={color} />
-        <rect x="2" y="3" width="3" height="6" fill={color} />
-        <rect x="11" y="3" width="3" height="6" fill={color} />
-        <rect x="5" y="3" width="6" height="11" fill={color} />
-        <rect x="6" y="4" width="4" height="2" fill="#2a2a2a" />
-    </svg>
-);
-
-const PixelLeggings = ({ color = '#6b7280' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
-        <rect x="4" y="1" width="8" height="3" fill={color} />
-        <rect x="4" y="4" width="3" height="11" fill={color} />
-        <rect x="9" y="4" width="3" height="11" fill={color} />
-    </svg>
-);
-
-const PixelBoots = ({ color = '#6b7280' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
-        <rect x="2" y="4" width="4" height="8" fill={color} />
-        <rect x="10" y="4" width="4" height="8" fill={color} />
-        <rect x="1" y="12" width="6" height="3" fill={color} />
-        <rect x="9" y="12" width="6" height="3" fill={color} />
-    </svg>
-);
-
-const PixelSword = ({ color = '#ef4444' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
-        <rect x="12" y="1" width="2" height="2" fill={color} />
-        <rect x="10" y="3" width="2" height="2" fill={color} />
-        <rect x="8" y="5" width="2" height="2" fill={color} />
-        <rect x="6" y="7" width="2" height="2" fill={color} />
-        <rect x="4" y="9" width="2" height="2" fill="#8b5cf6" />
-        <rect x="2" y="11" width="2" height="2" fill="#a16207" />
-        <rect x="3" y="13" width="2" height="2" fill="#a16207" />
-    </svg>
-);
-
-const PixelNecklace = ({ color = '#a855f7' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
-        <rect x="4" y="2" width="8" height="2" fill="#fbbf24" />
-        <rect x="3" y="4" width="2" height="4" fill="#fbbf24" />
-        <rect x="11" y="4" width="2" height="4" fill="#fbbf24" />
-        <rect x="5" y="8" width="6" height="2" fill="#fbbf24" />
-        <rect x="6" y="10" width="4" height="4" fill={color} />
-    </svg>
-);
-
-const PixelEarring = ({ color = '#ec4899' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
-        <rect x="3" y="2" width="3" height="3" fill="#fbbf24" />
-        <rect x="4" y="5" width="2" height="3" fill="#fbbf24" />
-        <rect x="3" y="8" width="4" height="4" fill={color} />
-        <rect x="10" y="2" width="3" height="3" fill="#fbbf24" />
-        <rect x="11" y="5" width="2" height="3" fill="#fbbf24" />
-        <rect x="10" y="8" width="4" height="4" fill={color} />
-    </svg>
-);
-
+// Pixel icons removed (using global ItemIcons)
 const InventoryModal: React.FC<InventoryModalProps> = ({ playerState, onClose, isOverlay = false, onEquip, onUnequip, onUse, onEquipSkin }) => {
     const [activeTab, setActiveTab] = React.useState<'inventory' | 'skins'>('inventory');
-
-    const getItemIcon = (item: Item) => {
-        if (item.image) {
-            return <img src={item.image} alt={item.name} className="w-full h-full object-contain p-1" />;
-        }
-
-        const rarityColors: Record<string, string> = {
-            common: '#6b7280',
-            uncommon: '#22c55e',
-            rare: '#3b82f6',
-            epic: '#a855f7',
-            legendary: '#f97316',
-            ancient: '#ec4899'
-        };
-        const color = rarityColors[item.rarity] || '#6b7280';
-
-        switch (item.type) {
-            case 'weapon': return <PixelSword color={color} />;
-            case 'armor': return <PixelChestplate color={color} />;
-            case 'helmet': return <PixelHelmet color={color} />;
-            case 'pants': return <PixelLeggings color={color} />;
-            case 'boots': return <PixelBoots color={color} />;
-            case 'necklace': return <PixelNecklace color={color} />;
-            case 'earring': return <PixelEarring color={color} />;
-            case 'consumable': return <Droplet className="text-green-400 w-6 h-6" />;
-            case 'pet_egg': return <Bird className="text-green-400 w-6 h-6" />;
-            case 'wing_fragment': return <Feather className="text-yellow-400 w-6 h-6" />;
-            default: return <Box className="text-slate-500 w-6 h-6" />;
-        }
-    };
 
     const getRarityColor = (rarity: string) => {
         switch (rarity) {
@@ -192,12 +94,14 @@ const InventoryModal: React.FC<InventoryModalProps> = ({ playerState, onClose, i
                         <div className="grid grid-cols-4 gap-2 mt-4">
                             {Object.entries(playerState.equipment).map(([slot, item]) => (
                                 item ? (
-                                    <div key={slot} className="w-10 h-10 border border-slate-700 bg-slate-900 rounded cursor-pointer relative group" onClick={() => onUnequip && onUnequip(slot as keyof Equipment)} title={`Çıkar: ${item.name}`}>
-                                        <div className="absolute -top-1 -right-1 bg-red-500 rounded-full w-3 h-3 flex items-center justify-center text-[8px] text-white opacity-0 group-hover:opacity-100">x</div>
-                                        <div className="flex items-center justify-center w-full h-full p-1 opacity-75 group-hover:opacity-100 transition-opacity">
-                                            {React.cloneElement(getItemIcon(item) as any, { size: 16 })}
+                                    <ItemTooltip key={slot} item={item}>
+                                        <div className="w-10 h-10 border border-slate-700 bg-slate-900 rounded cursor-pointer relative group" onClick={() => onUnequip && onUnequip(slot as keyof Equipment)} title={`Çıkar: ${item.name}`}>
+                                            <div className="absolute -top-1 -right-1 bg-red-500 rounded-full w-3 h-3 flex items-center justify-center text-[8px] text-white opacity-0 group-hover:opacity-100">x</div>
+                                            <div className="flex items-center justify-center w-full h-full p-1 opacity-75 group-hover:opacity-100 transition-opacity">
+                                                {renderItemIcon(item)}
+                                            </div>
                                         </div>
-                                    </div>
+                                    </ItemTooltip>
                                 ) : (
                                     <div key={slot} className="w-10 h-10 border border-slate-800 bg-black/20 rounded flex items-center justify-center text-[9px] text-slate-700 uppercase">
                                         {slot.substring(0, 2)}
@@ -269,9 +173,11 @@ const InventoryModal: React.FC<InventoryModalProps> = ({ playerState, onClose, i
                                                 return (
                                                     <div key={item.id + idx} className={`flex items-center justify-between p-3 bg-[#1a120b] border border-[#3f2e18] rounded-lg group hover:border-yellow-600 hover:bg-[#2a1f15] transition-all`}>
                                                         <div className="flex items-center gap-4">
-                                                            <div className={`w-12 h-12 rounded bg-black/40 border-2 flex items-center justify-center shadow-inner ${rarityClass}`}>
-                                                                {getItemIcon(item)}
-                                                            </div>
+                                                            <ItemTooltip item={item}>
+                                                                <div className={`w-12 h-12 rounded bg-black/40 border-2 flex items-center justify-center shadow-inner ${rarityClass}`}>
+                                                                    {renderItemIcon(item)}
+                                                                </div>
+                                                            </ItemTooltip>
                                                             <div>
                                                                 <div className="flex items-center gap-2">
                                                                     <span className={`font-bold text-sm ${item.rarity === 'legendary' ? 'text-orange-400' : item.rarity === 'ancient' ? 'text-purple-400' : 'text-[#e6cba5]'}`}>

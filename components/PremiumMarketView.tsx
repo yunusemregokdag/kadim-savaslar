@@ -8,9 +8,10 @@ interface PremiumMarketViewProps {
     playerState: PlayerState;
     onBuyData: (category: 'currency' | 'item' | 'subscription', id: string, cost: number, currency: 'real' | 'gold' | 'gems', amount?: number) => void;
     onClose: () => void;
+    isEmbedded?: boolean;
 }
 
-export const PremiumMarketView: React.FC<PremiumMarketViewProps> = ({ playerState, onBuyData, onClose }) => {
+export const PremiumMarketView: React.FC<PremiumMarketViewProps> = ({ playerState, onBuyData, onClose, isEmbedded = false }) => {
     const [activeTab, setActiveTab] = useState<'currency' | 'items' | 'subscription'>('items'); // Default to items to show skins first
 
     const PREMIUM_CURRENCY_PACKS = [
@@ -48,30 +49,32 @@ export const PremiumMarketView: React.FC<PremiumMarketViewProps> = ({ playerStat
     return (
         <div className="h-full flex flex-col bg-[#0f0a15] text-white">
             {/* Header */}
-            <div className="p-6 border-b border-purple-900/50 flex justify-between items-center bg-gradient-to-r from-purple-900/20 to-indigo-900/20">
-                <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-900/50">
-                        <Crown size={28} className="text-white animate-pulse" />
+            {!isEmbedded && (
+                <div className="p-6 border-b border-purple-900/50 flex justify-between items-center bg-gradient-to-r from-purple-900/20 to-indigo-900/20">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-purple-900/50">
+                            <Crown size={28} className="text-white animate-pulse" />
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-200 to-indigo-200 bg-clip-text text-transparent">Premium Market</h2>
+                            <p className="text-purple-300/60 text-sm">Destek ol, güçlen ve farkını ortaya koy!</p>
+                        </div>
                     </div>
-                    <div>
-                        <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-200 to-indigo-200 bg-clip-text text-transparent">Premium Market</h2>
-                        <p className="text-purple-300/60 text-sm">Destek ol, güçlen ve farkını ortaya koy!</p>
+                    <div className="flex gap-4">
+                        <div className="flex items-center gap-2 px-4 py-2 bg-slate-900 rounded border border-slate-700">
+                            <Coins size={16} className="text-yellow-400" />
+                            <span className="font-bold">{playerState.credits}</span>
+                        </div>
+                        <div className="flex items-center gap-2 px-4 py-2 bg-slate-900 rounded border border-slate-700">
+                            <Diamond size={16} className="text-cyan-400" />
+                            <span className="font-bold">{playerState.gems}</span>
+                        </div>
+                        <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                            X
+                        </button>
                     </div>
                 </div>
-                <div className="flex gap-4">
-                    <div className="flex items-center gap-2 px-4 py-2 bg-slate-900 rounded border border-slate-700">
-                        <Coins size={16} className="text-yellow-400" />
-                        <span className="font-bold">{playerState.credits}</span>
-                    </div>
-                    <div className="flex items-center gap-2 px-4 py-2 bg-slate-900 rounded border border-slate-700">
-                        <Diamond size={16} className="text-cyan-400" />
-                        <span className="font-bold">{playerState.gems}</span>
-                    </div>
-                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-                        X
-                    </button>
-                </div>
-            </div>
+            )}
 
             {/* Tabs */}
             <div className="flex border-b border-purple-900/30 px-6">

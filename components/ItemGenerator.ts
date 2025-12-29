@@ -150,7 +150,9 @@ CLASSES.forEach((charClass) => {
             classReq: charClass,
             levelReq,
             stats: { damage: stats.damage + tier * 5, critChance: tier },
-            visuals: v(weaponInfo.type, tierColor.primary, tierColor.glow)
+            visuals: v(weaponInfo.type, tierColor.primary, tierColor.glow),
+            durability: 100 + (tier - 1) * 20,
+            maxDurability: 100 + (tier - 1) * 20
         });
 
         // ARMOR (Gövde Zırhı)
@@ -163,7 +165,9 @@ CLASSES.forEach((charClass) => {
             classReq: charClass,
             levelReq,
             stats: { defense: stats.defense + tier * 3, hp: stats.hp },
-            visuals: { primaryColor: tierColor.primary, glowColor: tierColor.glow } as any
+            visuals: { primaryColor: tierColor.primary, glowColor: tierColor.glow } as any,
+            durability: 100 + (tier - 1) * 20,
+            maxDurability: 100 + (tier - 1) * 20
         });
 
         // HELMET (Miğfer)
@@ -176,7 +180,9 @@ CLASSES.forEach((charClass) => {
             classReq: charClass,
             levelReq,
             stats: { defense: Math.floor(stats.defense * 0.6), hp: Math.floor(stats.hp * 0.5) },
-            visuals: { primaryColor: tierColor.primary, glowColor: tierColor.glow } as any
+            visuals: { primaryColor: tierColor.primary, glowColor: tierColor.glow } as any,
+            durability: 100 + (tier - 1) * 20,
+            maxDurability: 100 + (tier - 1) * 20
         });
 
         // PANTS (Pantolon)
@@ -189,7 +195,9 @@ CLASSES.forEach((charClass) => {
             classReq: charClass,
             levelReq,
             stats: { defense: Math.floor(stats.defense * 0.7), hp: Math.floor(stats.hp * 0.3) },
-            visuals: { primaryColor: tierColor.primary, glowColor: tierColor.glow } as any
+            visuals: { primaryColor: tierColor.primary, glowColor: tierColor.glow } as any,
+            durability: 100 + (tier - 1) * 20,
+            maxDurability: 100 + (tier - 1) * 20
         });
     }
 });
@@ -210,7 +218,9 @@ for (let tier = 1; tier <= 5; tier++) {
         rarity,
         levelReq,
         stats: { defense: Math.floor(stats.defense * 0.5), hp: Math.floor(stats.hp * 0.2) },
-        visuals: { primaryColor: tierColor.primary, glowColor: tierColor.glow } as any
+        visuals: { primaryColor: tierColor.primary, glowColor: tierColor.glow } as any,
+        durability: 100 + (tier - 1) * 20,
+        maxDurability: 100 + (tier - 1) * 20
     });
 
     ALL_CLASS_ITEMS.push({
@@ -221,7 +231,9 @@ for (let tier = 1; tier <= 5; tier++) {
         rarity,
         levelReq,
         stats: { defense: Math.floor(stats.defense * 0.4), mana: stats.mana },
-        visuals: { primaryColor: tierColor.primary, glowColor: tierColor.glow } as any
+        visuals: { primaryColor: tierColor.primary, glowColor: tierColor.glow } as any,
+        durability: 100 + (tier - 1) * 20,
+        maxDurability: 100 + (tier - 1) * 20
     });
 }
 

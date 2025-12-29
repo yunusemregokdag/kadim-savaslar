@@ -63,6 +63,8 @@ export interface Item {
   visuals?: ItemVisuals; // Data-driven rendering
   classReq?: CharacterClass; // Class restriction
   setId?: string; // Set bonus ID
+  durability?: number;
+  maxDurability?: number;
 }
 
 export interface ItemStats {
@@ -148,6 +150,8 @@ export interface Item {
     buffType?: 'exp' | 'gold' | 'damage' | 'defense';
     duration?: number;
   };
+  durability?: number;
+  maxDurability?: number;
 }
 
 export interface ItemStats {
@@ -262,10 +266,14 @@ export interface PlayerState {
   exp: number;
   maxExp: number;
   credits: number;
-  gems: number;
+  gems: number;       // Farmable premium currency
+  donateCoins: number; // Real-money currency (non-tradable)
 
   honor: number;
-  premiumUntil?: number; // Timestamp for subscription expiry
+  vipUntil?: number;   // Timestamp for VIP subscription (separate from Premium)
+  vipTier?: number;    // 1=Silver, 2=Gold
+  lastVipClaim?: number; // Timestamp of last daily VIP bonus claim
+  premiumUntil?: number; // Legacy/Permanent Premium status
   premiumTier?: 'none' | 'bronze' | 'silver' | 'gold' | 'diamond'; // Premium tier
   premiumBenefits?: {
     expMultiplier: number;
@@ -280,6 +288,10 @@ export interface PlayerState {
   };
   rankPoints: number;
   rank: number;
+  dailyHonor: number; // Günlük honor (her gece sıfırlanır)
+  dailyAdsWatched: number; // Günlük izlenen reklam sayısı
+  extraMarketSlots?: number; // Satın alınan ekstra market slotları
+  extraStorage?: number;     // Satın alınan ekstra depo slotları
 
   questStage: number;
 
@@ -340,6 +352,12 @@ export interface GameEntity {
   defense?: number; // Reduces incoming damage
   damage?: number;  // Attack damage
   attackRange?: number; // Attack range
+
+  // Loot Rewards
+  exp?: number;
+  gold?: number;
+  diamond?: number;
+
   // Boss AI Data
   bossData?: {
     phase: 1 | 2 | 3;
@@ -408,7 +426,7 @@ export interface CraftingRecipe {
   category: 'weapon' | 'armor' | 'accessory' | 'consumable' | 'material';
 }
 
-export type NPCType = 'shop' | 'quest' | 'blacksmith' | 'healer' | 'guide' | 'merchant' | 'quest_giver' | 'arena_master' | 'guild_master';
+export type NPCType = 'shop' | 'quest' | 'blacksmith' | 'healer' | 'guide' | 'merchant' | 'quest_giver' | 'arena_master' | 'guild_master' | 'craftmaster';
 
 export interface NPCData {
   id: string;

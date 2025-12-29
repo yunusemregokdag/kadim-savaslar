@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Item, PlayerState, PetItem, WingItem } from '../types';
-import { ShoppingBasket, Shield, Sword, Box, DollarSign, X, Bird, Feather, Sparkles } from 'lucide-react';
+import { ShoppingBasket, Shield, Sword, Box, DollarSign, X, Bird, Sparkles } from 'lucide-react';
+import { renderItemIcon, PixelWing, PixelBox, PixelShield, PixelBird } from './ui/ItemIcons';
+import { ItemTooltip } from './ui/ItemTooltip';
 import { v4 as uuidv4 } from 'uuid';
 import { POTIONS, PETS_DATA, WINGS_DATA, ARMOR_SETS } from '../constants';
 
@@ -123,25 +125,25 @@ const NpcShopView: React.FC<NpcShopViewProps> = ({ playerState, onBuy, onBuyPet,
                     onClick={() => setFilter('consumable')}
                     className={`px-4 py-2 rounded text-xs font-bold transition-all flex items-center gap-2 ${filter === 'consumable' ? 'bg-amber-700 text-white' : 'bg-transparent text-amber-700 hover:bg-amber-900/20'}`}
                 >
-                    <Box size={14} /> TÜKETİM
+                    <div className="w-4 h-4"><PixelBox color="#f59e0b" /></div> TÜKETİM
                 </button>
                 <button
                     onClick={() => setFilter('gear')}
                     className={`px-4 py-2 rounded text-xs font-bold transition-all flex items-center gap-2 ${filter === 'gear' ? 'bg-amber-700 text-white' : 'bg-transparent text-amber-700 hover:bg-amber-900/20'}`}
                 >
-                    <Shield size={14} /> EKİPMAN
+                    <div className="w-4 h-4"><PixelShield color="#f59e0b" /></div> EKİPMAN
                 </button>
                 <button
                     onClick={() => setFilter('pets')}
                     className={`px-4 py-2 rounded text-xs font-bold transition-all flex items-center gap-2 ${filter === 'pets' ? 'bg-green-700 text-white' : 'bg-transparent text-green-700 hover:bg-green-900/20'}`}
                 >
-                    <Bird size={14} /> YOLDAŞLAR
+                    <div className="w-4 h-4"><PixelBird color="#22c55e" /></div> YOLDAŞLAR
                 </button>
                 <button
                     onClick={() => setFilter('wings')}
                     className={`px-4 py-2 rounded text-xs font-bold transition-all flex items-center gap-2 ${filter === 'wings' ? 'bg-purple-700 text-white' : 'bg-transparent text-purple-700 hover:bg-purple-900/20'}`}
                 >
-                    <Feather size={14} /> KANATLAR
+                    <div className="w-4 h-4"><PixelWing color="#a78bfa" /></div> KANATLAR
                 </button>
             </div>
 
@@ -160,7 +162,7 @@ const NpcShopView: React.FC<NpcShopViewProps> = ({ playerState, onBuy, onBuyPet,
                                 <div key={pet.id} className={`bg-[#291d18] border ${owned ? 'border-green-600' : 'border-[#4a3b32]'} p-3 rounded hover:border-amber-600 transition-colors group`}>
                                     <div className="flex gap-3">
                                         <div className="w-14 h-14 bg-black/40 rounded-lg flex items-center justify-center border border-[#3f2e26]" style={{ borderColor: pet.color }}>
-                                            <span className="text-2xl">🐾</span>
+                                            <Bird size={28} style={{ color: pet.color }} />
                                         </div>
                                         <div className="flex-1">
                                             <div className="flex items-center justify-between">
@@ -212,7 +214,7 @@ const NpcShopView: React.FC<NpcShopViewProps> = ({ playerState, onBuy, onBuyPet,
                                 <div key={wing.id} className={`bg-[#291d18] border ${owned ? 'border-purple-600' : 'border-[#4a3b32]'} p-3 rounded hover:border-amber-600 transition-colors group`}>
                                     <div className="flex gap-3">
                                         <div className="w-14 h-14 bg-black/40 rounded-lg flex items-center justify-center border border-[#3f2e26]" style={{ borderColor: wing.color }}>
-                                            <span className="text-2xl">🪽</span>
+                                            <div className="w-10 h-10"><PixelWing color={wing.color} /></div>
                                         </div>
                                         <div className="flex-1">
                                             <div className="flex items-center justify-between">
@@ -260,10 +262,8 @@ const NpcShopView: React.FC<NpcShopViewProps> = ({ playerState, onBuy, onBuyPet,
 
                             return (
                                 <div key={item.id} className="bg-[#291d18] border border-[#4a3b32] p-3 rounded flex gap-3 hover:border-amber-600 transition-colors group">
-                                    <div className="w-12 h-12 bg-black/40 rounded flex items-center justify-center border border-[#3f2e26] relative">
-                                        {item.type === 'consumable' ? <Box size={20} className="text-red-400" /> :
-                                            item.type === 'upgrade_scroll' ? <Sparkles size={20} className="text-blue-400" /> :
-                                                <Sword size={20} className="text-slate-400" />}
+                                    <div className="w-12 h-12 bg-black/40 rounded flex items-center justify-center border border-[#3f2e26] relative p-1">
+                                        {renderItemIcon(item)}
                                         {item.tier && <span className="absolute -top-1 -right-1 bg-slate-800 text-[8px] px-1 rounded text-amber-400">T{item.tier}</span>}
                                     </div>
                                     <div className="flex-1 flex flex-col justify-between">

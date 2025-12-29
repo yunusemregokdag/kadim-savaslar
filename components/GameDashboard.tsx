@@ -3,14 +3,19 @@ import { GameGuideModal } from './GameGuideModal';
 import { AssetLoader } from '../utils/AssetLoader';
 import { PlayerState, CharacterClass, Item, Equipment, Faction, Quest, Rank, WingItem, PetItem, HUDLayout, CraftingRecipe, DailyLoginState, Achievement, DailyLoginReward, Party, PartyMember, Guild, Trade } from '../types';
 import { CLASSES, LEVEL_XP_REQUIREMENTS, FACTIONS, QUEST_DATA, ZONE_CONFIG, RANKS, MOCK_LEADERBOARD, WINGS_DATA, PETS_DATA, CLASS_BASE_STATS, DEFAULT_HUD_LAYOUT, CLASS_STARTER_ITEMS } from '../constants';
+import { addExp, getExpForNextLevel } from '../utils/levelSystem';
 import SkillTree from './SkillTree';
 const ActiveZoneView = React.lazy(() => import('./ActiveZoneView')); // Lazy load to prevent immediate preload of assets
-import MarketView from './MarketView';
+import { MarketView } from './MarketView';
 import NpcShopView from './NpcShopView';
-import BlacksmithView from './BlacksmithView';
+import { BlacksmithView } from './BlacksmithView';
 import CraftingView from './CraftingView';
 import RecipeCraftingView from './RecipeCraftingView';
 import InventoryModal from './InventoryModal';
+import { PixelWing, PixelUser, PixelBackpack, PixelShield, PixelQuest, PixelUsers, PixelHammer, PixelMap, PixelTrophy, PixelCart, PixelSwords } from './ui/ItemIcons';
+import { ItemTooltip } from './ui/ItemTooltip';
+import { loadListings, getListings } from '../utils/marketSystem';
+import { loadDailyStats, getAllDailyStats } from '../utils/dailyLeaderboard';
 import StatPointsPanel from './StatPointsPanel';
 import { DailyLoginModal } from './DailyLoginModal';
 import { AchievementModal, DEFAULT_ACHIEVEMENTS } from './AchievementModal';
@@ -137,9 +142,13 @@ const RankBadge: React.FC<{ rankIndex: number, title: string, showTitle?: boolea
     );
 };
 
-const TabButton = ({ id, icon: Icon, label, activeTab, onClick }: any) => (
+const TabButton = ({ id, icon: Icon, pixelIcon, label, activeTab, onClick }: any) => (
     <button onClick={() => onClick(id)} className={`w-full p-3 rounded-lg flex flex-col md:flex-row items-center gap-3 transition-all ${activeTab === id ? 'bg-yellow-900/40 border border-yellow-700 text-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.2)]' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent'}`}>
-        <Icon size={20} className={activeTab === id ? 'animate-pulse' : ''} />
+        {pixelIcon ? (
+            <div className={`w-5 h-5 ${activeTab === id ? 'animate-pulse' : ''}`}>{pixelIcon}</div>
+        ) : (
+            <Icon size={20} className={activeTab === id ? 'animate-pulse' : ''} />
+        )}
         <span className={`text-xs md:text-sm font-bold hidden md:block ${activeTab === id ? 'text-yellow-100' : ''}`}>{label}</span>
     </button>
 );
@@ -350,7 +359,8 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
             return {
                 nickname: `[GM] ${nickname}`, class: charClass, faction: faction, guildName: 'YÖNETİM',
                 level: 30, exp: LEVEL_XP_REQUIREMENTS[29], maxExp: LEVEL_XP_REQUIREMENTS[29],
-                credits: 99000000, gems: 99000000, honor: 500000000, rankPoints: 500000000, rank: 19,
+                credits: 99000000, gems: 99000000, donateCoins: 999999, honor: 500000000, dailyHonor: 0, dailyAdsWatched: 0, rankPoints: 500000000, rank: 19,
+                vipUntil: Date.now() + (365 * 24 * 60 * 60 * 1000), // 1 Year VIP
                 questStage: 10, hp: 99999, maxHp: 99999, mana: 99999, maxMana: 99999, damage: 9999, defense: 9999,
                 strength: baseStats.str + 500, dexterity: baseStats.dex + 500, intelligence: baseStats.int + 500, vitality: baseStats.vit + 500, statPoints: 100,
                 inventory: adminInventory,
@@ -364,7 +374,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
 
         return {
             nickname, class: charClass, faction: faction, guildName: null,
-            level: 1, exp: 0, maxExp: LEVEL_XP_REQUIREMENTS[2], credits: 500, gems: 10, honor: 0, rankPoints: 0, rank: 0,
+            level: 1, exp: 0, maxExp: LEVEL_XP_REQUIREMENTS[2], credits: 500, gems: 10, donateCoins: 0, honor: 0, dailyHonor: 0, dailyAdsWatched: 0, rankPoints: 0, rank: 0,
             questStage: 1, hp: baseStats.vit * 10, maxHp: baseStats.vit * 10, mana: baseStats.int * 20, maxMana: baseStats.int * 20,
             damage: baseStats.str * 2, defense: baseStats.vit,
             strength: baseStats.str, dexterity: baseStats.dex, intelligence: baseStats.int, vitality: baseStats.vit, statPoints: 0,
@@ -378,6 +388,40 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
 
     const [playerStats, setPlayerStats] = useState<PlayerState>(getInitialState());
     const [activeTab, setActiveTab] = useState<string>('character');
+    const [marketSubTab, setMarketSubTab] = useState<'npc' | 'player' | 'premium'>('npc');
+    const [showMarket, setShowMarket] = useState(false);
+
+    // --- PERSISTENCE LOGIC ---
+    useEffect(() => {
+        // Load persist data on mount
+        const savedListings = localStorage.getItem('market_listings');
+        if (savedListings) {
+            try { loadListings(JSON.parse(savedListings)); } catch (e) { console.error('Load listings fail', e); }
+        }
+
+        const savedDailyStats = localStorage.getItem('daily_rank_stats');
+        if (savedDailyStats) {
+            try { loadDailyStats(JSON.parse(savedDailyStats)); } catch (e) { console.error('Load stats fail', e); }
+        }
+
+        // Save on basic interactions (using unload event primarily)
+        const handleBeforeUnload = () => {
+            localStorage.setItem('market_listings', JSON.stringify(getListings()));
+            localStorage.setItem('daily_rank_stats', JSON.stringify(getAllDailyStats()));
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, []);
+
+    // Periodic Save (Safety)
+    useEffect(() => {
+        const timer = setInterval(() => {
+            localStorage.setItem('market_listings', JSON.stringify(getListings()));
+            localStorage.setItem('daily_rank_stats', JSON.stringify(getAllDailyStats()));
+        }, 10000); // 10 sec autosave
+        return () => clearInterval(timer);
+    }, []);
 
     // --- LOAD DATA ---
     useEffect(() => {
@@ -474,7 +518,42 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
         setPlayerStats(prev => {
             let newInv = [...prev.inventory];
             if (item) newInv.push(item);
-            return { ...prev, credits: prev.credits + gold, exp: prev.exp + xp, honor: prev.honor + honor, inventory: newInv };
+
+            // Use levelSystem for EXP/Level calculation
+            const expResult = addExp(prev.exp, prev.level, xp);
+
+            // Play level up sound for each level gained
+            if (expResult.didLevelUp) {
+                for (let i = 0; i < expResult.levelsGained; i++) {
+                    soundManager.playSFX('level_up');
+                }
+            }
+
+            // Calculate new honor
+            const newHonor = prev.honor + honor;
+            const newDailyHonor = (prev.dailyHonor || 0) + honor;
+
+            // RANK RECALCULATION based on honor
+            let newRank = prev.rank;
+            for (let i = RANKS.length - 1; i >= 0; i--) {
+                if (newHonor >= RANKS[i].minRP) {
+                    newRank = RANKS[i].id;
+                    break;
+                }
+            }
+
+            return {
+                ...prev,
+                credits: prev.credits + gold,
+                exp: expResult.newExp,
+                level: expResult.newLevel,
+                statPoints: prev.statPoints + expResult.statPointsGained,
+                maxExp: getExpForNextLevel(expResult.newLevel),
+                honor: newHonor,
+                dailyHonor: newDailyHonor,
+                rank: newRank,
+                inventory: newInv
+            };
         });
     };
 
@@ -779,8 +858,107 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
 
         socketRef.current.emit('chat_message', { text, channel, sender: nickname });
     };
-    const handleQuestProgress = () => { };
-    const handleClaimQuest = () => { };
+
+    // Quest Progress Handler - tracks kills and checks completion
+    const handleQuestProgress = (enemyName?: string) => {
+        setPlayerStats(prev => {
+            const currentStage = prev.questStage || 1;
+            const questData = QUEST_DATA[currentStage];
+            if (!questData) return prev; // No more quests
+
+            // Get current progress (use activeQuest or create from QUEST_DATA)
+            const currentQuest: Quest = prev.activeQuest || {
+                id: `quest_${currentStage}`,
+                title: questData.title || '',
+                description: questData.description || '',
+                targetEnemyName: '',  // Any enemy counts
+                requiredCount: questData.requiredCount || 10,
+                currentCount: 0,
+                rewardGold: questData.rewardGold || 0,
+                rewardXp: questData.rewardXp || 0,
+                rewardHonor: questData.rewardHonor || 0,
+                isCompleted: false
+            };
+
+            // Increment progress
+            const newCount = currentQuest.currentCount + 1;
+            const isComplete = newCount >= currentQuest.requiredCount;
+
+            return {
+                ...prev,
+                activeQuest: {
+                    ...currentQuest,
+                    currentCount: newCount,
+                    isCompleted: isComplete
+                }
+            };
+        });
+    };
+
+    // Claim Quest Reward Handler
+    const handleClaimQuest = () => {
+        setPlayerStats(prev => {
+            if (!prev.activeQuest?.isCompleted) return prev;
+
+            const reward = prev.activeQuest;
+            const nextStage = (prev.questStage || 1) + 1;
+            const nextQuestData = QUEST_DATA[nextStage];
+
+            // Grant rewards
+            let newExp = prev.exp + (reward.rewardXp || 0);
+            let newCredits = prev.credits + (reward.rewardGold || 0);
+            let newHonor = prev.honor + (reward.rewardHonor || 0);
+            let newLevel = prev.level;
+            let newStatPoints = prev.statPoints;
+            let newMaxExp = prev.maxExp;
+
+            // Check level up from quest XP
+            while (newLevel < 30 && newExp >= LEVEL_XP_REQUIREMENTS[newLevel + 1]) {
+                newLevel++;
+                newStatPoints += 5;
+                newMaxExp = LEVEL_XP_REQUIREMENTS[newLevel + 1] || LEVEL_XP_REQUIREMENTS[30];
+                soundManager.playSFX('level_up');
+            }
+
+            // Recalculate rank with new honor
+            let newRank = prev.rank;
+            for (let i = RANKS.length - 1; i >= 0; i--) {
+                if (newHonor >= RANKS[i].minRP) {
+                    newRank = RANKS[i].id;
+                    break;
+                }
+            }
+
+            // Setup next quest or null if done
+            const nextQuest: Quest | null = nextQuestData ? {
+                id: `quest_${nextStage}`,
+                title: nextQuestData.title || '',
+                description: nextQuestData.description || '',
+                targetEnemyName: '',
+                requiredCount: nextQuestData.requiredCount || 10,
+                currentCount: 0,
+                rewardGold: nextQuestData.rewardGold || 0,
+                rewardXp: nextQuestData.rewardXp || 0,
+                rewardHonor: nextQuestData.rewardHonor || 0,
+                isCompleted: false
+            } : null;
+
+            soundManager.playSFX('quest_complete');
+
+            return {
+                ...prev,
+                exp: newExp,
+                level: newLevel,
+                statPoints: newStatPoints,
+                maxExp: newMaxExp,
+                credits: newCredits,
+                honor: newHonor,
+                rank: newRank,
+                questStage: nextStage,
+                activeQuest: nextQuest
+            };
+        });
+    };
 
     // NOT: Early return kullanmıyoruz çünkü React Hook kurallarını ihlal eder (Error #310)
     // Bunun yerine aşağıda conditional rendering kullanıyoruz
@@ -806,10 +984,14 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
     }, [loading, activeZone]);
 
     const loadingScreen = (
-        <div className="h-full w-full flex flex-col items-center justify-center bg-slate-950 relative overflow-hidden">
-            {/* Background Atmosphere */}
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-20 animate-pulse"></div>
-            <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 via-slate-900/80 to-slate-950"></div>
+        <div className="h-full w-full flex flex-col items-center justify-center relative overflow-hidden">
+            {/* Full-screen fixed background image */}
+            <div
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                style={{ backgroundImage: "url('/images/loading_bg.jpg')" }}
+            />
+            {/* Dark overlay for readability */}
+            <div className="absolute inset-0 bg-black/60" />
 
             {/* Central Content */}
             <div className="relative z-10 flex flex-col items-center text-center max-w-lg px-4">
@@ -898,10 +1080,20 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                         onOpenCrafting={() => setShowCrafting(true)}
                         onQuickPotion={() => { }}
                         onInteraction={(type, id) => { if (type === 'portal') setActiveZone(Number(id) || null); }}
+                        onOpenMarket={() => setShowMarket(true)}
                         isAdmin={isAdmin}
                     />
                 </Suspense>
             </ErrorBoundary>
+
+            {/* Market View Overlay */}
+            {showMarket && (
+                <MarketView
+                    playerState={playerStats}
+                    onClose={() => setShowMarket(false)}
+                    onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
+                />
+            )}
 
             {/* Trade Modal Overlay */}
             {activeTrade && (
@@ -980,18 +1172,18 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                     <aside className="w-20 md:w-64 bg-slate-900 border-r border-slate-800 flex flex-col py-6 gap-2 px-2 md:px-4 overflow-hidden">
                         <nav className="flex flex-col gap-2 h-full overflow-y-auto pr-1 custom-scrollbar">
                             <button onClick={() => setActiveZone(startingMap || 11)} className="w-full p-3 rounded-lg flex flex-col md:flex-row items-center gap-3 transition-all text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent">
-                                <Swords size={20} /><span className="text-xs md:text-sm font-bold hidden md:block">OYUNA GİR</span>
+                                <div className="w-5 h-5"><PixelSwords color="#ef4444" /></div><span className="text-xs md:text-sm font-bold hidden md:block">OYUNA GİR</span>
                             </button>
-                            <TabButton id="character" icon={User} label="Karakter" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="inventory" icon={Package} label="Envanter" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="skills" icon={Shield} label="Yetenekler" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="quests" icon={Scroll} label="Görevler" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="party" icon={UserPlus} label="Parti" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="guild" icon={Users} label="Lonca" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="market" icon={ShoppingBag} label="Pazar" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="blacksmith" icon={Hammer} label="Demirci" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="map" icon={MapIcon} label="Harita" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="leaderboard" icon={Trophy} label="Sıralama" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="character" pixelIcon={<PixelUser color="#60a5fa" />} label="Karakter" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="inventory" pixelIcon={<PixelBackpack color="#f59e0b" />} label="Envanter" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="skills" pixelIcon={<PixelShield color="#3b82f6" />} label="Yetenekler" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="quests" pixelIcon={<PixelQuest color="#fbbf24" />} label="Görevler" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="party" pixelIcon={<PixelUsers color="#8b5cf6" />} label="Parti" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="guild" pixelIcon={<PixelUsers color="#a855f7" />} label="Lonca" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="market" pixelIcon={<PixelCart color="#f59e0b" />} label="Pazar" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="blacksmith" pixelIcon={<PixelHammer color="#94a3b8" />} label="Demirci" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="map" pixelIcon={<PixelMap color="#22c55e" />} label="Harita" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="leaderboard" pixelIcon={<PixelTrophy color="#fbbf24" />} label="Sıralama" activeTab={activeTab} onClick={setActiveTab} />
                         </nav>
                     </aside>
 
@@ -1099,12 +1291,12 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                                         {/* Kanat Bölümü */}
                                         <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-4 border border-slate-700">
                                             <h3 className="text-lg font-bold text-white flex items-center gap-2 mb-3">
-                                                🪽 Kanat
+                                                <div className="w-5 h-5"><PixelWing color="#a78bfa" /></div> Kanat
                                             </h3>
                                             {playerStats.equippedWing ? (
                                                 <div className="flex items-center gap-4 p-3 bg-purple-600/20 rounded-lg border border-purple-600/30">
-                                                    <div className="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center text-2xl">
-                                                        🪽
+                                                    <div className="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center">
+                                                        <div className="w-8 h-8"><PixelWing color={playerStats.equippedWing.color || '#a78bfa'} /></div>
                                                     </div>
                                                     <div className="flex-1">
                                                         <div className="font-bold text-purple-400">{playerStats.equippedWing.name}</div>
@@ -1132,17 +1324,18 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                                                     <div className="text-xs text-slate-400 mb-2">Sahip Olduğun Kanatlar:</div>
                                                     <div className="grid grid-cols-3 gap-2">
                                                         {playerStats.ownedWings.map(wing => (
-                                                            <button
-                                                                key={wing.id}
-                                                                onClick={() => setPlayerStats(prev => ({ ...prev, equippedWing: prev.equippedWing?.id === wing.id ? null : wing }))}
-                                                                className={`p-2 rounded-lg border text-center transition-all ${playerStats.equippedWing?.id === wing.id
-                                                                    ? 'bg-purple-600/30 border-purple-500'
-                                                                    : 'bg-slate-800 border-slate-600 hover:border-purple-500'
-                                                                    }`}
-                                                            >
-                                                                <div className="text-lg">🪽</div>
-                                                                <div className="text-[10px] text-slate-300 truncate">{wing.name}</div>
-                                                            </button>
+                                                            <ItemTooltip key={wing.id} item={wing}>
+                                                                <button
+                                                                    onClick={() => setPlayerStats(prev => ({ ...prev, equippedWing: prev.equippedWing?.id === wing.id ? null : wing }))}
+                                                                    className={`p-2 rounded-lg border text-center transition-all ${playerStats.equippedWing?.id === wing.id
+                                                                        ? 'bg-purple-600/30 border-purple-500'
+                                                                        : 'bg-slate-800 border-slate-600 hover:border-purple-500'
+                                                                        }`}
+                                                                >
+                                                                    <div className="w-8 h-8"><PixelWing color={wing.color || '#a78bfa'} /></div>
+                                                                    <div className="text-[10px] text-slate-300 truncate">{wing.name}</div>
+                                                                </button>
+                                                            </ItemTooltip>
                                                         ))}
                                                     </div>
                                                 </div>
@@ -1185,82 +1378,87 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                         )}
 
                         {activeTab === 'market' && (
-                            <NpcShopView
+                            <div className="flex flex-col h-full bg-slate-900/50 rounded-xl overflow-hidden md:p-4">
+                                {/* SUB TABS */}
+                                <div className="flex gap-2 md:gap-4 mb-4 border-b border-white/10 pb-2 px-2 overflow-x-auto">
+                                    <button onClick={() => setMarketSubTab('npc')} className={`px-4 py-2 font-bold rounded transition-colors whitespace-nowrap ${marketSubTab === 'npc' ? 'bg-amber-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Köy Pazarı</button>
+                                    <button onClick={() => setMarketSubTab('player')} className={`px-4 py-2 font-bold rounded transition-colors whitespace-nowrap ${marketSubTab === 'player' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Oyuncu Pazarı</button>
+                                    <button onClick={() => setMarketSubTab('premium')} className={`px-4 py-2 font-bold rounded transition-colors whitespace-nowrap ${marketSubTab === 'premium' ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Mağaza</button>
+                                </div>
+
+                                <div className="flex-1 relative overflow-hidden rounded-lg bg-slate-900 border border-slate-700">
+                                    {marketSubTab === 'npc' && (
+                                        <NpcShopView
+                                            playerState={playerStats}
+                                            onBuy={(item, cost) => {
+                                                if (playerStats.credits >= cost) {
+                                                    setPlayerStats(prev => ({
+                                                        ...prev,
+                                                        credits: prev.credits - cost,
+                                                        inventory: [...prev.inventory, item]
+                                                    }));
+                                                    soundManager.playSFX('coin');
+                                                }
+                                            }}
+                                            onBuyPet={handleBuyPet}
+                                            onBuyWing={handleBuyWing}
+                                            onClose={() => setActiveTab('skills')}
+                                        />
+                                    )}
+                                    {marketSubTab === 'player' && (
+                                        <MarketView
+                                            playerState={playerStats}
+                                            onClose={() => { }}
+                                            onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
+                                            isEmbedded={true}
+                                        />
+                                    )}
+                                    {marketSubTab === 'premium' && (
+                                        <PremiumMarketView
+                                            playerState={playerStats}
+                                            onBuyData={(category, id, cost, currency, amount) => {
+                                                setPlayerStats(prev => {
+                                                    const updates: any = {};
+                                                    let currentCredits = prev.credits;
+                                                    let currentGems = prev.gems;
+
+                                                    let success = false;
+                                                    if (currency === 'gold' && currentCredits >= cost) { updates.credits = currentCredits - cost; success = true; }
+                                                    else if (currency === 'gems' && currentGems >= cost) { updates.gems = currentGems - cost; success = true; }
+                                                    else if (currency === 'real') { success = true; }
+
+                                                    if (!success) return prev;
+
+                                                    if (category === 'currency') {
+                                                        if (id.includes('gold')) updates.credits = (updates.credits ?? currentCredits) + (amount || 0);
+                                                        else updates.gems = (updates.gems ?? currentGems) + (amount || 0);
+                                                    } else if (category === 'item') {
+                                                        const skins = prev.ownedSkins || [];
+                                                        if (!skins.includes(id)) updates.ownedSkins = [...skins, id];
+                                                    } else if (category === 'subscription') {
+                                                        updates.vipStatus = { tier: 1, expiresAt: Date.now() + 2592000000 };
+                                                        updates.gems = (updates.gems ?? currentGems) + 50;
+                                                    }
+                                                    return { ...prev, ...updates };
+                                                });
+                                                soundManager.playSFX('coin');
+                                            }}
+                                            onClose={() => { }}
+                                            isEmbedded={true}
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                        {activeTab === 'blacksmith' && (
+                            <BlacksmithView
+                                isOpen={true}
                                 playerState={playerStats}
-                                onBuy={(item, cost) => {
-                                    if (playerStats.credits >= cost) {
-                                        setPlayerStats(prev => ({
-                                            ...prev,
-                                            credits: prev.credits - cost,
-                                            inventory: [...prev.inventory, item]
-                                        }));
-                                        soundManager.playSFX('coin');
-                                    }
-                                }}
-                                onBuyPet={handleBuyPet}
-                                onBuyWing={handleBuyWing}
-                                onClose={() => setActiveTab('skills')}
+                                onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
+                                onClose={() => setActiveTab('character')}
+                                isEmbedded={true}
                             />
                         )}
-                        {activeTab === 'blacksmith' && <BlacksmithView playerState={playerStats} onUpgrade={(item, scroll) => {
-                            // KNIGHT ONLINE TARZI ZOR GÜÇLENDİRME SİSTEMİ
-                            // +7'den sonra çok zor - item pazarı değerli olsun!
-                            const currentPlus = item.plus || 0;
-
-                            // Başarı Oranları (ULTRA ZOR - Knight Online hardcore!)
-                            const SUCCESS_RATES: Record<number, number> = {
-                                0: 100, 1: 100, 2: 100, 3: 100, // +0 → +3: Garanti
-                                4: 60,   // +4: %60
-                                5: 35,   // +5: %35
-                                6: 15,   // +6: %15
-                                7: 5,    // +7: %5 (ÇOK ZOR!)
-                                8: 2,    // +8: %2
-                                9: 1,    // +9: %1
-                                10: 0.5, // +10: %0.5
-                                11: 0.2, // +11: %0.2
-                                12: 0.1, // +12: %0.1 (EFSANE!)
-                            };
-
-                            // Yanma Oranları (+5'ten itibaren yanma riski!)
-                            const BURN_RATES: Record<number, number> = {
-                                5: 10,   // +5: %10 yanma
-                                6: 20,   // +6: %20 yanma
-                                7: 35,   // +7: %35 yanma
-                                8: 50,   // +8: %50 yanma
-                                9: 60,   // +9: %60 yanma
-                                10: 70,  // +10: %70 yanma
-                                11: 80,  // +11: %80 yanma
-                                12: 90,  // +12: %90 yanma
-                            };
-
-                            const successRate = SUCCESS_RATES[currentPlus] ?? 0.1;
-                            const burnRate = BURN_RATES[currentPlus] ?? 0;
-
-                            const roll = Math.random() * 100;
-                            const isSuccess = roll < successRate;
-                            const isBurned = !isSuccess && burnRate > 0 && (Math.random() * 100) < burnRate;
-
-                            if (isSuccess) {
-                                // BAŞARILI! Item seviye atladı
-                                const newPlus = currentPlus + 1;
-                                const updatedInventory = playerStats.inventory.map((i: any) =>
-                                    i.id === item.id ? { ...i, plus: newPlus } : i
-                                );
-                                const finalInventory = updatedInventory.filter((i: any) => i.id !== scroll.id);
-                                setPlayerStats({ ...playerStats, inventory: finalInventory });
-                                return { success: true, burned: false, newPlus };
-                            } else if (isBurned) {
-                                // YANDI! Item yok oldu
-                                const finalInventory = playerStats.inventory.filter((i: any) => i.id !== item.id && i.id !== scroll.id);
-                                setPlayerStats({ ...playerStats, inventory: finalInventory });
-                                return { success: false, burned: true, newPlus: 0 };
-                            } else {
-                                // BAŞARISIZ! Sadece scroll harcandı
-                                const finalInventory = playerStats.inventory.filter((i: any) => i.id !== scroll.id);
-                                setPlayerStats({ ...playerStats, inventory: finalInventory });
-                                return { success: false, burned: false, newPlus: currentPlus };
-                            }
-                        }} onClose={() => setActiveTab('skills')} />}
                         {activeTab === 'map' && <div className="w-full h-full flex flex-col items-center"><h2 className="text-3xl rpg-font text-yellow-500 mb-6 flex items-center gap-3"><MapIcon size={32} /> HARİTA</h2><div className="w-full max-w-5xl"><SchematicMap activeZone={startingMap} onZoneSelect={(id) => setActiveZone(id)} /></div></div>}
                         {activeTab === 'leaderboard' && <LeaderboardView onJoinGuild={handleJoinGuild} />}
                     </main>

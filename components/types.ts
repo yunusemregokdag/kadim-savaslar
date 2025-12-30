@@ -136,7 +136,9 @@ export interface HUDElement {
   x: number; // Percentage 0-100
   y: number; // Percentage 0-100
   scale: number; // 0.5 to 2.0
+  opacity: number; // 0.0 to 1.0
   enabled: boolean;
+  locked: boolean;
 }
 
 // Flexible Layout for separate customization

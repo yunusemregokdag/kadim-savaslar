@@ -512,42 +512,40 @@ export const DEFAULT_HUD_LAYOUT: HUDLayout = {
     elements: {
         // ═══════════ SOL TARAF ═══════════
         // Profile - Sol üst köşe (Seviye, İsim, HP/MP barları)
-        profile: { x: 2, y: 2, scale: 1, enabled: true },
+        profile: { x: 2, y: 2, scale: 1, opacity: 1, enabled: true, locked: false },
 
         // Quest Tracker - Profilin hemen altında
-        quest: { x: 2, y: 14, scale: 1, enabled: true },
+        quest: { x: 2, y: 14, scale: 1, opacity: 0.9, enabled: true, locked: false },
 
         // Chat - Quest'in altında (Genel/Parti/Klan sekmeleri)
-        chat: { x: 2, y: 28, scale: 1, enabled: true },
+        chat: { x: 2, y: 35, scale: 1, opacity: 0.8, enabled: true, locked: false },
 
         // Joystick - Sol alt köşe (sabit)
-        joystick: { x: 8, y: 75, scale: 1, enabled: true },
+        joystick: { x: 8, y: 75, scale: 1, opacity: 0.8, enabled: true, locked: false },
 
         // ═══════════ SAĞ ÜST ═══════════
         // Map + Menu Buttons - Sağ üst köşe (Minimap, Zone ismi, butonlar)
-        map: { x: 72, y: 2, scale: 1, enabled: true },
+        map: { x: 72, y: 2, scale: 1, opacity: 1, enabled: true, locked: false },
 
         // ═══════════ SAĞ TARAF SKİLL'LER ═══════════
         // Eye Button (Free Look) - Sağ orta
-        eye: { x: 92, y: 30, scale: 1, enabled: true },
+        eye: { x: 92, y: 30, scale: 0.85, opacity: 1, enabled: true, locked: false },
 
         // HP/MP Potları - Eye'ın altında
-        hp_pot: { x: 92, y: 38, scale: 0.85, enabled: true },
-        mp_pot: { x: 92, y: 46, scale: 0.85, enabled: true },
-        potions: { x: 92, y: 38, scale: 0.9, enabled: true },
+        hp_pot: { x: 92, y: 38, scale: 0.9, opacity: 1, enabled: true, locked: false },
+        mp_pot: { x: 92, y: 46, scale: 0.9, opacity: 1, enabled: true, locked: false },
 
         // Skills - Dikey sıralı, sağ tarafta (ekran içinde)
-        skill1: { x: 70, y: 30, scale: 1, enabled: true },
-        skill2: { x: 70, y: 38, scale: 1, enabled: true },
-        skill3: { x: 70, y: 46, scale: 1, enabled: true },
-        skill4: { x: 70, y: 54, scale: 1, enabled: true },
-        skill5: { x: 70, y: 62, scale: 1, enabled: true },
-        skill6: { x: 70, y: 70, scale: 1, enabled: true },
-        skill7: { x: 70, y: 78, scale: 1, enabled: true },
+        skill1: { x: 70, y: 30, scale: 1, opacity: 1, enabled: true, locked: false },
+        skill2: { x: 70, y: 38, scale: 1, opacity: 1, enabled: true, locked: false },
+        skill3: { x: 70, y: 46, scale: 1, opacity: 1, enabled: true, locked: false },
+        skill4: { x: 70, y: 54, scale: 1, opacity: 1, enabled: true, locked: false },
+        skill5: { x: 70, y: 62, scale: 1, opacity: 1, enabled: true, locked: false },
+        skill6: { x: 70, y: 70, scale: 1, opacity: 1, enabled: true, locked: false },
 
         // ═══════════ SAĞ ALT ═══════════
         // Attack Button - Sağ alt köşe (büyük kırmızı, ekran içinde)
-        attack: { x: 85, y: 75, scale: 1.2, enabled: true },
+        attack: { x: 85, y: 75, scale: 1.2, opacity: 1, enabled: true, locked: false },
     }
 };
 

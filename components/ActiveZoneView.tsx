@@ -9,8 +9,9 @@ import { io, Socket } from 'socket.io-client';
 import { PlayerState, GameEntity, LootLog, FloatingText, LootBox, Item, Equipment, Portal, ChatMessage, HUDElement, HUDLayout, EntityType, Skill, NPCData } from '../types';
 import { soundManager } from './SoundManager';
 import { ZONE_CONFIG, RANKS, CLASSES, LEVEL_XP_REQUIREMENTS, DEFAULT_HUD_LAYOUT, ZONE_REWARDS, ALL_CLASS_ITEMS, DEFAULT_ZONE_REWARD, ACHIEVEMENTS_LIST } from '../constants';
-import { Swords, Shield, Zap, ShoppingBag, Backpack, X, Wind, Skull, Target, Droplet, Flame, Send, Clock, Hammer, MessageSquare, Minus, Crosshair, Map as MapIcon, Settings as SettingsIcon, Crown, Star, ArrowRight, ZoomIn, Globe, AlertTriangle, Navigation, Info, Compass, Plus, Smartphone, Monitor, ChevronDown, ChevronUp, Move, RotateCw, Eye, Book, Users, Trophy, Scroll } from 'lucide-react';
+import { Swords, Shield, Zap, ShoppingBag, Backpack, X, Wind, Skull, Target, Droplet, Flame, Send, Clock, Hammer, MessageSquare, Minus, Crosshair, Map as MapIcon, Settings as SettingsIcon, Crown, Star, ArrowRight, ZoomIn, Globe, AlertTriangle, Navigation, Info, Compass, Plus, Smartphone, Monitor, ChevronDown, ChevronUp, Move, RotateCw, Eye, Book, Users, Trophy, Scroll, Lock, Unlock } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+import { GameVFXOverlay, vfxManager } from './VFXSystem';
 import { VoxelSpartan } from './VoxelSpartan';
 import InventoryModal from './InventoryModal';
 import { PlayerStall } from './PlayerStall';
@@ -117,11 +118,13 @@ interface DraggableHUDElementProps {
     id: string;
     element: HUDElement;
     isEditing: boolean;
+    isSelected: boolean;
+    onSelect: (id: string) => void;
     onDragStart: (e: React.MouseEvent | React.TouchEvent, id: string) => void;
     children: React.ReactNode;
 }
 
-const DraggableHUDElement: React.FC<DraggableHUDElementProps> = ({ id, element, isEditing, onDragStart, children }) => {
+const DraggableHUDElement: React.FC<DraggableHUDElementProps> = ({ id, element, isEditing, isSelected, onSelect, onDragStart, children }) => {
     // If not enabled and not editing, hide it. If editing, show it even if disabled (to allow enabling/moving) - or keep logic simple:
     if (!element.enabled && !isEditing) return null;
 
@@ -150,21 +153,39 @@ const DraggableHUDElement: React.FC<DraggableHUDElementProps> = ({ id, element, 
         positionStyle.top = `${clampedY}%`;
     }
 
+    // Apply scale and opacity from element config
+    const transformStyle = {
+        transform: `scale(${element.scale})`,
+        opacity: isEditing ? 1 : (element.opacity ?? 1), // Always full opacity while editing to see it
+    };
+
     return (
         <div
-            className={`absolute transition-transform origin-center select-none ${isEditing ? 'z-[100] cursor-move' : 'z-50'}`}
+            className={`absolute transition-transform origin-center select-none ${isEditing ? 'z-[100] cursor-pointer' : 'z-50'}`}
             style={{
                 ...positionStyle,
-                transform: `scale(${element.scale})`,
+                ...transformStyle
             }}
-            onMouseDown={(e) => isEditing && onDragStart(e, id)}
-            onTouchStart={(e) => isEditing && onDragStart(e, id)}
+            onMouseDown={(e) => {
+                if (isEditing) {
+                    e.stopPropagation(); // Prevent map click etc
+                    onSelect(id);
+                    if (!element.locked) onDragStart(e, id);
+                }
+            }}
+            onTouchStart={(e) => {
+                if (isEditing) {
+                    e.stopPropagation();
+                    onSelect(id);
+                    if (!element.locked) onDragStart(e, id);
+                }
+            }}
         >
             {isEditing && (
-                <div className="absolute inset-0 border-2 border-yellow-500 bg-yellow-500/20 rounded-lg flex items-center justify-center pointer-events-none">
-                    <Move size={24} className="text-white drop-shadow-md opacity-80 animate-pulse" />
-                    <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-yellow-600 text-[10px] text-white px-1.5 py-0.5 rounded font-bold uppercase shadow whitespace-nowrap">
-                        {id}
+                <div className={`absolute inset-0 border-2 rounded-lg flex items-center justify-center pointer-events-none ${isSelected ? 'border-green-500 bg-green-500/30 shadow-[0_0_15px_green]' : 'border-yellow-500 bg-yellow-500/20'} ${element.locked ? 'border-red-500' : ''}`}>
+                    {element.locked ? <div className="text-red-500"><Lock size={24} /></div> : <Move size={24} className={`text-white drop-shadow-md opacity-80 ${isSelected ? 'animate-bounce' : 'animate-pulse'}`} />}
+                    <div className={`absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] text-white px-1.5 py-0.5 rounded font-bold uppercase shadow whitespace-nowrap ${isSelected ? 'bg-green-600' : 'bg-yellow-600'}`}>
+                        {id} {element.locked && '(KİLİTLİ)'}
                     </div>
                 </div>
             )}
@@ -1573,6 +1594,7 @@ const GameScene: React.FC<GameSceneProps> = ({
             ))}
 
             <Ground color={zoneColor} zoneId={zoneId} showGrid={false} />
+            <GameVFXOverlay />
             <BorderWalls limit={borderLimit} />
             {decorations.map(d => (<DecorationMesh key={d.id} id={d.id} type={d.type} pos={d.pos} scale={d.scale} color={d.color} rotation={d.rotation} onClick={handleGather} />))}
 
@@ -1610,23 +1632,35 @@ const GameScene: React.FC<GameSceneProps> = ({
 
                 {playerStats?.settings?.showNames && (
                     <Html position={[0, 2.8, 0]} center zIndexRange={[50, 0]}>
-                        <div className="flex flex-col items-center pointer-events-none whitespace-nowrap">
-                            <div className="text-[10px] font-bold text-white bg-black/50 px-2 rounded backdrop-blur-sm border border-slate-600 mb-1">
-                                {playerStats.guildName ? <span className="text-yellow-400">[{playerStats.guildName}] </span> : ''}
-                                <span style={{
-                                    color: playerStats.settings.nameColor || 'white',
-                                    textShadow: playerStats.settings.nameColor ? `0 0 8px ${playerStats.settings.nameColor}` : 'none'
-                                }}>
-                                    {playerStats.nickname}
-                                </span>
-                            </div>
-                            <div className="w-12 h-1 bg-black border border-slate-700 rounded-full overflow-hidden mb-0.5">
-                                <div className="h-full bg-red-600" style={{ width: `${(playerStats.hp / playerStats.maxHp) * 100}%` }} />
-                            </div>
-                            <div className="w-12 h-1 bg-black border border-slate-700 rounded-full overflow-hidden">
-                                <div className="h-full bg-blue-600" style={{ width: `${(playerStats.mana / playerStats.maxMana) * 100}%` }} />
-                            </div>
-                        </div>
+                        {(() => {
+                            const isVip = (playerStats.premiumUntil && playerStats.premiumUntil > Date.now()) ||
+                                playerStats.nickname.includes('[GM]') ||
+                                playerStats.nickname.includes('[YÖNETİM]');
+
+                            return (
+                                <div className="flex flex-col items-center pointer-events-none whitespace-nowrap">
+                                    <div className={`text-[10px] font-bold px-2 py-0.5 rounded backdrop-blur-sm border mb-1 flex items-center gap-1 ${isVip
+                                        ? 'bg-gradient-to-r from-amber-900/90 to-yellow-900/90 border-yellow-500 text-yellow-200 shadow-[0_0_10px_rgba(234,179,8,0.5)]'
+                                        : 'bg-black/50 border-slate-600 text-white'
+                                        }`}>
+                                        {isVip && <Crown size={12} className="text-yellow-400 fill-yellow-400 animate-pulse" />}
+                                        {playerStats.guildName ? <span className={isVip ? "text-yellow-100" : "text-yellow-400"}>[{playerStats.guildName}] </span> : ''}
+                                        <span style={{
+                                            color: isVip ? '#fef08a' : (playerStats.settings.nameColor || 'white'),
+                                            textShadow: isVip ? '0 0 10px #eab308' : (playerStats.settings.nameColor ? `0 0 8px ${playerStats.settings.nameColor}` : 'none')
+                                        }}>
+                                            {playerStats.nickname}
+                                        </span>
+                                    </div>
+                                    <div className="w-12 h-1 bg-black border border-slate-700 rounded-full overflow-hidden mb-0.5">
+                                        <div className="h-full bg-red-600" style={{ width: `${(playerStats.hp / playerStats.maxHp) * 100}%` }} />
+                                    </div>
+                                    <div className="w-12 h-1 bg-black border border-slate-700 rounded-full overflow-hidden">
+                                        <div className="h-full bg-blue-600" style={{ width: `${(playerStats.mana / playerStats.maxMana) * 100}%` }} />
+                                    </div>
+                                </div>
+                            );
+                        })()}
                     </Html>
                 )}
 
@@ -1642,37 +1676,46 @@ const GameScene: React.FC<GameSceneProps> = ({
             </group>
 
             {/* REMOTE PLAYERS (Socket IO) */}
-            {remotePlayers.map(p => (
-                <group key={p.id} position={[p.x, 0, p.y]} rotation={[0, p.rotation || 0, 0]}>
-                    <React.Suspense fallback={null}>
-                        <VoxelSpartan
-                            charClass={p.class || 'warrior'}
-                            isAttacking={p.isAttacking || false}
-                            isMoving={p.isMoving || false}
-                            weaponItem={p.equipment?.weapon}
-                            armorItem={p.equipment?.armor}
-                            helmetItem={p.equipment?.helmet}
-                            pantsItem={p.equipment?.pants}
-                            necklaceItem={p.equipment?.necklace}
-                            earringItem={p.equipment?.earring}
-                        />
-                    </React.Suspense>
-                    <Html position={[0, 2.5, 0]} center zIndexRange={[40, 0]}>
-                        <div
-                            className="flex flex-col items-center whitespace-nowrap cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
-                            onClick={() => setTargetedPlayer(p)}
-                        >
-                            <div className={`text-[10px] font-bold px-2 rounded backdrop-blur-sm border mb-1 ${targetedPlayer?.id === p.id ? 'border-yellow-400 ring-2 ring-yellow-400' : 'border-slate-600'} ${
-                                // Simple VIP check if available, or just use custom style
-                                (p as any).isVip ? 'bg-gradient-to-r from-amber-900/80 to-yellow-900/80 text-yellow-400 border-yellow-600 shadow-[0_0_10px_rgba(250,204,21,0.3)]' : 'bg-black/50 text-white'
-                                }`}>
-                                {(p as any).isVip && <span className="mr-1">👑</span>}
-                                {p.nickname} (Lv.{p.level})
+            {remotePlayers.map(p => {
+                const isVip = (p as any).isVip ||
+                    p.nickname.includes('[GM]') ||
+                    p.nickname.includes('[YÖNETİM]') ||
+                    ((p as any).premiumUntil && (p as any).premiumUntil > Date.now());
+
+                return (
+                    <group key={p.id} position={[p.x, 0, p.y]} rotation={[0, p.rotation || 0, 0]}>
+                        <React.Suspense fallback={null}>
+                            <VoxelSpartan
+                                charClass={p.class || 'warrior'}
+                                isAttacking={p.isAttacking || false}
+                                isMoving={p.isMoving || false}
+                                weaponItem={p.equipment?.weapon}
+                                armorItem={p.equipment?.armor}
+                                helmetItem={p.equipment?.helmet}
+                                pantsItem={p.equipment?.pants}
+                                necklaceItem={p.equipment?.necklace}
+                                earringItem={p.equipment?.earring}
+                            />
+                        </React.Suspense>
+                        <Html position={[0, 2.5, 0]} center zIndexRange={[40, 0]}>
+                            <div
+                                className="flex flex-col items-center whitespace-nowrap cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
+                                onClick={() => setTargetedPlayer(p)}
+                            >
+                                <div className={`text-[10px] font-bold px-2 py-0.5 rounded backdrop-blur-sm border mb-1 flex items-center gap-1 ${targetedPlayer?.id === p.id ? 'ring-2 ring-yellow-400' : ''} ${isVip
+                                    ? 'bg-gradient-to-r from-amber-900/90 to-yellow-900/90 border-yellow-500 text-yellow-200 shadow-[0_0_10px_rgba(234,179,8,0.5)]'
+                                    : 'bg-black/50 border-slate-600 text-white'
+                                    }`}>
+                                    {isVip && <Crown size={12} className="text-yellow-400 fill-yellow-400 animate-pulse" />}
+                                    <span className={isVip ? "text-yellow-100 drop-shadow-[0_0_5px_rgba(234,179,8,0.8)]" : ""}>
+                                        {p.nickname} (Lv.{p.level})
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                    </Html>
-                </group>
-            ))}
+                        </Html>
+                    </group>
+                )
+            })}
 
             {entities.map(ent => (
                 <VoxelMob
@@ -1850,6 +1893,9 @@ const GlobalMapModal: React.FC<{ onClose: () => void, currentZone: number, onSwi
 const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     const { playerState, zoneId, onLoot, onQuestProgress, onUpdatePlayer, onExit, onOpenCrafting, onOpenMarket, socketRef, onReceiveChat } = props;
 
+    // Is Mounted Ref to track zone changes vs initial mount
+    const isMountedRef = useRef(false);
+
     // Get settings from context
     const { settings } = useSettings();
 
@@ -1968,47 +2014,43 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
     // HUD Editor
     const [isHudEditing, setIsHudEditing] = useState(false);
+    const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
     const [dragTarget, setDragTarget] = useState<string | null>(null);
     const [isFreeLook, setIsFreeLook] = useState(false); // Free Look State
 
     // HUD Customization - Local state for immediate visual feedback
-    const [localHudScale, setLocalHudScale] = useState(() => {
-        try {
-            const localData = localStorage.getItem(`hud_settings_${playerState.nickname}`);
-            if (localData) {
-                const parsed = JSON.parse(localData);
-                if (parsed.hudScale) return parsed.hudScale;
-            }
-        } catch (e) { }
-        return playerState.settings.hudScale || 1;
-    });
+    // REMOVED: Global localHudScale and localButtonOpacity in favor of per-element config
+    // We rely directly on hudLayout.elements[id].scale / opacity 
 
-    const [localButtonOpacity, setLocalButtonOpacity] = useState(() => {
-        try {
-            const localData = localStorage.getItem(`hud_settings_${playerState.nickname}`);
-            if (localData) {
-                const parsed = JSON.parse(localData);
-                if (parsed.buttonOpacity) return parsed.buttonOpacity;
-            }
-        } catch (e) { }
-        return (playerState.settings as any).buttonOpacity || 1;
-    });
+
+    // (Removed localButtonOpacity)
 
     const playerPosRef = useRef({
         x: (() => {
-            // Priority: 1. Prop (lastPosition) if meaningful, 2. LocalStorage, 3. Zero
-            if (playerState.lastPosition?.x) return playerState.lastPosition.x;
+            // Check LocalStorage with Zone Lock first
             try {
                 const saved = localStorage.getItem(`lastPos_${playerState.nickname}`);
-                if (saved) return JSON.parse(saved).x;
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    // Only restore if we are in the SAME zone
+                    if (parsed.zoneId === zoneId) return parsed.x;
+                }
             } catch (e) { }
+
+            // Fallback to prop if provided (and we decide to trust it, or if localStorage failed)
+            // But usually prop brings in the 'last known' which might be from another zone, be careful.
+            // If we want strict zone persistence, rely on localStorage check above.
+            // if (playerState.lastPosition?.x) return playerState.lastPosition.x; 
+
             return 0;
         })(),
         y: (() => {
-            if (playerState.lastPosition?.z) return playerState.lastPosition.z;
             try {
                 const saved = localStorage.getItem(`lastPos_${playerState.nickname}`);
-                if (saved) return JSON.parse(saved).z;
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.zoneId === zoneId) return parsed.z; // Note: saved as z, used as y in 2D Ref
+                }
             } catch (e) { }
             return 0;
         })()
@@ -2020,7 +2062,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             // Unmount: Save position
             try {
                 if (playerPosRef.current) {
-                    const pos = { x: playerPosRef.current.x, z: playerPosRef.current.y };
+                    const pos = { x: playerPosRef.current.x, z: playerPosRef.current.y, zoneId };
                     localStorage.setItem(`lastPos_${playerState.nickname}`, JSON.stringify(pos));
                     console.log("💾 Auto-Saved Position on Exit:", pos);
                 }
@@ -2041,8 +2083,12 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                     Math.abs(currentZ - (playerState.lastPosition?.z || 0)) > 1) {
 
                     onUpdatePlayer({
-                        lastPosition: { x: currentX, y: 0, z: currentZ }
+                        lastPosition: { x: currentX, y: 0, z: currentZ } // Note: This doesn't sync zoneId to parent yet, but helps UI
                     });
+
+                    // Save to local storage explicitly with Zone ID
+                    const pos = { x: currentX, z: currentZ, zoneId };
+                    localStorage.setItem(`lastPos_${playerState.nickname}`, JSON.stringify(pos));
                 }
             }
         }, 1000);
@@ -2223,7 +2269,10 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
     // --- HUD DRAG LOGIC ---
     const handleDragStart = (e: React.MouseEvent | React.TouchEvent, id: string) => {
+        // If locked, prevent drag (though DraggableHUDElement also prevents it, double check here)
+        if (hudLayout.elements[id]?.locked) return;
         setDragTarget(id);
+        setSelectedElementId(id); // Auto-select on drag start
     };
 
     useEffect(() => {
@@ -2285,37 +2334,42 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         if (type === 'mobile') {
             // ARC PRESET - Use deep copy from constants
             setHudLayout(JSON.parse(JSON.stringify(DEFAULT_HUD_LAYOUT)));
-            setLocalHudScale(1);
-            setLocalButtonOpacity(1);
         } else {
             // LINEAR/DESKTOP PRESET - Skills in a row at bottom center
+            // Need to construct full object with defaults since we are deep merging usually
+            // but here we replace.
+
+            // Helper to create element
+            const createEl = (x: number, y: number, scale = 1) => ({ x, y, scale, opacity: 1, enabled: true, locked: false });
+
             setHudLayout({
                 elements: {
                     // Profile - Top Left
-                    profile: { x: 5, y: 5, scale: 1, enabled: true },
+                    profile: createEl(5, 5, 1),
                     // Map - Top Right
-                    map: { x: 85, y: 5, scale: 1, enabled: true },
+                    map: createEl(85, 5, 1),
                     // Quest - Below Profile
-                    quest: { x: 5, y: 18, scale: 1, enabled: true },
+                    quest: createEl(5, 18, 1),
                     // Chat - Left side middle
-                    chat: { x: 5, y: 40, scale: 1, enabled: true },
+                    chat: createEl(5, 40, 1),
                     // Joystick - Bottom Left
-                    joystick: { x: 12, y: 82, scale: 1, enabled: true },
+                    joystick: createEl(12, 82, 1),
                     // Eye - Right side middle
-                    eye: { x: 80, y: 45, scale: 1, enabled: true },
+                    eye: createEl(80, 45, 1),
                     // Skills in a row at bottom center
-                    skill1: { x: 30, y: 92, scale: 1, enabled: true },
-                    skill2: { x: 38, y: 92, scale: 1, enabled: true },
-                    skill3: { x: 46, y: 92, scale: 1, enabled: true },
-                    skill4: { x: 54, y: 92, scale: 1, enabled: true },
-                    skill5: { x: 62, y: 92, scale: 1, enabled: true },
-                    skill6: { x: 70, y: 92, scale: 1, enabled: true },
-                    skill7: { x: 78, y: 92, scale: 1, enabled: true },
+                    skill1: createEl(30, 92, 1),
+                    skill2: createEl(38, 92, 1),
+                    skill3: createEl(46, 92, 1),
+                    skill4: createEl(54, 92, 1),
+                    skill5: createEl(62, 92, 1),
+                    skill6: createEl(70, 92, 1),
+                    skill7: createEl(78, 92, 1),
                     // Attack - Bottom Right
-                    attack: { x: 90, y: 82, scale: 1.2, enabled: true },
+                    attack: createEl(90, 82, 1.2),
                     // Potions - Right side
-                    hp_pot: { x: 92, y: 35, scale: 0.9, enabled: true },
-                    mp_pot: { x: 92, y: 42, scale: 0.9, enabled: true },
+                    hp_pot: createEl(92, 35, 0.9),
+                    mp_pot: createEl(92, 42, 0.9),
+                    // Legacy pot
                 }
             });
         }
@@ -2326,8 +2380,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         try {
             const settingsToSave = {
                 hudLayout,
-                hudScale: localHudScale,
-                buttonOpacity: localButtonOpacity
+                // Removed global scale/opacity props
             };
             localStorage.setItem(`hud_settings_${playerState.nickname}`, JSON.stringify(settingsToSave));
         } catch (e) {
@@ -2338,8 +2391,9 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             settings: {
                 ...playerState.settings,
                 hudLayout,
-                hudScale: localHudScale,
-                buttonOpacity: localButtonOpacity
+                // Pass defaults for legacy props if backend expects them, or just ignore
+                hudScale: 1,
+                buttonOpacity: 1
             }
         });
         setIsHudEditing(false);
@@ -2471,8 +2525,16 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             setEntities(initNPCs);
             setLootBoxes([]);
             setTarget(null);
-            playerPosRef.current = { x: 0, y: 0 };
+
+            // Only reset position if we are SWITCHING zones while already mounted.
+            // If this is the first mount (isMountedRef false), we keep the value initialized by useRef (from localStorage)
+            if (isMountedRef.current) {
+                playerPosRef.current = { x: 0, y: 0 };
+            }
+
             setTeleporting(null);
+
+            isMountedRef.current = true;
         }
     }, [zoneId, hasBase]);
 
@@ -2788,6 +2850,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                     }
 
                     spawnVisualEffect(ex, ey, combatResult.isCritical ? '#f97316' : '#fca5a5');
+                    vfxManager.spawn('PHYSICAL', [playerPosRef.current.x, 1, playerPosRef.current.y], [ex, 1, ey], ent.type);
 
                     // Check Death
                     if (ent.hp <= 0) {
@@ -3138,6 +3201,9 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 const rot = playerGroupRef.current?.rotation.y || 0;
                 targetPos = [px + Math.sin(rot) * 5, 0.5, pz + Math.cos(rot) * 5];
             }
+
+            // NEW PIXEL VFX SYSTEM
+            vfxManager.spawn(skill.visual || skill.name, [px, 1, pz], targetPos, effectiveTarget?.type || 'ground');
 
             // FIX: Damage/Utility skills should spawn at target, not at player!
             // Only buff/heal/shield skills should spawn on player
@@ -3674,8 +3740,8 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             <WeatherChangeNotification />
 
             {/* JOYSTICK */}
-            <DraggableHUDElement id="joystick" element={hudLayout.elements.joystick} isEditing={isHudEditing} onDragStart={handleDragStart}>
-                <div style={{ transform: `scale(${localHudScale})`, opacity: localButtonOpacity }}>
+            <DraggableHUDElement id="joystick" element={hudLayout.elements.joystick} isEditing={isHudEditing} isSelected={selectedElementId === 'joystick'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+                <div>
                     <div className="w-32 h-32 relative pointer-events-auto"
                         onMouseDown={(e) => { !isHudEditing && setJoystick({ x: 0, y: 0 }); }}
                         onTouchStart={(e) => { !isHudEditing && setJoystick({ x: 0, y: 0 }); }}
@@ -3699,8 +3765,8 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             </DraggableHUDElement>
 
             {/* FREE LOOK / EYE BUTTON */}
-            <DraggableHUDElement id="eye" element={hudLayout.elements.eye || { x: 80, y: 40, scale: 1, enabled: true }} isEditing={isHudEditing} onDragStart={handleDragStart}>
-                <div style={{ transform: `scale(${localHudScale})`, opacity: localButtonOpacity }}>
+            <DraggableHUDElement id="eye" element={hudLayout.elements.eye || { x: 80, y: 40, scale: 1, enabled: true }} isEditing={isHudEditing} isSelected={selectedElementId === 'eye'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+                <div>
                     <button
                         onMouseDown={() => setIsFreeLook(true)}
                         onMouseUp={() => setIsFreeLook(false)}
@@ -3717,8 +3783,8 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             </DraggableHUDElement>
 
             {/* ATTACK BUTTON */}
-            <DraggableHUDElement id="attack" element={hudLayout.elements.attack} isEditing={isHudEditing} onDragStart={handleDragStart}>
-                <div style={{ transform: `scale(${localHudScale})`, opacity: localButtonOpacity }}>
+            <DraggableHUDElement id="attack" element={hudLayout.elements.attack} isEditing={isHudEditing} isSelected={selectedElementId === 'attack'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+                <div>
                     <button
                         onMouseDown={handleAttack}
                         onTouchStart={handleAttack}
@@ -3731,8 +3797,8 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
             {/* SKILLS 1-6 (INDIVIDUAL DRAGGABLES) - REDUCED TO 6 */}
             {['skill1', 'skill2', 'skill3', 'skill4', 'skill5', 'skill6'].map((key, i) => (
-                <DraggableHUDElement key={key} id={key} element={hudLayout.elements[key]} isEditing={isHudEditing} onDragStart={handleDragStart}>
-                    <div style={{ opacity: localButtonOpacity, transform: `scale(${localHudScale})` }}>
+                <DraggableHUDElement key={key} id={key} element={hudLayout.elements[key]} isEditing={isHudEditing} isSelected={selectedElementId === key} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+                    <div>
                         {playerState.class && CLASSES[playerState.class]?.skills?.[i]
                             ? renderSkillButton(CLASSES[playerState.class].skills[i], i)
                             : <div className="w-12 h-12 bg-slate-800 rounded-full border border-slate-600 opacity-30" />
@@ -3743,8 +3809,8 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
 
             {/* HP POT - Separately Draggable */}
-            <DraggableHUDElement id="hp_pot" element={hudLayout.elements.hp_pot} isEditing={isHudEditing} onDragStart={handleDragStart}>
-                <div style={{ transform: `scale(${localHudScale})`, opacity: localButtonOpacity }}>
+            <DraggableHUDElement id="hp_pot" element={hudLayout.elements.hp_pot} isEditing={isHudEditing} isSelected={selectedElementId === 'hp_pot'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+                <div>
                     <button onClick={() => props.onQuickPotion('hp')} className="w-10 h-10 bg-red-900/90 border-2 border-red-500 rounded-full flex flex-col items-center justify-center hover:bg-red-800 transition-colors relative shadow-lg active:scale-95 pointer-events-auto">
                         <Droplet size={14} className="text-red-300" />
                         <span className="text-[9px] text-white font-bold absolute bottom-0.5">{hpPotCount}</span>
@@ -3753,8 +3819,8 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             </DraggableHUDElement>
 
             {/* MP POT - Separately Draggable */}
-            <DraggableHUDElement id="mp_pot" element={hudLayout.elements.mp_pot} isEditing={isHudEditing} onDragStart={handleDragStart}>
-                <div style={{ transform: `scale(${localHudScale})`, opacity: localButtonOpacity }}>
+            <DraggableHUDElement id="mp_pot" element={hudLayout.elements.mp_pot} isEditing={isHudEditing} isSelected={selectedElementId === 'mp_pot'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+                <div>
                     <button onClick={() => props.onQuickPotion('mp')} className="w-10 h-10 bg-blue-900/90 border-2 border-blue-500 rounded-full flex flex-col items-center justify-center hover:bg-blue-800 transition-colors relative shadow-lg active:scale-95 pointer-events-auto">
                         <Zap size={14} className="text-blue-300" />
                         <span className="text-[9px] text-white font-bold absolute bottom-0.5">{mpPotCount}</span>
@@ -3764,8 +3830,8 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
 
             {/* PROFILE UI */}
-            <DraggableHUDElement id="profile" element={hudLayout.elements.profile} isEditing={isHudEditing} onDragStart={handleDragStart}>
-                <div style={{ transform: `scale(${localHudScale})`, opacity: localButtonOpacity, transformOrigin: 'top left' }}>
+            <DraggableHUDElement id="profile" element={hudLayout.elements.profile} isEditing={isHudEditing} isSelected={selectedElementId === 'profile'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+                <div style={{ transformOrigin: 'top left' }}>
                     <div className="flex gap-3 pointer-events-auto select-none items-center">
                         <div className="relative w-16 h-16 rounded-full border-4 border-slate-700 bg-slate-900 flex items-center justify-center shadow-2xl z-20">
                             <div className="text-2xl font-black text-white rpg-font">{playerState.level}</div>
@@ -3796,15 +3862,15 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             </DraggableHUDElement>
 
             {/* MAP & MENU BUTTONS */}
-            <DraggableHUDElement id="map" element={hudLayout.elements.map} isEditing={isHudEditing} onDragStart={handleDragStart}>
-                <div style={{ transform: `scale(${localHudScale})`, opacity: settings.hudOpacity / 100, transformOrigin: 'top right' }}>
+            <DraggableHUDElement id="map" element={hudLayout.elements.map} isEditing={isHudEditing} isSelected={selectedElementId === 'map'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+                <div style={{ opacity: settings.hudOpacity / 100, transformOrigin: 'top right' }}>
                     <div className="flex flex-col items-end gap-2 pointer-events-auto">
                         {settings.showMinimap && (
                             <div className="flex gap-4 items-end" style={{ opacity: settings.minimapOpacity / 100 }}>
                                 <MiniMap playerPos={playerPosUI} entities={entities} portals={zoneData?.portals || []} zoneLimit={100} onClick={() => setShowMap(true)} smallMap={playerState.settings.smallMap} />
                             </div>
                         )}
-                        <div className="flex gap-2" style={{ opacity: localButtonOpacity }}>
+                        <div className="flex gap-2">
                             <div className="bg-black/50 px-3 py-2 rounded text-white font-bold backdrop-blur-sm border border-slate-700 text-xs hidden md:block">{zoneData?.name}</div>
                             <button title="Sohbet" onClick={() => setShowChat(!showChat)} className={`p-2 rounded border border-slate-700 hover:text-white ${showChat ? 'bg-yellow-900/80 text-yellow-500' : 'bg-slate-900/80 text-slate-400'}`}><MessageSquare size={20} /></button>
                             <button title="Envanter" onClick={() => setShowInventory(true)} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-yellow-500 hover:text-white"><Backpack size={20} /></button>
@@ -3819,7 +3885,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
             {/* CHAT SYSTEM */}
             {showChat && (
-                <DraggableHUDElement id="chat" element={hudLayout.elements.chat} isEditing={isHudEditing} onDragStart={handleDragStart}>
+                <DraggableHUDElement id="chat" element={hudLayout.elements.chat} isEditing={isHudEditing} isSelected={selectedElementId === 'chat'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
                     <div className="w-80 h-64 pointer-events-auto" style={{ opacity: settings.chatOpacity / 100 }}>
                         <ChatSystem
                             playerState={playerState}
@@ -3839,8 +3905,8 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             )}
 
             {/* QUEST TRACKER - Her zaman görünür, küçültülebilir */}
-            <DraggableHUDElement id="quest" element={hudLayout.elements.quest} isEditing={isHudEditing} onDragStart={handleDragStart}>
-                <div style={{ transform: `scale(${localHudScale})`, opacity: localButtonOpacity, transformOrigin: 'top left' }} className="pointer-events-auto">
+            <DraggableHUDElement id="quest" element={hudLayout.elements.quest} isEditing={isHudEditing} isSelected={selectedElementId === 'quest'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+                <div style={{ transformOrigin: 'top left' }} className="pointer-events-auto">
                     <div className={`bg-slate-900/90 rounded-lg border border-slate-700 w-52 transition-all shadow-lg ${isHudEditing ? 'border-dashed border-yellow-500' : ''}`}>
                         {/* Header - Her zaman görünür */}
                         <div className="p-2 flex justify-between items-center border-b border-slate-700/50">
@@ -3988,67 +4054,136 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             )}
 
             {isHudEditing && (
-                <div className="absolute top-16 left-1/2 -translate-x-1/2 bg-black/95 border border-yellow-500 p-5 rounded-xl flex flex-col gap-4 z-[60] pointer-events-auto shadow-2xl w-80 max-h-[80vh] overflow-y-auto custom-scrollbar">
-                    <h3 className="text-yellow-500 font-bold text-center flex items-center justify-center gap-2 text-lg"><Move /> ARAYÜZ DÜZENLEYİCİ</h3>
+                <div className="absolute top-16 right-4 w-72 bg-black/95 border-2 border-yellow-600/50 p-4 rounded-xl flex flex-col gap-4 z-[61] pointer-events-auto backdrop-blur-md shadow-2xl animate-[fadeIn_0.2s]">
+                    <h3 className="text-yellow-500 font-bold text-center flex items-center justify-center gap-2 border-b border-yellow-600/30 pb-2">
+                        <Move size={18} /> ARAYÜZ DÜZENLEYİCİ
+                    </h3>
 
-                    {/* Hazır Şablonlar */}
-                    <div className="flex flex-col gap-2">
-                        <div className="text-xs text-slate-300 font-bold">Hazır Şablonlar</div>
-                        <div className="flex gap-2">
-                            <button onClick={() => resetLayout('desktop')} className="flex-1 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded text-xs text-white">Düz (PC)</button>
-                            <button onClick={() => resetLayout('mobile')} className="flex-1 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded text-xs text-white">Yay (Mobil)</button>
+                    {/* Selected Element Controls */}
+                    {selectedElementId ? (
+                        <div className="flex flex-col gap-3 animate-[fadeIn_0.3s]">
+                            <div className="text-xs font-bold text-white bg-yellow-900/40 p-2 rounded border border-yellow-600/30 flex justify-between items-center">
+                                <span>SEÇİLİ: <span className="text-yellow-400 uppercase">{selectedElementId}</span></span>
+                                <button onClick={() => setSelectedElementId(null)} className="text-slate-400 hover:text-white"><X size={14} /></button>
+                            </div>
+
+                            {/* Scale Slider */}
+                            <div className="flex flex-col gap-1">
+                                <div className="flex justify-between text-xs text-slate-300">
+                                    <span>Boyut</span>
+                                    <span>{Math.round((hudLayout.elements[selectedElementId]?.scale || 1) * 100)}%</span>
+                                </div>
+                                <input
+                                    type="range" min="50" max="200" step="5"
+                                    value={(hudLayout.elements[selectedElementId]?.scale || 1) * 100}
+                                    onChange={(e) => {
+                                        const newScale = parseInt(e.target.value) / 100;
+                                        setHudLayout(prev => ({
+                                            ...prev,
+                                            elements: {
+                                                ...prev.elements,
+                                                [selectedElementId]: {
+                                                    ...prev.elements[selectedElementId],
+                                                    scale: newScale
+                                                }
+                                            }
+                                        }));
+                                    }}
+                                    className="w-full h-2 bg-slate-700 rounded-lg accent-yellow-500 cursor-pointer"
+                                />
+                            </div>
+
+                            {/* Opacity Slider */}
+                            <div className="flex flex-col gap-1">
+                                <div className="flex justify-between text-xs text-slate-300">
+                                    <span>Görünürlük</span>
+                                    <span>{Math.round((hudLayout.elements[selectedElementId]?.opacity ?? 1) * 100)}%</span>
+                                </div>
+                                <input
+                                    type="range" min="10" max="100" step="5"
+                                    value={(hudLayout.elements[selectedElementId]?.opacity ?? 1) * 100}
+                                    onChange={(e) => {
+                                        const newOp = parseInt(e.target.value) / 100;
+                                        setHudLayout(prev => ({
+                                            ...prev,
+                                            elements: {
+                                                ...prev.elements,
+                                                [selectedElementId]: {
+                                                    ...prev.elements[selectedElementId],
+                                                    opacity: newOp
+                                                }
+                                            }
+                                        }));
+                                    }}
+                                    className="w-full h-2 bg-slate-700 rounded-lg accent-cyan-500 cursor-pointer"
+                                />
+                            </div>
+
+                            {/* Toggles */}
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => {
+                                        const isLocked = hudLayout.elements[selectedElementId]?.locked;
+                                        setHudLayout(prev => ({
+                                            ...prev,
+                                            elements: {
+                                                ...prev.elements,
+                                                [selectedElementId]: {
+                                                    ...prev.elements[selectedElementId],
+                                                    locked: !isLocked
+                                                }
+                                            }
+                                        }));
+                                    }}
+                                    className={`flex-1 py-2 rounded border text-xs font-bold flex items-center justify-center gap-1 transition-colors ${hudLayout.elements[selectedElementId]?.locked ? 'bg-red-900/50 border-red-500 text-red-200' : 'bg-slate-800 border-slate-600 text-slate-400 hover:text-white'}`}
+                                >
+                                    {hudLayout.elements[selectedElementId]?.locked ? <Lock size={14} /> : <Unlock size={14} />}
+                                    {hudLayout.elements[selectedElementId]?.locked ? 'KİLİTLİ' : 'KİLİTLE'}
+                                </button>
+
+                                <button
+                                    onClick={() => {
+                                        const def = DEFAULT_HUD_LAYOUT.elements[selectedElementId as keyof typeof DEFAULT_HUD_LAYOUT.elements];
+                                        if (def) {
+                                            setHudLayout(prev => ({
+                                                ...prev,
+                                                elements: {
+                                                    ...prev.elements,
+                                                    [selectedElementId]: { ...def } // Reset single element
+                                                }
+                                            }));
+                                        }
+                                    }}
+                                    className="flex-1 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded text-xs text-slate-300"
+                                >
+                                    SIFIRLA
+                                </button>
+                            </div>
+
                         </div>
+                    ) : (
+                        <div className="text-slate-400 text-xs text-center py-6 bg-slate-800/30 rounded border border-dashed border-slate-700 flex flex-col items-center gap-2">
+                            <Move className="opacity-50" />
+                            <span>Düzenlemek için ekrandaki herhangi bir öğeye dokunun</span>
+                        </div>
+                    )}
+
+                    {/* Global Actions */}
+                    <div className="mt-2 pt-2 border-t border-slate-700/50 flex flex-col gap-2">
+                        <div className="text-[10px] uppercase text-slate-500 font-bold tracking-wider">Genel Ayarlar</div>
+                        <div className="grid grid-cols-2 gap-2">
+                            <button onClick={() => { if (confirm('Mobil (Yay) dizilimine geçilecek?')) resetLayout('mobile') }} className="py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded text-xs text-white">Yay (Mobil)</button>
+                            <button onClick={() => { if (confirm('PC (Düz) dizilimine geçilecek?')) resetLayout('desktop') }} className="py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded text-xs text-white">Düz (PC)</button>
+                        </div>
+                        <button onClick={() => {
+                            if (confirm('Tüm ayarları varsayılana döndürmek istediğine emin misin?')) resetLayout('mobile');
+                        }} className="w-full py-2 bg-red-900/20 hover:bg-red-900/40 text-red-300 text-xs rounded border border-red-900/50 transition-colors">
+                            FABRİKA AYARLARI
+                        </button>
+                        <button onClick={saveHudSettings} className="w-full py-3 bg-green-600 text-white font-bold rounded hover:bg-green-500 shadow-lg mt-2 flex items-center justify-center gap-2">
+                            <SettingsIcon size={16} /> KAYDET & ÇIK
+                        </button>
                     </div>
-
-                    {/* Buton Boyutu */}
-                    <div className="flex flex-col gap-2">
-                        <div className="flex justify-between items-center">
-                            <span className="text-xs text-slate-300 font-bold">Buton Boyutu</span>
-                            <span className="text-xs text-yellow-400">{Math.round(localHudScale * 100)}%</span>
-                        </div>
-                        <input
-                            type="range"
-                            min="50"
-                            max="150"
-                            value={localHudScale * 100}
-                            onChange={(e) => setLocalHudScale(parseInt(e.target.value) / 100)}
-                            className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-yellow-500"
-                        />
-                        <div className="flex justify-between text-[10px] text-slate-500">
-                            <span>50%</span>
-                            <span>100%</span>
-                            <span>150%</span>
-                        </div>
-                    </div>
-
-                    {/* Buton Şeffaflığı */}
-                    <div className="flex flex-col gap-2">
-                        <div className="flex justify-between items-center">
-                            <span className="text-xs text-slate-300 font-bold">Buton Şeffaflığı</span>
-                            <span className="text-xs text-cyan-400">{Math.round(localButtonOpacity * 100)}%</span>
-                        </div>
-                        <input
-                            type="range"
-                            min="30"
-                            max="100"
-                            value={localButtonOpacity * 100}
-                            onChange={(e) => setLocalButtonOpacity(parseInt(e.target.value) / 100)}
-                            className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-500"
-                        />
-                        <div className="flex justify-between text-[10px] text-slate-500">
-                            <span>30%</span>
-                            <span>65%</span>
-                            <span>100%</span>
-                        </div>
-                    </div>
-
-
-                    {/* Bilgi */}
-                    <div className="text-xs text-slate-400 text-center leading-relaxed bg-slate-800/50 p-3 rounded border border-slate-700">
-                        💡 Öğeleri parmağınızla sürükleyerek istediğiniz yere taşıyabilirsiniz. HP/Mana potları da ayrı ayrı taşınabilir!
-                    </div>
-
-                    <button onClick={saveHudSettings} className="w-full py-3 bg-green-600 text-white font-bold rounded hover:bg-green-500 shadow-lg">KAYDET & ÇIK</button>
                 </div>
             )}
 

@@ -1662,7 +1662,11 @@ const GameScene: React.FC<GameSceneProps> = ({
                             className="flex flex-col items-center whitespace-nowrap cursor-pointer hover:scale-110 transition-transform pointer-events-auto"
                             onClick={() => setTargetedPlayer(p)}
                         >
-                            <div className={`text-[10px] font-bold text-white bg-black/50 px-2 rounded backdrop-blur-sm border mb-1 ${targetedPlayer?.id === p.id ? 'border-yellow-400 ring-2 ring-yellow-400' : 'border-slate-600'}`}>
+                            <div className={`text-[10px] font-bold px-2 rounded backdrop-blur-sm border mb-1 ${targetedPlayer?.id === p.id ? 'border-yellow-400 ring-2 ring-yellow-400' : 'border-slate-600'} ${
+                                // Simple VIP check if available, or just use custom style
+                                (p as any).isVip ? 'bg-gradient-to-r from-amber-900/80 to-yellow-900/80 text-yellow-400 border-yellow-600 shadow-[0_0_10px_rgba(250,204,21,0.3)]' : 'bg-black/50 text-white'
+                                }`}>
+                                {(p as any).isVip && <span className="mr-1">👑</span>}
                                 {p.nickname} (Lv.{p.level})
                             </div>
                         </div>
@@ -1855,6 +1859,45 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         return JSON.parse(JSON.stringify(DEFAULT_HUD_LAYOUT));
     });
 
+    // --- POSITION PERSISTENCE ---
+    useEffect(() => {
+        // MOUNT: Load saved position
+        try {
+            const saved = localStorage.getItem(`lastPos_${playerState.nickname}`);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                // Only override if current prop is zero/default (to prevent overwriting server data if valid)
+                // But user complained about 0,0 reset, so likely prop is failing.
+                if (!playerState.lastPosition || (playerState.lastPosition.x === 0 && playerState.lastPosition.z === 0)) {
+                    console.log("📍 Restoring Position:", parsed);
+                    // We need to update the REF directly because the game loop uses it
+                    // Assuming playerPosRef is defined later, BUT we are inside the component closure.
+                    // WAIT: playerPosRef is defined later in the code (line 1954). 
+                    // Accessing it here might be tricky if it's not hoisted or if this effect runs before ref assignment (it won't, effects run after render).
+                    // However, we can't reference a variable declared with `const` later in the same scope legally in JS/TS inside the effect function 
+                    // if the effect function closure captures it? Actually `const` is block scoped.
+                    // The ref is declared in the component body. Effect callback runs after mount.
+                    // So IT IS SAFE if the variable is declared in the component scope.
+                    // BUT TypeScript might complain "Block-scoped variable 'playerPosRef' used before its declaration".
+
+                    // WORKAROUND: We will trigger a state update that forces the game loop to respect this,
+                    // OR we just use localStorage in the `playerPosRef` initialization (which I should have done but couldn't find the line).
+
+                    // Let's use `onUpdatePlayer` to sync back to parent at least.
+                    if (onUpdatePlayer) {
+                        onUpdatePlayer({ lastPosition: { x: parsed.x, y: 0, z: parsed.z } });
+                    }
+                }
+            }
+        } catch (e) { }
+
+        return () => {
+            // UNMOUNT: Save position
+            // We can't access playerPosRef here if it is declared later.
+            // We need to rely on `onExit` wrapper or `playerPosRef` being moved up.
+        };
+    }, []);
+
     const [entities, setEntities] = useState<GameEntity[]>([]);
 
     // --- PERFORMANCE OPTIMİZASYONU: Ref Based Entity Tracking ---
@@ -1952,9 +1995,38 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     });
 
     const playerPosRef = useRef({
-        x: playerState.lastPosition?.x ?? 0,
-        y: playerState.lastPosition?.z ?? 0
+        x: (() => {
+            // Priority: 1. Prop (lastPosition) if meaningful, 2. LocalStorage, 3. Zero
+            if (playerState.lastPosition?.x) return playerState.lastPosition.x;
+            try {
+                const saved = localStorage.getItem(`lastPos_${playerState.nickname}`);
+                if (saved) return JSON.parse(saved).x;
+            } catch (e) { }
+            return 0;
+        })(),
+        y: (() => {
+            if (playerState.lastPosition?.z) return playerState.lastPosition.z;
+            try {
+                const saved = localStorage.getItem(`lastPos_${playerState.nickname}`);
+                if (saved) return JSON.parse(saved).z;
+            } catch (e) { }
+            return 0;
+        })()
     });
+
+    // --- AUTO-SAVE POSITION ON EXIT ---
+    useEffect(() => {
+        return () => {
+            // Unmount: Save position
+            try {
+                if (playerPosRef.current) {
+                    const pos = { x: playerPosRef.current.x, z: playerPosRef.current.y };
+                    localStorage.setItem(`lastPos_${playerState.nickname}`, JSON.stringify(pos));
+                    console.log("💾 Auto-Saved Position on Exit:", pos);
+                }
+            } catch (e) { }
+        };
+    }, []);
 
     // Periyodik Pozisyon Kaydetme (Her 1 saniyede bir) - Kaldığı yerden devam etmesi için
     useEffect(() => {

@@ -1,39 +1,12 @@
 {
-    "version": 2,
-    "builds": [
+    "buildCommand": "npm run build:skip-validation",
+    "outputDirectory": "dist",
+    "installCommand": "npm install",
+    "framework": "vite",
+    "rewrites": [
         {
-            "src": "api/index.js",
-            "use": "@vercel/node"
-        },
-        {
-            "src": "package.json",
-            "use": "@vercel/static-build",
-            "config": {
-                "distDir": "dist"
-            }
+            "source": "/(.*)",
+            "destination": "/index.html"
         }
-    ],
-    "routes": [
-        {
-            "src": "/api/(.*)",
-            "dest": "/api/index.js"
-        },
-        {
-            "src": "/assets/(.*)",
-            "dest": "/assets/$1"
-        },
-        {
-            "src": "/(.*\\.(js|css|ico|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|gltf|glb|bin|webp|mp3|ogg|wav))",
-            "dest": "/$1"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/index.html"
-        }
-    ],
-    "env": {
-        "MONGODB_URI": "mongodb+srv://yunusemregokdag_db_user:cmhmshp2gyegg@cluster0.lpw3x3g.mongodb.net/kadim-savaslar?retryWrites=true&w=majority",
-        "GOOGLE_CLIENT_ID": "519507497096-ka6f141tsfrrehnnalcnlvbiggji458n.apps.googleusercontent.com",
-        "JWT_SECRET": "kadim-savaslar-super-secret-jwt-key-2024"
-    }
+    ]
 }

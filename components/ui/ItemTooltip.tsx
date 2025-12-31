@@ -112,23 +112,107 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, children, disabl
     };
 
     const renderStats = () => {
+        // If displayData doesn't give us raw stats easily, we might want to check the item prop directly if possible.
+        // However, item prop is Item | WingItem | PetItem. Let's cast it safely if it has stats.
+        const itemStats = (item as any).stats || {};
+
         return (
-            <div className="flex flex-col gap-1">
-                {displayData.statsLines.map((stat: any, idx: number) => (
-                    <div key={idx} className={`flex items-center gap-2 ${stat.isBonus ? 'text-blue-300' : 'text-slate-300'}`}>
-                        <span className="opacity-70">{stat.label}:</span>
-                        <span className="font-bold">{stat.value}</span>
+            <div className="flex flex-col gap-1.5 mt-2">
+                {/* DEFENSE / ARMOR */}
+                {itemStats.defense > 0 && (
+                    <div className="flex items-center gap-2 text-blue-400">
+                        <Shield size={12} className="fill-blue-500/20" />
+                        <span className="font-bold">+{itemStats.defense} Savunma</span>
                     </div>
-                ))}
+                )}
+
+                {/* ATTACK DAMAGE */}
+                {itemStats.damage > 0 && (
+                    <div className="flex items-center gap-2 text-red-500">
+                        <Sword size={12} className="fill-red-500/20" />
+                        <span className="font-bold">+{itemStats.damage} Hasar</span>
+                    </div>
+                )}
+
+                {/* HP */}
+                {itemStats.hp > 0 && (
+                    <div className="flex items-center gap-2 text-emerald-400">
+                        <Heart size={12} className="fill-emerald-500/20" />
+                        <span className="font-bold">+{itemStats.hp} Can</span>
+                    </div>
+                )}
+
+                {/* MANA */}
+                {itemStats.mana > 0 && (
+                    <div className="flex items-center gap-2 text-blue-300">
+                        <Zap size={12} className="fill-blue-400/20" />
+                        <span className="font-bold">+{itemStats.mana} Mana</span>
+                    </div>
+                )}
+
+                {/* CRIT CHANCE */}
+                {itemStats.critChance > 0 && (
+                    <div className="flex items-center gap-2 text-yellow-400">
+                        <Target size={12} className="fill-yellow-500/20" />
+                        <span className="font-bold">+{itemStats.critChance}% Kritik Şansı</span>
+                    </div>
+                )}
+
+                {/* ATTACK SPEED */}
+                {itemStats.attackSpeed > 0 && (
+                    <div className="flex items-center gap-2 text-orange-300">
+                        <Wind size={12} className="fill-orange-400/20" />
+                        <span className="font-bold">+{itemStats.attackSpeed}% Saldırı Hızı</span>
+                    </div>
+                )}
+
+                {/* STR */}
+                {itemStats.strength > 0 && (
+                    <div className="flex items-center gap-2 text-orange-500">
+                        <TrendingUp size={12} className="fill-orange-600/20" />
+                        <span className="font-bold">+{itemStats.strength} Güç</span>
+                    </div>
+                )}
+
+                {/* DEX */}
+                {itemStats.dexterity > 0 && (
+                    <div className="flex items-center gap-2 text-green-500">
+                        <TrendingUp size={12} className="fill-green-600/20" />
+                        <span className="font-bold">+{itemStats.dexterity} Çeviklik</span>
+                    </div>
+                )}
+
+                {/* INT */}
+                {itemStats.intelligence > 0 && (
+                    <div className="flex items-center gap-2 text-cyan-400">
+                        <TrendingUp size={12} className="fill-cyan-500/20" />
+                        <span className="font-bold">+{itemStats.intelligence} Zeka</span>
+                    </div>
+                )}
+
+                {/* VIT */}
+                {itemStats.vitality > 0 && (
+                    <div className="flex items-center gap-2 text-pink-400">
+                        <TrendingUp size={12} className="fill-pink-500/20" />
+                        <span className="font-bold">+{itemStats.vitality} Dayanıklılık</span>
+                    </div>
+                )}
+
+                {/* Other buffs/lines that might not be in stats object directly */}
                 {displayData.buffsLines.length > 0 && (
-                    <div className="mt-2 text-green-400 text-xs">
+                    <div className="mt-1 pt-1 border-t border-slate-700/50">
                         {displayData.buffsLines.map((buff: string, i: number) => (
-                            <div key={i}>• {buff}</div>
+                            <div key={i} className="text-green-400 text-[10px] flex items-center gap-1">
+                                <Star size={8} /> {buff}
+                            </div>
                         ))}
                     </div>
                 )}
+
                 {displayData.durabilityLine && (
-                    <div className="text-slate-500 text-[10px] mt-1">Dayanıklılık: {displayData.durabilityLine}</div>
+                    <div className="text-slate-500 text-[10px] mt-1 border-t border-slate-700/50 pt-1">
+                        Dayanıklılık: {displayData.durabilityLine}
+                    </div>
                 )}
             </div>
         );
@@ -143,7 +227,7 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, children, disabl
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
             onTouchMove={handleTouchMove}
-            className="relative"
+            className="relative group"
         >
             {children}
 
@@ -153,43 +237,47 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, children, disabl
                     style={getTooltipStyle()}
                 >
                     <div
-                        className="bg-slate-900/95 border-2 rounded-lg p-3 min-w-[200px] max-w-[280px] shadow-2xl backdrop-blur-sm"
-                        style={{ borderColor: rarityColor }}
+                        className="bg-[#0f0b08]/95 border-2 rounded-xl p-4 min-w-[220px] max-w-[300px] shadow-[0_0_30px_rgba(0,0,0,0.5)] backdrop-blur-md"
+                        style={{ borderColor: rarityColor, boxShadow: `0 0 15px ${rarityColor}20` }}
                     >
                         {/* Item Name */}
-                        <div
-                            className="text-sm font-bold mb-1"
-                            style={{ color: rarityColor }}
-                        >
-                            {displayData.name}
+                        <div className="flex justify-between items-start mb-1">
+                            <div
+                                className="text-base font-bold leading-tight"
+                                style={{ color: rarityColor }}
+                            >
+                                {displayData.name}
+                            </div>
                             {displayData.plus > 0 && (
-                                <span className="text-yellow-400"> +{displayData.plus}</span>
+                                <div className="ml-2 px-1.5 py-0.5 bg-yellow-900/40 border border-yellow-700/50 rounded text-yellow-400 text-xs font-bold whitespace-nowrap">
+                                    +{displayData.plus}
+                                </div>
                             )}
                         </div>
 
                         {/* Rarity & Tier */}
-                        <div className="flex gap-2 text-[10px] mb-2">
-                            <span style={{ color: rarityColor }}>{rarityName}</span>
-                            <span className="text-slate-400">{displayData.tierLabel}</span>
-                            <span className="text-slate-500 capitalize">{displayData.type.replace('_', ' ')}</span>
+                        <div className="flex gap-2 text-[10px] mb-3 uppercase tracking-wider font-bold opacity-80 border-b border-white/10 pb-2">
+                            <span style={{ color: displayData.tierLabel.includes('T5') ? '#ef4444' : displayData.tierLabel.includes('T4') ? '#a855f7' : '#94a3b8' }}>{displayData.tierLabel}</span>
+                            <span className="text-slate-500">•</span>
+                            <span className="text-slate-400 capitalize">{displayData.type.replace('_', ' ')}</span>
                         </div>
 
-                        {/* Stats */}
-                        <div className="space-y-1 text-xs border-t border-slate-700 pt-2">
+                        {/* Stats Section with Custom Colors */}
+                        <div className="text-xs">
                             {renderStats()}
                         </div>
 
                         {/* Value */}
                         {displayData.value && (
-                            <div className="mt-2 pt-2 border-t border-slate-700 text-[10px] text-amber-400">
-                                💰 Değer: {displayData.value} Altın
+                            <div className="mt-3 pt-2 border-t border-white/10 text-[10px] text-amber-500 font-bold flex items-center gap-1.5">
+                                💰 Değer: <span className="text-amber-300 text-xs">{displayData.value} Altın</span>
                             </div>
                         )}
 
                         {/* Description */}
                         {displayData.description && (
-                            <div className="mt-2 text-xs italic text-slate-500">
-                                {displayData.description}
+                            <div className="mt-2 text-[10px] text-slate-500 italic leading-relaxed">
+                                "{displayData.description}"
                             </div>
                         )}
                     </div>

@@ -60,104 +60,144 @@ interface CodedVoxelCharacterProps {
     skinId?: string | null;
 }
 
-// --- ADVANCED WINGS COMPONENT ---
+// --- ADVANCED WINGS COMPONENT (BEAUTIFUL FEATHER DESIGN) ---
 const AdvancedWings: React.FC<{ type: WingItem['type']; color: string; isMoving: boolean }> = ({ type, color, isMoving }) => {
     const rightWingRef = useRef<THREE.Group>(null);
     const leftWingRef = useRef<THREE.Group>(null);
 
     useFrame((state) => {
         const t = state.clock.elapsedTime;
-        const flapSpeed = isMoving ? 8 : 3;
-        const flapAmp = isMoving ? 0.25 : 0.08;
+        const flapSpeed = isMoving ? 6 : 2;
+        const flapAmp = isMoving ? 0.3 : 0.1;
 
         if (rightWingRef.current) {
-            rightWingRef.current.rotation.z = 0.2 + Math.sin(t * flapSpeed) * flapAmp;
+            rightWingRef.current.rotation.z = 0.15 + Math.sin(t * flapSpeed) * flapAmp;
+            rightWingRef.current.rotation.y = 0.3 + Math.sin(t * flapSpeed * 0.5) * 0.05;
         }
         if (leftWingRef.current) {
-            leftWingRef.current.rotation.z = -0.2 - Math.sin(t * flapSpeed) * flapAmp;
+            leftWingRef.current.rotation.z = -0.15 - Math.sin(t * flapSpeed) * flapAmp;
+            leftWingRef.current.rotation.y = -0.3 - Math.sin(t * flapSpeed * 0.5) * 0.05;
         }
     });
 
-    const WingSegment = ({ pos, rot, scale, glow }: any) => (
-        <mesh position={pos} rotation={rot} castShadow>
-            <boxGeometry args={scale} />
-            <meshStandardMaterial color={color} emissive={color} emissiveIntensity={glow ? 1.0 : 0.3} toneMapped={false} />
-        </mesh>
+    // Feather component
+    const Feather = ({ pos, rot, length, width, baseColor, tipColor, glowIntensity = 0.5 }: any) => (
+        <group position={pos} rotation={rot}>
+            <mesh castShadow>
+                <cylinderGeometry args={[0.01, 0.005, length, 6]} />
+                <meshStandardMaterial color={baseColor} emissive={tipColor} emissiveIntensity={glowIntensity * 0.3} />
+            </mesh>
+            <mesh position={[0, 0, 0.01]} castShadow>
+                <planeGeometry args={[width, length * 0.9]} />
+                <meshStandardMaterial color={baseColor} emissive={tipColor} emissiveIntensity={glowIntensity} side={THREE.DoubleSide} transparent opacity={0.85} />
+            </mesh>
+        </group>
     );
 
+    // Get wing colors
+    const getWingColors = () => {
+        switch (type) {
+            case 'angel': return { base: '#ffffff', tip: '#fef3c7', glow: '#ffd700', intensity: 0.6 };
+            case 'fairy': return { base: '#e9d5ff', tip: '#c084fc', glow: '#a855f7', intensity: 0.7 };
+            case 'seraph': return { base: '#fef3c7', tip: '#fbbf24', glow: '#f59e0b', intensity: 1.2 };
+            case 'demon': return { base: '#1a1a1a', tip: '#7f1d1d', glow: '#dc2626', intensity: 0.5 };
+            case 'dragon': return { base: '#0f172a', tip: '#1e3a5f', glow: '#3b82f6', intensity: 0.6 };
+            case 'void': return { base: '#0a0a0a', tip: '#3b0764', glow: '#9333ea', intensity: 0.8 };
+            default: return { base: color, tip: color, glow: color, intensity: 0.5 };
+        }
+    };
+
+    const wingColors = getWingColors();
+    const isFeatheredWing = type === 'angel' || type === 'fairy' || type === 'seraph';
+    const isDemonWing = type === 'demon' || type === 'dragon' || type === 'void';
+
     return (
-        <group position={[0, 1.8, 0.2]} scale={[1.5, 1.5, 1.5]}>
-            <Sparkles count={15} scale={1.5} size={4} speed={0.4} opacity={0.5} color={color} />
-            {(type === 'angel' || type === 'fairy' || type === 'seraph') && (
+        <group position={[0, 1.8, 0.15]} scale={[1.4, 1.4, 1.4]}>
+            <Sparkles count={16} scale={1.5} size={isMoving ? 5 : 3} speed={0.4} opacity={0.5} color={wingColors.glow} />
+            <pointLight position={[0, 0.3, -0.2]} intensity={1} distance={2} color={wingColors.glow} />
+
+            {/* FEATHERED WINGS */}
+            {isFeatheredWing && (
                 <>
-                    <group ref={rightWingRef} position={[0.2, 0, 0]} rotation={[0, 0.6, 0.2]}>
-                        <WingSegment pos={[0.35, 0.15, 0]} scale={[0.7, 0.12, 0.04]} rot={[0, 0, 0.25]} glow={type === 'seraph'} />
-                        <WingSegment pos={[0.6, 0.35, 0]} scale={[0.5, 0.1, 0.03]} rot={[0, 0, 0.45]} glow={type === 'seraph'} />
-                        <WingSegment pos={[0.45, -0.1, 0]} scale={[0.6, 0.12, 0.04]} rot={[0, 0, -0.15]} glow={type === 'seraph'} />
+                    <group ref={rightWingRef} position={[0.15, 0, 0]}>
+                        {[0, 1, 2, 3, 4].map((i) => (
+                            <Feather key={`r-p-${i}`} pos={[0.3 + i * 0.1, 0.2 - i * 0.08, 0]} rot={[0, 0, 0.5 + i * 0.15]} length={0.6 - i * 0.06} width={0.12} baseColor={wingColors.base} tipColor={wingColors.tip} glowIntensity={wingColors.intensity} />
+                        ))}
+                        {[0, 1, 2, 3].map((i) => (
+                            <Feather key={`r-s-${i}`} pos={[0.22 + i * 0.08, -0.06 - i * 0.05, 0.01]} rot={[0, 0, 0.15 + i * 0.1]} length={0.45 - i * 0.05} width={0.1} baseColor={wingColors.base} tipColor={wingColors.tip} glowIntensity={wingColors.intensity * 0.8} />
+                        ))}
                     </group>
-                    <group ref={leftWingRef} position={[-0.2, 0, 0]} rotation={[0, -0.6, -0.2]}>
-                        <WingSegment pos={[-0.35, 0.15, 0]} scale={[0.7, 0.12, 0.04]} rot={[0, 0, -0.25]} glow={type === 'seraph'} />
-                        <WingSegment pos={[-0.6, 0.35, 0]} scale={[0.5, 0.1, 0.03]} rot={[0, 0, -0.45]} glow={type === 'seraph'} />
-                        <WingSegment pos={[-0.45, -0.1, 0]} scale={[0.6, 0.12, 0.04]} rot={[0, 0, 0.15]} glow={type === 'seraph'} />
+                    <group ref={leftWingRef} position={[-0.15, 0, 0]}>
+                        {[0, 1, 2, 3, 4].map((i) => (
+                            <Feather key={`l-p-${i}`} pos={[-0.3 - i * 0.1, 0.2 - i * 0.08, 0]} rot={[0, 0, -0.5 - i * 0.15]} length={0.6 - i * 0.06} width={0.12} baseColor={wingColors.base} tipColor={wingColors.tip} glowIntensity={wingColors.intensity} />
+                        ))}
+                        {[0, 1, 2, 3].map((i) => (
+                            <Feather key={`l-s-${i}`} pos={[-0.22 - i * 0.08, -0.06 - i * 0.05, 0.01]} rot={[0, 0, -0.15 - i * 0.1]} length={0.45 - i * 0.05} width={0.1} baseColor={wingColors.base} tipColor={wingColors.tip} glowIntensity={wingColors.intensity * 0.8} />
+                        ))}
                     </group>
                 </>
             )}
-            {(type === 'demon' || type === 'dragon' || type === 'void') && (
+
+            {/* DEMON/DRAGON/VOID WINGS */}
+            {isDemonWing && (
                 <>
-                    <group ref={rightWingRef} position={[0.15, 0, 0]} rotation={[0, 0.5, 0.2]}>
-                        <WingSegment pos={[0.25, 0.05, 0]} scale={[0.5, 0.06, 0.03]} rot={[0, 0, 0.3]} />
-                        <WingSegment pos={[0.55, 0.2, 0]} scale={[0.4, 0.05, 0.025]} rot={[0, 0, 0.5]} />
-                        <mesh position={[0.4, 0.05, 0.01]} rotation={[0, 0, 0.15]}>
-                            <planeGeometry args={[0.6, 0.4]} />
-                            <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.25} side={THREE.DoubleSide} transparent opacity={0.55} />
+                    <group ref={rightWingRef} position={[0.12, 0, 0]}>
+                        {[0, 1, 2].map((i) => (
+                            <mesh key={`r-b-${i}`} position={[0.18 + i * 0.14, 0.12 - i * 0.1, 0]} rotation={[0, 0, 0.35 + i * 0.18]} castShadow>
+                                <cylinderGeometry args={[0.018, 0.01, 0.5 - i * 0.1, 8]} />
+                                <meshStandardMaterial color={wingColors.base} emissive={wingColors.glow} emissiveIntensity={wingColors.intensity} />
+                            </mesh>
+                        ))}
+                        <mesh position={[0.35, 0, 0.01]} rotation={[0, 0, 0.25]} castShadow>
+                            <planeGeometry args={[0.6, 0.5]} />
+                            <meshStandardMaterial color={wingColors.tip} emissive={wingColors.glow} emissiveIntensity={wingColors.intensity * 0.6} side={THREE.DoubleSide} transparent opacity={0.65} />
+                        </mesh>
+                        <mesh position={[0.6, 0.25, 0]} rotation={[0, 0, 0.9]} castShadow>
+                            <coneGeometry args={[0.025, 0.1, 6]} />
+                            <meshStandardMaterial color={wingColors.base} emissive={wingColors.glow} emissiveIntensity={wingColors.intensity * 0.8} />
                         </mesh>
                     </group>
-                    <group ref={leftWingRef} position={[-0.15, 0, 0]} rotation={[0, -0.5, -0.2]}>
-                        <WingSegment pos={[-0.25, 0.05, 0]} scale={[0.5, 0.06, 0.03]} rot={[0, 0, -0.3]} />
-                        <WingSegment pos={[-0.55, 0.2, 0]} scale={[0.4, 0.05, 0.025]} rot={[0, 0, -0.5]} />
-                        <mesh position={[-0.4, 0.05, 0.01]} rotation={[0, 0, -0.15]}>
-                            <planeGeometry args={[0.6, 0.4]} />
-                            <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.25} side={THREE.DoubleSide} transparent opacity={0.55} />
+                    <group ref={leftWingRef} position={[-0.12, 0, 0]}>
+                        {[0, 1, 2].map((i) => (
+                            <mesh key={`l-b-${i}`} position={[-0.18 - i * 0.14, 0.12 - i * 0.1, 0]} rotation={[0, 0, -0.35 - i * 0.18]} castShadow>
+                                <cylinderGeometry args={[0.018, 0.01, 0.5 - i * 0.1, 8]} />
+                                <meshStandardMaterial color={wingColors.base} emissive={wingColors.glow} emissiveIntensity={wingColors.intensity} />
+                            </mesh>
+                        ))}
+                        <mesh position={[-0.35, 0, 0.01]} rotation={[0, 0, -0.25]} castShadow>
+                            <planeGeometry args={[0.6, 0.5]} />
+                            <meshStandardMaterial color={wingColors.tip} emissive={wingColors.glow} emissiveIntensity={wingColors.intensity * 0.6} side={THREE.DoubleSide} transparent opacity={0.65} />
+                        </mesh>
+                        <mesh position={[-0.6, 0.25, 0]} rotation={[0, 0, -0.9]} castShadow>
+                            <coneGeometry args={[0.025, 0.1, 6]} />
+                            <meshStandardMaterial color={wingColors.base} emissive={wingColors.glow} emissiveIntensity={wingColors.intensity * 0.8} />
                         </mesh>
                     </group>
                 </>
             )}
-            {/* ANGEL/DEMON HYBRID WINGS */}
+
+            {/* ANGEL/DEMON HYBRID */}
             {type === 'angel_demon' && (
                 <>
-                    {/* Left Wing - ANGEL (White/Gold) */}
-                    <group ref={leftWingRef} position={[-0.2, 0, 0]} rotation={[0, -0.6, -0.2]}>
-                        <mesh position={[-0.35, 0.15, 0]} rotation={[0, 0, -0.25]} castShadow>
-                            <boxGeometry args={[0.7, 0.12, 0.04]} />
-                            <meshStandardMaterial color="#ffffff" emissive="#ffd700" emissiveIntensity={0.8} toneMapped={false} />
-                        </mesh>
-                        <mesh position={[-0.6, 0.35, 0]} rotation={[0, 0, -0.45]} castShadow>
-                            <boxGeometry args={[0.5, 0.1, 0.03]} />
-                            <meshStandardMaterial color="#fef3c7" emissive="#fbbf24" emissiveIntensity={1.0} toneMapped={false} />
-                        </mesh>
-                        <mesh position={[-0.45, -0.1, 0]} rotation={[0, 0, 0.15]} castShadow>
-                            <boxGeometry args={[0.6, 0.12, 0.04]} />
-                            <meshStandardMaterial color="#fffbeb" emissive="#f59e0b" emissiveIntensity={0.6} toneMapped={false} />
-                        </mesh>
+                    <group ref={leftWingRef} position={[-0.15, 0, 0]}>
+                        {[0, 1, 2, 3, 4].map((i) => (
+                            <Feather key={`l-a-${i}`} pos={[-0.3 - i * 0.1, 0.2 - i * 0.08, 0]} rot={[0, 0, -0.5 - i * 0.15]} length={0.6 - i * 0.06} width={0.12} baseColor="#ffffff" tipColor="#fef3c7" glowIntensity={0.8} />
+                        ))}
+                        <Sparkles count={10} scale={0.9} size={4} speed={0.5} opacity={0.8} color="#ffd700" />
                     </group>
-                    {/* Right Wing - DEMON (Black/Red) */}
-                    <group ref={rightWingRef} position={[0.15, 0, 0]} rotation={[0, 0.5, 0.2]}>
-                        <mesh position={[0.25, 0.05, 0]} rotation={[0, 0, 0.3]} castShadow>
-                            <boxGeometry args={[0.5, 0.06, 0.03]} />
-                            <meshStandardMaterial color="#1a1a1a" emissive="#991b1b" emissiveIntensity={0.6} toneMapped={false} />
+                    <group ref={rightWingRef} position={[0.12, 0, 0]}>
+                        {[0, 1, 2].map((i) => (
+                            <mesh key={`r-d-${i}`} position={[0.18 + i * 0.14, 0.12 - i * 0.1, 0]} rotation={[0, 0, 0.35 + i * 0.18]} castShadow>
+                                <cylinderGeometry args={[0.018, 0.01, 0.5 - i * 0.1, 8]} />
+                                <meshStandardMaterial color="#1a1a1a" emissive="#dc2626" emissiveIntensity={0.6} />
+                            </mesh>
+                        ))}
+                        <mesh position={[0.35, 0, 0.01]} rotation={[0, 0, 0.25]} castShadow>
+                            <planeGeometry args={[0.6, 0.5]} />
+                            <meshStandardMaterial color="#2a0a0a" emissive="#991b1b" emissiveIntensity={0.5} side={THREE.DoubleSide} transparent opacity={0.7} />
                         </mesh>
-                        <mesh position={[0.55, 0.2, 0]} rotation={[0, 0, 0.5]} castShadow>
-                            <boxGeometry args={[0.4, 0.05, 0.025]} />
-                            <meshStandardMaterial color="#0a0a0a" emissive="#dc2626" emissiveIntensity={0.8} toneMapped={false} />
-                        </mesh>
-                        <mesh position={[0.4, 0.05, 0.01]} rotation={[0, 0, 0.15]}>
-                            <planeGeometry args={[0.6, 0.4]} />
-                            <meshStandardMaterial color="#1f1f1f" emissive="#7f1d1d" emissiveIntensity={0.4} side={THREE.DoubleSide} transparent opacity={0.7} />
-                        </mesh>
+                        <Sparkles count={10} scale={0.9} size={4} speed={0.5} opacity={0.8} color="#dc2626" />
                     </group>
-                    {/* Mixed Sparkles */}
-                    <Sparkles count={8} scale={1.2} size={5} speed={0.5} opacity={0.8} color="#ffd700" position={[-0.4, 0.2, 0]} />
-                    <Sparkles count={8} scale={1.2} size={5} speed={0.5} opacity={0.8} color="#dc2626" position={[0.4, 0.2, 0]} />
                 </>
             )}
         </group>

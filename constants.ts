@@ -89,6 +89,9 @@ export const WINGS_DATA: WingItem[] = [
 
     // NEW: VOLT WINGS (T5 PREMIUM)
     { id: 'wing_volt', name: 'Volt Kanatları', type: 'dragon', tier: 5, bonusDamage: 300, bonusHp: 3000, bonusDefense: 200, bonusGoldRate: 30, color: '#facc15', modelPath: '/models/wings/volt_wings/volt_wings.gltf' },
+
+    // ANGEL/DEMON HYBRID WINGS (T5 PREMIUM) - Yarısı Melek (Beyaz/Altın), Yarısı Şeytan (Siyah/Kırmızı)
+    { id: 'wing_angel_demon', name: 'Melek Şeytan Kanatları', type: 'angel_demon', tier: 5, bonusDamage: 280, bonusHp: 2800, bonusDefense: 180, bonusGoldRate: 20, bonusHonorRate: 20, color: '#FFD700', secondaryColor: '#991b1b' },
 ];
 
 // --- NEW: PETS DATA (REBALANCED T4/T5) ---
@@ -124,6 +127,9 @@ export const PETS_DATA: PetItem[] = [
     { id: 'pet_gothic_hag', name: 'Gothic Hag', type: 'phoenix', tier: 4, bonusExpRate: 40, bonusDamage: 110, bonusDefense: 40, color: '#2d132c', modelPath: '/models/pets/Cubee Black Magic pet/cubee-gothic_hag.gltf' },
     { id: 'pet_skelly_warlock', name: 'Skelly Warlock', type: 'owl', tier: 5, bonusExpRate: 55, bonusDamage: 180, bonusHp: 800, bonusDefense: 90, color: '#3d0066', modelPath: '/models/pets/Cubee Black Magic pet/cubee-skelly_warlock.gltf' },
     { id: 'pet_soul_weaver', name: 'Soul Weaver', type: 'owl', tier: 5, bonusExpRate: 60, bonusDamage: 250, bonusHp: 600, bonusDefense: 70, color: '#7b2cbf', modelPath: '/models/pets/Cubee Black Magic pet/cubee-soul_weaver.gltf' },
+
+    // ANGEL/DEMON HYBRID PET (T5 PREMIUM) - Melek ve Şeytan Ruhu
+    { id: 'pet_angel_demon', name: 'Cennet Cehennemi', type: 'phoenix', tier: 5, bonusExpRate: 55, bonusDamage: 220, bonusHp: 1500, bonusDefense: 120, color: '#FFD700', modelPath: '/models/pets/cubee-angel-demon.gltf' },
 ];
 
 // --- CLASSES WITH 7 SKILLS (UPDATED CDS) ---

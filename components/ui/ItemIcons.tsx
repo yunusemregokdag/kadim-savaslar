@@ -330,28 +330,49 @@ export const PixelCart = ({ color = '#f59e0b' }: { color?: string }) => (
     </svg>
 );
 
-export const PixelWing = ({ color = '#a78bfa' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
-        {/* Left Wing */}
-        <rect x="1" y="5" width="2" height="2" fill={color} />
-        <rect x="2" y="4" width="2" height="1" fill={color} />
-        <rect x="3" y="3" width="2" height="1" fill={color} />
-        <rect x="3" y="6" width="2" height="3" fill={color} />
-        <rect x="4" y="4" width="2" height="2" fill={color} style={{ filter: 'brightness(1.2)' }} />
-        <rect x="5" y="7" width="2" height="4" fill={color} />
-        <rect x="6" y="5" width="1" height="2" fill={color} style={{ filter: 'brightness(1.2)' }} />
-        {/* Right Wing (mirrored) */}
-        <rect x="13" y="5" width="2" height="2" fill={color} />
-        <rect x="12" y="4" width="2" height="1" fill={color} />
-        <rect x="11" y="3" width="2" height="1" fill={color} />
-        <rect x="11" y="6" width="2" height="3" fill={color} />
-        <rect x="10" y="4" width="2" height="2" fill={color} style={{ filter: 'brightness(1.2)' }} />
-        <rect x="9" y="7" width="2" height="4" fill={color} />
-        <rect x="9" y="5" width="1" height="2" fill={color} style={{ filter: 'brightness(1.2)' }} />
-        {/* Center body connection */}
-        <rect x="7" y="6" width="2" height="5" fill={color} style={{ filter: 'brightness(0.8)' }} />
-    </svg>
-);
+export const PixelWing = ({ color = '#a78bfa', secondaryColor, wingType }: { color?: string; secondaryColor?: string; wingType?: string }) => {
+    // For Angel/Demon hybrid: Left wing = Angel (white/gold), Right wing = Demon (black/red)
+    const leftColor = color;
+    const rightColor = wingType === 'angel_demon' ? (secondaryColor || '#1a1a1a') : color;
+
+    // Enhanced pixel art style based on reference images
+    return (
+        <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+            {/* Left Wing (Primary Color - Angel side for hybrid) */}
+            <rect x="0" y="4" width="1" height="1" fill={leftColor} style={{ filter: 'brightness(1.3)' }} />
+            <rect x="1" y="3" width="1" height="2" fill={leftColor} style={{ filter: 'brightness(1.2)' }} />
+            <rect x="1" y="5" width="1" height="3" fill={leftColor} />
+            <rect x="2" y="2" width="1" height="2" fill={leftColor} style={{ filter: 'brightness(1.3)' }} />
+            <rect x="2" y="4" width="1" height="4" fill={leftColor} />
+            <rect x="3" y="2" width="1" height="1" fill={leftColor} style={{ filter: 'brightness(1.4)' }} />
+            <rect x="3" y="3" width="1" height="5" fill={leftColor} style={{ filter: 'brightness(1.1)' }} />
+            <rect x="4" y="3" width="1" height="5" fill={leftColor} />
+            <rect x="5" y="4" width="1" height="5" fill={leftColor} style={{ filter: 'brightness(0.9)' }} />
+            <rect x="6" y="5" width="1" height="4" fill={leftColor} style={{ filter: 'brightness(0.85)' }} />
+            {/* Feather details for left wing */}
+            <rect x="1" y="6" width="1" height="1" fill={leftColor} style={{ filter: 'brightness(1.5)' }} />
+            <rect x="3" y="7" width="1" height="1" fill={leftColor} style={{ filter: 'brightness(1.4)' }} />
+
+            {/* Right Wing (Secondary Color - Demon side for hybrid) */}
+            <rect x="15" y="4" width="1" height="1" fill={rightColor} style={{ filter: 'brightness(1.3)' }} />
+            <rect x="14" y="3" width="1" height="2" fill={rightColor} style={{ filter: 'brightness(1.2)' }} />
+            <rect x="14" y="5" width="1" height="3" fill={rightColor} />
+            <rect x="13" y="2" width="1" height="2" fill={rightColor} style={{ filter: 'brightness(1.3)' }} />
+            <rect x="13" y="4" width="1" height="4" fill={rightColor} />
+            <rect x="12" y="2" width="1" height="1" fill={rightColor} style={{ filter: 'brightness(1.4)' }} />
+            <rect x="12" y="3" width="1" height="5" fill={rightColor} style={{ filter: 'brightness(1.1)' }} />
+            <rect x="11" y="3" width="1" height="5" fill={rightColor} />
+            <rect x="10" y="4" width="1" height="5" fill={rightColor} style={{ filter: 'brightness(0.9)' }} />
+            <rect x="9" y="5" width="1" height="4" fill={rightColor} style={{ filter: 'brightness(0.85)' }} />
+            {/* Feather details for right wing */}
+            <rect x="14" y="6" width="1" height="1" fill={rightColor} style={{ filter: 'brightness(1.5)' }} />
+            <rect x="12" y="7" width="1" height="1" fill={rightColor} style={{ filter: 'brightness(1.4)' }} />
+
+            {/* Center body connection */}
+            <rect x="7" y="5" width="2" height="5" fill={leftColor} style={{ filter: 'brightness(0.7)' }} />
+        </svg>
+    );
+};
 
 export const renderItemIcon = (item: Item) => {
     if (item.image) {

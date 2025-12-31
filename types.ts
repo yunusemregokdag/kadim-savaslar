@@ -87,7 +87,7 @@ export interface ItemStats {
 export interface WingItem {
   id: string;
   name: string;
-  type: 'angel' | 'demon' | 'dragon' | 'fairy' | 'seraph' | 'void';
+  type: 'angel' | 'demon' | 'dragon' | 'fairy' | 'seraph' | 'void' | 'angel_demon';
   tier: number;
   bonusDamage: number;
   bonusHp: number;
@@ -95,6 +95,7 @@ export interface WingItem {
   bonusGoldRate?: number; // New for premium
   bonusHonorRate?: number; // New for premium
   color: string;
+  secondaryColor?: string; // Secondary color for hybrid wings (e.g., Angel/Demon)
   modelPath?: string; // Path to GLTF wing model (for butterfly wings etc.)
   expiresAt?: number; // Timestamp for rental expiration
 }
@@ -188,7 +189,7 @@ export interface ItemStats {
 export interface WingItem {
   id: string;
   name: string;
-  type: 'angel' | 'demon' | 'dragon' | 'fairy' | 'seraph' | 'void';
+  type: 'angel' | 'demon' | 'dragon' | 'fairy' | 'seraph' | 'void' | 'angel_demon';
   tier: number;
   bonusDamage: number;
   bonusHp: number;
@@ -196,6 +197,7 @@ export interface WingItem {
   bonusGoldRate?: number; // New for premium
   bonusHonorRate?: number; // New for premium
   color: string;
+  secondaryColor?: string; // Secondary color for hybrid wings (e.g., Angel/Demon)
   modelPath?: string; // Path to custom GLTF model
   expiresAt?: number; // Timestamp for rental expiration
 }

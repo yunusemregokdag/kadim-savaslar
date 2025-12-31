@@ -407,27 +407,27 @@ export const MOCK_LEADERBOARD = [
 ];
 
 export const RANKS: Rank[] = [
-    { id: 1, title: 'Acemi Savaşçı', minRP: 0, bonusDamage: 0, bonusShield: 0, icon: '🌱', image: '/ranks/acemi_uzay_pilotu.png', limitType: 'percent', limitValue: 20.0, order: 21 },
-    { id: 2, title: 'Gezgin', minRP: 500, bonusDamage: 0, bonusShield: 0, icon: '👟', image: '/ranks/uzay_pilotu.png', limitType: 'percent', limitValue: 12.39, order: 20 },
-    { id: 3, title: 'Kadim Gezgin', minRP: 1000, bonusDamage: 1, bonusShield: 1, icon: '🌿', image: '/ranks/acemi_pilot.png', limitType: 'percent', limitValue: 10.0, order: 19 },
-    { id: 4, title: 'Kıdemli Gezgin', minRP: 2500, bonusDamage: 2, bonusShield: 1, icon: '✈️', image: '/ranks/acemi_cavus.png', limitType: 'percent', limitValue: 9.0, order: 18 },
-    { id: 5, title: 'Acemi Milis', minRP: 5000, bonusDamage: 3, bonusShield: 1, icon: '⚔️', image: '/ranks/cavus.png', limitType: 'percent', limitValue: 8.0, order: 17 },
-    { id: 6, title: 'Kıdemli Nefer', minRP: 7500, bonusDamage: 4, bonusShield: 2, icon: '🛡️', image: '/ranks/uzman_cavus.png', limitType: 'percent', limitValue: 7.0, order: 16 },
-    { id: 7, title: 'Uzman Milis', minRP: 10000, bonusDamage: 5, bonusShield: 2, icon: '🎖️', image: '/ranks/astegmen.png', limitType: 'percent', limitValue: 6.0, order: 15 },
-    { id: 8, title: 'Aday Muhafız', minRP: 25000, bonusDamage: 6, bonusShield: 3, icon: '🥉', image: '/ranks/tegmen.png', limitType: 'percent', limitValue: 5.0, order: 14 },
-    { id: 9, title: 'Gezgin Savaşçı', minRP: 50000, bonusDamage: 7, bonusShield: 3, icon: '🥈', image: '/ranks/ustegmen.png', limitType: 'percent', limitValue: 4.5, order: 13 },
-    { id: 10, title: 'Karakol Teğmeni', minRP: 100000, bonusDamage: 8, bonusShield: 4, icon: '🥇', image: '/ranks/acemi_yuzbasi.png', limitType: 'percent', limitValue: 4.0, order: 12 },
-    { id: 11, title: 'Sınır Bekçisi', minRP: 250000, bonusDamage: 9, bonusShield: 4, icon: '🏰', image: '/ranks/yuzbasi.png', limitType: 'percent', limitValue: 3.5, order: 11 },
-    { id: 12, title: 'Kıdemli Akıncı', minRP: 500000, bonusDamage: 10, bonusShield: 5, icon: '🏇', image: '/ranks/uzman_yuzbasi.png', limitType: 'percent', limitValue: 3.0, order: 10 },
-    { id: 13, title: 'Uzman Savaşçı', minRP: 750000, bonusDamage: 12, bonusShield: 5, icon: '⚔️⭐', image: '/ranks/acemi_binbasi.png', limitType: 'percent', limitValue: 2.5, order: 9 },
-    { id: 14, title: 'Öncü Birliği Lideri', minRP: 1000000, bonusDamage: 15, bonusShield: 6, icon: '🚩', image: '/ranks/binbasi.png', limitType: 'percent', limitValue: 2.0, order: 8 },
-    { id: 15, title: 'Bölük Komutanı', minRP: 1500000, bonusDamage: 18, bonusShield: 7, icon: '🏵️', image: '/ranks/kurmay_binbasi.png', limitType: 'percent', limitValue: 1.5, order: 7 },
-    { id: 16, title: 'Kıdemli Muhafız', minRP: 2500000, bonusDamage: 20, bonusShield: 8, icon: '🛡️⭐', image: '/ranks/acemi_albay.png', limitType: 'percent', limitValue: 1.0, order: 6 },
-    { id: 17, title: 'Seçkin Şövalye', minRP: 5000000, bonusDamage: 25, bonusShield: 10, icon: '⚜️', image: '/ranks/albay.png', limitType: 'count', limitValue: 20, order: 5 },
-    { id: 18, title: 'Savaş Lordu', minRP: 10000000, bonusDamage: 30, bonusShield: 12, icon: '👹', image: '/ranks/kurmay_albay.png', limitType: 'count', limitValue: 5, order: 4 },
-    { id: 19, title: 'Kurmay Komutan', minRP: 20000000, bonusDamage: 35, bonusShield: 15, icon: '👑', image: '/ranks/tumgeneral.png', limitType: 'count', limitValue: 3, order: 3 },
-    { id: 20, title: 'Kadim General', minRP: 50000000, bonusDamage: 40, bonusShield: 20, icon: '🌟', image: '/ranks/general.png', limitType: 'count', limitValue: 2, order: 2 },
-    { id: 21, title: 'Yüce Hükümdar', minRP: 100000000, bonusDamage: 50, bonusShield: 25, icon: '👑🔥', image: '/ranks/orgeneral.png', limitType: 'count', limitValue: 1, order: 1 },
+    { id: 1, title: 'Acemi Savaşçı', minRP: 0, bonusDamage: 0, bonusShield: 0, icon: '🌱', image: '/ranks/rank_01.png', limitType: 'percent', limitValue: 20.0, order: 21 },
+    { id: 2, title: 'Gezgin', minRP: 500, bonusDamage: 0, bonusShield: 0, icon: '👟', image: '/ranks/rank_02.png', limitType: 'percent', limitValue: 12.39, order: 20 },
+    { id: 3, title: 'Kadim Gezgin', minRP: 1000, bonusDamage: 1, bonusShield: 1, icon: '🌿', image: '/ranks/rank_03.png', limitType: 'percent', limitValue: 10.0, order: 19 },
+    { id: 4, title: 'Kıdemli Gezgin', minRP: 2500, bonusDamage: 2, bonusShield: 1, icon: '✈️', image: '/ranks/rank_04.png', limitType: 'percent', limitValue: 9.0, order: 18 },
+    { id: 5, title: 'Acemi Milis', minRP: 5000, bonusDamage: 3, bonusShield: 1, icon: '⚔️', image: '/ranks/rank_05.png', limitType: 'percent', limitValue: 8.0, order: 17 },
+    { id: 6, title: 'Kıdemli Nefer', minRP: 7500, bonusDamage: 4, bonusShield: 2, icon: '🛡️', image: '/ranks/rank_06.png', limitType: 'percent', limitValue: 7.0, order: 16 },
+    { id: 7, title: 'Uzman Milis', minRP: 10000, bonusDamage: 5, bonusShield: 2, icon: '🎖️', image: '/ranks/rank_07.png', limitType: 'percent', limitValue: 6.0, order: 15 },
+    { id: 8, title: 'Aday Muhafız', minRP: 25000, bonusDamage: 6, bonusShield: 3, icon: '🥉', image: '/ranks/rank_08.png', limitType: 'percent', limitValue: 5.0, order: 14 },
+    { id: 9, title: 'Gezgin Savaşçı', minRP: 50000, bonusDamage: 7, bonusShield: 3, icon: '🥈', image: '/ranks/rank_09.png', limitType: 'percent', limitValue: 4.5, order: 13 },
+    { id: 10, title: 'Karakol Teğmeni', minRP: 100000, bonusDamage: 8, bonusShield: 4, icon: '🥇', image: '/ranks/rank_10.png', limitType: 'percent', limitValue: 4.0, order: 12 },
+    { id: 11, title: 'Sınır Bekçisi', minRP: 250000, bonusDamage: 9, bonusShield: 4, icon: '🏰', image: '/ranks/rank_11.png', limitType: 'percent', limitValue: 3.5, order: 11 },
+    { id: 12, title: 'Kıdemli Akıncı', minRP: 500000, bonusDamage: 10, bonusShield: 5, icon: '🏇', image: '/ranks/rank_12.png', limitType: 'percent', limitValue: 3.0, order: 10 },
+    { id: 13, title: 'Uzman Savaşçı', minRP: 750000, bonusDamage: 12, bonusShield: 5, icon: '⚔️⭐', image: '/ranks/rank_13.png', limitType: 'percent', limitValue: 2.5, order: 9 },
+    { id: 14, title: 'Öncü Birliği Lideri', minRP: 1000000, bonusDamage: 15, bonusShield: 6, icon: '🚩', image: '/ranks/rank_14.png', limitType: 'percent', limitValue: 2.0, order: 8 },
+    { id: 15, title: 'Bölük Komutanı', minRP: 1500000, bonusDamage: 18, bonusShield: 7, icon: '🏵️', image: '/ranks/rank_15.png', limitType: 'percent', limitValue: 1.5, order: 7 },
+    { id: 16, title: 'Kıdemli Muhafız', minRP: 2500000, bonusDamage: 20, bonusShield: 8, icon: '🛡️⭐', image: '/ranks/rank_16.png', limitType: 'percent', limitValue: 1.0, order: 6 },
+    { id: 17, title: 'Seçkin Şövalye', minRP: 5000000, bonusDamage: 25, bonusShield: 10, icon: '⚜️', image: '/ranks/rank_17.png', limitType: 'count', limitValue: 20, order: 5 },
+    { id: 18, title: 'Savaş Lordu', minRP: 10000000, bonusDamage: 30, bonusShield: 12, icon: '👹', image: '/ranks/rank_18.png', limitType: 'count', limitValue: 5, order: 4 },
+    { id: 19, title: 'Kurmay Komutan', minRP: 20000000, bonusDamage: 35, bonusShield: 15, icon: '👑', image: '/ranks/rank_19.png', limitType: 'count', limitValue: 3, order: 3 },
+    { id: 20, title: 'Kadim General', minRP: 50000000, bonusDamage: 40, bonusShield: 20, icon: '🌟', image: '/ranks/rank_19.png', limitType: 'count', limitValue: 2, order: 2 },
+    { id: 21, title: 'Yüce Hükümdar', minRP: 100000000, bonusDamage: 50, bonusShield: 25, icon: '👑🔥', image: '/ranks/rank_21.png', limitType: 'count', limitValue: 1, order: 1 },
 ];
 
 export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwner?: Faction, minLevel: number, isSafeZone?: boolean, enemies: Partial<GameEntity>[], npcs: Partial<GameEntity>[], portals: Portal[] }> = {
@@ -748,40 +748,40 @@ export const DEFAULT_HUD_LAYOUT: HUDLayout = {
     elements: {
         // ═══════════ SOL TARAF ═══════════
         // Profile - Sol üst köşe (Seviye, İsim, HP/MP barları)
-        profile: { x: 2, y: 2, scale: 1, enabled: true },
+        profile: { x: 2, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
 
         // Quest Tracker - Profilin hemen altında
-        quest: { x: 2, y: 14, scale: 1, enabled: true },
+        quest: { x: 2, y: 14, scale: 1, enabled: true, opacity: 1, locked: false },
 
         // Chat - Quest'in altında (Genel/Parti/Klan sekmeleri)
-        chat: { x: 2, y: 28, scale: 1, enabled: true },
+        chat: { x: 2, y: 28, scale: 1, enabled: true, opacity: 1, locked: false },
 
         // Joystick - Sol alt köşe (sabit)
-        joystick: { x: 8, y: 75, scale: 1, enabled: true },
+        joystick: { x: 8, y: 75, scale: 1, enabled: true, opacity: 1, locked: false },
 
         // ═══════════ SAĞ ÜST ═══════════
         // Map + Menu Buttons - Sağ üst köşe (Minimap, Zone ismi, butonlar)
-        map: { x: 72, y: 2, scale: 1, enabled: true },
+        map: { x: 72, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
 
         // ═══════════ SAĞ TARAF SKİLL'LER ═══════════
         // Eye Button (Free Look) - Sağ orta
-        eye: { x: 92, y: 30, scale: 1, enabled: true },
+        eye: { x: 92, y: 30, scale: 1, enabled: true, opacity: 1, locked: false },
 
         // HP/MP Potları - Eye'ın altında
-        hp_pot: { x: 92, y: 38, scale: 0.85, enabled: true },
-        mp_pot: { x: 92, y: 46, scale: 0.85, enabled: true },
+        hp_pot: { x: 92, y: 38, scale: 0.85, enabled: true, opacity: 1, locked: false },
+        mp_pot: { x: 92, y: 46, scale: 0.85, enabled: true, opacity: 1, locked: false },
 
         // Skills - Dikey sıralı, sağ tarafta (ekran içinde)
-        skill1: { x: 70, y: 30, scale: 1, enabled: true },
-        skill2: { x: 70, y: 38, scale: 1, enabled: true },
-        skill3: { x: 70, y: 46, scale: 1, enabled: true },
-        skill4: { x: 70, y: 54, scale: 1, enabled: true },
-        skill5: { x: 70, y: 62, scale: 1, enabled: true },
-        skill6: { x: 70, y: 70, scale: 1, enabled: true },
+        skill1: { x: 70, y: 30, scale: 1, enabled: true, opacity: 1, locked: false },
+        skill2: { x: 70, y: 38, scale: 1, enabled: true, opacity: 1, locked: false },
+        skill3: { x: 70, y: 46, scale: 1, enabled: true, opacity: 1, locked: false },
+        skill4: { x: 70, y: 54, scale: 1, enabled: true, opacity: 1, locked: false },
+        skill5: { x: 70, y: 62, scale: 1, enabled: true, opacity: 1, locked: false },
+        skill6: { x: 70, y: 70, scale: 1, enabled: true, opacity: 1, locked: false },
 
         // ═══════════ SAĞ ALT ═══════════
         // Attack Button - Sağ alt köşe (büyük kırmızı, ekran içinde)
-        attack: { x: 85, y: 75, scale: 1.2, enabled: true },
+        attack: { x: 85, y: 75, scale: 1.2, enabled: true, opacity: 1, locked: false },
     }
 };
 

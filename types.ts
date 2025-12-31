@@ -232,6 +232,8 @@ export interface HUDElement {
   y: number; // Percentage 0-100
   scale: number; // 0.5 to 2.0
   enabled: boolean;
+  opacity: number; // 0.1 to 1.0 (default 1.0)
+  locked: boolean; // Prevent dragging
 }
 
 // Flexible Layout for separate customization
@@ -259,6 +261,7 @@ export interface Settings {
 
 export interface PlayerState {
   nickname: string;
+  userId?: string; // Stable Database ID
   class: CharacterClass | null; // Allow null during creation
   faction: Faction | null;      // Allow null
   lastPosition?: { x: number, y: number, z: number }; // Persist location

@@ -129,7 +129,8 @@ export interface Rank {
   minRP: number;
   bonusDamage: number;
   bonusShield: number;
-  icon: string;
+  icon: string;        // Emoji fallback (DEV only)
+  iconPath?: string;   // Local PNG path (e.g., '/ranks/rank_01.png')
 }
 
 export interface HUDElement {

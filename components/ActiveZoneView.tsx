@@ -41,10 +41,12 @@ import { monitor } from '../utils/diagnostics/PerformanceMonitor';
 import { generateDrop, generateBossMaterialDrop } from '../utils/generateDrop';
 import { createAntiBotState, updateAntiBotOnKill, getRewardMultipliers, AntiBotState } from '../utils/antiBotSystem';
 import { ExpBarCompact } from './ui/ExpBar';
+import { RankIcon } from './ui/RankIcon';
 import { HonorDisplayCompact } from './ui/HonorDisplay';
 import { canGainHonor, getHonorValue, recordKill } from '../utils/rankSystem';
 import { getVipBonus } from '../utils/vipSystem';
 import { addDailyHonor, addDailyKill } from '../utils/dailyLeaderboard';
+import { getMaterialIcon, isDevelopmentMode } from '../utils/AssetManager';
 
 // --- PRELOAD ASSETS (NO FREEZE ON SPAWN) ---
 const PRELOAD_MODELS = [
@@ -81,12 +83,12 @@ interface Active3DEffect {
 }
 
 
-// --- MATERIALS ---
+// --- MATERIALS (Using AssetManager for icons) ---
 const MATERIALS: Item[] = [
-    { id: 'iron_ore', name: 'Demir Cevheri', type: 'material', tier: 1, rarity: 'common', value: 10, image: 'https://placehold.co/64/grey/white?text=Fe', stats: {} },
-    { id: 'wood_log', name: 'Odun', type: 'material', tier: 1, rarity: 'common', value: 5, image: 'https://placehold.co/64/brown/white?text=Wood', stats: {} },
-    { id: 'leather_scrap', name: 'Deri Parçası', type: 'material', tier: 1, rarity: 'common', value: 8, image: 'https://placehold.co/64/orange/white?text=Hide', stats: {} },
-    { id: 'herb_green', name: 'Şifalı Ot', type: 'material', tier: 1, rarity: 'common', value: 15, image: 'https://placehold.co/64/green/white?text=Herb', stats: {} },
+    { id: 'iron_ore', name: 'Demir Cevheri', type: 'material', tier: 1, rarity: 'common', value: 10, icon: getMaterialIcon('iron_ore').emoji, stats: {} },
+    { id: 'wood_log', name: 'Odun', type: 'material', tier: 1, rarity: 'common', value: 5, icon: getMaterialIcon('wood_log').emoji, stats: {} },
+    { id: 'leather_scrap', name: 'Deri Parçası', type: 'material', tier: 1, rarity: 'common', value: 8, icon: getMaterialIcon('leather_scrap').emoji, stats: {} },
+    { id: 'herb_green', name: 'Şifalı Ot', type: 'material', tier: 1, rarity: 'common', value: 15, icon: getMaterialIcon('herb_green').emoji, stats: {} },
 ];
 
 interface ActiveZoneViewProps {
@@ -1059,17 +1061,17 @@ const GameScene: React.FC<GameSceneProps> = ({
         let particleColor = '#8b4513';
 
         if (type === 'tree') {
-            itemDrop = { id: `wood_log_${uuidv4()}`, name: 'Kütük', type: 'material', tier: 1, rarity: 'common', value: 10, icon: '🪵' };
+            itemDrop = { id: `wood_log_${uuidv4()}`, name: 'Kütük', type: 'material', tier: 1, rarity: 'common', value: 10, icon: getMaterialIcon('wood_log').emoji };
             soundKey = 'gather_wood';
             particleColor = '#5D4037';
         }
         if (type === 'rock') {
-            itemDrop = { id: `iron_ore_${uuidv4()}`, name: 'Demir Cevheri', type: 'material', tier: 1, rarity: 'uncommon', value: 20, icon: '🪨' };
+            itemDrop = { id: `iron_ore_${uuidv4()}`, name: 'Demir Cevheri', type: 'material', tier: 1, rarity: 'uncommon', value: 20, icon: getMaterialIcon('iron_ore').emoji };
             soundKey = 'gather_rock';
             particleColor = '#757575';
         }
         if (type === 'crystal') {
-            itemDrop = { id: `crystal_${uuidv4()}`, name: 'Kristal Parçası', type: 'material', tier: 2, rarity: 'rare', value: 50, icon: '💎' };
+            itemDrop = { id: `crystal_${uuidv4()}`, name: 'Kristal Parçası', type: 'material', tier: 2, rarity: 'rare', value: 50, icon: getMaterialIcon('diamond_ore').emoji };
             soundKey = 'gather_magic';
             particleColor = '#00B0FF';
         }
@@ -1095,6 +1097,8 @@ const GameScene: React.FC<GameSceneProps> = ({
         const interval = setInterval(() => {
             setEntities((prev: GameEntity[]) => {
                 const hostiles = prev.filter(e => e.isHostile);
+
+
 
                 // DESPAWN LOGIC: Remove far away mobs to cycle new ones
                 const playerX = playerGroupRef.current ? playerGroupRef.current.position.x : 0;
@@ -1905,6 +1909,28 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         return JSON.parse(JSON.stringify(DEFAULT_HUD_LAYOUT));
     });
 
+    // Register Player Location for VFX
+    // Register Player Location for VFX
+    useEffect(() => {
+        if (!playerState.nickname) return;
+
+        // Self Key Logic - Must match handleSkill
+        const selfKey = playerState.userId
+            ? `user:${playerState.userId}`
+            : (socketRef.current?.id ? `socket:${socketRef.current.id}` : `player:${playerState.nickname}`);
+
+        vfxManager.registerEntityLocationProvider(selfKey, () => {
+            if (playerGroupRef.current) {
+                return [playerGroupRef.current.position.x, playerGroupRef.current.position.y, playerGroupRef.current.position.z];
+            }
+            return [0, 0, 0];
+        });
+
+        return () => {
+            vfxManager.unregisterEntityLocationProvider(selfKey);
+        };
+    }, [playerState.nickname, playerState.userId, socketRef.current?.id]);
+
     // --- POSITION PERSISTENCE ---
     useEffect(() => {
         // MOUNT: Load saved position
@@ -2008,6 +2034,78 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
     // Visual Effects
     const [particles, setParticles] = useState<any[]>([]);
+
+    // --- VFX IDENTITY SYSTEM (FUTURE-PROOF) ---
+    const trackedKeysRef = useRef<Set<string>>(new Set());
+    const socketToKeyRef = useRef<Map<string, string>>(new Map());
+
+    // Helper Refs for stable callbacks
+    const latestRemotePlayersRef = useRef(remotePlayers);
+    const latestEntitiesRef = useRef(entities);
+
+    // Sync Refs
+    useEffect(() => { latestRemotePlayersRef.current = remotePlayers; }, [remotePlayers]);
+    useEffect(() => { latestEntitiesRef.current = entities; }, [entities]);
+
+    const getEntityKey = (p: any): string => {
+        return p.userId ? `user:${p.userId}` : `socket:${p.id || p.socketId}`;
+    };
+
+    // 1. MANAGE REMOTE PLAYER IDENTITIES & VFX REGISTRY
+    useEffect(() => {
+        const currentSockets = new Set<string>();
+
+        remotePlayers.forEach(p => {
+            const socketId = p.id;
+            currentSockets.add(socketId);
+
+            const newKey = getEntityKey(p);
+            const oldKey = socketToKeyRef.current.get(socketId);
+
+            if (oldKey && oldKey !== newKey) {
+                console.log(`[VFX] Remapping Identity: ${oldKey} -> ${newKey}`);
+                vfxManager.remapEntityLocationProvider(oldKey, newKey);
+                socketToKeyRef.current.set(socketId, newKey);
+                trackedKeysRef.current.delete(oldKey);
+                trackedKeysRef.current.add(newKey);
+            } else if (!trackedKeysRef.current.has(newKey)) {
+                vfxManager.registerEntityLocationProvider(newKey, () => {
+                    const list = latestRemotePlayersRef.current;
+                    const target = list.find(rp => getEntityKey(rp) === newKey);
+                    if (target) return [target.x, 0, target.y];
+                    return null;
+                });
+                socketToKeyRef.current.set(socketId, newKey);
+                trackedKeysRef.current.add(newKey);
+            }
+        });
+
+        for (const [sId, key] of socketToKeyRef.current.entries()) {
+            if (!currentSockets.has(sId)) {
+                vfxManager.unregisterEntityLocationProvider(key);
+                socketToKeyRef.current.delete(sId);
+                trackedKeysRef.current.delete(key);
+            }
+        }
+    }, [remotePlayers]);
+
+    // 2. REGISTER MOBS (Entities)
+    useEffect(() => {
+        entities.forEach(e => {
+            const key = `mob:${e.id}`;
+            if (!trackedKeysRef.current.has(key)) {
+                vfxManager.registerEntityLocationProvider(key, () => {
+                    const ent = latestEntitiesRef.current.find(en => en.id === e.id);
+                    if (ent) return [ent.x / 15, 0, ent.y / 15];
+                    return null;
+                });
+                trackedKeysRef.current.add(key);
+            }
+        });
+    }, [entities]);
+
+
+
 
     const [castingSkill, setCastingSkill] = useState<number | null>(null);
     const [active3DEffects, setActive3DEffects] = useState<Active3DEffect[]>([]);
@@ -2136,6 +2234,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             console.log('✅ ActiveZoneView Re-connected');
             socket.emit('join_game', {
                 nickname: playerState.nickname,
+                userId: playerState.userId,
                 class: playerState.class,
                 level: playerState.level,
                 equipment: playerState.equipment
@@ -2168,6 +2267,22 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
         const handlePlayerLeft = (id: string) => {
             setRemotePlayers(prev => prev.filter(p => p.id !== id));
+        };
+
+        // Handle receiving initial zone players list (on join/reconnect)
+        const handleZonePlayers = (players: any[]) => {
+            setRemotePlayers(players);
+        };
+
+        // Handle new player joining current zone
+        const handlePlayerJoined = (playerData: any) => {
+            setRemotePlayers(prev => {
+                // Avoid duplicates
+                if (prev.find(p => p.id === playerData.id || p.socketId === playerData.socketId)) {
+                    return prev;
+                }
+                return [...prev, playerData];
+            });
         };
 
         const handleDuelChallenge = (data: any) => {
@@ -2227,6 +2342,8 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         socket.on('game_update', handleGameUpdate);
         socket.on('player_moved', handlePlayerMoved);
         socket.on('player_left', handlePlayerLeft);
+        socket.on('zone_players', handleZonePlayers);
+        socket.on('player_joined', handlePlayerJoined);
         socket.on('duel_challenge', handleDuelChallenge);
         socket.on('duel_started', handleDuelStarted);
         socket.on('duel_rejected', handleDuelRejected);
@@ -2246,11 +2363,12 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         }
 
         return () => {
-            console.log("🔌 ActiveZoneView Detaching Listeners");
             socket.off('connect', handleConnect);
             socket.off('game_update', handleGameUpdate);
             socket.off('player_moved', handlePlayerMoved);
             socket.off('player_left', handlePlayerLeft);
+            socket.off('zone_players', handleZonePlayers);
+            socket.off('player_joined', handlePlayerJoined);
             socket.off('duel_challenge', handleDuelChallenge);
             socket.off('duel_started', handleDuelStarted);
             socket.off('duel_rejected', handleDuelRejected);
@@ -3171,17 +3289,13 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         handleUpdatePlayerSafe({ mana: playerState.mana - skill.manaCost });
 
         // === SKILL ANIMASYONU TETİKLE ===
-        // skillId'den skill numarasını çıkar (skill_1 -> 1, skill_2 -> 2, vs.)
         const skillNumMatch = skillId.match(/(\d+)/);
         const skillNum = skillNumMatch ? parseInt(skillNumMatch[1]) : 1;
         setCastingSkill(skillNum);
 
-        // 500ms sonra animasyonu durdur
         setTimeout(() => {
             setCastingSkill(null);
         }, 500);
-
-        // Legacy setSkillEffects removed
 
         // 3D EFFECT LOGIC
         console.log("DEBUG SKILL EXEC:", skill.id, skill.visual, "Model:", skill.modelPath);
@@ -3190,29 +3304,57 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             const px = playerPosRef.current.x;
             const pz = playerPosRef.current.y;
 
-            let effectPos: [number, number, number] = [px, 0.5, pz]; // Default at player
+            let effectPos: [number, number, number] = [px, 0.5, pz];
             let targetPos: [number, number, number] | undefined = undefined;
 
             if (effectiveTarget) {
                 targetPos = [effectiveTarget.x / 15, 0.5, effectiveTarget.y / 15];
             } else {
-                console.log("DEBUG: No Effective Target found");
-                // Forward vector for no target
                 const rot = playerGroupRef.current?.rotation.y || 0;
                 targetPos = [px + Math.sin(rot) * 5, 0.5, pz + Math.cos(rot) * 5];
             }
 
-            // NEW PIXEL VFX SYSTEM
-            vfxManager.spawn(skill.visual || skill.name, [px, 1, pz], targetPos, effectiveTarget?.type || 'ground');
-
-            // FIX: Damage/Utility skills should spawn at target, not at player!
-            // Only buff/heal/shield skills should spawn on player
+            // Determine Target Type & Key
             const isPlayerCenteredSkill = skill.type === 'buff' || skill.type === 'heal' ||
                 skill.visual.includes('shield') || skill.visual.includes('barrier') ||
                 skill.visual.includes('meditation') || skill.visual.includes('focus') ||
-                skill.visual.includes('storm'); // arctic_storm is a shield around player
+                (skill.visual.includes('storm') && !skill.visual.includes('meteor'));
+
+            // Calculate Self Key
+            const selfKey = playerState.userId
+                ? `user:${playerState.userId}`
+                : (socketRef.current?.id ? `socket:${socketRef.current.id}` : `player:${playerState.nickname}`);
+
+            // Calculate Target Key
+            let targetKey = undefined;
+            if (effectiveTarget) {
+                if (effectiveTarget.type === 'player') {
+                    // Resolve latest key from Ref
+                    targetKey = socketToKeyRef.current.get(effectiveTarget.id) || `socket:${effectiveTarget.id}`;
+                } else {
+                    targetKey = `mob:${effectiveTarget.id}`;
+                }
+            }
+
+            // Decide Attachment
+            let attachId = undefined;
+            if (isPlayerCenteredSkill) {
+                attachId = selfKey;
+            } else if ((skill.type === 'utility' || skill.visual.includes('poison') || skill.visual.includes('burn')) && targetKey) {
+                attachId = targetKey;
+            }
+
+            // NEW PIXEL VFX SYSTEM
+            vfxManager.spawn(
+                skill.visual || skill.name,
+                [px, 1, pz],
+                targetPos,
+                effectiveTarget?.type || 'ground',
+                attachId
+            );
 
             if (!isPlayerCenteredSkill && targetPos) {
+
                 console.log("DEBUG: Spawning at TargetPos (Enemy)", targetPos);
                 effectPos = targetPos;
             } else {
@@ -3765,7 +3907,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             </DraggableHUDElement>
 
             {/* FREE LOOK / EYE BUTTON */}
-            <DraggableHUDElement id="eye" element={hudLayout.elements.eye || { x: 80, y: 40, scale: 1, enabled: true }} isEditing={isHudEditing} isSelected={selectedElementId === 'eye'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+            <DraggableHUDElement id="eye" element={hudLayout.elements.eye || { x: 80, y: 40, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'eye'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
                 <div>
                     <button
                         onMouseDown={() => setIsFreeLook(true)}
@@ -3843,7 +3985,10 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                                     {playerState.premiumBenefits?.badge && <span className="mr-1">{playerState.premiumBenefits.badge}</span>}
                                     {playerState.nickname}
                                 </span>
-                                <span className="text-[10px] text-yellow-500 flex items-center gap-1"><Crown size={10} /> {RANKS[playerState.rank]?.title || 'Acemi'}</span>
+                                <span className="text-[10px] text-yellow-500 flex items-center gap-1">
+                                    <RankIcon rank={playerState.rank} size="sm" />
+                                    <span className="font-bold tracking-wide drop-shadow-md text-amber-400">{RANKS[playerState.rank]?.title || 'Acemi'}</span>
+                                </span>
                             </div>
                             <div className="relative h-4 w-full bg-slate-900 rounded-sm border border-slate-800">
                                 <div className="h-full bg-gradient-to-r from-red-700 to-red-500 transition-all duration-300" style={{ width: `${(playerState.hp / playerState.maxHp) * 100}%` }} />

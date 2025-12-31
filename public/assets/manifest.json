@@ -1,0 +1,517 @@
+{
+    "version": "1.1.0",
+    "description": "Asset manifest for Kadim Savaşlar - Required assets for production build",
+    "lastUpdated": "2025-12-31",
+    "assetRules": {
+        "materials": {
+            "path": "/assets/materials/",
+            "format": "PNG with alpha",
+            "sizes": [
+                "32x32",
+                "64x64"
+            ],
+            "required": true
+        },
+        "skills": {
+            "path": "/assets/skills/",
+            "format": "PNG with alpha",
+            "sizes": [
+                "48x48",
+                "96x96"
+            ],
+            "subfolders": [
+                "warrior",
+                "mage",
+                "shaman",
+                "archer",
+                "common"
+            ],
+            "required": true
+        },
+        "items": {
+            "path": "/assets/items/",
+            "format": "PNG with alpha",
+            "sizes": [
+                "48x48",
+                "96x96"
+            ],
+            "subfolders": [
+                "weapons",
+                "armor",
+                "accessories",
+                "consumables",
+                "cosmetics"
+            ],
+            "required": true
+        },
+        "vfx": {
+            "path": "/assets/vfx/",
+            "format": "PNG sprite atlas",
+            "sizes": [
+                "512x512"
+            ],
+            "required": true
+        },
+        "mounts": {
+            "path": "/assets/mounts/",
+            "format": "PNG with alpha",
+            "sizes": [
+                "48x48",
+                "96x96"
+            ],
+            "required": true
+        },
+        "ui": {
+            "path": "/assets/ui/",
+            "format": "PNG with alpha",
+            "sizes": [
+                "32x32",
+                "48x48"
+            ],
+            "required": true
+        }
+    },
+    "materials": {
+        "iron_ore": {
+            "file": "iron_ore.png",
+            "description": "Demir Cevheri"
+        },
+        "copper_ore": {
+            "file": "copper_ore.png",
+            "description": "Bakır Cevheri"
+        },
+        "gold_ore": {
+            "file": "gold_ore.png",
+            "description": "Altın Cevheri"
+        },
+        "diamond_ore": {
+            "file": "diamond_ore.png",
+            "description": "Elmas Cevheri"
+        },
+        "wood_log": {
+            "file": "wood_log.png",
+            "description": "Odun/Kütük"
+        },
+        "stone": {
+            "file": "stone.png",
+            "description": "Taş"
+        },
+        "leather_scrap": {
+            "file": "leather_scrap.png",
+            "description": "Deri Parçası"
+        },
+        "herb_green": {
+            "file": "herb_green.png",
+            "description": "Şifalı Ot"
+        },
+        "cloth": {
+            "file": "cloth.png",
+            "description": "Kumaş"
+        },
+        "bone": {
+            "file": "bone.png",
+            "description": "Kemik"
+        },
+        "dragon_scale": {
+            "file": "dragon_scale.png",
+            "description": "Ejder Pulu"
+        },
+        "phoenix_feather": {
+            "file": "phoenix_feather.png",
+            "description": "Anka Tüyü"
+        },
+        "titan_essence": {
+            "file": "titan_essence.png",
+            "description": "Titan Özü"
+        },
+        "void_crystal": {
+            "file": "void_crystal.png",
+            "description": "Boşluk Kristali"
+        },
+        "ancient_rune": {
+            "file": "ancient_rune.png",
+            "description": "Antik Rün"
+        },
+        "soul_shard": {
+            "file": "soul_shard.png",
+            "description": "Ruh Parçası"
+        },
+        "magic_dust": {
+            "file": "magic_dust.png",
+            "description": "Büyü Tozu"
+        },
+        "enchant_scroll": {
+            "file": "enchant_scroll.png",
+            "description": "Büyüleme Parşömeni"
+        },
+        "upgrade_stone": {
+            "file": "upgrade_stone.png",
+            "description": "Güçlendirme Taşı"
+        },
+        "protection_scroll": {
+            "file": "protection_scroll.png",
+            "description": "Koruma Parşömeni"
+        }
+    },
+    "mounts": {
+        "horse_brown": {
+            "file": "horse_brown.png",
+            "name": "Kahverengi At"
+        },
+        "donkey": {
+            "file": "donkey.png",
+            "name": "Eşek"
+        },
+        "camel": {
+            "file": "camel.png",
+            "name": "Deve"
+        },
+        "horse_white": {
+            "file": "horse_white.png",
+            "name": "Beyaz At"
+        },
+        "elephant": {
+            "file": "elephant.png",
+            "name": "Fil"
+        },
+        "wolf": {
+            "file": "wolf.png",
+            "name": "Kurt"
+        },
+        "tiger": {
+            "file": "tiger.png",
+            "name": "Kaplan"
+        },
+        "lion": {
+            "file": "lion.png",
+            "name": "Aslan"
+        },
+        "bear": {
+            "file": "bear.png",
+            "name": "Ayı"
+        },
+        "dragon_small": {
+            "file": "dragon_small.png",
+            "name": "Yavru Ejderha"
+        },
+        "phoenix": {
+            "file": "phoenix.png",
+            "name": "Anka Kuşu"
+        },
+        "griffin": {
+            "file": "griffin.png",
+            "name": "Grifon"
+        },
+        "dragon_ancient": {
+            "file": "dragon_ancient.png",
+            "name": "Kadim Ejderha"
+        },
+        "unicorn_divine": {
+            "file": "unicorn_divine.png",
+            "name": "Kutsal Unicorn"
+        },
+        "nightmare": {
+            "file": "nightmare.png",
+            "name": "Kabus Atı"
+        }
+    },
+    "ui": {
+        "tier_bronze": {
+            "file": "tier_bronze.png",
+            "name": "Bronz Rozet"
+        },
+        "tier_silver": {
+            "file": "tier_silver.png",
+            "name": "Gümüş Rozet"
+        },
+        "tier_gold": {
+            "file": "tier_gold.png",
+            "name": "Altın Rozet"
+        },
+        "tier_diamond": {
+            "file": "tier_diamond.png",
+            "name": "Elmas Rozet"
+        },
+        "tier_t4": {
+            "file": "tier_t4.png",
+            "name": "T4 Kadim"
+        },
+        "tier_t5": {
+            "file": "tier_t5.png",
+            "name": "T5 Efsanevi"
+        },
+        "boss_essence": {
+            "file": "boss_essence.png",
+            "name": "Boss Özü"
+        },
+        "void_shard": {
+            "file": "void_shard.png",
+            "name": "Boşluk Parçası"
+        },
+        "gold_coin": {
+            "file": "gold_coin.png",
+            "name": "Altın"
+        },
+        "diamond_gem": {
+            "file": "diamond_gem.png",
+            "name": "Elmas"
+        },
+        "puzzle_piece": {
+            "file": "puzzle_piece.png",
+            "name": "Malzeme"
+        },
+        "blocked": {
+            "file": "blocked.png",
+            "name": "Engelli"
+        },
+        "crafting": {
+            "file": "crafting.png",
+            "name": "Üretim"
+        },
+        "hammer": {
+            "file": "hammer.png",
+            "name": "Çekiç"
+        },
+        "locked": {
+            "file": "locked.png",
+            "name": "Kilitli"
+        },
+        "success": {
+            "file": "success.png",
+            "name": "Başarılı"
+        },
+        "failed": {
+            "file": "failed.png",
+            "name": "Başarısız"
+        },
+        "fire": {
+            "file": "fire.png",
+            "name": "Ateş"
+        },
+        "shop": {
+            "file": "shop.png",
+            "name": "Mağaza"
+        },
+        "blacksmith": {
+            "file": "blacksmith.png",
+            "name": "Demirci"
+        },
+        "healer": {
+            "file": "healer.png",
+            "name": "Şifacı"
+        },
+        "arena": {
+            "file": "arena.png",
+            "name": "Arena"
+        },
+        "castle": {
+            "file": "castle.png",
+            "name": "Kale"
+        },
+        "safe_zone": {
+            "file": "safe_zone.png",
+            "name": "Güvenli Bölge"
+        },
+        "danger_zone": {
+            "file": "danger_zone.png",
+            "name": "Tehlikeli Bölge"
+        },
+        "boss_zone": {
+            "file": "boss_zone.png",
+            "name": "Boss Bölgesi"
+        },
+        "map_marker": {
+            "file": "map_marker.png",
+            "name": "Harita İşareti"
+        }
+    },
+    "skills": {
+        "warrior": {
+            "w1": {
+                "file": "sword_strike.png",
+                "name": "Kılıç Darbesi"
+            },
+            "w2": {
+                "file": "shield_wall.png",
+                "name": "Kalkan Duvarı"
+            },
+            "w3": {
+                "file": "rage_burst.png",
+                "name": "Öfke Patlaması"
+            },
+            "w4": {
+                "file": "ground_slam.png",
+                "name": "Yere Vurma"
+            },
+            "w5": {
+                "file": "spear_throw.png",
+                "name": "Mızrak Atışı"
+            },
+            "w6": {
+                "file": "war_cry.png",
+                "name": "Savaş Çığlığı"
+            },
+            "w7": {
+                "file": "whirlwind.png",
+                "name": "Kıyım (Ulti)"
+            }
+        },
+        "mage": {
+            "m1": {
+                "file": "fireball.png",
+                "name": "Ateş Topu"
+            },
+            "m2": {
+                "file": "ice_shield.png",
+                "name": "Buz Kalkanı"
+            },
+            "m3": {
+                "file": "teleport.png",
+                "name": "Işınlanma"
+            },
+            "m4": {
+                "file": "lightning_chain.png",
+                "name": "Yıldırım Zinciri"
+            },
+            "m5": {
+                "file": "meteor.png",
+                "name": "Meteor"
+            },
+            "m6": {
+                "file": "mana_drain.png",
+                "name": "Mana Emilimi"
+            },
+            "m7": {
+                "file": "cosmic_destruction.png",
+                "name": "Kozmik Yıkım"
+            }
+        },
+        "shaman": {
+            "s1": {
+                "file": "spirit_bolt.png",
+                "name": "Ruh Oku"
+            },
+            "s2": {
+                "file": "heal_light.png",
+                "name": "Şifa Işığı"
+            },
+            "s3": {
+                "file": "speed_totem.png",
+                "name": "Hız Totemi"
+            },
+            "s4": {
+                "file": "poison_vine.png",
+                "name": "Zehirli Sarmaşık"
+            },
+            "s5": {
+                "file": "earth_shield.png",
+                "name": "Toprak Kalkanı"
+            },
+            "s6": {
+                "file": "cleanse.png",
+                "name": "Arındırma"
+            },
+            "s7": {
+                "file": "ancestor_wrath.png",
+                "name": "Ataların Gazabı"
+            }
+        },
+        "archer": {
+            "a1": {
+                "file": "arrow_shot.png",
+                "name": "Ok Atışı"
+            },
+            "a2": {
+                "file": "evasion.png",
+                "name": "Kaçış"
+            },
+            "a3": {
+                "file": "multishot.png",
+                "name": "Çoklu Atış"
+            },
+            "a4": {
+                "file": "poison_arrow.png",
+                "name": "Zehirli Ok"
+            },
+            "a5": {
+                "file": "trap.png",
+                "name": "Tuzak"
+            },
+            "a6": {
+                "file": "eagle_eye.png",
+                "name": "Kartal Gözü"
+            },
+            "a7": {
+                "file": "arrow_rain.png",
+                "name": "Ok Yağmuru"
+            }
+        }
+    },
+    "items": {
+        "weapons": [
+            "sword",
+            "axe",
+            "staff",
+            "bow",
+            "dagger",
+            "mace",
+            "spear"
+        ],
+        "armor": [
+            "helmet",
+            "chest",
+            "gloves",
+            "boots",
+            "shield"
+        ],
+        "accessories": [
+            "ring",
+            "necklace",
+            "earring"
+        ],
+        "consumables": [
+            "hp_potion",
+            "mp_potion",
+            "buff_potion"
+        ],
+        "cosmetics": [
+            "pet",
+            "wing",
+            "costume"
+        ]
+    },
+    "vfx": {
+        "fire_particles": {
+            "file": "fire_particles.png",
+            "type": "FIRE"
+        },
+        "ice_particles": {
+            "file": "ice_particles.png",
+            "type": "ICE"
+        },
+        "lightning_particles": {
+            "file": "lightning_particles.png",
+            "type": "LIGHTNING"
+        },
+        "heal_particles": {
+            "file": "heal_particles.png",
+            "type": "HEAL"
+        },
+        "poison_particles": {
+            "file": "poison_particles.png",
+            "type": "POISON"
+        },
+        "physical_particles": {
+            "file": "physical_particles.png",
+            "type": "PHYSICAL"
+        },
+        "dark_particles": {
+            "file": "dark_particles.png",
+            "type": "DARK"
+        },
+        "holy_particles": {
+            "file": "holy_particles.png",
+            "type": "HOLY"
+        }
+    }
+}

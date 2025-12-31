@@ -6,6 +6,7 @@ import {
     X, ChevronRight, Zap, Shield, Package, RefreshCw,
     TrendingUp, Percent, Award
 } from 'lucide-react';
+import { GameIcon } from '../utils/IconMapper';
 
 interface PremiumBenefit {
     expMultiplier: number;
@@ -187,8 +188,8 @@ export const PremiumView: React.FC<PremiumViewProps> = ({ playerState, onClose, 
                                 onClick={handleClaimDaily}
                                 disabled={!canClaimDaily}
                                 className={`px-4 py-2 rounded-lg font-bold text-sm transition-colors ${canClaimDaily
-                                        ? 'bg-purple-600 hover:bg-purple-500 text-white'
-                                        : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+                                    ? 'bg-purple-600 hover:bg-purple-500 text-white'
+                                    : 'bg-slate-700 text-slate-500 cursor-not-allowed'
                                     }`}
                             >
                                 {canClaimDaily ? 'Al' : 'Alındı ✓'}
@@ -226,15 +227,12 @@ export const PremiumView: React.FC<PremiumViewProps> = ({ playerState, onClose, 
                                     key={tier}
                                     onClick={() => setSelectedTier(tier)}
                                     className={`p-4 rounded-xl border-2 transition-all ${isSelected
-                                            ? `${tierColor.bg} ${tierColor.border} scale-105`
-                                            : 'bg-slate-800/50 border-slate-700 hover:border-slate-600'
+                                        ? `${tierColor.bg} ${tierColor.border} scale-105`
+                                        : 'bg-slate-800/50 border-slate-700 hover:border-slate-600'
                                         }`}
                                 >
-                                    <div className={`text-2xl mb-2 ${tierColor.text}`}>
-                                        {tier === 'bronze' && '🥉'}
-                                        {tier === 'silver' && '🥈'}
-                                        {tier === 'gold' && '🥇'}
-                                        {tier === 'diamond' && '💎'}
+                                    <div className={`text-2xl mb-2 ${tierColor.text} flex justify-center`}>
+                                        <GameIcon category="ui" iconKey={`tier_${tier}`} size={32} />
                                     </div>
                                     <div className={`font-bold ${isSelected ? tierColor.text : 'text-white'}`}>
                                         {TIER_NAMES[tier]}

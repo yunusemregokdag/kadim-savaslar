@@ -4,11 +4,12 @@ import {
     Zap, X, Lock, Star, Crown, Timer, Coins, Check,
     TrendingUp, Shield, Heart, Sparkles
 } from 'lucide-react';
+import { GameIcon } from '../utils/IconMapper';
 
 export interface Mount {
     id: string;
     name: string;
-    emoji: string;
+    emoji: string;        // DEV fallback only
     tier: 1 | 2 | 3 | 4 | 5;
     rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
     speedBonus: number; // Percentage
@@ -147,8 +148,12 @@ export const MountSystemView: React.FC<MountSystemViewProps> = ({
                 <div className="bg-gradient-to-r from-amber-900 to-orange-900 p-4 md:p-6 border-b border-amber-700">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-3 md:gap-4">
-                            <div className="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg text-3xl">
-                                {equippedMountData?.emoji || '🐴'}
+                            <div className="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+                                {equippedMountData ? (
+                                    <GameIcon category="mount" iconKey={equippedMountData.id} size={40} />
+                                ) : (
+                                    <GameIcon category="mount" iconKey="horse_brown" size={40} />
+                                )}
                             </div>
                             <div>
                                 <h2 className="text-xl md:text-2xl font-bold text-white">Binek Ahırı</h2>
@@ -185,8 +190,8 @@ export const MountSystemView: React.FC<MountSystemViewProps> = ({
                     <button
                         onClick={() => setActiveTab('owned')}
                         className={`flex-1 py-3 px-4 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${activeTab === 'owned'
-                                ? 'bg-slate-800 text-amber-400 border-b-2 border-amber-400'
-                                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                            ? 'bg-slate-800 text-amber-400 border-b-2 border-amber-400'
+                            : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
                             }`}
                     >
                         <Star size={16} /> Bineklerim ({ownedMountsList.length})
@@ -194,8 +199,8 @@ export const MountSystemView: React.FC<MountSystemViewProps> = ({
                     <button
                         onClick={() => setActiveTab('shop')}
                         className={`flex-1 py-3 px-4 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${activeTab === 'shop'
-                                ? 'bg-slate-800 text-amber-400 border-b-2 border-amber-400'
-                                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                            ? 'bg-slate-800 text-amber-400 border-b-2 border-amber-400'
+                            : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
                             }`}
                     >
                         <Coins size={16} /> Mağaza
@@ -223,9 +228,9 @@ export const MountSystemView: React.FC<MountSystemViewProps> = ({
                                         </div>
                                     )}
 
-                                    {/* Mount Emoji */}
-                                    <div className="text-center text-4xl md:text-5xl mb-2 filter drop-shadow-lg">
-                                        {mount.emoji}
+                                    {/* Mount Icon */}
+                                    <div className="text-center mb-2 flex justify-center">
+                                        <GameIcon category="mount" iconKey={mount.id} size={48} className="filter drop-shadow-lg" />
                                     </div>
 
                                     {/* Name */}
@@ -281,7 +286,9 @@ export const MountSystemView: React.FC<MountSystemViewProps> = ({
                             </div>
 
                             <div className="text-center mb-4">
-                                <div className="text-6xl mb-2 animate-bounce">{selectedMount.emoji}</div>
+                                <div className="mb-2 flex justify-center">
+                                    <GameIcon category="mount" iconKey={selectedMount.id} size={64} className="animate-bounce" />
+                                </div>
                                 <h3 className={`text-xl font-bold ${getRarityTextColor(selectedMount.rarity)}`}>
                                     {selectedMount.name}
                                 </h3>
@@ -319,8 +326,8 @@ export const MountSystemView: React.FC<MountSystemViewProps> = ({
                                 <button
                                     onClick={() => handleEquip(selectedMount)}
                                     className={`w-full py-3 rounded-lg font-bold ${equippedMount === selectedMount.id
-                                            ? 'bg-red-600 hover:bg-red-500 text-white'
-                                            : 'bg-green-600 hover:bg-green-500 text-white'
+                                        ? 'bg-red-600 hover:bg-red-500 text-white'
+                                        : 'bg-green-600 hover:bg-green-500 text-white'
                                         }`}
                                 >
                                     {equippedMount === selectedMount.id ? 'Çıkar' : 'Kuşan'}

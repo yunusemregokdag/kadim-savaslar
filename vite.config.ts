@@ -64,7 +64,9 @@ export default defineConfig(({ mode }) => {
       target: 'es2020',
       supported: {
         'top-level-await': true
-      }
+      },
+      // Remove console.log and debugger in production
+      drop: mode === 'production' ? ['console', 'debugger'] : []
     }
   };
 });

@@ -5,6 +5,8 @@ import {
     Plus, X, ChevronDown, Check, AlertTriangle, Package, Star
 } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+import { GameIcon, getItemTypeEmoji } from '../utils/IconMapper';
+import { isDevelopmentMode } from '../utils/AssetManager';
 
 interface AuctionListing {
     id: string;
@@ -136,17 +138,14 @@ export const AuctionHouseView: React.FC<AuctionHouseViewProps> = ({
         }
     };
 
+    // Use IconMapper for consistent icon handling
     const getTypeIcon = (type: string): string => {
-        switch (type) {
-            case 'weapon': return '⚔️';
-            case 'armor': return '🛡️';
-            case 'helmet': return '⛑️';
-            case 'boots': return '👢';
-            case 'necklace': return '📿';
-            case 'earring': return '💎';
-            case 'pants': return '👖';
-            default: return '📦';
-        }
+        return getItemTypeEmoji(type);
+    };
+
+    // Render icon with fallback
+    const renderItemIcon = (type: string, size: number = 24) => {
+        return <GameIcon category="item" iconKey={type} size={size} />;
     };
 
     // Filter and sort listings

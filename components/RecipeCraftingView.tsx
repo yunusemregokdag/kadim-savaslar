@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Hammer, Scroll, Lock, CheckCircle, XCircle, Search, Sword, Shield, FlaskConical, Zap, Crown, Star, Sparkles } from 'lucide-react';
 import { Item, CraftingRecipe, PlayerState } from '../types';
 import { soundManager } from './SoundManager';
+import { GameIcon } from '../utils/IconMapper';
 
 interface RecipeCraftingViewProps {
     playerState: PlayerState;
@@ -513,22 +514,23 @@ const RecipeCraftingView: React.FC<RecipeCraftingViewProps> = ({ playerState, on
 
                 <div className="flex gap-1 overflow-x-auto pb-1 no-scrollbar">
                     {[
-                        { id: 'all', label: 'Tümü' },
-                        { id: 'craftable', label: '✓ Yapılabilir' },
-                        { id: 'weapon', label: '⚔️ Silah' },
-                        { id: 'armor', label: '🛡️ Zırh' },
-                        { id: 'accessory', label: '💎 Aksesuar' },
-                        { id: 'consumable', label: '🧪 İksir' },
+                        { id: 'all', label: 'Tümü', iconKey: null },
+                        { id: 'craftable', label: 'Yapılabilir', iconKey: 'success' },
+                        { id: 'weapon', label: 'Silah', iconKey: 'weapon' },
+                        { id: 'armor', label: 'Zırh', iconKey: 'armor' },
+                        { id: 'accessory', label: 'Aksesuar', iconKey: 'accessory' },
+                        { id: 'consumable', label: 'İksir', iconKey: 'consumable' },
                     ].map(cat => (
                         <button
                             key={cat.id}
                             onClick={() => setSelectedCategory(cat.id as any)}
-                            className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${selectedCategory === cat.id
+                            className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap flex items-center gap-1 ${selectedCategory === cat.id
                                 ? 'bg-blue-600 text-white'
                                 : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
                                 }`}
                         >
-                            {cat.label}
+                            {cat.iconKey && <GameIcon category={cat.id === 'craftable' ? 'ui' : 'item'} iconKey={cat.iconKey} size={14} />}
+                            {cat.id === 'craftable' && '✓ '}{cat.label}
                         </button>
                     ))}
                 </div>
@@ -634,7 +636,13 @@ const RecipeCraftingView: React.FC<RecipeCraftingViewProps> = ({ playerState, on
                                     canCraft(selectedRecipe) ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white' : 'bg-slate-800 text-slate-500'
                                     }`}
                             >
-                                {isCrafting ? '⏳ Üretiliyor...' : canCraft(selectedRecipe) ? '🔨 ÜRET' : '🔒 Eksik'}
+                                {isCrafting ? (
+                                    <><GameIcon category="ui" iconKey="crafting" size={16} /> Üretiliyor...</>
+                                ) : canCraft(selectedRecipe) ? (
+                                    <><GameIcon category="ui" iconKey="hammer" size={16} /> ÜRET</>
+                                ) : (
+                                    <><GameIcon category="ui" iconKey="locked" size={16} /> Eksik</>
+                                )}
                             </button>
                         </div>
                     ) : (

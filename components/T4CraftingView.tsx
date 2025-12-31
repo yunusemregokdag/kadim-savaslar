@@ -9,6 +9,7 @@ import { X, Hammer, Gem, Coins, AlertTriangle, CheckCircle, Package, XCircle } f
 import { Item, CharacterClass } from '../types';
 import { getAllRecipes, validateCraft, craftItem, getRecipesByTier, CraftingRecipe } from '../utils/craftingSystem';
 import { CRAFTING_MATERIALS } from '../constants';
+import { GameIcon } from '../utils/IconMapper';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TYPES
@@ -29,14 +30,14 @@ interface T4CraftingViewProps {
 type CraftState = 'idle' | 'crafting' | 'success' | 'error';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// FAILURE ICONS
+// FAILURE ICONS - Uses GameIcon keys instead of emojis
 // ─────────────────────────────────────────────────────────────────────────────
 
 const FAILURE_ICONS = {
-    gold: { icon: '💰', message: 'Yetersiz altın' },
-    diamond: { icon: '💎', message: 'Yetersiz elmas' },
-    materials: { icon: '🧩', message: 'Malzeme eksik' },
-    tier: { icon: '🚫', message: 'Geçersiz tier' },
+    gold: { iconKey: 'gold_coin', message: 'Yetersiz altın' },
+    diamond: { iconKey: 'diamond_gem', message: 'Yetersiz elmas' },
+    materials: { iconKey: 'puzzle_piece', message: 'Malzeme eksik' },
+    tier: { iconKey: 'blocked', message: 'Geçersiz tier' },
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -148,21 +149,21 @@ export default function T4CraftingView({
                 <div className="flex border-b border-slate-700/50">
                     <button
                         onClick={() => { setSelectedTier(4); setSelectedRecipe(null); setCraftState('idle'); }}
-                        className={`flex-1 py-3 text-center font-semibold transition ${selectedTier === 4
+                        className={`flex-1 py-3 text-center font-semibold transition flex items-center justify-center gap-2 ${selectedTier === 4
                             ? 'bg-purple-900/50 text-purple-300 border-b-2 border-purple-400'
                             : 'text-slate-500 hover:bg-slate-800/50 hover:text-slate-300'
                             }`}
                     >
-                        🟣 T4 Kadim
+                        <GameIcon category="ui" iconKey="tier_t4" size={18} /> T4 Kadim
                     </button>
                     <button
                         onClick={() => { setSelectedTier(5); setSelectedRecipe(null); setCraftState('idle'); }}
-                        className={`flex-1 py-3 text-center font-semibold transition ${selectedTier === 5
+                        className={`flex-1 py-3 text-center font-semibold transition flex items-center justify-center gap-2 ${selectedTier === 5
                             ? 'bg-orange-900/50 text-orange-300 border-b-2 border-orange-400'
                             : 'text-slate-500 hover:bg-slate-800/50 hover:text-slate-300'
                             }`}
                     >
-                        🔴 T5 Efsanevi
+                        <GameIcon category="ui" iconKey="tier_t5" size={18} /> T5 Efsanevi
                     </button>
                 </div>
 
@@ -189,7 +190,7 @@ export default function T4CraftingView({
                         {selectedRecipe ? (
                             <div className="space-y-4">
                                 <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                                    {selectedRecipe.resultTier === 5 ? '🔴' : '🟣'} {selectedRecipe.name}
+                                    <GameIcon category="ui" iconKey={selectedRecipe.resultTier === 5 ? 'tier_t5' : 'tier_t4'} size={20} /> {selectedRecipe.name}
                                 </h3>
 
                                 {/* Requirements */}
@@ -205,7 +206,8 @@ export default function T4CraftingView({
 
                                     {/* Boss Essence */}
                                     <RequirementRow
-                                        label="💀 Boss Özü"
+                                        icon={<GameIcon category="ui" iconKey="boss_essence" size={16} />}
+                                        label="Boss Özü"
                                         have={countMaterial(CRAFTING_MATERIALS.BOSS_ESSENCE)}
                                         need={selectedRecipe.requirements.bossEssence}
                                     />
@@ -213,7 +215,8 @@ export default function T4CraftingView({
                                     {/* Void Shard (T5) */}
                                     {selectedRecipe.requirements.voidShard > 0 && (
                                         <RequirementRow
-                                            label="🌀 Boşluk Parçası"
+                                            icon={<GameIcon category="ui" iconKey="void_shard" size={16} />}
+                                            label="Boşluk Parçası"
                                             have={countMaterial(CRAFTING_MATERIALS.VOID_SHARD)}
                                             need={selectedRecipe.requirements.voidShard}
                                         />
@@ -221,7 +224,8 @@ export default function T4CraftingView({
 
                                     {/* Gold */}
                                     <RequirementRow
-                                        label="💰 Altın"
+                                        icon={<GameIcon category="ui" iconKey="gold_coin" size={16} />}
+                                        label="Altın"
                                         have={gold}
                                         need={selectedRecipe.cost.gold}
                                         format
@@ -229,7 +233,8 @@ export default function T4CraftingView({
 
                                     {/* Diamonds */}
                                     <RequirementRow
-                                        label="💎 Elmas"
+                                        icon={<GameIcon category="ui" iconKey="diamond_gem" size={16} />}
+                                        label="Elmas"
                                         have={diamonds}
                                         need={selectedRecipe.cost.diamond}
                                     />
@@ -314,11 +319,11 @@ export default function T4CraftingView({
 // HELPER COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
 
-function RequirementRow({ label, have, need, format = false }: { label: string; have: number; need: number; format?: boolean }) {
+function RequirementRow({ icon, label, have, need, format = false }: { icon?: React.ReactNode; label: string; have: number; need: number; format?: boolean }) {
     const sufficient = have >= need;
     return (
         <div className={`flex items-center justify-between p-2.5 rounded-lg bg-slate-800/40 border ${sufficient ? 'border-green-500/30' : 'border-red-500/40'}`}>
-            <span className="text-sm text-slate-300">{label}</span>
+            <span className="text-sm text-slate-300 flex items-center gap-1.5">{icon}{label}</span>
             <span className={`text-sm font-bold ${sufficient ? 'text-green-400' : 'text-red-400'}`}>
                 {format ? have.toLocaleString() : have} / {format ? need.toLocaleString() : need}
             </span>

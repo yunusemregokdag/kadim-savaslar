@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useEffect, useState } from 'react';
+import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -6,18 +6,23 @@ import * as THREE from 'three';
 // 1. ARCHITECTURE & TYPES
 // ════════════════════════════════════════════════════════════════════════════════
 
-export type VFXPresetName = 'FIRE' | 'ICE' | 'POISON' | 'LIGHTNING' | 'HOLY' | 'PHYSICAL';
+export type VFXPresetName = 'FIRE' | 'ICE' | 'POISON' | 'LIGHTNING' | 'HOLY' | 'PHYSICAL' | 'SHIELD_BUFF';
+
+export type VFXType = 'IMPACT' | 'PROJECTILE' | 'STATUS';
 
 // Input for spawning a VFX
 export interface VFXRequest {
     id: string;
     preset: VFXPresetName;
-    position: [number, number, number]; // Attacker or Start
-    targetPosition?: [number, number, number]; // Enemy or End
-    targetType?: string; // For seeding
+    position: [number, number, number];
+    targetPosition?: [number, number, number];
+    targetType?: string;
+    type?: VFXType; // New: Impact, Projectile, Status
+    duration?: number; // New: For status effects
+    attachToEntityId?: string; // New: To follow an entity
 }
 
-// Particle definition for our pool
+// Particle definition for our pool (PHYSICS BASED)
 interface Particle {
     active: boolean;
     x: number; y: number; z: number;
@@ -26,34 +31,123 @@ interface Particle {
     scale: number;
     maxLife: number;
     life: number;
-    type: 'cube' | 'spark';
+    type: 'cube' | 'flat' | 'thin';
 }
 
-// Global Manager to decouple Logic from View
+// Effect Instance (SCRIPTED MOTION)
+interface EffectInstance {
+    id: string;
+    preset: VFXPresetName;
+    type: 'STATUS' | 'PROJECTILE'; // Effect type
+    active: boolean;
+    startTime: number;
+    duration: number;
+    attachToEntityId?: string;
+    // Current state
+    x: number; y: number; z: number;
+    // For projectiles
+    startX?: number; startY?: number; startZ?: number;
+    targetX?: number; targetY?: number; targetZ?: number;
+    travelDuration?: number;
+    impactTriggered?: boolean;
+    data: any; // e.g. orbital rotation angle
+}
+
+// Global Manager
 class VFXManager {
     private listeners: ((req: VFXRequest) => void)[] = [];
+    private locationProviders: Map<string, () => [number, number, number]> = new Map();
 
-    // Trigger an effect from anywhere in the codebase
-    public spawn(skillName: string, start: [number, number, number], target?: [number, number, number], targetType = 'mob') {
-        const preset = this.resolvePreset(skillName);
+    // Trigger an effect
+    public spawn(skillName: string, start: [number, number, number], target?: [number, number, number], targetType = 'mob', attachToEntityId?: string) {
+        let preset = this.resolvePreset(skillName);
+        let type: VFXType = 'IMPACT';
+        let duration = 1.0;
+
+        // Custom Logic per Skill
+        if (skillName === 'Kalkan Duravı') {
+            preset = 'SHIELD_BUFF';
+            type = 'STATUS';
+            duration = 3.0;
+        }
+
         this.emit({
             id: Math.random().toString(36).slice(2),
             preset,
             position: start,
             targetPosition: target,
-            targetType
+            targetType,
+            type,
+            duration,
+            attachToEntityId
         });
     }
 
-    // A) SkillVFXResolver (Deterministic)
     public resolvePreset(skillName: string): VFXPresetName {
-        const s = skillName.toLowerCase();
-        if (s.includes('fire') || s.includes('burn') || s.includes('flame') || s.includes('inferno') || s.includes('dragon')) return 'FIRE';
-        if (s.includes('ice') || s.includes('frost') || s.includes('freeze') || s.includes('cold') || s.includes('glacier')) return 'ICE';
-        if (s.includes('poison') || s.includes('toxin') || s.includes('venom') || s.includes('decay') || s.includes('acid')) return 'POISON';
-        if (s.includes('bolt') || s.includes('shock') || s.includes('thunder') || s.includes('lightning') || s.includes('storm')) return 'LIGHTNING';
-        if (s.includes('holy') || s.includes('heal') || s.includes('light') || s.includes('divine') || s.includes('bless')) return 'HOLY';
+        const s = (skillName || '').toLowerCase();
+
+        // Shield/Buff effects
+        if (s.includes('kalkan') || s.includes('shield') || s.includes('zırh') || s.includes('buff') || s.includes('guardian')) return 'SHIELD_BUFF';
+
+        // Fire effects
+        if (s.includes('fire') || s.includes('burn') || s.includes('flame') || s.includes('inferno') || s.includes('ateş') || s.includes('yanık') || s.includes('mage_2') || s.includes('mage_6')) return 'FIRE';
+
+        // Ice effects
+        if (s.includes('ice') || s.includes('frost') || s.includes('freeze') || s.includes('cold') || s.includes('buz') || s.includes('don') || s.includes('arctic')) return 'ICE';
+
+        // Poison effects
+        if (s.includes('poison') || s.includes('toxin') || s.includes('venom') || s.includes('decay') || s.includes('zehir') || s.includes('archer_5')) return 'POISON';
+
+        // Lightning effects
+        if (s.includes('bolt') || s.includes('shock') || s.includes('thunder') || s.includes('lightning') || s.includes('yıldırım') || s.includes('şimşek') || s.includes('mage_1')) return 'LIGHTNING';
+
+        // Holy/Heal effects
+        if (s.includes('holy') || s.includes('heal') || s.includes('light') || s.includes('divine') || s.includes('kutsal') || s.includes('şifa') || s.includes('cleric')) return 'HOLY';
+
+        // Physical/Melee (warrior, dövüşçü, etc.)
+        if (s.includes('slash') || s.includes('spin') || s.includes('bash') || s.includes('rage') || s.includes('warrior') || s.includes('kılıç') || s.includes('saldırı')) return 'PHYSICAL';
+
+        // Default fallback
         return 'PHYSICAL';
+    }
+
+    // Register a way to get entity position dynamically
+    public registerEntityLocationProvider(id: string, provider: () => [number, number, number]) {
+        this.locationProviders.set(id, provider);
+    }
+
+    public getEntityPosition(id: string): [number, number, number] | null {
+        const p = this.locationProviders.get(id);
+        return p ? p() : null;
+    }
+
+    public remapEntityLocationProvider(oldId: string, newId: string) {
+        const provider = this.locationProviders.get(oldId);
+        if (provider) {
+            this.locationProviders.set(newId, provider);
+            this.locationProviders.delete(oldId);
+            this.emitRemap(oldId, newId);
+        }
+    }
+
+    public unregisterEntityLocationProvider(id: string) {
+        this.locationProviders.delete(id);
+    }
+
+    private emitRemap(oldId: string, newId: string) {
+        // We need a specific event to notify runtime overlay
+        // Reuse emit with a special type or add new listener type
+        // For simplicity, we'll patch the activeEffects in Overlay directly via a custom event or subscription
+        // but current emit is only for SPAWN.
+        // Let's add a secondary listener for system events
+        this.systemListeners.forEach(cb => cb({ type: 'REMAP', oldId, newId }));
+    }
+
+    private systemListeners: ((event: any) => void)[] = [];
+
+    public subscribeSystem(cb: (event: any) => void) {
+        this.systemListeners.push(cb);
+        return () => { this.systemListeners = this.systemListeners.filter(l => l !== cb); };
     }
 
     public subscribe(cb: (req: VFXRequest) => void) {
@@ -70,14 +164,14 @@ export const vfxManager = new VFXManager();
 
 
 // ════════════════════════════════════════════════════════════════════════════════
-// 2. PIXEL VFX FACTORY & RUNTIME
+// 2. RUNTIME SYSTEM
 // ════════════════════════════════════════════════════════════════════════════════
 
-const MAX_PARTICLES = 500; // Total pool size
+const MAX_PARTICLES = 1500;
 const DUMMY_OBJ = new THREE.Object3D();
 const DUMMY_COLOR = new THREE.Color();
 
-// Helper for deterministic randomness
+// Helper
 function stableHash(str: string): number {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
@@ -86,12 +180,14 @@ function stableHash(str: string): number {
     return Math.abs(hash);
 }
 
-export const GameVFXOverlay: React.FC = () => {
-    // We use one big InstancedMesh for all cubic particles to save draw calls.
-    // We update matrices every frame.
+export const GameVFXOverlay: React.FC<{
+    // Optional: Pass function to get player pos directly if needed, 
+    // but vfxManager pattern prefers decoupling.
+}> = () => {
+
     const meshRef = useRef<THREE.InstancedMesh>(null);
 
-    // The Pool
+    // 1. Particle Pool (Physics)
     const particles = useMemo<Particle[]>(() => {
         return new Array(MAX_PARTICLES).fill(0).map(() => ({
             active: false,
@@ -105,109 +201,98 @@ export const GameVFXOverlay: React.FC = () => {
         }));
     }, []);
 
-    // Active particle count for limiting
-    const activeCountRef = useRef(0);
+    // 2. Active Effects List (Scripted Instances)
+    const activeEffects = useRef<EffectInstance[]>([]);
 
-    // Queue for incoming requests
+    const nextParticleIdx = useRef(0);
     const queueRef = useRef<VFXRequest[]>([]);
 
     useEffect(() => {
-        return vfxManager.subscribe((req) => {
+        const unsub1 = vfxManager.subscribe((req) => {
             queueRef.current.push(req);
         });
+        const unsub2 = vfxManager.subscribeSystem((ev) => {
+            if (ev.type === 'REMAP') {
+                activeEffects.current.forEach(eff => {
+                    if (eff.attachToEntityId === ev.oldId) {
+                        eff.attachToEntityId = ev.newId;
+                    }
+                });
+            }
+        });
+        return () => { unsub1(); unsub2(); };
     }, []);
 
-    // B) VFX Factory Logic (Procedural Generation)
-    const spawnParticles = (req: VFXRequest) => {
+    // --- LOGIC: SPAWN IMPACT ---
+    const spawnImpact = (req: VFXRequest) => {
         const { preset, position, targetPosition, targetType } = req;
-        // Use target position if available (Impact), else attacker position (Self-cast/Buff)
         const [tx, ty, tz] = targetPosition || position;
         const seed = stableHash(preset + (targetType || ''));
-        const rng = () => ((seed * 1.5) % 1 + Math.random()) % 1; // Mixed rng
 
-        let count = 0;
-        let colorPalette: [number, number, number][] = [];
-        // Base config
-        let speed = 0.1;
-        let spread = 0.5;
-        let lift = 0.1;
-        let gravity = -0.01;
+        // Default Params
+        let count = 8;
+        let colorPalette: [number, number, number][] = [[1, 1, 1]];
+        let speed = 0.2;
+        let spread = 1.0;
+        let lift = 0.2;
+        let gravity = -0.02;
         let lifeBase = 1.0;
-        let sizeBase = 0.2;
+        let sizeBase = 0.4;
+        let shape: 'cube' | 'flat' | 'thin' = 'cube';
 
-        // 3) Concrete Presets
+        // Configure based on Preset
         switch (preset) {
             case 'FIRE':
-                count = 12;
-                colorPalette = [[1, 0.3, 0], [1, 0.6, 0], [1, 0.1, 0]]; // Orange, Yellow, Red
-                speed = 0.05;
-                spread = 0.4;
-                lift = 0.08;
-                lifeBase = 0.8;
+                count = 16;
+                colorPalette = [[1, 0.4, 0], [1, 0.8, 0], [0.8, 0.2, 0]];
+                speed = 0.15; spread = 0.6; lift = 0.15; lifeBase = 0.8;
                 break;
             case 'ICE':
-                count = 15;
-                colorPalette = [[0.5, 0.8, 1], [0.8, 0.9, 1], [0, 1, 1]]; // Cyan, White
-                speed = 0.15; // Fast burst
-                spread = 0.8;
-                lift = 0;
-                gravity = 0; // Floating shards
-                lifeBase = 1.2;
+                count = 20;
+                colorPalette = [[0.4, 0.9, 1], [0.8, 1, 1], [0, 1, 1]];
+                speed = 0.3; spread = 1.2; lift = 0.1; gravity = 0; lifeBase = 1.0; shape = 'flat';
                 break;
             case 'POISON':
-                count = 10;
-                colorPalette = [[0.2, 0.8, 0.2], [0.5, 0, 0.5], [0.1, 1, 0.1]]; // Green, Purple
-                speed = 0.02;
-                spread = 0.6;
-                lift = 0.05;
-                gravity = 0.005;
-                lifeBase = 2.0; // Lingering
+                count = 12;
+                colorPalette = [[0.2, 1, 0.2], [0.6, 0, 0.8], [0.8, 1, 0.4]];
+                speed = 0.05; spread = 0.8; lift = 0.1; gravity = 0.01; lifeBase = 2.0;
                 break;
             case 'LIGHTNING':
-                count = 8;
-                colorPalette = [[1, 1, 0.2], [0.8, 0.8, 1], [1, 1, 1]];
-                speed = 0.0; // Instant placement
-                spread = 1.0;
-                lifeBase = 0.3; // Quick flash
+                count = 10;
+                colorPalette = [[1, 1, 0.4], [0.8, 0.8, 1], [1, 1, 1]];
+                speed = 0.05; spread = 1.5; lifeBase = 0.4; shape = 'thin';
                 break;
             case 'HOLY':
-                count = 12;
-                colorPalette = [[1, 0.9, 0.3], [1, 1, 0.8], [1, 0.8, 0.1]]; // Gold
-                speed = 0.03;
-                spread = 0.5;
-                lift = 0.1; // Spiraling up
-                lifeBase = 1.5;
+                count = 16;
+                colorPalette = [[1, 0.9, 0.2], [1, 1, 0.7], [1, 0.7, 0]];
+                speed = 0.08; spread = 0.7; lift = 0.25; lifeBase = 1.5;
                 break;
             case 'PHYSICAL':
             default:
-                count = 6;
-                colorPalette = [[0.8, 0.8, 0.8], [0.5, 0.5, 0.5], [1, 1, 1]];
-                speed = 0.1;
-                spread = 0.3;
-                gravity = -0.05; // Falling debris
+                count = 8;
+                colorPalette = [[0.9, 0.9, 0.9], [0.6, 0.6, 0.6], [1, 0.2, 0.2]];
+                speed = 0.2; spread = 0.5; gravity = -0.06;
                 break;
         }
 
-        // Projectile Trail (Optional: If target is far from source)
-        // For now we implement IMPACT only as requested primarily.
-
-        // Spawn Loop
+        // Spawn
         for (let i = 0; i < count; i++) {
-            // Find free particle
-            const p = particles.find(pt => !pt.active);
-            if (!p) break;
+            const idx = nextParticleIdx.current;
+            nextParticleIdx.current = (nextParticleIdx.current + 1) % MAX_PARTICLES;
+            const p = particles[idx];
 
             p.active = true;
             p.maxLife = lifeBase + Math.random() * 0.5;
             p.life = p.maxLife;
+            p.type = shape;
 
-            // Random offset in sphere
+            // Sphere random
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
             const r = Math.random() * spread;
 
             p.x = tx + r * Math.sin(phi) * Math.cos(theta);
-            p.y = ty + r * Math.sin(phi) * Math.sin(theta) + 0.5; // Lift up slightly
+            p.y = ty + r * Math.sin(phi) * Math.sin(theta) + 1.0;
             p.z = tz + r * Math.cos(phi);
 
             // Velocity
@@ -215,108 +300,194 @@ export const GameVFXOverlay: React.FC = () => {
             p.vy = (Math.random() * lift) + (Math.random() - 0.5) * speed * 0.5;
             p.vz = (Math.random() - 0.5) * speed;
 
-            // Apply specific physics per preset
             if (preset === 'LIGHTNING') {
-                // Vertical pillars
-                p.x = tx + (Math.random() - 0.5) * 1.5;
-                p.z = tz + (Math.random() - 0.5) * 1.5;
-                p.y = ty + Math.random() * 2;
+                p.x = tx + (Math.random() - 0.5) * 2;
+                p.z = tz + (Math.random() - 0.5) * 2;
+                p.y = ty + Math.random() * 3;
                 p.vx = 0; p.vy = 0; p.vz = 0;
             } else if (preset === 'ICE') {
-                // Explosion outward
                 const dir = new THREE.Vector3(p.x - tx, p.y - ty, p.z - tz).normalize();
                 p.vx = dir.x * speed;
                 p.vy = dir.y * speed;
                 p.vz = dir.z * speed;
             }
+            if (gravity !== -0.01) p.vy += gravity * 2;
 
-            // Gravity override
-            if (gravity !== -0.01) p.vy += gravity * 2; // Init impulse
-
-            // Color
             const col = colorPalette[Math.floor(Math.random() * colorPalette.length)];
-            p.r = col[0];
-            p.g = col[1];
-            p.b = col[2];
-
+            p.r = col[0]; p.g = col[1]; p.b = col[2];
             p.scale = sizeBase * (0.8 + Math.random() * 0.4);
         }
     };
 
     useFrame((state, delta) => {
         if (!meshRef.current) return;
+        const now = state.clock.elapsedTime;
 
         // 1. Process Queue
         while (queueRef.current.length > 0) {
-            const req = queueRef.current.shift();
-            if (req) spawnParticles(req);
+            const req = queueRef.current.shift()!;
+
+            if (req.type === 'STATUS') {
+                // Register new persistent effect
+                activeEffects.current.push({
+                    id: req.id,
+                    preset: req.preset,
+                    active: true,
+                    startTime: now,
+                    duration: req.duration || 3.0,
+                    attachToEntityId: req.attachToEntityId,
+                    x: req.position[0],
+                    y: req.position[1],
+                    z: req.position[2],
+                    data: { angle: 0 }
+                });
+            } else {
+                // Instant Impact
+                spawnImpact(req);
+            }
         }
 
-        let activeIdx = 0;
         const matrix = new THREE.Matrix4();
+        let particleRenderIdx = 0;
 
-        // 2. Update Particles
-        particles.forEach(p => {
-            if (!p.active) return;
+        // 2. Render PHYSICS Particles
+        for (let i = 0; i < MAX_PARTICLES; i++) {
+            const p = particles[i];
 
-            p.life -= delta;
-            if (p.life <= 0) {
-                p.active = false;
-                // Hide
-                matrix.makeScale(0, 0, 0);
-                meshRef.current!.setMatrixAt(activeIdx++, matrix); // Optimization: We don't track indices perfectly, but InstancedMesh needs linear fill. 
-                // Wait... InstancedMesh needs persistent indices if we want shrinking.
-                // Re-write: We must iterate ALL particles and map them to instanceId 0..N? 
-                // Or dynamic count. 
-                return;
+            if (!p.active) {
+                // We SKIP rendering inactive ones (effectively) by not incrementing particleRenderIdx?
+                // No, InstancedMesh needs linear indices. We must set scale 0 for holes.
+                // But wait, we share the SAME mesh for physics particles AND scripted particles to save draw calls.
+                // So let's fill physics particles first.
+                // NOTE: Strategy -> We just loop everything. Inactive ones get scale 0.
             }
 
-            // Move
-            p.x += p.vx;
-            p.y += p.vy;
-            p.z += p.vz;
+            if (p.active) {
+                p.life -= delta;
+                if (p.life <= 0) p.active = false;
+                else {
+                    p.x += p.vx; p.y += p.vy; p.z += p.vz;
+                    p.vy -= 0.05 * delta; p.vx *= 0.95; p.vz *= 0.95;
+                }
+            }
 
-            // Gravity/Friction simulation
-            p.vy -= 0.05 * delta; // Generic gravity
-            p.vx *= 0.95; // Air resistance
-            p.vz *= 0.95;
+            if (p.active) {
+                const lifeRatio = p.life / p.maxLife;
+                const scale = p.scale * lifeRatio;
+                let sx = scale, sy = scale, sz = scale;
+                if (p.type === 'flat') { sx *= 0.1; sy *= 1.5; sz *= 1.5; }
+                if (p.type === 'thin') { sx *= 0.2; sy *= 4.0; sz *= 0.2; }
 
-            // Scale (Shrink at end)
-            const scale = p.scale * (p.life / p.maxLife);
+                DUMMY_OBJ.position.set(p.x, p.y, p.z);
+                DUMMY_OBJ.scale.set(sx, sy, sz);
+                DUMMY_OBJ.rotation.x += p.vx * 5;
+                DUMMY_OBJ.rotation.y += p.vy * 5;
+                if (p.type === 'thin') DUMMY_OBJ.rotation.set(0, 0, 0);
+                DUMMY_OBJ.updateMatrix();
 
-            // Update Instance
-            DUMMY_OBJ.position.set(p.x, p.y, p.z);
-            DUMMY_OBJ.scale.setScalar(scale);
-            DUMMY_OBJ.rotation.x += p.vx * 2;
-            DUMMY_OBJ.rotation.y += p.vy * 2;
-            DUMMY_OBJ.updateMatrix();
+                meshRef.current.setMatrixAt(particleRenderIdx, DUMMY_OBJ.matrix);
+                DUMMY_COLOR.setRGB(p.r, p.g, p.b);
+                meshRef.current.setColorAt(particleRenderIdx, DUMMY_COLOR);
+            } else {
+                matrix.makeScale(0, 0, 0);
+                meshRef.current.setMatrixAt(particleRenderIdx, matrix);
+            }
+            particleRenderIdx++;
+        }
 
-            meshRef.current!.setMatrixAt(activeIdx, DUMMY_OBJ.matrix);
+        // 3. Render SCRIPTED Effects (Status/Buffs)
+        // We use the remaining slots in the pool (MAX_PARTICLES.. limit?)
+        // Or we just continue incrementing particleRenderIdx if < MAX.
 
-            // Color with Glow (Emissive trick: make bright)
-            DUMMY_COLOR.setRGB(p.r, p.g, p.b);
-            // Boost color for glow
-            // DUMMY_COLOR.multiplyScalar(2.0); 
-            meshRef.current!.setColorAt(activeIdx, DUMMY_COLOR);
+        activeEffects.current = activeEffects.current.filter(eff => {
+            const age = now - eff.startTime;
+            if (age > eff.duration) return false;
 
-            activeIdx++;
+            // Update Position (Support attachment)
+            if (eff.attachToEntityId) {
+                const pos = vfxManager.getEntityPosition(eff.attachToEntityId);
+                if (pos) {
+                    eff.x = pos[0];
+                    eff.y = pos[1];
+                    eff.z = pos[2];
+                }
+            }
+
+            // Render Logic per Preset
+            if (eff.preset === 'SHIELD_BUFF') {
+                // 3 Orbiting Shields
+                const orbitSpeed = 3.5;
+                const radius = 0.9;
+                const count = 3;
+
+                // Fade out at end
+                let alpha = 1.0;
+                if (age > eff.duration - 0.25) {
+                    alpha = (eff.duration - age) / 0.25;
+                }
+
+                for (let j = 0; j < count; j++) {
+                    if (particleRenderIdx >= MAX_PARTICLES) break;
+
+                    const angle = (age * orbitSpeed) + (j * (Math.PI * 2 / count));
+                    const px = eff.x + Math.cos(angle) * radius;
+                    const py = eff.y + 1.0; // yOffset
+                    const pz = eff.z + Math.sin(angle) * radius;
+
+                    DUMMY_OBJ.position.set(px, py, pz);
+                    DUMMY_OBJ.scale.set(0.1, 0.35, 0.35); // Shield shape (Flat box)
+
+                    // Look away from center
+                    DUMMY_OBJ.lookAt(eff.x, py, eff.z);
+                    DUMMY_OBJ.rotateY(Math.PI / 2); // Face outward
+
+                    DUMMY_OBJ.updateMatrix();
+
+                    meshRef.current.setMatrixAt(particleRenderIdx, DUMMY_OBJ.matrix);
+
+                    // Cyan/Blue shield color
+                    DUMMY_COLOR.setRGB(0.2 * alpha, 0.8 * alpha, 1.0 * alpha);
+                    meshRef.current.setColorAt(particleRenderIdx, DUMMY_COLOR);
+
+                    particleRenderIdx++;
+                }
+            }
+            return true;
         });
 
-        // Update count and flags
-        meshRef.current.count = activeIdx;
+        // Clear remaining slots (if any active last frame but not now)
+        // Not strictly necessary if we rely on next frame overwriting, but good for cleanup.
+        // Actually, InstancedMesh keeps old matrices if we don't overwrite them.
+        // So we must clear from particleRenderIdx to MAX_PARTICLES.
+        // Optimization: Just clear a reasonable buffer amount or track previous count. 
+        // For now, let's clear 100 slots ahead to be safe/lazy
+        for (let k = 0; k < 100; k++) {
+            if (particleRenderIdx + k < MAX_PARTICLES) {
+                matrix.makeScale(0, 0, 0);
+                meshRef.current.setMatrixAt(particleRenderIdx + k, matrix);
+            }
+        }
+
+        meshRef.current.count = MAX_PARTICLES;
         meshRef.current.instanceMatrix.needsUpdate = true;
         if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
     });
 
     return (
-        <instancedMesh ref={meshRef} args={[undefined, undefined, MAX_PARTICLES]}>
+        <instancedMesh
+            ref={meshRef}
+            args={[undefined, undefined, MAX_PARTICLES]}
+            frustumCulled={false}
+        >
             <boxGeometry args={[1, 1, 1]} />
             <meshStandardMaterial
-                roughness={0.5}
-                metalness={0.1}
-                emissiveIntensity={1.2}
-                toneMapped={false} // Important for vibrant excessive colors
+                roughness={0.4}
+                metalness={0.2}
+                emissiveIntensity={2.0}
+                toneMapped={false}
                 vertexColors
+                transparent
+                opacity={0.9}
             />
         </instancedMesh>
     );

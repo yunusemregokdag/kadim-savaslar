@@ -14,8 +14,10 @@ import RecipeCraftingView from './RecipeCraftingView';
 import InventoryModal from './InventoryModal';
 import { PixelWing, PixelUser, PixelBackpack, PixelShield, PixelQuest, PixelUsers, PixelHammer, PixelMap, PixelTrophy, PixelCart, PixelSwords } from './ui/ItemIcons';
 import { ItemTooltip } from './ui/ItemTooltip';
+import { getItemDisplayData } from '../utils/ItemDisplayAdapter';
 import { loadListings, getListings } from '../utils/marketSystem';
 import { loadDailyStats, getAllDailyStats } from '../utils/dailyLeaderboard';
+import { RankIcon } from './ui/RankIcon';
 import StatPointsPanel from './StatPointsPanel';
 import { DailyLoginModal } from './DailyLoginModal';
 import { AchievementModal, DEFAULT_ACHIEVEMENTS } from './AchievementModal';
@@ -1197,428 +1199,489 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
 
                     <main className="flex-1 bg-slate-950 overflow-y-auto p-4 md:p-8">
                         {activeTab === 'character' && (
-                            <div className="max-w-4xl mx-auto">
-                                <div className="flex flex-col lg:flex-row gap-6">
-                                    {/* Sol Panel - 3D Model */}
-                                    <div className="flex-1 flex flex-col items-center">
-                                        <h2 className="text-2xl font-bold mb-4 text-white">{playerStats.nickname}</h2>
-                                        <div className="w-full max-w-xs h-96 relative bg-slate-900 rounded-xl border border-slate-700 overflow-hidden">
-                                            <Canvas shadows camera={{ position: [0, 2, 5], fov: 45 }} dpr={Math.min(window.devicePixelRatio, 1.5)} gl={{ antialias: false, powerPreference: 'high-performance', failIfMajorPerformanceCaveat: false }}>
-                                                <ambientLight intensity={0.5} />
-                                                <spotLight position={[5, 10, 5]} angle={0.5} penumbra={1} intensity={2} castShadow />
+                            <div className="max-w-7xl mx-auto animate-fadeIn">
+                                {/* TWO-COLUMN LAYOUT: Fixed Left + Flex Right */}
+                                <div className="flex gap-4">
+
+                                    {/* ═══════════════════════════════════════════════════════════════ */}
+                                    {/* LEFT COLUMN - IDENTITY PANEL (FIXED WIDTH 280px) */}
+                                    {/* ═══════════════════════════════════════════════════════════════ */}
+                                    <div className="w-[280px] flex-shrink-0 bg-gradient-to-b from-slate-900/90 to-slate-950 rounded-xl border border-purple-900/30 shadow-2xl overflow-hidden">
+                                        {/* Top Accent Bar */}
+                                        <div className="h-1 bg-gradient-to-r from-purple-600 via-yellow-500 to-purple-600"></div>
+
+                                        {/* Header: Name + Rank */}
+                                        <div className="p-3 text-center border-b border-purple-900/30 bg-gradient-to-b from-purple-950/50 to-transparent">
+                                            <h2 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-400 to-yellow-200 tracking-wide uppercase">{playerStats.nickname}</h2>
+                                            <div className="text-[10px] text-purple-400 font-bold tracking-wider mt-0.5">{RANKS[playerStats.rank]?.title || 'Maceracı'}</div>
+                                        </div>
+
+                                        {/* 3D Character Preview */}
+                                        <div className="w-full h-[260px] relative bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-950/30 to-slate-950">
+                                            <Canvas shadows camera={{ position: [0, 2, 5], fov: 45 }} dpr={Math.min(window.devicePixelRatio, 1.5)} gl={{ antialias: false, powerPreference: 'high-performance' }}>
+                                                <ambientLight intensity={0.6} />
+                                                <spotLight position={[5, 10, 5]} angle={0.5} penumbra={1} intensity={2} castShadow color="#ffedd5" />
+                                                <pointLight position={[-5, 5, -5]} intensity={0.5} color="#3b82f6" />
                                                 <Suspense fallback={null}>
                                                     <VoxelSpartan charClass={playerStats.class} rotation={[0, 0, 0]} isMoving={false} isAttacking={false} weaponItem={playerStats.equipment.weapon} />
                                                 </Suspense>
                                                 <Environment preset="city" />
                                             </Canvas>
+
+                                            {/* Level Badge */}
+                                            <div className="absolute bottom-3 left-3 bg-black/70 backdrop-blur px-3 py-1 rounded-full border border-yellow-500/30 text-xs text-white">
+                                                Lv <span className="text-yellow-400 font-bold text-sm">{playerStats.level}</span>
+                                            </div>
+                                            <div className="absolute bottom-3 right-3 flex items-center gap-1.5">
+                                                <RankIcon rank={playerStats.rank} size="sm" />
+                                            </div>
                                         </div>
 
-                                        {/* Temel Bilgiler */}
-                                        <div className="w-full max-w-xs mt-4 bg-slate-900/80 rounded-xl p-4 border border-slate-700">
-                                            <h3 className="text-sm font-bold text-slate-400 uppercase mb-3">📊 Temel Bilgiler</h3>
-                                            <div className="grid grid-cols-2 gap-3 text-sm">
-                                                <div className="flex justify-between">
-                                                    <span className="text-slate-400">Seviye:</span>
-                                                    <span className="text-yellow-400 font-bold">{playerStats.level}</span>
+                                        {/* HP/MP Bars */}
+                                        <div className="p-3 bg-slate-950/80 border-t border-purple-900/30 space-y-2">
+                                            {/* HP */}
+                                            <div className="bg-slate-900/50 p-2 rounded border border-red-900/30">
+                                                <div className="flex items-center justify-between text-[10px] mb-1">
+                                                    <span className="text-red-400 font-bold flex items-center gap-1"><Heart size={10} /> HP</span>
+                                                    <span className="text-slate-400">{playerStats.hp}/{playerStats.maxHp}</span>
                                                 </div>
-                                                <div className="flex justify-between">
-                                                    <span className="text-slate-400">Sınıf:</span>
-                                                    <span className="text-purple-400 font-bold capitalize">{playerStats.class || 'Bilinmiyor'}</span>
+                                                <div className="w-full h-1.5 bg-red-950 rounded-full overflow-hidden">
+                                                    <div className="h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full" style={{ width: `${(playerStats.hp / playerStats.maxHp) * 100}%` }}></div>
                                                 </div>
-                                                <div className="flex justify-between">
-                                                    <span className="text-slate-400">Can:</span>
-                                                    <span className="text-red-400 font-bold">{playerStats.hp}/{playerStats.maxHp}</span>
+                                            </div>
+                                            {/* MP */}
+                                            <div className="bg-slate-900/50 p-2 rounded border border-blue-900/30">
+                                                <div className="flex items-center justify-between text-[10px] mb-1">
+                                                    <span className="text-blue-400 font-bold flex items-center gap-1"><Zap size={10} /> MP</span>
+                                                    <span className="text-slate-400">{playerStats.mana}/{playerStats.maxMana}</span>
                                                 </div>
-                                                <div className="flex justify-between">
-                                                    <span className="text-slate-400">Mana:</span>
-                                                    <span className="text-blue-400 font-bold">{playerStats.mana}/{playerStats.maxMana}</span>
-                                                </div>
-                                                <div className="flex justify-between">
-                                                    <span className="text-slate-400">Hasar:</span>
-                                                    <span className="text-orange-400 font-bold">{playerStats.damage}</span>
-                                                </div>
-                                                <div className="flex justify-between">
-                                                    <span className="text-slate-400">Zırh:</span>
-                                                    <span className="text-cyan-400 font-bold">{playerStats.defense}</span>
+                                                <div className="w-full h-1.5 bg-blue-950 rounded-full overflow-hidden">
+                                                    <div className="h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-full" style={{ width: `${(playerStats.mana / playerStats.maxMana) * 100}%` }}></div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Sağ Panel - Stat Points + Pet + Kanat */}
-                                    <div className="flex-1 space-y-4">
-                                        <StatPointsPanel playerState={playerStats} onAddStat={handleStatIncrease} />
+                                    {/* ═══════════════════════════════════════════════════════════════ */}
+                                    {/* RIGHT COLUMN - FLEX (Stats Primary + Companions Secondary) */}
+                                    {/* ═══════════════════════════════════════════════════════════════ */}
+                                    <div className="flex-1 flex flex-col gap-4">
 
-                                        {/* Yoldaş (Pet) Bölümü */}
-                                        <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-4 border border-slate-700">
-                                            <h3 className="text-lg font-bold text-white flex items-center gap-2 mb-3">
-                                                🐾 Yoldaş (Pet)
-                                            </h3>
-                                            {playerStats.equippedPet ? (
-                                                <div className="flex items-center gap-4 p-3 bg-green-600/20 rounded-lg border border-green-600/30">
-                                                    <div className="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center text-2xl">
-                                                        🐉
-                                                    </div>
-                                                    <div>
-                                                        <div className="font-bold text-green-400">{playerStats.equippedPet.name}</div>
-                                                        <div className="text-xs text-slate-400">
-                                                            +{playerStats.equippedPet.bonusExpRate}% EXP • +{playerStats.equippedPet.bonusDefense} Zırh
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <div className="text-center py-4 text-slate-500">
-                                                    <div className="text-2xl mb-2">🎁</div>
-                                                    <p className="text-sm">Henüz yoldaşın yok</p>
-                                                    <p className="text-xs text-slate-600">Market'ten satın alabilirsin</p>
-                                                </div>
-                                            )}
-                                            {/* Sahip Olunan Petler */}
-                                            {playerStats.ownedPets && playerStats.ownedPets.length > 0 && (
-                                                <div className="mt-3 border-t border-slate-700 pt-3">
-                                                    <div className="text-xs text-slate-400 mb-2">Sahip Olduğun Yoldaşlar:</div>
-                                                    <div className="grid grid-cols-3 gap-2">
-                                                        {playerStats.ownedPets.map(pet => (
-                                                            <button
-                                                                key={pet.id}
-                                                                onClick={() => setPlayerStats(prev => ({ ...prev, equippedPet: prev.equippedPet?.id === pet.id ? null : pet }))}
-                                                                className={`p-2 rounded-lg border text-center transition-all ${playerStats.equippedPet?.id === pet.id
-                                                                    ? 'bg-green-600/30 border-green-500'
-                                                                    : 'bg-slate-800 border-slate-600 hover:border-green-500'
-                                                                    }`}
-                                                            >
-                                                                <div className="text-lg">🐾</div>
-                                                                <div className="text-[10px] text-slate-300 truncate">{pet.name}</div>
-                                                            </button>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
+                                        {/* ─────────────────────────────────────────────────────────── */}
+                                        {/* TOP RIGHT: PRIMARY PANEL - CHARACTER STATS */}
+                                        {/* This is the VISUAL ANCHOR - Wide, clean, readable */}
+                                        {/* ─────────────────────────────────────────────────────────── */}
+                                        <div className="bg-gradient-to-b from-slate-900/90 to-slate-950 rounded-xl border border-amber-900/30 shadow-lg overflow-hidden">
+                                            <StatPointsPanel playerState={playerStats} onAddStat={handleStatIncrease} />
                                         </div>
 
-                                        {/* Kanat Bölümü */}
-                                        <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-4 border border-slate-700">
-                                            <h3 className="text-lg font-bold text-white flex items-center gap-2 mb-3">
-                                                <div className="w-5 h-5"><PixelWing color="#a78bfa" /></div> Kanat
-                                            </h3>
-                                            {playerStats.equippedWing ? (
-                                                <div className="flex items-center gap-4 p-3 bg-purple-600/20 rounded-lg border border-purple-600/30">
-                                                    <div className="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center">
-                                                        <div className="w-8 h-8"><PixelWing color={playerStats.equippedWing.color || '#a78bfa'} /></div>
-                                                    </div>
-                                                    <div className="flex-1">
-                                                        <div className="font-bold text-purple-400">{playerStats.equippedWing.name}</div>
-                                                        <div className="text-xs text-slate-400">
-                                                            +{playerStats.equippedWing.bonusDamage} Hasar • +{playerStats.equippedWing.bonusHp} Can
-                                                        </div>
-                                                    </div>
-                                                    <button
-                                                        onClick={() => setPlayerStats(prev => ({ ...prev, equippedWing: null }))}
-                                                        className="px-2 py-1 bg-red-600/30 hover:bg-red-600/50 text-red-300 text-xs rounded border border-red-600/50"
-                                                    >
-                                                        Çıkar
-                                                    </button>
+                                        {/* ─────────────────────────────────────────────────────────── */}
+                                        {/* BOTTOM RIGHT: SECONDARY PANELS - Companions + Wings */}
+                                        {/* Smaller visual weight, must NOT dominate */}
+                                        {/* ─────────────────────────────────────────────────────────── */}
+                                        <div className="grid grid-cols-2 gap-3">
+
+                                            {/* PET CARD (Compact) */}
+                                            <div className="bg-gradient-to-b from-slate-900/80 to-slate-950 rounded-lg border border-emerald-900/30 shadow overflow-hidden">
+                                                <div className="px-2 py-1.5 border-b border-emerald-900/20 bg-emerald-950/20 flex justify-between items-center">
+                                                    <h3 className="font-bold text-emerald-400 flex items-center gap-1.5 text-xs">
+                                                        <span className="text-sm">🐾</span> Yoldaşlar
+                                                    </h3>
+                                                    <span className="text-[9px] text-emerald-600 font-mono bg-emerald-950/40 px-1 py-0.5 rounded">{playerStats.ownedPets?.length || 0}</span>
                                                 </div>
-                                            ) : (
-                                                <div className="text-center py-4 text-slate-500">
-                                                    <div className="text-2xl mb-2">✨</div>
-                                                    <p className="text-sm">Henüz kanatın yok</p>
-                                                    <p className="text-xs text-slate-600">Market'ten satın alabilirsin</p>
-                                                </div>
-                                            )}
-                                            {/* Sahip Olunan Kanatlar */}
-                                            {playerStats.ownedWings && playerStats.ownedWings.length > 0 && (
-                                                <div className="mt-3 border-t border-slate-700 pt-3">
-                                                    <div className="text-xs text-slate-400 mb-2">Sahip Olduğun Kanatlar:</div>
-                                                    <div className="grid grid-cols-3 gap-2">
-                                                        {playerStats.ownedWings.map(wing => (
-                                                            <ItemTooltip key={wing.id} item={wing}>
-                                                                <button
-                                                                    onClick={() => setPlayerStats(prev => ({ ...prev, equippedWing: prev.equippedWing?.id === wing.id ? null : wing }))}
-                                                                    className={`p-2 rounded-lg border text-center transition-all ${playerStats.equippedWing?.id === wing.id
-                                                                        ? 'bg-purple-600/30 border-purple-500'
-                                                                        : 'bg-slate-800 border-slate-600 hover:border-purple-500'
-                                                                        }`}
-                                                                >
-                                                                    <div className="w-8 h-8"><PixelWing color={wing.color || '#a78bfa'} /></div>
-                                                                    <div className="text-[10px] text-slate-300 truncate">{wing.name}</div>
-                                                                </button>
-                                                            </ItemTooltip>
-                                                        ))}
+
+                                                <div className="p-2 flex gap-2">
+                                                    {/* Equipped Preview (Smaller) */}
+                                                    <div className="w-12 h-12 flex-shrink-0">
+                                                        {playerStats.equippedPet ? (
+                                                            <div className="w-full h-full rounded bg-emerald-950/40 border border-emerald-500 flex flex-col items-center justify-center shadow-[0_0_10px_rgba(34,197,94,0.15)]">
+                                                                <span className="text-lg">🐉</span>
+                                                                <div className="text-[7px] text-emerald-400 font-bold truncate w-full text-center">{playerStats.equippedPet.name}</div>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="w-full h-full rounded border border-dashed border-emerald-900/40 flex items-center justify-center text-slate-600 text-sm">?</div>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Pet Grid (Compact) */}
+                                                    <div className="flex-1 grid grid-cols-4 gap-1">
+                                                        {playerStats.ownedPets?.slice(0, 8).map(pet => {
+                                                            const displayData = getItemDisplayData(pet);
+                                                            const isEquipped = playerStats.equippedPet?.id === pet.id;
+                                                            return (
+                                                                <ItemTooltip key={pet.id} item={pet}>
+                                                                    <button
+                                                                        onClick={() => setPlayerStats(prev => ({ ...prev, equippedPet: isEquipped ? null : pet }))}
+                                                                        className={`aspect-square rounded border flex items-center justify-center text-sm transition-all relative
+                                                                            ${isEquipped
+                                                                                ? 'bg-emerald-900/40 border-emerald-500 shadow-[0_0_6px_rgba(34,197,94,0.25)]'
+                                                                                : 'bg-slate-900/50 border-slate-700 hover:border-emerald-600'
+                                                                            }`}
+                                                                    >
+                                                                        🐉
+                                                                        <div className="absolute top-0 right-0 px-0.5 bg-black/80 rounded-bl text-[6px] font-bold text-emerald-400">{displayData.tierLabel}</div>
+                                                                    </button>
+                                                                </ItemTooltip>
+                                                            );
+                                                        })}
                                                     </div>
                                                 </div>
-                                            )}
+                                            </div>
+
+                                            {/* WING CARD (Compact) */}
+                                            <div className="bg-gradient-to-b from-slate-900/80 to-slate-950 rounded-lg border border-violet-900/30 shadow overflow-hidden">
+                                                <div className="px-2 py-1.5 border-b border-violet-900/20 bg-violet-950/20 flex justify-between items-center">
+                                                    <h3 className="font-bold text-violet-400 flex items-center gap-1.5 text-xs">
+                                                        <div className="w-3 h-3"><PixelWing color="#a78bfa" /></div> Kanatlar
+                                                    </h3>
+                                                    <span className="text-[9px] text-violet-600 font-mono bg-violet-950/40 px-1 py-0.5 rounded">{playerStats.ownedWings?.length || 0}</span>
+                                                </div>
+
+                                                <div className="p-2 flex gap-2">
+                                                    {/* Equipped Preview (Smaller) */}
+                                                    <div className="w-12 h-12 flex-shrink-0">
+                                                        {playerStats.equippedWing ? (
+                                                            <div className="w-full h-full rounded bg-violet-950/40 border border-violet-500 flex flex-col items-center justify-center shadow-[0_0_10px_rgba(139,92,246,0.15)]">
+                                                                <div className="w-6 h-6"><PixelWing color={playerStats.equippedWing.color || '#a78bfa'} /></div>
+                                                                <div className="text-[7px] text-violet-400 font-bold truncate w-full text-center">{playerStats.equippedWing.name}</div>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="w-full h-full rounded border border-dashed border-violet-900/40 flex items-center justify-center text-slate-600 text-sm">?</div>
+                                                        )}
+                                                    </div>
+
+                                                    {/* Wing Grid (Compact) */}
+                                                    <div className="flex-1 grid grid-cols-4 gap-1">
+                                                        {playerStats.ownedWings?.slice(0, 8).map(wing => {
+                                                            const displayData = getItemDisplayData(wing);
+                                                            const isEquipped = playerStats.equippedWing?.id === wing.id;
+                                                            return (
+                                                                <ItemTooltip key={wing.id} item={wing}>
+                                                                    <button
+                                                                        onClick={() => setPlayerStats(prev => ({ ...prev, equippedWing: isEquipped ? null : wing }))}
+                                                                        className={`aspect-square rounded border flex items-center justify-center transition-all relative
+                                                                            ${isEquipped
+                                                                                ? 'bg-violet-900/40 border-violet-500 shadow-[0_0_6px_rgba(139,92,246,0.25)]'
+                                                                                : 'bg-slate-900/50 border-slate-700 hover:border-violet-600'
+                                                                            }`}
+                                                                    >
+                                                                        <div className="w-5 h-5"><PixelWing color={wing.color || '#a78bfa'} /></div>
+                                                                        <div className="absolute top-0 right-0 px-0.5 bg-black/80 rounded-bl text-[6px] font-bold text-violet-400">{displayData.tierLabel}</div>
+                                                                    </button>
+                                                                </ItemTooltip>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         )}
+
                         {activeTab === 'inventory' && <InventoryModal playerState={playerStats} onEquip={handleEquipItem} onUnequip={handleUnequipItem} onUse={handleUseItem} onClose={() => setActiveTab('skills')} />}
                         {activeTab === 'skills' && <SkillTree playerClass={CLASSES[playerStats.class || 'warrior']} playerLevel={playerStats.level} />}
                         {activeTab === 'quests' && <div className="bg-slate-900 p-8 rounded-xl border border-slate-700"><h1 className="text-2xl text-yellow-500 font-bold mb-4">GÖREVLER</h1><p className="text-slate-400">Aktif: {playerStats.activeQuest ? playerStats.activeQuest.title : 'Yok'}</p></div>}
-                        {activeTab === 'party' && (
-                            <PartyView
-                                party={party}
-                                playerState={playerStats}
-                                onCreateParty={handleCreateParty}
-                                onLeaveParty={handleLeaveParty}
-                                onKickMember={handleKickPartyMember}
-                                onInvitePlayer={handleInviteToParty}
-                                onTradeRequest={handleTradeRequest}
-                                onChangeLootRule={() => { }}
-                                onClose={() => setActiveTab('skills')}
-                            />
-                        )}
+                        {
+                            activeTab === 'party' && (
+                                <PartyView
+                                    party={party}
+                                    playerState={playerStats}
+                                    onCreateParty={handleCreateParty}
+                                    onLeaveParty={handleLeaveParty}
+                                    onKickMember={handleKickPartyMember}
+                                    onInvitePlayer={handleInviteToParty}
+                                    onTradeRequest={handleTradeRequest}
+                                    onChangeLootRule={() => { }}
+                                    onClose={() => setActiveTab('skills')}
+                                />
+                            )
+                        }
 
-                        {activeTab === 'guild' && (
-                            <GuildView
-                                guild={guild}
-                                playerState={playerStats}
-                                onCreateGuild={handleCreateGuild}
-                                onJoinGuild={handleJoinGuild}
-                                onLeaveGuild={handleLeaveGuild}
-                                onKickMember={handleKickGuildMember}
-                                onPromoteMember={handlePromoteGuildMember}
-                                onDemoteMember={handleDemoteGuildMember}
-                                onDonate={handleDonate}
-                                onClose={() => setActiveTab('skills')}
-                            />
-                        )}
+                        {
+                            activeTab === 'guild' && (
+                                <GuildView
+                                    guild={guild}
+                                    playerState={playerStats}
+                                    onCreateGuild={handleCreateGuild}
+                                    onJoinGuild={handleJoinGuild}
+                                    onLeaveGuild={handleLeaveGuild}
+                                    onKickMember={handleKickGuildMember}
+                                    onPromoteMember={handlePromoteGuildMember}
+                                    onDemoteMember={handleDemoteGuildMember}
+                                    onDonate={handleDonate}
+                                    onClose={() => setActiveTab('skills')}
+                                />
+                            )
+                        }
 
-                        {activeTab === 'market' && (
-                            <div className="flex flex-col h-full bg-slate-900/50 rounded-xl overflow-hidden md:p-4">
-                                {/* SUB TABS */}
-                                <div className="flex gap-2 md:gap-4 mb-4 border-b border-white/10 pb-2 px-2 overflow-x-auto">
-                                    <button onClick={() => setMarketSubTab('npc')} className={`px-4 py-2 font-bold rounded transition-colors whitespace-nowrap ${marketSubTab === 'npc' ? 'bg-amber-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Köy Pazarı</button>
-                                    <button onClick={() => setMarketSubTab('player')} className={`px-4 py-2 font-bold rounded transition-colors whitespace-nowrap ${marketSubTab === 'player' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Oyuncu Pazarı</button>
-                                    <button onClick={() => setMarketSubTab('premium')} className={`px-4 py-2 font-bold rounded transition-colors whitespace-nowrap ${marketSubTab === 'premium' ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Mağaza</button>
-                                </div>
+                        {
+                            activeTab === 'market' && (
+                                <div className="flex flex-col h-full bg-slate-900/50 rounded-xl overflow-hidden md:p-4">
+                                    {/* SUB TABS */}
+                                    <div className="flex gap-2 md:gap-4 mb-4 border-b border-white/10 pb-2 px-2 overflow-x-auto">
+                                        <button onClick={() => setMarketSubTab('npc')} className={`px-4 py-2 font-bold rounded transition-colors whitespace-nowrap ${marketSubTab === 'npc' ? 'bg-amber-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Köy Pazarı</button>
+                                        <button onClick={() => setMarketSubTab('player')} className={`px-4 py-2 font-bold rounded transition-colors whitespace-nowrap ${marketSubTab === 'player' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Oyuncu Pazarı</button>
+                                        <button onClick={() => setMarketSubTab('premium')} className={`px-4 py-2 font-bold rounded transition-colors whitespace-nowrap ${marketSubTab === 'premium' ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Mağaza</button>
+                                    </div>
 
-                                <div className="flex-1 relative overflow-hidden rounded-lg bg-slate-900 border border-slate-700">
-                                    {marketSubTab === 'npc' && (
-                                        <NpcShopView
-                                            playerState={playerStats}
-                                            onBuy={(item, cost) => {
-                                                if (playerStats.credits >= cost) {
-                                                    setPlayerStats(prev => ({
-                                                        ...prev,
-                                                        credits: prev.credits - cost,
-                                                        inventory: [...prev.inventory, item]
-                                                    }));
-                                                    soundManager.playSFX('coin');
-                                                }
-                                            }}
-                                            onBuyPet={handleBuyPet}
-                                            onBuyWing={handleBuyWing}
-                                            onClose={() => setActiveTab('skills')}
-                                        />
-                                    )}
-                                    {marketSubTab === 'player' && (
-                                        <MarketView
-                                            playerState={playerStats}
-                                            onClose={() => { }}
-                                            onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
-                                            isEmbedded={true}
-                                        />
-                                    )}
-                                    {marketSubTab === 'premium' && (
-                                        <PremiumMarketView
-                                            playerState={playerStats}
-                                            onBuyData={(category, id, cost, currency, amount) => {
-                                                setPlayerStats(prev => {
-                                                    const updates: any = {};
-                                                    let currentCredits = prev.credits;
-                                                    let currentGems = prev.gems;
-
-                                                    let success = false;
-                                                    if (currency === 'gold' && currentCredits >= cost) { updates.credits = currentCredits - cost; success = true; }
-                                                    else if (currency === 'gems' && currentGems >= cost) { updates.gems = currentGems - cost; success = true; }
-                                                    else if (currency === 'real') { success = true; }
-
-                                                    if (!success) return prev;
-
-                                                    if (category === 'currency') {
-                                                        if (id.includes('gold')) updates.credits = (updates.credits ?? currentCredits) + (amount || 0);
-                                                        else updates.gems = (updates.gems ?? currentGems) + (amount || 0);
-                                                    } else if (category === 'item') {
-                                                        const skins = prev.ownedSkins || [];
-                                                        if (!skins.includes(id)) updates.ownedSkins = [...skins, id];
-                                                    } else if (category === 'subscription') {
-                                                        updates.vipStatus = { tier: 1, expiresAt: Date.now() + 2592000000 };
-                                                        updates.gems = (updates.gems ?? currentGems) + 50;
+                                    <div className="flex-1 relative overflow-hidden rounded-lg bg-slate-900 border border-slate-700">
+                                        {marketSubTab === 'npc' && (
+                                            <NpcShopView
+                                                playerState={playerStats}
+                                                onBuy={(item, cost) => {
+                                                    if (playerStats.credits >= cost) {
+                                                        setPlayerStats(prev => ({
+                                                            ...prev,
+                                                            credits: prev.credits - cost,
+                                                            inventory: [...prev.inventory, item]
+                                                        }));
+                                                        soundManager.playSFX('coin');
                                                     }
-                                                    return { ...prev, ...updates };
-                                                });
-                                                soundManager.playSFX('coin');
-                                            }}
-                                            onClose={() => { }}
-                                            isEmbedded={true}
-                                        />
-                                    )}
+                                                }}
+                                                onBuyPet={handleBuyPet}
+                                                onBuyWing={handleBuyWing}
+                                                onClose={() => setActiveTab('skills')}
+                                            />
+                                        )}
+                                        {marketSubTab === 'player' && (
+                                            <MarketView
+                                                playerState={playerStats}
+                                                onClose={() => { }}
+                                                onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
+                                                isEmbedded={true}
+                                            />
+                                        )}
+                                        {marketSubTab === 'premium' && (
+                                            <PremiumMarketView
+                                                playerState={playerStats}
+                                                onBuyData={(category, id, cost, currency, amount) => {
+                                                    setPlayerStats(prev => {
+                                                        const updates: any = {};
+                                                        let currentCredits = prev.credits;
+                                                        let currentGems = prev.gems;
+
+                                                        let success = false;
+                                                        if (currency === 'gold' && currentCredits >= cost) { updates.credits = currentCredits - cost; success = true; }
+                                                        else if (currency === 'gems' && currentGems >= cost) { updates.gems = currentGems - cost; success = true; }
+                                                        else if (currency === 'real') { success = true; }
+
+                                                        if (!success) return prev;
+
+                                                        if (category === 'currency') {
+                                                            if (id.includes('gold')) updates.credits = (updates.credits ?? currentCredits) + (amount || 0);
+                                                            else updates.gems = (updates.gems ?? currentGems) + (amount || 0);
+                                                        } else if (category === 'item') {
+                                                            const skins = prev.ownedSkins || [];
+                                                            if (!skins.includes(id)) updates.ownedSkins = [...skins, id];
+                                                        } else if (category === 'subscription') {
+                                                            updates.vipStatus = { tier: 1, expiresAt: Date.now() + 2592000000 };
+                                                            updates.gems = (updates.gems ?? currentGems) + 50;
+                                                        }
+                                                        return { ...prev, ...updates };
+                                                    });
+                                                    soundManager.playSFX('coin');
+                                                }}
+                                                onClose={() => { }}
+                                                isEmbedded={true}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        )}
-                        {activeTab === 'blacksmith' && (
-                            <BlacksmithView
-                                isOpen={true}
-                                playerState={playerStats}
-                                onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
-                                onClose={() => setActiveTab('character')}
-                                isEmbedded={true}
-                            />
-                        )}
+                            )
+                        }
+                        {
+                            activeTab === 'blacksmith' && (
+                                <BlacksmithView
+                                    isOpen={true}
+                                    playerState={playerStats}
+                                    onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
+                                    onClose={() => setActiveTab('character')}
+                                    isEmbedded={true}
+                                />
+                            )
+                        }
                         {activeTab === 'map' && <div className="w-full h-full flex flex-col items-center"><h2 className="text-3xl rpg-font text-yellow-500 mb-6 flex items-center gap-3"><MapIcon size={32} /> HARİTA</h2><div className="w-full max-w-5xl"><SchematicMap activeZone={startingMap} onZoneSelect={(id) => setActiveZone(id)} /></div></div>}
                         {activeTab === 'leaderboard' && <LeaderboardView onJoinGuild={handleJoinGuild} />}
-                    </main>
-                </div>
-            </div>
+                    </main >
+                </div >
+            </div >
 
             {/* Mail Modal */}
-            {showMailbox && (
-                <MailView
-                    playerState={playerStats}
-                    onClose={() => setShowMailbox(false)}
-                    onRefreshPlayer={() => loadPartyData()}
-                />
-            )}
+            {
+                showMailbox && (
+                    <MailView
+                        playerState={playerStats}
+                        onClose={() => setShowMailbox(false)}
+                        onRefreshPlayer={() => loadPartyData()}
+                    />
+                )
+            }
 
             {/* Daily Quests Modal */}
-            {showDailyQuests && (
-                <DailyQuestView
-                    playerState={playerStats}
-                    onClose={() => setShowDailyQuests(false)}
-                />
-            )}
+            {
+                showDailyQuests && (
+                    <DailyQuestView
+                        playerState={playerStats}
+                        onClose={() => setShowDailyQuests(false)}
+                    />
+                )
+            }
 
             {/* Tutorial System */}
-            {showTutorial && (
-                <TutorialSystem
-                    playerState={playerStats}
-                    onComplete={() => { }}
-                    onReward={(rewards) => {
-                        // Apply rewards
-                        setPlayerStats(prev => ({
-                            ...prev,
-                            credits: prev.credits + (rewards.gold || 0),
-                            exp: prev.exp + (rewards.exp || 0),
-                            gems: prev.gems + (rewards.gems || 0)
-                        }));
-                    }}
-                    isFirstTime={true}
-                />
-            )}
+            {
+                showTutorial && (
+                    <TutorialSystem
+                        playerState={playerStats}
+                        onComplete={() => { }}
+                        onReward={(rewards) => {
+                            // Apply rewards
+                            setPlayerStats(prev => ({
+                                ...prev,
+                                credits: prev.credits + (rewards.gold || 0),
+                                exp: prev.exp + (rewards.exp || 0),
+                                gems: prev.gems + (rewards.gems || 0)
+                            }));
+                        }}
+                        isFirstTime={true}
+                    />
+                )
+            }
 
             {/* Settings Modal */}
-            {showSettings && (
-                <SettingsView onClose={() => setShowSettings(false)} />
-            )}
+            {
+                showSettings && (
+                    <SettingsView onClose={() => setShowSettings(false)} />
+                )
+            }
 
             {/* Premium Modal */}
-            {showPremium && (
-                <PremiumView
-                    playerState={playerStats}
-                    onClose={() => setShowPremium(false)}
-                    onRefreshPlayer={() => loadPartyData()}
-                />
-            )}
+            {
+                showPremium && (
+                    <PremiumView
+                        playerState={playerStats}
+                        onClose={() => setShowPremium(false)}
+                        onRefreshPlayer={() => loadPartyData()}
+                    />
+                )
+            }
 
             {/* Battle Pass Modal */}
-            {showBattlePass && (
-                <BattlePassView
-                    playerState={playerStats}
-                    onClose={() => setShowBattlePass(false)}
-                    onClaimReward={(tier, isPremium, reward) => {
-                        if (reward.gold) setPlayerStats(prev => ({ ...prev, credits: prev.credits + reward.gold }));
-                        if (reward.gems) setPlayerStats(prev => ({ ...prev, gems: prev.gems + reward.gems }));
-                    }}
-                    onPurchasePremium={() => {
-                        setPlayerStats(prev => ({ ...prev, gems: prev.gems - 500 }));
-                    }}
-                />
-            )}
+            {
+                showBattlePass && (
+                    <BattlePassView
+                        playerState={playerStats}
+                        onClose={() => setShowBattlePass(false)}
+                        onClaimReward={(tier, isPremium, reward) => {
+                            if (reward.gold) setPlayerStats(prev => ({ ...prev, credits: prev.credits + reward.gold }));
+                            if (reward.gems) setPlayerStats(prev => ({ ...prev, gems: prev.gems + reward.gems }));
+                        }}
+                        onPurchasePremium={() => {
+                            setPlayerStats(prev => ({ ...prev, gems: prev.gems - 500 }));
+                        }}
+                    />
+                )
+            }
 
             {/* Player Stats Modal */}
-            {showPlayerStats && (
-                <PlayerStatsView
-                    playerState={playerStats}
-                    onClose={() => setShowPlayerStats(false)}
-                />
-            )}
+            {
+                showPlayerStats && (
+                    <PlayerStatsView
+                        playerState={playerStats}
+                        onClose={() => setShowPlayerStats(false)}
+                    />
+                )
+            }
 
             {/* Boss Timer Modal */}
-            {showBossTimer && (
-                <BossTimerView
-                    onClose={() => setShowBossTimer(false)}
-                    playerLevel={playerStats.level}
-                    onNavigate={(zoneId) => setActiveZone(zoneId)}
-                />
-            )}
+            {
+                showBossTimer && (
+                    <BossTimerView
+                        onClose={() => setShowBossTimer(false)}
+                        playerLevel={playerStats.level}
+                        onNavigate={(zoneId) => setActiveZone(zoneId)}
+                    />
+                )
+            }
 
             {/* Referral Modal */}
-            {showReferral && (
-                <ReferralView
-                    playerState={playerStats}
-                    onClose={() => setShowReferral(false)}
-                    onClaimReward={(rewards) => {
-                        if (rewards.gold) setPlayerStats(prev => ({ ...prev, credits: prev.credits + rewards.gold }));
-                        if (rewards.gems) setPlayerStats(prev => ({ ...prev, gems: prev.gems + rewards.gems }));
-                    }}
-                />
-            )}
+            {
+                showReferral && (
+                    <ReferralView
+                        playerState={playerStats}
+                        onClose={() => setShowReferral(false)}
+                        onClaimReward={(rewards) => {
+                            if (rewards.gold) setPlayerStats(prev => ({ ...prev, credits: prev.credits + rewards.gold }));
+                            if (rewards.gems) setPlayerStats(prev => ({ ...prev, gems: prev.gems + rewards.gems }));
+                        }}
+                    />
+                )
+            }
 
             {/* Auction House Modal */}
-            {showAuction && (
-                <AuctionHouseView
-                    playerState={playerStats}
-                    onClose={() => setShowAuction(false)}
-                    onBid={(listingId, amount) => {
-                        // Deduct gold for bid (in real app, only when won)
-                    }}
-                    onBuyout={(listingId) => {
-                        // Handle buyout purchase
-                    }}
-                    onCreateListing={(item, startPrice, buyoutPrice, duration) => {
-                        // Logic handled in view via onUpdatePlayer
-                    }}
-                    onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
-                />
-            )}
+            {
+                showAuction && (
+                    <AuctionHouseView
+                        playerState={playerStats}
+                        onClose={() => setShowAuction(false)}
+                        onBid={(listingId, amount) => {
+                            // Deduct gold for bid (in real app, only when won)
+                        }}
+                        onBuyout={(listingId) => {
+                            // Handle buyout purchase
+                        }}
+                        onCreateListing={(item, startPrice, buyoutPrice, duration) => {
+                            // Logic handled in view via onUpdatePlayer
+                        }}
+                        onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
+                    />
+                )
+            }
 
             {/* World Map Modal */}
-            {showWorldMap && (
-                <WorldMapView
-                    playerState={playerStats}
-                    currentZoneId={activeZone || 1}
-                    onClose={() => setShowWorldMap(false)}
-                    onNavigate={(zoneId) => { setActiveZone(zoneId); setShowWorldMap(false); }}
-                />
-            )}
+            {
+                showWorldMap && (
+                    <WorldMapView
+                        playerState={playerStats}
+                        currentZoneId={activeZone || 1}
+                        onClose={() => setShowWorldMap(false)}
+                        onNavigate={(zoneId) => { setActiveZone(zoneId); setShowWorldMap(false); }}
+                    />
+                )
+            }
 
             {/* Controls Guide Modal */}
-            {showControls && (
-                <ControlsGuideView
-                    onClose={() => setShowControls(false)}
-                />
-            )}
+            {
+                showControls && (
+                    <ControlsGuideView
+                        onClose={() => setShowControls(false)}
+                    />
+                )
+            }
 
             {/* Mount System Modal */}
-            {showMounts && (
-                <MountSystemView
-                    playerState={playerStats}
-                    onClose={() => setShowMounts(false)}
-                    onEquipMount={(mount) => {
-                        // Apply speed bonus to player
-                    }}
-                    onPurchaseMount={(mount) => {
-                        if (mount.gemPrice) {
-                            setPlayerStats(prev => ({ ...prev, gems: prev.gems - (mount.gemPrice || 0) }));
-                        } else if (mount.price) {
-                            setPlayerStats(prev => ({ ...prev, credits: prev.credits - (mount.price || 0) }));
-                        }
-                    }}
-                />
-            )}
-        </ErrorBoundary>
+            {
+                showMounts && (
+                    <MountSystemView
+                        playerState={playerStats}
+                        onClose={() => setShowMounts(false)}
+                        onEquipMount={(mount) => {
+                            // Apply speed bonus to player
+                        }}
+                        onPurchaseMount={(mount) => {
+                            if (mount.gemPrice) {
+                                setPlayerStats(prev => ({ ...prev, gems: prev.gems - (mount.gemPrice || 0) }));
+                            } else if (mount.price) {
+                                setPlayerStats(prev => ({ ...prev, credits: prev.credits - (mount.price || 0) }));
+                            }
+                        }}
+                    />
+                )
+            }
+        </ErrorBoundary >
     );
 };
 

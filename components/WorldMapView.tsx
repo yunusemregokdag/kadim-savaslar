@@ -4,6 +4,7 @@ import {
     Map, X, MapPin, Skull, Crown, Users, Zap, Lock,
     ChevronRight, Star, Shield, Flame, Snowflake, Wind
 } from 'lucide-react';
+import { GameIcon } from '../utils/IconMapper';
 
 interface ZoneInfo {
     id: number;
@@ -318,16 +319,20 @@ export const WorldMapView: React.FC<WorldMapViewProps> = ({
                 {selectedZone && (
                     <div className="p-4 bg-slate-800 border-t border-slate-700">
                         <div className="flex items-start gap-4">
-                            <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl ${getZoneColor(selectedZone)}`}>
-                                {selectedZone.bosses ? '👑' : selectedZone.type === 'safe' ? '🏠' : selectedZone.type === 'pvp' ? '⚔️' : '🗺️'}
+                            <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${getZoneColor(selectedZone)}`}>
+                                <GameIcon
+                                    category="ui"
+                                    iconKey={selectedZone.bosses ? 'boss_zone' : selectedZone.type === 'safe' ? 'safe_zone' : selectedZone.type === 'pvp' ? 'arena' : 'map_marker'}
+                                    size={28}
+                                />
                             </div>
                             <div className="flex-1">
                                 <div className="flex items-center gap-2">
                                     <h3 className="font-bold text-white text-lg">{selectedZone.name}</h3>
                                     <span className={`text-xs px-2 py-0.5 rounded ${selectedZone.type === 'safe' ? 'bg-blue-900/50 text-blue-300' :
-                                            selectedZone.type === 'pvp' ? 'bg-red-900/50 text-red-300' :
-                                                selectedZone.type === 'boss' ? 'bg-purple-900/50 text-purple-300' :
-                                                    'bg-emerald-900/50 text-emerald-300'
+                                        selectedZone.type === 'pvp' ? 'bg-red-900/50 text-red-300' :
+                                            selectedZone.type === 'boss' ? 'bg-purple-900/50 text-purple-300' :
+                                                'bg-emerald-900/50 text-emerald-300'
                                         }`}>
                                         {selectedZone.type.toUpperCase()}
                                     </span>
@@ -362,8 +367,8 @@ export const WorldMapView: React.FC<WorldMapViewProps> = ({
                                     onClick={() => { onNavigate(selectedZone.id); onClose(); }}
                                     disabled={!canAccess(selectedZone)}
                                     className={`px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 ${canAccess(selectedZone)
-                                            ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                                            : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+                                        ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                                        : 'bg-slate-700 text-slate-500 cursor-not-allowed'
                                         }`}
                                 >
                                     {selectedZone.id === currentZoneId ? (

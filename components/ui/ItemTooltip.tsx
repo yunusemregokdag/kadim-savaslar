@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Item, WingItem, PetItem } from '../../types';
+import { getItemDisplayData } from '../../utils/ItemDisplayAdapter';
 import { Sword, Shield, Heart, Zap, Target, Wind, Star, TrendingUp } from 'lucide-react';
 
 interface ItemTooltipProps {
@@ -85,8 +86,11 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, children, disabl
 
     if (!item) return <>{children}</>;
 
-    const rarityColor = RARITY_COLORS[(item as any).rarity || 'common'];
-    const rarityName = RARITY_NAMES[(item as any).rarity || 'common'];
+    const displayData = getItemDisplayData(item);
+
+    // Rarity Colors and Names
+    const rarityColor = RARITY_COLORS[displayData.rarity] || RARITY_COLORS.common;
+    const rarityName = RARITY_NAMES[displayData.rarity] || 'Sıradan';
 
     // Calculate tooltip position to keep it on screen
     const getTooltipStyle = () => {
@@ -108,109 +112,26 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, children, disabl
     };
 
     const renderStats = () => {
-        const stats: JSX.Element[] = [];
-
-        // Item stats
-        if ((item as Item).stats) {
-            const itemStats = (item as Item).stats;
-            if (itemStats?.damage) stats.push(
-                <div key="dmg" className="flex items-center gap-2 text-red-400">
-                    <Sword size={12} /> +{itemStats.damage} Hasar
-                </div>
-            );
-            if (itemStats?.defense) stats.push(
-                <div key="def" className="flex items-center gap-2 text-blue-400">
-                    <Shield size={12} /> +{itemStats.defense} Savunma
-                </div>
-            );
-            if (itemStats?.hp) stats.push(
-                <div key="hp" className="flex items-center gap-2 text-green-400">
-                    <Heart size={12} /> +{itemStats.hp} Can
-                </div>
-            );
-            if (itemStats?.mana) stats.push(
-                <div key="mana" className="flex items-center gap-2 text-blue-300">
-                    <Zap size={12} /> +{itemStats.mana} Mana
-                </div>
-            );
-            if (itemStats?.critChance) stats.push(
-                <div key="crit" className="flex items-center gap-2 text-yellow-400">
-                    <Target size={12} /> +{itemStats.critChance}% Kritik Şansı
-                </div>
-            );
-            if (itemStats?.attackSpeed) stats.push(
-                <div key="as" className="flex items-center gap-2 text-orange-400">
-                    <Wind size={12} /> +{itemStats.attackSpeed}% Saldırı Hızı
-                </div>
-            );
-            if (itemStats?.strength) stats.push(
-                <div key="str" className="flex items-center gap-2 text-red-300">
-                    <TrendingUp size={12} /> +{itemStats.strength} Güç
-                </div>
-            );
-            if (itemStats?.dexterity) stats.push(
-                <div key="dex" className="flex items-center gap-2 text-green-300">
-                    <TrendingUp size={12} /> +{itemStats.dexterity} Çeviklik
-                </div>
-            );
-            if (itemStats?.intelligence) stats.push(
-                <div key="int" className="flex items-center gap-2 text-purple-300">
-                    <TrendingUp size={12} /> +{itemStats.intelligence} Zeka
-                </div>
-            );
-            if (itemStats?.vitality) stats.push(
-                <div key="vit" className="flex items-center gap-2 text-pink-300">
-                    <TrendingUp size={12} /> +{itemStats.vitality} Dayanıklılık
-                </div>
-            );
-        }
-
-        // Wing stats
-        if ((item as WingItem).flySpeed) {
-            const wing = item as WingItem;
-            stats.push(
-                <div key="fly" className="flex items-center gap-2 text-purple-400">
-                    <Wind size={12} /> +{wing.flySpeed}% Uçuş Hızı
-                </div>
-            );
-            if (wing.bonusDamage) stats.push(
-                <div key="wdmg" className="flex items-center gap-2 text-red-400">
-                    <Sword size={12} /> +{wing.bonusDamage}% Hasar
-                </div>
-            );
-            if (wing.bonusDefense) stats.push(
-                <div key="wdef" className="flex items-center gap-2 text-blue-400">
-                    <Shield size={12} /> +{wing.bonusDefense}% Savunma
-                </div>
-            );
-        }
-
-        // Pet stats
-        if ((item as PetItem).bonusDamage !== undefined) {
-            const pet = item as PetItem;
-            if (pet.bonusDamage) stats.push(
-                <div key="pdmg" className="flex items-center gap-2 text-red-400">
-                    <Sword size={12} /> +{pet.bonusDamage}% Hasar
-                </div>
-            );
-            if (pet.bonusDefense) stats.push(
-                <div key="pdef" className="flex items-center gap-2 text-blue-400">
-                    <Shield size={12} /> +{pet.bonusDefense}% Savunma
-                </div>
-            );
-            if (pet.bonusExp) stats.push(
-                <div key="pexp" className="flex items-center gap-2 text-yellow-400">
-                    <Star size={12} /> +{pet.bonusExp}% Tecrübe
-                </div>
-            );
-            if (pet.bonusGold) stats.push(
-                <div key="pgold" className="flex items-center gap-2 text-amber-400">
-                    <Star size={12} /> +{pet.bonusGold}% Altın
-                </div>
-            );
-        }
-
-        return stats;
+        return (
+            <div className="flex flex-col gap-1">
+                {displayData.statsLines.map((stat: any, idx: number) => (
+                    <div key={idx} className={`flex items-center gap-2 ${stat.isBonus ? 'text-blue-300' : 'text-slate-300'}`}>
+                        <span className="opacity-70">{stat.label}:</span>
+                        <span className="font-bold">{stat.value}</span>
+                    </div>
+                ))}
+                {displayData.buffsLines.length > 0 && (
+                    <div className="mt-2 text-green-400 text-xs">
+                        {displayData.buffsLines.map((buff: string, i: number) => (
+                            <div key={i}>• {buff}</div>
+                        ))}
+                    </div>
+                )}
+                {displayData.durabilityLine && (
+                    <div className="text-slate-500 text-[10px] mt-1">Dayanıklılık: {displayData.durabilityLine}</div>
+                )}
+            </div>
+        );
     };
 
     return (
@@ -228,7 +149,7 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, children, disabl
 
             {showTooltip && (
                 <div
-                    className="fixed z-[9999] pointer-events-none animate-fadeIn"
+                    className="fixed z-[99999] pointer-events-none animate-fadeIn"
                     style={getTooltipStyle()}
                 >
                     <div
@@ -240,21 +161,17 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, children, disabl
                             className="text-sm font-bold mb-1"
                             style={{ color: rarityColor }}
                         >
-                            {item.name}
-                            {(item as Item).enhanceLevel && (item as Item).enhanceLevel! > 0 && (
-                                <span className="text-yellow-400"> +{(item as Item).enhanceLevel}</span>
+                            {displayData.name}
+                            {displayData.plus > 0 && (
+                                <span className="text-yellow-400"> +{displayData.plus}</span>
                             )}
                         </div>
 
                         {/* Rarity & Tier */}
                         <div className="flex gap-2 text-[10px] mb-2">
                             <span style={{ color: rarityColor }}>{rarityName}</span>
-                            {(item as Item).tier && (
-                                <span className="text-slate-400">T{(item as Item).tier}</span>
-                            )}
-                            {(item as Item).type && (
-                                <span className="text-slate-500 capitalize">{(item as Item).type}</span>
-                            )}
+                            <span className="text-slate-400">{displayData.tierLabel}</span>
+                            <span className="text-slate-500 capitalize">{displayData.type.replace('_', ' ')}</span>
                         </div>
 
                         {/* Stats */}
@@ -263,16 +180,16 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, children, disabl
                         </div>
 
                         {/* Value */}
-                        {(item as Item).value && (
+                        {displayData.value && (
                             <div className="mt-2 pt-2 border-t border-slate-700 text-[10px] text-amber-400">
-                                💰 Değer: {(item as Item).value} Altın
+                                💰 Değer: {displayData.value} Altın
                             </div>
                         )}
 
-                        {/* Pet Level */}
-                        {(item as PetItem).level !== undefined && (
-                            <div className="mt-1 text-[10px] text-green-400">
-                                ⭐ Seviye: {(item as PetItem).level}
+                        {/* Description */}
+                        {displayData.description && (
+                            <div className="mt-2 text-xs italic text-slate-500">
+                                {displayData.description}
                             </div>
                         )}
                     </div>

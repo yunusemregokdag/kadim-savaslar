@@ -1,7 +1,7 @@
-
-import React from 'react';
-import { PlayerState, Item, Equipment } from '../types';
-import { X, Shirt } from 'lucide-react';
+import React, { useState, useMemo, Suspense } from 'react';
+import { PlayerState, Item, Equipment, ItemStats } from '../types';
+import { getItemDisplayData } from '../utils/ItemDisplayAdapter';
+import { X, Search, Filter, ArrowUpDown, Shield, Sword, Zap, Heart, Star, User, Lock } from 'lucide-react';
 import { renderItemIcon } from './ui/ItemIcons';
 import { ItemTooltip } from './ui/ItemTooltip';
 import { Canvas } from '@react-three/fiber';
@@ -16,239 +16,471 @@ interface InventoryModalProps {
     onUnequip?: (slot: keyof Equipment) => void;
     onUse?: (item: Item) => void;
     onEquipSkin?: (skinId: string | null) => void;
+    onLock?: (itemId: string, locked: boolean) => void;
 }
 
+const RARITY_COLORS = {
+    common: 'text-slate-400 border-slate-600',
+    uncommon: 'text-green-400 border-green-600',
+    rare: 'text-blue-400 border-blue-600',
+    epic: 'text-purple-400 border-purple-600',
+    legendary: 'text-orange-400 border-orange-600 shadow-[0_0_10px_orange]',
+    ancient: 'text-red-500 border-red-600 shadow-[0_0_15px_red]',
+};
 
-// Pixel icons removed (using global ItemIcons)
-const InventoryModal: React.FC<InventoryModalProps> = ({ playerState, onClose, isOverlay = false, onEquip, onUnequip, onUse, onEquipSkin }) => {
-    const [activeTab, setActiveTab] = React.useState<'inventory' | 'skins'>('inventory');
+type InventoryFilter = 'all' | 'gear' | 'cosmetic' | 'consumable' | 'material';
 
-    const getRarityColor = (rarity: string) => {
-        switch (rarity) {
-            case 'common': return 'text-slate-400 border-slate-600';
-            case 'uncommon': return 'text-green-400 border-green-600';
-            case 'rare': return 'text-blue-400 border-blue-600';
-            case 'legendary': return 'text-orange-400 border-orange-600 shadow-[0_0_10px_orange]';
-            case 'ancient': return 'text-purple-400 border-purple-600 shadow-[0_0_15px_purple]';
-            default: return 'text-slate-400 border-slate-600';
+const InventoryModal: React.FC<InventoryModalProps> = ({
+    playerState,
+    onClose,
+    isOverlay = false,
+    onEquip,
+    onUnequip,
+    onUse,
+    onEquipSkin,
+    onLock
+}) => {
+    // State
+    const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+    const [filter, setFilter] = useState<InventoryFilter>('all');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [sortBy, setSortBy] = useState<'rarity' | 'tier' | 'newest'>('newest');
+
+    // New States
+    const [lockedItems, setLockedItems] = useState<Set<string>>(new Set()); // In real app, this should come from playerState
+
+    // In a real scenario, lockedItems should be passed via props or contained in Item object.
+    // For now, we simulate it locally or derived from prop if available.
+
+    // Lock Handler
+    const toggleLock = (itemId: string) => {
+        const next = new Set(lockedItems);
+        const isLocked = next.has(itemId);
+        if (isLocked) next.delete(itemId);
+        else next.add(itemId);
+        setLockedItems(next);
+        if (onLock) onLock(itemId, !isLocked);
+    };
+
+    // Filter Logic
+    const filteredInventory = useMemo(() => {
+        let items = [...playerState.inventory];
+
+        // 1. Text Search
+        if (searchQuery) {
+            const low = searchQuery.toLowerCase();
+            items = items.filter(i => i.name.toLowerCase().includes(low));
         }
+
+        // 2. Category Filter
+        if (filter !== 'all') {
+            items = items.filter(i => {
+                if (filter === 'gear') return ['weapon', 'helmet', 'armor', 'pants', 'boots', 'necklace', 'earring'].includes(i.type);
+                if (filter === 'cosmetic') return ['costume', 'wing_fragment', 'pet_egg'].includes(i.type); // Pending real types
+                if (filter === 'consumable') return i.type === 'consumable';
+                if (filter === 'material') return i.type === 'material';
+                return true;
+            });
+        }
+
+        // 3. Sort
+        return items.sort((a, b) => {
+            if (sortBy === 'rarity') {
+                const rMap = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4, ancient: 5 };
+                return (rMap[b.rarity] || 0) - (rMap[a.rarity] || 0);
+            }
+            if (sortBy === 'tier') return b.tier - a.tier;
+            // newest is default (index based usually but here stable sort or id?)
+            return 0;
+        });
+    }, [playerState.inventory, filter, searchQuery, sortBy]);
+
+    // Handlers
+    const handleEquip = () => {
+        if (!selectedItem || !onEquip) return;
+        onEquip(selectedItem);
+        // Maybe sound?
+    };
+
+    const handleUse = () => {
+        if (!selectedItem || !onUse) return;
+        onUse(selectedItem);
+    };
+
+    // Helper: Slot Renderer
+    const renderEquipSlot = (slotName: string, slotKey: keyof Equipment | 'wing' | 'pet' | 'skin', item: any) => {
+        const isCosmetic = ['wing', 'pet', 'skin'].includes(slotKey);
+
+        return (
+            <div
+                className={`relative w-14 h-14 bg-[#140e08] border border-[#3f2e18] rounded-lg flex items-center justify-center cursor-pointer hover:border-yellow-600 transition-colors group ${item ? 'border-yellow-900/50' : ''}`}
+                title={slotName}
+                onClick={() => {
+                    if (!isCosmetic && item && onUnequip) onUnequip(slotKey as keyof Equipment);
+                    // Logic for cosmetic unequip?
+                    if (slotKey === 'skin' && onEquipSkin) onEquipSkin(null); // click to unequip skin
+                }}
+            >
+                {item ? (
+                    <>
+                        <div className="p-1">{renderItemIcon(item)}</div>
+                        <div className="absolute top-0 right-0 w-2 h-2 bg-green-500 rounded-full shadow-lg" />
+                        {/* Unequip Overlay */}
+                        <div className="absolute inset-0 bg-red-900/80 items-center justify-center rounded-lg opacity-0 group-hover:opacity-100 flex text-[10px] uppercase font-bold text-white tracking-tighter">
+                            Çıkar
+                        </div>
+                    </>
+                ) : (
+                    <span className="text-[#3f2e18] text-[8px] uppercase font-bold tracking-widest text-center">{slotName}</span>
+                )}
+            </div>
+        );
     };
 
     return (
-        <div className={`${isOverlay ? 'fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4' : 'w-full h-full'}`}>
+        <div className={`${isOverlay ? 'fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4' : 'w-full h-full'}`}>
+            <div className={`w-full max-w-[1400px] h-[85vh] bg-[#0c0906] border border-[#3f2e18] rounded-xl flex flex-col shadow-2xl overflow-hidden ${isOverlay ? 'animate-[scaleIn_0.2s]' : ''}`}>
 
-            <div className={`bg-[#1a120b] w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-xl border-2 border-[#5e4b35] shadow-2xl flex flex-col ${isOverlay ? 'animate-[fadeIn_0.3s]' : ''}`}>
-
+                {/* HEADLINE */}
                 {isOverlay && (
-                    <div className="flex justify-between items-center p-4 border-b border-[#3f2e18] bg-[#0f0a06]">
-                        <h2 className="text-xl rpg-font text-[#e6cba5] flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-yellow-500" /> Kahraman Envanteri</h2>
-                        <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
-                            <X size={24} />
+                    <div className="h-14 border-b border-[#3f2e18] flex items-center justify-between px-6 bg-[#16100a]">
+                        <h2 className="text-[#e6cba5] font-bold text-lg flex items-center gap-3">
+                            <div className="w-2 h-2 bg-yellow-600 rotate-45" />
+                            ENVANTER & KOZMETİK MERKEZİ
+                        </h2>
+                        <button onClick={onClose} className="p-2 hover:bg-red-900/30 rounded-full transition-colors text-slate-400 hover:text-red-400">
+                            <X size={20} />
                         </button>
                     </div>
                 )}
 
-                <div className="flex flex-col md:flex-row h-full overflow-hidden">
-                    {/* CHARACTER PREVIEW PANEL */}
-                    <div className="w-full md:w-1/3 bg-[#0a0705] relative border-r border-[#3f2e18] flex flex-col items-center justify-center p-4">
-                        <div className="absolute top-2 left-2 text-xs text-slate-500 uppercase font-bold tracking-widest">Önizleme</div>
-                        <div className="w-full h-full min-h-[400px] relative overflow-hidden rounded-lg shadow-2xl border border-slate-800 bg-black">
-                            {/* Radial Gradient Background */}
-                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#3f2e18_0%,_#0a0705_100%)] z-0" />
+                {/* 3-COLUMN LAYOUT */}
+                <div className="flex flex-1 overflow-hidden">
 
-                            <React.Suspense fallback={<div className="text-white relative z-10 flex items-center justify-center h-full">Yükleniyor...</div>}>
-                                <Canvas shadows dpr={[1, 2]} gl={{ antialias: true, toneMapping: 3 }} className="z-10 relative">
-                                    <PerspectiveCamera makeDefault position={[0, 1.6, 5]} fov={42} />
-                                    <ambientLight intensity={0.8} color="#ffffff" />
-                                    <spotLight position={[5, 10, 5]} angle={0.5} penumbra={1} intensity={2} castShadow shadow-bias={-0.0001} />
-                                    <pointLight position={[-5, 5, -5]} intensity={1.5} color="#fbbf24" />
-                                    <pointLight position={[0, -2, 2]} intensity={0.8} color="#3b82f6" />
+                    {/* LEFT: CHARACTER & SLOTS */}
+                    <div className="w-[320px] bg-[#0f0b08] border-r border-[#3f2e18] flex flex-col overflow-y-auto custom-scrollbar">
+                        {/* 3D PREVIEW */}
+                        <div className="h-[320px] relative bg-gradient-to-b from-[#1a1410] to-[#0f0b08]">
+                            <Suspense fallback={<div className="text-white/20 flex items-center justify-center h-full">...</div>}>
+                                <Canvas shadows dpr={[1, 1.5]} gl={{ preserveDrawingBuffer: true }}>
+                                    <PerspectiveCamera makeDefault position={[0, 1.4, 4.5]} fov={35} />
+                                    <ambientLight intensity={0.6} />
+                                    <pointLight position={[10, 10, 10]} intensity={1.5} castShadow />
+                                    <pointLight position={[-10, 0, 5]} intensity={1} color="#fbbf24" />
                                     <Environment preset="city" />
 
-                                    <group position={[0, -1.1, 0]}>
-                                        <VoxelSpartan
-                                            position={[0, 0, 0]}
-                                            rotation={[0, Math.PI + 0.1, 0]}
-                                            charClass={playerState.class || 'warrior'}
-                                            weaponItem={playerState.equipment.weapon}
-                                            armorItem={playerState.equipment.armor}
-                                            helmetItem={playerState.equipment.helmet}
-                                            pantsItem={playerState.equipment.pants}
-                                            wingType={playerState.equippedWing}
-                                            petType={playerState.equippedPet}
-                                            skinId={playerState.equippedSkin}
-                                            isAttacking={false}
-                                            isMoving={false}
-                                        />
-                                        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
-                                            <planeGeometry args={[2, 2]} />
-                                            <shadowMaterial opacity={0.4} />
-                                        </mesh>
-                                    </group>
+                                    <VoxelSpartan
+                                        position={[0, -1, 0]}
+                                        rotation={[0, 0.2, 0]}
+                                        charClass={playerState.class || 'warrior'}
+                                        weaponItem={playerState.equipment.weapon}
+                                        armorItem={playerState.equipment.armor}
+                                        helmetItem={playerState.equipment.helmet}
+                                        pantsItem={playerState.equipment.pants}
+                                        wingType={playerState.equippedWing}
+                                        petType={playerState.equippedPet}
+                                        skinId={playerState.equippedSkin}
+                                    />
 
-                                    <OrbitControls enableZoom={true} minZoom={0.8} maxZoom={2} enablePan={false} minPolarAngle={Math.PI / 3} maxPolarAngle={Math.PI / 1.8} enableRotate={true} target={[0, 0, 0]} />
+                                    <mesh position={[0, -1.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                                        <planeGeometry args={[3, 3]} />
+                                        <shadowMaterial opacity={0.3} color="#000" />
+                                    </mesh>
+
+                                    <OrbitControls enableZoom={false} enablePan={false} minPolarAngle={Math.PI / 3} maxPolarAngle={Math.PI / 1.8} />
                                 </Canvas>
-                            </React.Suspense>
+                            </Suspense>
+                            <div className="absolute top-4 left-4 text-xs font-bold text-[#e6cba5]/50 uppercase tracking-widest">
+                                Lv.{playerState.level} {playerState.class?.toUpperCase()}
+                            </div>
+                            <div className="absolute bottom-4 w-full flex justify-center gap-6 text-[#e6cba5]">
+                                <div className="text-center">
+                                    <div className="text-xs text-slate-500">HP</div>
+                                    <div className="font-bold">{playerState.hp}/{playerState.maxHp}</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-xs text-slate-500">MANA</div>
+                                    <div className="font-bold text-blue-400">{playerState.mana}/{playerState.maxMana}</div>
+                                </div>
+                            </div>
                         </div>
-                        {/* Equipped Items Summary */}
-                        <div className="grid grid-cols-4 gap-2 mt-4">
-                            {Object.entries(playerState.equipment).map(([slot, item]) => (
-                                item ? (
-                                    <ItemTooltip key={slot} item={item}>
-                                        <div className="w-10 h-10 border border-slate-700 bg-slate-900 rounded cursor-pointer relative group" onClick={() => onUnequip && onUnequip(slot as keyof Equipment)} title={`Çıkar: ${item.name}`}>
-                                            <div className="absolute -top-1 -right-1 bg-red-500 rounded-full w-3 h-3 flex items-center justify-center text-[8px] text-white opacity-0 group-hover:opacity-100">x</div>
-                                            <div className="flex items-center justify-center w-full h-full p-1 opacity-75 group-hover:opacity-100 transition-opacity">
-                                                {renderItemIcon(item)}
-                                            </div>
-                                        </div>
-                                    </ItemTooltip>
-                                ) : (
-                                    <div key={slot} className="w-10 h-10 border border-slate-800 bg-black/20 rounded flex items-center justify-center text-[9px] text-slate-700 uppercase">
-                                        {slot.substring(0, 2)}
-                                    </div>
-                                )
-                            ))}
+
+                        {/* SLOTS GRID */}
+                        <div className="p-6 flex flex-col gap-6">
+                            {/* Armor Section */}
+                            <div>
+                                <h3 className="text-xs font-bold text-[#e6cba5]/40 uppercase mb-3 flex items-center gap-2">
+                                    <Shield size={10} /> Ekipmanlar
+                                </h3>
+                                <div className="flex justify-center gap-4 flex-wrap">
+                                    {renderEquipSlot('Miğfer', 'helmet', playerState.equipment.helmet)}
+                                    {renderEquipSlot('Zırh', 'armor', playerState.equipment.armor)}
+                                    {renderEquipSlot('Alt', 'pants', playerState.equipment.pants)}
+                                    {renderEquipSlot('Ayak', 'boots', playerState.equipment.boots)}
+                                    {renderEquipSlot('Silah', 'weapon', playerState.equipment.weapon)}
+                                </div>
+                            </div>
+
+                            {/* Accessory Section */}
+                            <div>
+                                <h3 className="text-xs font-bold text-[#e6cba5]/40 uppercase mb-3 flex items-center gap-2">
+                                    <Star size={10} /> Takılar
+                                </h3>
+                                <div className="flex justify-center gap-4">
+                                    {renderEquipSlot('Kolye', 'necklace', playerState.equipment.necklace)}
+                                    {renderEquipSlot('Küpe', 'earring', playerState.equipment.earring)}
+                                </div>
+                            </div>
+
+                            {/* Cosmetics Section */}
+                            <div>
+                                <h3 className="text-xs font-bold text-[#e6cba5]/40 uppercase mb-3 flex items-center gap-2">
+                                    <User size={10} /> Görünüm
+                                </h3>
+                                <div className="flex justify-center gap-4">
+                                    {renderEquipSlot('Kostüm', 'skin', playerState.equippedSkin ? { type: 'costume', name: 'Kostüm' } : null)}
+                                    {renderEquipSlot('Kanat', 'wing', playerState.equippedWing)}
+                                    {renderEquipSlot('Yoldaş', 'pet', playerState.equippedPet)}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    {/* INVENTORY / SKINS LIST */}
-                    <div className="flex-1 flex flex-col bg-[#0f0a06] overflow-hidden">
 
-                        {/* TABS */}
-                        <div className="flex border-b border-[#3f2e18]">
-                            <button onClick={() => setActiveTab('inventory')} className={`flex-1 py-3 text-sm font-bold uppercase transition-colors ${activeTab === 'inventory' ? 'bg-[#2a1f15] text-[#e6cba5] border-b-2 border-yellow-600' : 'text-slate-500 hover:text-slate-300'}`}>
-                                🎒 Çanta ({playerState.inventory.length})
-                            </button>
-                            <button onClick={() => setActiveTab('skins')} className={`flex-1 py-3 text-sm font-bold uppercase transition-colors ${activeTab === 'skins' ? 'bg-[#2a1f15] text-[#e6cba5] border-b-2 border-yellow-600' : 'text-slate-500 hover:text-slate-300'}`}>
-                                👕 Kostümler ({playerState.ownedSkins.length})
-                            </button>
+                    {/* CENTER: INVENTORY GRID */}
+                    <div className="flex-1 bg-[#0c0906] flex flex-col border-r border-[#3f2e18]">
+                        {/* Toolbar */}
+                        <div className="p-4 border-b border-[#3f2e18] flex gap-3 items-center sticky top-0 bg-[#0c0906] z-10">
+                            <div className="relative flex-1">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
+                                <input
+                                    type="text"
+                                    placeholder="Eşya Ara..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full h-10 bg-[#16100a] border border-[#3f2e18] rounded pl-9 text-sm text-[#e6cba5] focus:border-yellow-600 outline-none"
+                                />
+                            </div>
+                            <div className="flex gap-1 h-10 p-1 bg-[#16100a] border border-[#3f2e18] rounded">
+                                {(['all', 'gear', 'consumable', 'material'] as InventoryFilter[]).map((f) => (
+                                    <button
+                                        key={f}
+                                        onClick={() => setFilter(f)}
+                                        className={`px-3 h-full rounded text-xs font-bold capitalize transition-all ${filter === f ? 'bg-yellow-700/30 text-yellow-500' : 'text-slate-500 hover:text-slate-300'}`}
+                                    >
+                                        {f === 'all' ? 'Tümü' : f === 'gear' ? 'Ekipman' : f === 'consumable' ? 'İksir' : 'Materyal'}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
 
-                        {/* CONTENT */}
+                        {/* Grid */}
                         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                            {filteredInventory.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center h-full text-slate-600">
+                                    <Filter size={48} className="mb-4 opacity-50" />
+                                    <p>Eşya bulunamadı.</p>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-auto-fill-50 gap-2">
+                                    {filteredInventory.map((item, idx) => {
+                                        const displayData = getItemDisplayData(item);
+                                        return (
+                                            <ItemTooltip key={item.id + idx} item={item}>
+                                                <div
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
 
-                            {/* SKINS TAB */}
-                            {activeTab === 'skins' && (
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div onClick={() => onEquipSkin && onEquipSkin(null)} className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex flex-col items-center gap-2 relative group hover:bg-[#1a120b] ${playerState.equippedSkin === null ? 'border-green-500 bg-[#1a120b] shadow-[0_0_15px_green]' : 'border-slate-700 bg-black/20'}`}>
-                                        <Shirt size={32} className={playerState.equippedSkin === null ? 'text-green-400' : 'text-slate-500'} />
-                                        <span className={`font-bold text-sm ${playerState.equippedSkin === null ? 'text-green-400' : 'text-slate-400'}`}>Varsayılan</span>
-                                        {playerState.equippedSkin === null && <div className="absolute top-2 right-2 w-3 h-3 bg-green-500 rounded-full animate-pulse" />}
-                                    </div>
+                                                        // If filtered to locked/unlocked specifically? No.
+                                                        // Default Select
+                                                        setSelectedItem(item);
 
-                                    {playerState.ownedSkins.map(skinId => (
-                                        <div key={skinId} onClick={() => onEquipSkin && onEquipSkin(skinId)} className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex flex-col items-center gap-2 relative group hover:bg-[#1a120b] ${playerState.equippedSkin === skinId ? 'border-green-500 bg-[#1a120b] shadow-[0_0_15px_green]' : 'border-slate-700 bg-black/20'}`}>
-                                            <Shirt size={32} className={playerState.equippedSkin === skinId ? 'text-green-400' : 'text-purple-400'} />
-                                            <span className={`font-bold text-sm text-center ${playerState.equippedSkin === skinId ? 'text-green-400' : 'text-purple-300'}`}>
-                                                {skinId.replace('_bundle', '').toUpperCase()} KOSTÜMÜ
-                                            </span>
-                                            {playerState.equippedSkin === skinId && <div className="absolute top-2 right-2 w-3 h-3 bg-green-500 rounded-full animate-pulse" />}
-                                        </div>
-                                    ))}
+                                                        // Quick Action: Single Click Equip/Use
+                                                        // Check lock state? If locked, maybe warn? Or allow equip? Usually locked items can be equipped, just not sold/deleted.
+                                                        // We will trigger equip.
+                                                        if (['weapon', 'helmet', 'armor', 'pants', 'boots', 'necklace', 'earring', 'wing', 'pet', 'costume'].includes(item.type)) {
+                                                            if (onEquip) onEquip(item);
+                                                        } else if (item.type === 'consumable' && onUse) {
+                                                            // Consumables might need confirmation or double click to prevent accidental waste? 
+                                                            // User said "tek tıklama ile giysin çıkarsın", implying gear. 
+                                                            // For consistency let's keep consumables as select-first or use button. 
+                                                            // But for GEAR it is requested.
+                                                        }
+                                                    }}
+                                                    className={`
+                                                        relative w-14 h-14 rounded border cursor-pointer group transition-all
+                                                        flex items-center justify-center
+                                                        ${selectedItem?.id === item.id ? 'border-yellow-400 bg-yellow-900/20' : 'border-[#3f2e18] bg-[#16100a] hover:border-slate-500'}
+                                                        ${RARITY_COLORS[item.rarity as keyof typeof RARITY_COLORS]}
+                                                    `}
+                                                >
+                                                    <div className="scale-75">{renderItemIcon(item)}</div>
 
-                                    {playerState.ownedSkins.length === 0 && (
-                                        <div className="col-span-2 text-center text-slate-500 py-10 italic">
-                                            Henüz hiç kostümün yok. <br /> Premium Market'ten satın alabilirsin!
-                                        </div>
-                                    )}
+                                                    {/* Tier Badge (Restored) */}
+                                                    <div className="absolute top-0.5 right-0.5 z-10 px-1 rounded bg-black/60 border border-slate-700 text-[9px] font-bold text-slate-300">
+                                                        {displayData.tierLabel}
+                                                    </div>
+
+                                                    {item.plus ? (
+                                                        <div className="absolute bottom-1 right-1 text-[9px] font-bold text-yellow-400 bg-black/50 px-1 rounded">+{item.plus}</div>
+                                                    ) : null}
+
+                                                    {/* Lock Icon */}
+                                                    {lockedItems.has(item.id) && (
+                                                        <div className="absolute top-0.5 left-0.5 text-slate-400 z-10">
+                                                            <Lock size={10} />
+                                                        </div>
+                                                    )}
+
+                                                    {(item.type === 'consumable' || item.type === 'material') && (
+                                                        <div className="absolute bottom-1 right-1 text-[9px] font-bold text-slate-400">x1</div>
+                                                    )}
+                                                </div>
+                                            </ItemTooltip>
+                                        );
+                                    })}
                                 </div>
                             )}
-
-                            {/* INVENTORY TAB */}
-                            {activeTab === 'inventory' && (
-                                <>
-                                    {playerState.inventory.length === 0 ? (
-                                        <div className="flex flex-col items-center justify-center h-full text-slate-600 min-h-[300px]">
-                                            <div className="text-4xl mb-2">🎒</div>
-                                            <p>Çantan bomboş...</p>
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-2">
-                                            {playerState.inventory.map((item, idx) => {
-                                                const canEquip = (item.type === 'weapon' || item.type === 'armor' || item.type === 'helmet' || item.type === 'pants' || item.type === 'boots' || item.type === 'necklace' || item.type === 'earring');
-                                                const canUse = item.type === 'consumable';
-                                                const rarityClass = getRarityColor(item.rarity);
-                                                const isPlus = (item.plus || 0) > 0;
-
-                                                return (
-                                                    <div key={item.id + idx} className={`flex items-center justify-between p-3 bg-[#1a120b] border border-[#3f2e18] rounded-lg group hover:border-yellow-600 hover:bg-[#2a1f15] transition-all`}>
-                                                        <div className="flex items-center gap-4">
-                                                            <ItemTooltip item={item}>
-                                                                <div className={`w-12 h-12 rounded bg-black/40 border-2 flex items-center justify-center shadow-inner ${rarityClass}`}>
-                                                                    {renderItemIcon(item)}
-                                                                </div>
-                                                            </ItemTooltip>
-                                                            <div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <span className={`font-bold text-sm ${item.rarity === 'legendary' ? 'text-orange-400' : item.rarity === 'ancient' ? 'text-purple-400' : 'text-[#e6cba5]'}`}>
-                                                                        {item.name}
-                                                                    </span>
-                                                                    {isPlus && <span className="text-xs bg-yellow-900/40 text-yellow-400 px-1.5 rounded border border-yellow-700">+{item.plus}</span>}
-                                                                </div>
-                                                                <div className="text-[10px] text-slate-500 flex gap-2 mt-0.5">
-                                                                    <span className="uppercase">{item.rarity}</span> • <span>Tier {item.tier}</span>
-                                                                </div>
-                                                                <div className="flex flex-wrap gap-1 mt-1 text-[10px]">
-                                                                    {item.stats ? (
-                                                                        <>
-                                                                            {item.stats.damage && <span className="text-red-400 font-bold">+{item.stats.damage} Hasar</span>}
-                                                                            {item.stats.defense && <span className="text-blue-400 font-bold">+{item.stats.defense} Zırh</span>}
-                                                                            {item.stats.hp && <span className="text-green-400 font-bold">+{item.stats.hp} Can</span>}
-                                                                            {item.stats.mana && <span className="text-blue-300 font-bold">+{item.stats.mana} Mana</span>}
-
-                                                                            {/* Attributes */}
-                                                                            {item.stats.strength && <span className="text-orange-400 font-bold">+{item.stats.strength} GÜÇ</span>}
-                                                                            {item.stats.dexterity && <span className="text-emerald-400 font-bold">+{item.stats.dexterity} ÇEV</span>}
-                                                                            {item.stats.intelligence && <span className="text-cyan-300 font-bold">+{item.stats.intelligence} ZEK</span>}
-                                                                            {item.stats.vitality && <span className="text-pink-400 font-bold">+{item.stats.vitality} DAY</span>}
-
-                                                                            {/* Secondary Stats */}
-                                                                            {item.stats.critChance && <span className="text-yellow-400 font-bold">+{item.stats.critChance}% Kritik</span>}
-                                                                            {item.stats.attackSpeed && <span className="text-white font-bold">+{item.stats.attackSpeed}% Saldırı Hızı</span>}
-                                                                        </>
-                                                                    ) : (
-                                                                        <>
-                                                                            {item.type === 'weapon' && <span className="text-red-400 font-bold">Hasar</span>}
-                                                                            {item.type === 'armor' && <span className="text-blue-400 font-bold">Zırh</span>}
-                                                                            {item.type === 'consumable' && <span className="text-green-400 font-bold">Kullanılabilir</span>}
-                                                                        </>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="flex items-center gap-2">
-                                                            {canEquip && (
-                                                                <button onClick={() => onEquip && onEquip(item)} className="px-4 py-2 bg-yellow-700/20 text-yellow-500 border border-yellow-700/50 rounded hover:bg-yellow-600 hover:text-black font-bold text-xs transition-colors">
-                                                                    KUŞAN
-                                                                </button>
-                                                            )}
-                                                            {canUse && (
-                                                                <button onClick={() => onUse && onUse(item)} className="px-4 py-2 bg-green-700/20 text-green-500 border border-green-700/50 rounded hover:bg-green-600 hover:text-black font-bold text-xs transition-colors">
-                                                                    KULLAN
-                                                                </button>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    )}
-                                </>
-                            )}
-
                         </div>
-                        {/* Footer info */}
-                        <div className="p-3 bg-[#140e08] border-t border-[#3f2e18] text-center text-xs text-slate-500">
-                            {playerState.inventory.length} / {50 + (playerState.premiumBenefits?.inventorySlots || 0)} Eşya Kapasitesi
-                            {playerState.premiumBenefits?.inventorySlots && (
-                                <span className="text-green-400 ml-2">(+{playerState.premiumBenefits.inventorySlots} Premium)</span>
-                            )}
+
+
+
+                        {/* Footer Capacity */}
+                        <div className="p-3 border-t border-[#3f2e18] text-xs text-slate-500 flex justify-between">
+                            <span>Kapasite: {playerState.inventory.length} / 50</span>
+                            <span>Altın: {playerState.credits} 🟡</span>
                         </div>
                     </div>
+
+
+                    {/* RIGHT: SELECTED DETAILS */}
+                    <div className="w-[300px] bg-[#0f0b08] flex flex-col">
+                        {selectedItem ? (
+                            <div className="flex flex-col h-full animate-[fadeIn_0.2s]">
+                                {/* Header */}
+                                <div className="p-6 border-b border-[#3f2e18] bg-gradient-to-b from-[#16100a] to-transparent items-center flex flex-col text-center">
+                                    <div className={`w-20 h-20 rounded-lg flex items-center justify-center mb-4 bg-black/40 border-2 shadow-2xl ${RARITY_COLORS[selectedItem.rarity as keyof typeof RARITY_COLORS]}`}>
+                                        <div className="scale-125">{renderItemIcon(selectedItem)}</div>
+                                    </div>
+                                    <h3 className={`font-bold text-lg leading-tight uppercase ${selectedItem.rarity === 'legendary' ? 'text-orange-400' : 'text-[#e6cba5]'}`}>
+                                        {selectedItem.name} {selectedItem.plus ? `+${selectedItem.plus}` : ''}
+                                    </h3>
+                                    <span className="text-xs uppercase tracking-widest text-slate-500 mt-1">
+                                        {selectedItem.rarity} • Tier {selectedItem.tier}
+                                    </span>
+                                </div>
+
+                                {/* Stats Scrollable */}
+                                <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+                                    {selectedItem.type === 'weapon' && (
+                                        <div className="bg-red-900/10 border border-red-900/30 p-3 rounded flex items-center justify-between">
+                                            <span className="text-red-400 font-bold uppercase text-xs">Saldırı Gücü</span>
+                                            <span className="text-xl font-bold text-[#e6cba5]">
+                                                {selectedItem.stats?.damage || 0}
+                                            </span>
+                                        </div>
+                                    )}
+                                    {['armor', 'helmet', 'pants', 'boots'].includes(selectedItem.type) && (
+                                        <div className="bg-blue-900/10 border border-blue-900/30 p-3 rounded flex items-center justify-between">
+                                            <span className="text-blue-400 font-bold uppercase text-xs">Zırh Değeri</span>
+                                            <span className="text-xl font-bold text-[#e6cba5]">
+                                                {selectedItem.stats?.defense || 0}
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    {/* Stat Grid */}
+                                    <div className="space-y-2">
+                                        {selectedItem.stats?.hp && <StatRow label="Can (HP)" val={selectedItem.stats.hp} color="text-green-400" />}
+                                        {selectedItem.stats?.mana && <StatRow label="Mana" val={selectedItem.stats.mana} color="text-blue-300" />}
+                                        {selectedItem.stats?.strength && <StatRow label="Güç (STR)" val={selectedItem.stats.strength} color="text-orange-400" />}
+                                        {selectedItem.stats?.dexterity && <StatRow label="Çeviklik (DEX)" val={selectedItem.stats.dexterity} color="text-emerald-400" />}
+                                        {selectedItem.stats?.intelligence && <StatRow label="Zeka (INT)" val={selectedItem.stats.intelligence} color="text-cyan-400" />}
+                                        {selectedItem.stats?.vitality && <StatRow label="Dayanıklılık (VIT)" val={selectedItem.stats.vitality} color="text-pink-400" />}
+
+                                        {/* New Stats */}
+                                        {selectedItem.stats?.critChance && <StatRow label="Kritik Şansı" val={selectedItem.stats.critChance} color="text-yellow-400" isPercent />}
+                                        {selectedItem.stats?.critDamage && <StatRow label="Kritik Hasarı" val={selectedItem.stats.critDamage} color="text-red-400" isPercent />}
+                                    </div>
+
+                                    {/* Description/Lore */}
+                                    <p className="text-xs italic text-slate-600 mt-6 leading-relaxed">
+                                        "{selectedItem.description || "Kadim zamanlardan kalma bu eşya, içinde büyük bir güç barındırıyor..."}"
+                                    </p>
+                                </div>
+
+                                {/* Actions */}
+                                <div className="p-6 border-t border-[#3f2e18] flex flex-col gap-2">
+                                    {['weapon', 'helmet', 'armor', 'pants', 'boots', 'necklace', 'earring'].includes(selectedItem.type) && (
+                                        <button
+                                            onClick={handleEquip}
+                                            className="w-full py-3 bg-yellow-700 hover:bg-yellow-600 text-black font-bold uppercase rounded shadow-lg transition-transform active:scale-95"
+                                        >
+                                            KUŞAN
+                                        </button>
+                                    )}
+                                    {selectedItem.type === 'consumable' && (
+                                        <button
+                                            onClick={handleUse}
+                                            className="w-full py-3 bg-green-700 hover:bg-green-600 text-white font-bold uppercase rounded shadow-lg transition-transform active:scale-95"
+                                        >
+                                            KULLAN
+                                        </button>
+                                    )}
+                                    {/* Cosmetic Apply Logic */}
+                                    {selectedItem.type === 'costume' && (
+                                        <button
+                                            onClick={() => onEquipSkin && onEquipSkin('some_skin_id_from_item')}
+                                            className="w-full py-3 bg-purple-700 hover:bg-purple-600 text-white font-bold uppercase rounded"
+                                        >
+                                            GÖRÜNÜMÜ UYGULA
+                                        </button>
+                                    )}
+
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => toggleLock(selectedItem.id)}
+                                            className={`flex-1 py-2 border ${lockedItems.has(selectedItem.id) ? 'border-yellow-500 text-yellow-500 bg-yellow-900/20' : 'border-[#3f2e18] text-slate-400 hover:bg-white/5'} rounded uppercase text-xs font-bold transition-all`}
+                                        >
+                                            {lockedItems.has(selectedItem.id) ? <><Lock size={12} className="inline mr-1" /> Kilitli</> : 'Kilitle'}
+                                        </button>
+                                        <button className="flex-1 py-2 border border-red-900/30 text-red-500 hover:bg-red-900/20 rounded uppercase text-xs font-bold disabled:opacity-50" disabled={lockedItems.has(selectedItem.id)}>
+                                            Sat
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center h-full text-slate-700 p-8 text-center">
+                                <Search size={48} className="mb-4 opacity-20" />
+                                <h3 className="text-[#e6cba5] font-bold mb-2">Eşya Seçilmedi</h3>
+                                <p className="text-xs">Detaylarını görmek veya işlem yapmak için listeden bir eşya seç.</p>
+                            </div>
+                        )}
+                    </div>
+
                 </div>
             </div>
+
+            {/* INLINE CSS FOR SCROLLBAR & GRID */}
+            <style>{`
+                .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+                .custom-scrollbar::-webkit-scrollbar-track { bg: #000; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f2e18; border-radius: 2px; }
+                .grid-cols-auto-fill-50 {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+                }
+            `}</style>
         </div>
     );
 };
+
+const StatRow = ({ label, val, color, isPercent }: { label: string, val: number, color: string, isPercent?: boolean }) => (
+    <div className="flex justify-between text-sm border-b border-white/5 pb-1">
+        <span className="text-slate-400">{label}</span>
+        <span className={`font-bold ${color}`}>+{val}{isPercent ? '%' : ''}</span>
+    </div>
+);
 
 export default InventoryModal;

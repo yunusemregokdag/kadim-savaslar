@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Book, Trophy, Info, Keyboard, Move, Target, MessageSquare, Settings, Zap } from 'lucide-react';
 import { RANKS } from '../constants';
+import { RankIcon } from './ui/RankIcon';
 
 interface GameGuideModalProps {
     onClose: () => void;
@@ -159,7 +160,8 @@ export const GameGuideModal: React.FC<GameGuideModalProps> = ({ onClose }) => {
                                         {RANKS.sort((a, b) => (a.order || 0) - (b.order || 0)).map((rank, idx) => (
                                             <tr key={rank.id} className={idx % 2 === 0 ? 'bg-black/20' : ''}>
                                                 <td className="p-3 font-bold text-white flex items-center gap-2">
-                                                    <span className="text-xl">{rank.icon}</span> {rank.title}
+                                                    <RankIcon rank={rank.id} size="md" />
+                                                    {rank.title}
                                                 </td>
                                                 <td className="p-3 text-slate-300">
                                                     {rank.limitType === 'count' ? (

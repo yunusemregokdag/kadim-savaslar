@@ -135,7 +135,104 @@ Her sınıf için 5 tier item yapıldı. **250 item oluşturuldu!**
 
 ---
 
-*Son Güncelleme: 2025-12-21 13:15*
+*Son Güncelleme: 2025-12-31 14:20*
+
+---
+
+## ⏳ BEKLEMEDEKİ GÖREVLER
+
+### 🧾 ICON GENERATION BACKLOG (QUOTA RESET BEKLİYOR)
+
+**Durum**: Image generation quota exhausted (reset: ~01:28 TR)
+**Validation**: `npm run validate:assets:prod` → ❌ (139 asset, 108 placeholder)
+
+---
+
+#### 🐎 Mount Icons (4 / 15 KALDI)
+
+| Icon | Path | Size | Style | Status |
+|------|------|------|-------|--------|
+| `griffin.png` | `public/assets/mounts/` | 96x96 | Eagle-head + lion body, golden-brown | ❌ Pending |
+| `dragon_ancient.png` | `public/assets/mounts/` | 96x96 | Ancient legendary dragon, dark scales | ❌ Pending |
+| `unicorn_divine.png` | `public/assets/mounts/` | 96x96 | Divine holy unicorn, subtle glow pixels | ❌ Pending |
+| `nightmare.png` | `public/assets/mounts/` | 96x96 | Dark cursed mount, red/purple accents | ❌ Pending |
+
+**Tamamlanan (11/15)**:
+- ✅ horse_brown, horse_white, donkey, camel, elephant
+- ✅ wolf, tiger, lion, bear, dragon_small, phoenix
+
+---
+
+#### 🧩 UI Icons (27 ADET KALDI)
+
+**Tier Badges** (6 adet):
+| Icon | Path | Size | Status |
+|------|------|------|--------|
+| `tier_bronze.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `tier_silver.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `tier_gold.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `tier_diamond.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `tier_t4.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `tier_t5.png` | `public/assets/ui/` | 48x48 | ❌ |
+
+**Crafting / Status Icons** (12 adet):
+| Icon | Path | Size | Status |
+|------|------|------|--------|
+| `boss_essence.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `void_shard.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `gold_coin.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `diamond_gem.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `puzzle_piece.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `blocked.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `crafting.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `hammer.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `locked.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `success.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `failed.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `fire.png` | `public/assets/ui/` | 48x48 | ❌ |
+
+**Zone Icons** (9 adet):
+| Icon | Path | Size | Status |
+|------|------|------|--------|
+| `shop.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `blacksmith.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `healer.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `arena.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `castle.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `safe_zone.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `danger_zone.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `boss_zone.png` | `public/assets/ui/` | 48x48 | ❌ |
+| `map_marker.png` | `public/assets/ui/` | 48x48 | ❌ |
+
+---
+
+#### 🔒 VALIDATION KURALLAR
+
+```bash
+# Her ikon eklendikten sonra:
+npm run validate:assets:prod
+
+# TÜM ikonlar bittikten sonra:
+npm run build
+
+# ✔️ Build PASS = RELEASE GO!
+```
+
+**STYLE LOCK (Tüm ikonlar için)**:
+- Pixel art, game UI style (Minecraft-like but original)
+- Transparent background (PNG alpha)
+- NO background, NO square fill
+- Centered icon, 70–80% canvas usage
+- Clean silhouette, readable at small size
+- 1–2px dark outline
+- Subtle highlight pixels (no blur, no glow)
+- Flat pixel shading (no gradients)
+
+---
+
+### Kadim General Rütbe İkonu
+- [ ] **Kadim General** için özel pixel art icon üret
+- Dosya: `/public/ranks/rank_20.png`
 
 ---
 

@@ -1327,403 +1327,381 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                                                                 return (
                                                                     <ItemTooltip key={pet.id} item={pet}>
                                                                         <button
-                                                                            onClick={() => setPlayerStats(prev => ({ ...prev, equippedPet: isEquipped ? null : pet }))}
-                                                                            className={`aspect-square rounded-lg border-2 flex flex-col items-center justify-center transition-all relative group
-                                                                                    ${isEquipped
-                                                                                    ? 'bg-emerald-900/40 border-emerald-500 shadow-[0_0_10px_rgba(34,197,94,0.3)]'
-                                                                                    : 'bg-slate-900/50 border-slate-700/50 hover:border-emerald-500/50 hover:bg-slate-800'
-                                                                                }`}
-                                                                        >
-                                                                            <span className="text-xl group-hover:scale-110 transition-transform">🐉</span>
-                                                                            <div className={`absolute top-0 right-0 px-1 rounded-bl-md text-[8px] font-bold
-                                                                                    ${displayData.tierLabel.includes('T5') ? 'bg-red-900 text-red-100' : 'bg-black/60 text-emerald-400'}
-                                                                                `}>
-                                                                                {displayData.tierLabel}
-                                                                            </div>
-                                                                        </button>
-                                                                    </ItemTooltip>
-                                                                );
-                                                            })}
-                                                            {/* Empty slots placeholders */}
-                                                            {Array.from({ length: Math.max(0, 16 - (playerStats.ownedPets?.length || 0)) }).map((_, i) => (
-                                                                <div key={`empty-${i}`} className="aspect-square rounded-lg border border-slate-800/50 bg-slate-900/20"></div>
-                                                            ))}
+                                                    </div>
+                                                </div>
+                                                    </div>
+
+                                                    {/* WING CARD (Large) */}
+                                                    <div className="bg-gradient-to-b from-slate-900/80 to-slate-950 rounded-xl border border-violet-900/30 shadow-lg overflow-hidden flex flex-col">
+                                                        <div className="px-4 py-2 border-b border-violet-900/20 bg-violet-950/20 flex justify-between items-center flex-shrink-0">
+                                                            <h3 className="font-bold text-violet-400 flex items-center gap-2">
+                                                                <div className="w-5 h-5"><PixelWing color="#a78bfa" /></div>
+                                                                <span className="tracking-wide">KANATLAR</span>
+                                                            </h3>
+                                                            <span className="text-xs text-violet-600 font-bold bg-violet-950/40 px-2 py-0.5 rounded-full border border-violet-900/30">
+                                                                {playerStats.ownedWings?.length || 0} / 20
+                                                            </span>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            </div>
 
-                                            {/* WING CARD (Large) */}
-                                            <div className="bg-gradient-to-b from-slate-900/80 to-slate-950 rounded-xl border border-violet-900/30 shadow-lg overflow-hidden flex flex-col">
-                                                <div className="px-4 py-2 border-b border-violet-900/20 bg-violet-950/20 flex justify-between items-center flex-shrink-0">
-                                                    <h3 className="font-bold text-violet-400 flex items-center gap-2">
-                                                        <div className="w-5 h-5"><PixelWing color="#a78bfa" /></div>
-                                                        <span className="tracking-wide">KANATLAR</span>
-                                                    </h3>
-                                                    <span className="text-xs text-violet-600 font-bold bg-violet-950/40 px-2 py-0.5 rounded-full border border-violet-900/30">
-                                                        {playerStats.ownedWings?.length || 0} / 20
-                                                    </span>
-                                                </div>
+                                                        <div className="p-4 flex-1 flex flex-col gap-4 overflow-hidden">
+                                                            {/* Large Preview */}
+                                                            <div className="w-full h-24 flex-shrink-0 bg-[#1e1b4b]/30 rounded-lg border border-dashed border-violet-800/50 flex items-center justify-center relative overflow-hidden group">
+                                                                {playerStats.equippedWing ? (
+                                                                    <>
+                                                                        <div className="absolute inset-0 bg-gradient-to-t from-violet-900/40 to-transparent"></div>
+                                                                        <div className="z-10 w-16 h-16 drop-shadow-[0_0_15px_rgba(139,92,246,0.6)] animate-pulse-slow">
+                                                                            <PixelWing color={playerStats.equippedWing.color || '#a78bfa'} />
+                                                                        </div>
+                                                                        <div className="absolute bottom-1 left-0 right-0 text-center text-[10px] font-bold text-violet-300 uppercase tracking-widest">
+                                                                            {playerStats.equippedWing.name}
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <span className="text-violet-800/50 text-xs font-bold uppercase tracking-widest">Kanat Seçilmedi</span>
+                                                                )}
+                                                            </div>
 
-                                                <div className="p-4 flex-1 flex flex-col gap-4 overflow-hidden">
-                                                    {/* Large Preview */}
-                                                    <div className="w-full h-24 flex-shrink-0 bg-[#1e1b4b]/30 rounded-lg border border-dashed border-violet-800/50 flex items-center justify-center relative overflow-hidden group">
-                                                        {playerStats.equippedWing ? (
-                                                            <>
-                                                                <div className="absolute inset-0 bg-gradient-to-t from-violet-900/40 to-transparent"></div>
-                                                                <div className="z-10 w-16 h-16 drop-shadow-[0_0_15px_rgba(139,92,246,0.6)] animate-pulse-slow">
-                                                                    <PixelWing color={playerStats.equippedWing.color || '#a78bfa'} />
-                                                                </div>
-                                                                <div className="absolute bottom-1 left-0 right-0 text-center text-[10px] font-bold text-violet-300 uppercase tracking-widest">
-                                                                    {playerStats.equippedWing.name}
-                                                                </div>
-                                                            </>
-                                                        ) : (
-                                                            <span className="text-violet-800/50 text-xs font-bold uppercase tracking-widest">Kanat Seçilmedi</span>
-                                                        )}
-                                                    </div>
-
-                                                    {/* Scrollable Grid */}
-                                                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
-                                                        <div className="grid grid-cols-4 gap-2 content-start">
-                                                            {playerStats.ownedWings?.map(wing => {
-                                                                const displayData = getItemDisplayData(wing);
-                                                                const isEquipped = playerStats.equippedWing?.id === wing.id;
-                                                                return (
-                                                                    <ItemTooltip key={wing.id} item={wing}>
-                                                                        <button
-                                                                            onClick={() => setPlayerStats(prev => ({ ...prev, equippedWing: isEquipped ? null : wing }))}
-                                                                            className={`aspect-square rounded-lg border-2 flex flex-col items-center justify-center transition-all relative group
+                                                            {/* Scrollable Grid */}
+                                                            <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
+                                                                <div className="grid grid-cols-4 gap-2 content-start">
+                                                                    {playerStats.ownedWings?.map(wing => {
+                                                                        const displayData = getItemDisplayData(wing);
+                                                                        const isEquipped = playerStats.equippedWing?.id === wing.id;
+                                                                        return (
+                                                                            <ItemTooltip key={wing.id} item={wing}>
+                                                                                <button
+                                                                                    onClick={() => setPlayerStats(prev => ({ ...prev, equippedWing: isEquipped ? null : wing }))}
+                                                                                    className={`aspect-square rounded-lg border-2 flex flex-col items-center justify-center transition-all relative group
                                                                                     ${isEquipped
-                                                                                    ? 'bg-violet-900/40 border-violet-500 shadow-[0_0_10px_rgba(139,92,246,0.3)]'
-                                                                                    : 'bg-slate-900/50 border-slate-700/50 hover:border-violet-500/50 hover:bg-slate-800'
-                                                                                }`}
-                                                                        >
-                                                                            <div className="w-6 h-6 group-hover:scale-110 transition-transform"><PixelWing color={wing.color || '#a78bfa'} /></div>
-                                                                            <div className={`absolute top-0 right-0 px-1 rounded-bl-md text-[8px] font-bold
+                                                                                            ? 'bg-violet-900/40 border-violet-500 shadow-[0_0_10px_rgba(139,92,246,0.3)]'
+                                                                                            : 'bg-slate-900/50 border-slate-700/50 hover:border-violet-500/50 hover:bg-slate-800'
+                                                                                        }`}
+                                                                                >
+                                                                                    <div className="w-6 h-6 group-hover:scale-110 transition-transform"><PixelWing color={wing.color || '#a78bfa'} /></div>
+                                                                                    <div className={`absolute top-0 right-0 px-1 rounded-bl-md text-[8px] font-bold
                                                                                     ${displayData.tierLabel.includes('T5') ? 'bg-red-900 text-red-100' : 'bg-black/60 text-violet-400'}
                                                                                 `}>
-                                                                                {displayData.tierLabel}
-                                                                            </div>
-                                                                        </button>
-                                                                    </ItemTooltip>
-                                                                );
-                                                            })}
-                                                            {/* Empty slots placeholders */}
-                                                            {Array.from({ length: Math.max(0, 16 - (playerStats.ownedWings?.length || 0)) }).map((_, i) => (
-                                                                <div key={`empty-${i}`} className="aspect-square rounded-lg border border-slate-800/50 bg-slate-900/20"></div>
-                                                            ))}
+                                                                                        {displayData.tierLabel}
+                                                                                    </div>
+                                                                                </button>
+                                                                            </ItemTooltip>
+                                                                        );
+                                                                    })}
+                                                                    {/* Empty slots placeholders */}
+                                                                    {Array.from({ length: Math.max(0, 16 - (playerStats.ownedWings?.length || 0)) }).map((_, i) => (
+                                                                        <div key={`empty-${i}`} className="aspect-square rounded-lg border border-slate-800/50 bg-slate-900/20"></div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
+
                                                 </div>
                                             </div>
 
                                         </div>
                                     </div>
-
-                                </div>
-                            </div>
                         )}
 
-                        {activeTab === 'inventory' && <InventoryModal playerState={playerStats} onEquip={handleEquipItem} onUnequip={handleUnequipItem} onUse={handleUseItem} onClose={() => setActiveTab('skills')} />}
-                        {activeTab === 'skills' && <SkillTree playerClass={CLASSES[playerStats.class || 'warrior']} playerLevel={playerStats.level} />}
-                        {activeTab === 'quests' && <div className="bg-slate-900 p-8 rounded-xl border border-slate-700"><h1 className="text-2xl text-yellow-500 font-bold mb-4">GÖREVLER</h1><p className="text-slate-400">Aktif: {playerStats.activeQuest ? playerStats.activeQuest.title : 'Yok'}</p></div>}
-                        {
-                            activeTab === 'party' && (
-                                <PartyView
-                                    party={party}
-                                    playerState={playerStats}
-                                    onCreateParty={handleCreateParty}
-                                    onLeaveParty={handleLeaveParty}
-                                    onKickMember={handleKickPartyMember}
-                                    onInvitePlayer={handleInviteToParty}
-                                    onTradeRequest={handleTradeRequest}
-                                    onChangeLootRule={() => { }}
-                                    onClose={() => setActiveTab('skills')}
-                                />
-                            )
-                        }
-
-                        {
-                            activeTab === 'guild' && (
-                                <GuildView
-                                    guild={guild}
-                                    playerState={playerStats}
-                                    onCreateGuild={handleCreateGuild}
-                                    onJoinGuild={handleJoinGuild}
-                                    onLeaveGuild={handleLeaveGuild}
-                                    onKickMember={handleKickGuildMember}
-                                    onPromoteMember={handlePromoteGuildMember}
-                                    onDemoteMember={handleDemoteGuildMember}
-                                    onDonate={handleDonate}
-                                    onClose={() => setActiveTab('skills')}
-                                />
-                            )
-                        }
-
-                        {
-                            activeTab === 'market' && (
-                                <div className="flex flex-col h-full bg-slate-900/50 rounded-xl overflow-hidden md:p-4">
-                                    {/* SUB TABS */}
-                                    <div className="flex gap-2 md:gap-4 mb-4 border-b border-white/10 pb-2 px-2 overflow-x-auto">
-                                        <button onClick={() => setMarketSubTab('npc')} className={`px-4 py-2 font-bold rounded transition-colors whitespace-nowrap ${marketSubTab === 'npc' ? 'bg-amber-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Köy Pazarı</button>
-                                        <button onClick={() => setMarketSubTab('player')} className={`px-4 py-2 font-bold rounded transition-colors whitespace-nowrap ${marketSubTab === 'player' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Oyuncu Pazarı</button>
-                                        <button onClick={() => setMarketSubTab('premium')} className={`px-4 py-2 font-bold rounded transition-colors whitespace-nowrap ${marketSubTab === 'premium' ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Mağaza</button>
-                                    </div>
-
-                                    <div className="flex-1 relative overflow-hidden rounded-lg bg-slate-900 border border-slate-700">
-                                        {marketSubTab === 'npc' && (
-                                            <NpcShopView
+                                    {activeTab === 'inventory' && <InventoryModal playerState={playerStats} onEquip={handleEquipItem} onUnequip={handleUnequipItem} onUse={handleUseItem} onClose={() => setActiveTab('skills')} />}
+                                    {activeTab === 'skills' && <SkillTree playerClass={CLASSES[playerStats.class || 'warrior']} playerLevel={playerStats.level} />}
+                                    {activeTab === 'quests' && <div className="bg-slate-900 p-8 rounded-xl border border-slate-700"><h1 className="text-2xl text-yellow-500 font-bold mb-4">GÖREVLER</h1><p className="text-slate-400">Aktif: {playerStats.activeQuest ? playerStats.activeQuest.title : 'Yok'}</p></div>}
+                                    {
+                                        activeTab === 'party' && (
+                                            <PartyView
+                                                party={party}
                                                 playerState={playerStats}
-                                                onBuy={(item, cost) => {
-                                                    if (playerStats.credits >= cost) {
-                                                        setPlayerStats(prev => ({
-                                                            ...prev,
-                                                            credits: prev.credits - cost,
-                                                            inventory: [...prev.inventory, item]
-                                                        }));
-                                                        soundManager.playSFX('coin');
-                                                    }
-                                                }}
-                                                onBuyPet={handleBuyPet}
-                                                onBuyWing={handleBuyWing}
+                                                onCreateParty={handleCreateParty}
+                                                onLeaveParty={handleLeaveParty}
+                                                onKickMember={handleKickPartyMember}
+                                                onInvitePlayer={handleInviteToParty}
+                                                onTradeRequest={handleTradeRequest}
+                                                onChangeLootRule={() => { }}
                                                 onClose={() => setActiveTab('skills')}
                                             />
-                                        )}
-                                        {marketSubTab === 'player' && (
-                                            <MarketView
+                                        )
+                                    }
+
+                                    {
+                                        activeTab === 'guild' && (
+                                            <GuildView
+                                                guild={guild}
                                                 playerState={playerStats}
-                                                onClose={() => { }}
+                                                onCreateGuild={handleCreateGuild}
+                                                onJoinGuild={handleJoinGuild}
+                                                onLeaveGuild={handleLeaveGuild}
+                                                onKickMember={handleKickGuildMember}
+                                                onPromoteMember={handlePromoteGuildMember}
+                                                onDemoteMember={handleDemoteGuildMember}
+                                                onDonate={handleDonate}
+                                                onClose={() => setActiveTab('skills')}
+                                            />
+                                        )
+                                    }
+
+                                    {
+                                        activeTab === 'market' && (
+                                            <div className="flex flex-col h-full bg-slate-900/50 rounded-xl overflow-hidden md:p-4">
+                                                {/* SUB TABS */}
+                                                <div className="flex gap-2 md:gap-4 mb-4 border-b border-white/10 pb-2 px-2 overflow-x-auto">
+                                                    <button onClick={() => setMarketSubTab('npc')} className={`px-4 py-2 font-bold rounded transition-colors whitespace-nowrap ${marketSubTab === 'npc' ? 'bg-amber-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Köy Pazarı</button>
+                                                    <button onClick={() => setMarketSubTab('player')} className={`px-4 py-2 font-bold rounded transition-colors whitespace-nowrap ${marketSubTab === 'player' ? 'bg-emerald-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Oyuncu Pazarı</button>
+                                                    <button onClick={() => setMarketSubTab('premium')} className={`px-4 py-2 font-bold rounded transition-colors whitespace-nowrap ${marketSubTab === 'premium' ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}>Mağaza</button>
+                                                </div>
+
+                                                <div className="flex-1 relative overflow-hidden rounded-lg bg-slate-900 border border-slate-700">
+                                                    {marketSubTab === 'npc' && (
+                                                        <NpcShopView
+                                                            playerState={playerStats}
+                                                            onBuy={(item, cost) => {
+                                                                if (playerStats.credits >= cost) {
+                                                                    setPlayerStats(prev => ({
+                                                                        ...prev,
+                                                                        credits: prev.credits - cost,
+                                                                        inventory: [...prev.inventory, item]
+                                                                    }));
+                                                                    soundManager.playSFX('coin');
+                                                                }
+                                                            }}
+                                                            onBuyPet={handleBuyPet}
+                                                            onBuyWing={handleBuyWing}
+                                                            onClose={() => setActiveTab('skills')}
+                                                        />
+                                                    )}
+                                                    {marketSubTab === 'player' && (
+                                                        <MarketView
+                                                            playerState={playerStats}
+                                                            onClose={() => { }}
+                                                            onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
+                                                            isEmbedded={true}
+                                                        />
+                                                    )}
+                                                    {marketSubTab === 'premium' && (
+                                                        <PremiumMarketView
+                                                            playerState={playerStats}
+                                                            onBuyData={(category, id, cost, currency, amount) => {
+                                                                setPlayerStats(prev => {
+                                                                    const updates: any = {};
+                                                                    let currentCredits = prev.credits;
+                                                                    let currentGems = prev.gems;
+
+                                                                    let success = false;
+                                                                    if (currency === 'gold' && currentCredits >= cost) { updates.credits = currentCredits - cost; success = true; }
+                                                                    else if (currency === 'gems' && currentGems >= cost) { updates.gems = currentGems - cost; success = true; }
+                                                                    else if (currency === 'real') { success = true; }
+
+                                                                    if (!success) return prev;
+
+                                                                    if (category === 'currency') {
+                                                                        if (id.includes('gold')) updates.credits = (updates.credits ?? currentCredits) + (amount || 0);
+                                                                        else updates.gems = (updates.gems ?? currentGems) + (amount || 0);
+                                                                    } else if (category === 'item') {
+                                                                        const skins = prev.ownedSkins || [];
+                                                                        if (!skins.includes(id)) updates.ownedSkins = [...skins, id];
+                                                                    } else if (category === 'subscription') {
+                                                                        updates.vipStatus = { tier: 1, expiresAt: Date.now() + 2592000000 };
+                                                                        updates.gems = (updates.gems ?? currentGems) + 50;
+                                                                    }
+                                                                    return { ...prev, ...updates };
+                                                                });
+                                                                soundManager.playSFX('coin');
+                                                            }}
+                                                            onClose={() => { }}
+                                                            isEmbedded={true}
+                                                        />
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )
+                                    }
+                                    {
+                                        activeTab === 'blacksmith' && (
+                                            <BlacksmithView
+                                                isOpen={true}
+                                                playerState={playerStats}
                                                 onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
+                                                onClose={() => setActiveTab('character')}
                                                 isEmbedded={true}
                                             />
-                                        )}
-                                        {marketSubTab === 'premium' && (
-                                            <PremiumMarketView
-                                                playerState={playerStats}
-                                                onBuyData={(category, id, cost, currency, amount) => {
-                                                    setPlayerStats(prev => {
-                                                        const updates: any = {};
-                                                        let currentCredits = prev.credits;
-                                                        let currentGems = prev.gems;
-
-                                                        let success = false;
-                                                        if (currency === 'gold' && currentCredits >= cost) { updates.credits = currentCredits - cost; success = true; }
-                                                        else if (currency === 'gems' && currentGems >= cost) { updates.gems = currentGems - cost; success = true; }
-                                                        else if (currency === 'real') { success = true; }
-
-                                                        if (!success) return prev;
-
-                                                        if (category === 'currency') {
-                                                            if (id.includes('gold')) updates.credits = (updates.credits ?? currentCredits) + (amount || 0);
-                                                            else updates.gems = (updates.gems ?? currentGems) + (amount || 0);
-                                                        } else if (category === 'item') {
-                                                            const skins = prev.ownedSkins || [];
-                                                            if (!skins.includes(id)) updates.ownedSkins = [...skins, id];
-                                                        } else if (category === 'subscription') {
-                                                            updates.vipStatus = { tier: 1, expiresAt: Date.now() + 2592000000 };
-                                                            updates.gems = (updates.gems ?? currentGems) + 50;
-                                                        }
-                                                        return { ...prev, ...updates };
-                                                    });
-                                                    soundManager.playSFX('coin');
-                                                }}
-                                                onClose={() => { }}
-                                                isEmbedded={true}
-                                            />
-                                        )}
-                                    </div>
-                                </div>
-                            )
-                        }
-                        {
-                            activeTab === 'blacksmith' && (
-                                <BlacksmithView
-                                    isOpen={true}
-                                    playerState={playerStats}
-                                    onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
-                                    onClose={() => setActiveTab('character')}
-                                    isEmbedded={true}
-                                />
-                            )
-                        }
-                        {activeTab === 'map' && <div className="w-full h-full flex flex-col items-center"><h2 className="text-3xl rpg-font text-yellow-500 mb-6 flex items-center gap-3"><MapIcon size={32} /> HARİTA</h2><div className="w-full max-w-5xl"><SchematicMap activeZone={startingMap} onZoneSelect={(id) => setActiveZone(id)} /></div></div>}
-                        {activeTab === 'leaderboard' && <LeaderboardView onJoinGuild={handleJoinGuild} />}
-                    </main >
-                </div >
+                                        )
+                                    }
+                                    {activeTab === 'map' && <div className="w-full h-full flex flex-col items-center"><h2 className="text-3xl rpg-font text-yellow-500 mb-6 flex items-center gap-3"><MapIcon size={32} /> HARİTA</h2><div className="w-full max-w-5xl"><SchematicMap activeZone={startingMap} onZoneSelect={(id) => setActiveZone(id)} /></div></div>}
+                                    {activeTab === 'leaderboard' && <LeaderboardView onJoinGuild={handleJoinGuild} />}
+                                </main >
+                            </div >
             </div >
 
-            {/* Mail Modal */}
-            {
-                showMailbox && (
-                    <MailView
-                        playerState={playerStats}
-                        onClose={() => setShowMailbox(false)}
-                        onRefreshPlayer={() => loadPartyData()}
-                    />
-                )
-            }
+                {/* Mail Modal */}
+                {
+                    showMailbox && (
+                        <MailView
+                            playerState={playerStats}
+                            onClose={() => setShowMailbox(false)}
+                            onRefreshPlayer={() => loadPartyData()}
+                        />
+                    )
+                }
 
-            {/* Daily Quests Modal */}
-            {
-                showDailyQuests && (
-                    <DailyQuestView
-                        playerState={playerStats}
-                        onClose={() => setShowDailyQuests(false)}
-                    />
-                )
-            }
+                {/* Daily Quests Modal */}
+                {
+                    showDailyQuests && (
+                        <DailyQuestView
+                            playerState={playerStats}
+                            onClose={() => setShowDailyQuests(false)}
+                        />
+                    )
+                }
 
-            {/* Tutorial System */}
-            {
-                showTutorial && (
-                    <TutorialSystem
-                        playerState={playerStats}
-                        onComplete={() => { }}
-                        onReward={(rewards) => {
-                            // Apply rewards
-                            setPlayerStats(prev => ({
-                                ...prev,
-                                credits: prev.credits + (rewards.gold || 0),
-                                exp: prev.exp + (rewards.exp || 0),
-                                gems: prev.gems + (rewards.gems || 0)
-                            }));
-                        }}
-                        isFirstTime={true}
-                    />
-                )
-            }
+                {/* Tutorial System */}
+                {
+                    showTutorial && (
+                        <TutorialSystem
+                            playerState={playerStats}
+                            onComplete={() => { }}
+                            onReward={(rewards) => {
+                                // Apply rewards
+                                setPlayerStats(prev => ({
+                                    ...prev,
+                                    credits: prev.credits + (rewards.gold || 0),
+                                    exp: prev.exp + (rewards.exp || 0),
+                                    gems: prev.gems + (rewards.gems || 0)
+                                }));
+                            }}
+                            isFirstTime={true}
+                        />
+                    )
+                }
 
-            {/* Settings Modal */}
-            {
-                showSettings && (
-                    <SettingsView onClose={() => setShowSettings(false)} />
-                )
-            }
+                {/* Settings Modal */}
+                {
+                    showSettings && (
+                        <SettingsView onClose={() => setShowSettings(false)} />
+                    )
+                }
 
-            {/* Premium Modal */}
-            {
-                showPremium && (
-                    <PremiumView
-                        playerState={playerStats}
-                        onClose={() => setShowPremium(false)}
-                        onRefreshPlayer={() => loadPartyData()}
-                    />
-                )
-            }
+                {/* Premium Modal */}
+                {
+                    showPremium && (
+                        <PremiumView
+                            playerState={playerStats}
+                            onClose={() => setShowPremium(false)}
+                            onRefreshPlayer={() => loadPartyData()}
+                        />
+                    )
+                }
 
-            {/* Battle Pass Modal */}
-            {
-                showBattlePass && (
-                    <BattlePassView
-                        playerState={playerStats}
-                        onClose={() => setShowBattlePass(false)}
-                        onClaimReward={(tier, isPremium, reward) => {
-                            if (reward.gold) setPlayerStats(prev => ({ ...prev, credits: prev.credits + reward.gold }));
-                            if (reward.gems) setPlayerStats(prev => ({ ...prev, gems: prev.gems + reward.gems }));
-                        }}
-                        onPurchasePremium={() => {
-                            setPlayerStats(prev => ({ ...prev, gems: prev.gems - 500 }));
-                        }}
-                    />
-                )
-            }
+                {/* Battle Pass Modal */}
+                {
+                    showBattlePass && (
+                        <BattlePassView
+                            playerState={playerStats}
+                            onClose={() => setShowBattlePass(false)}
+                            onClaimReward={(tier, isPremium, reward) => {
+                                if (reward.gold) setPlayerStats(prev => ({ ...prev, credits: prev.credits + reward.gold }));
+                                if (reward.gems) setPlayerStats(prev => ({ ...prev, gems: prev.gems + reward.gems }));
+                            }}
+                            onPurchasePremium={() => {
+                                setPlayerStats(prev => ({ ...prev, gems: prev.gems - 500 }));
+                            }}
+                        />
+                    )
+                }
 
-            {/* Player Stats Modal */}
-            {
-                showPlayerStats && (
-                    <PlayerStatsView
-                        playerState={playerStats}
-                        onClose={() => setShowPlayerStats(false)}
-                    />
-                )
-            }
+                {/* Player Stats Modal */}
+                {
+                    showPlayerStats && (
+                        <PlayerStatsView
+                            playerState={playerStats}
+                            onClose={() => setShowPlayerStats(false)}
+                        />
+                    )
+                }
 
-            {/* Boss Timer Modal */}
-            {
-                showBossTimer && (
-                    <BossTimerView
-                        onClose={() => setShowBossTimer(false)}
-                        playerLevel={playerStats.level}
-                        onNavigate={(zoneId) => setActiveZone(zoneId)}
-                    />
-                )
-            }
+                {/* Boss Timer Modal */}
+                {
+                    showBossTimer && (
+                        <BossTimerView
+                            onClose={() => setShowBossTimer(false)}
+                            playerLevel={playerStats.level}
+                            onNavigate={(zoneId) => setActiveZone(zoneId)}
+                        />
+                    )
+                }
 
-            {/* Referral Modal */}
-            {
-                showReferral && (
-                    <ReferralView
-                        playerState={playerStats}
-                        onClose={() => setShowReferral(false)}
-                        onClaimReward={(rewards) => {
-                            if (rewards.gold) setPlayerStats(prev => ({ ...prev, credits: prev.credits + rewards.gold }));
-                            if (rewards.gems) setPlayerStats(prev => ({ ...prev, gems: prev.gems + rewards.gems }));
-                        }}
-                    />
-                )
-            }
+                {/* Referral Modal */}
+                {
+                    showReferral && (
+                        <ReferralView
+                            playerState={playerStats}
+                            onClose={() => setShowReferral(false)}
+                            onClaimReward={(rewards) => {
+                                if (rewards.gold) setPlayerStats(prev => ({ ...prev, credits: prev.credits + rewards.gold }));
+                                if (rewards.gems) setPlayerStats(prev => ({ ...prev, gems: prev.gems + rewards.gems }));
+                            }}
+                        />
+                    )
+                }
 
-            {/* Auction House Modal */}
-            {
-                showAuction && (
-                    <AuctionHouseView
-                        playerState={playerStats}
-                        onClose={() => setShowAuction(false)}
-                        onBid={(listingId, amount) => {
-                            // Deduct gold for bid (in real app, only when won)
-                        }}
-                        onBuyout={(listingId) => {
-                            // Handle buyout purchase
-                        }}
-                        onCreateListing={(item, startPrice, buyoutPrice, duration) => {
-                            // Logic handled in view via onUpdatePlayer
-                        }}
-                        onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
-                    />
-                )
-            }
+                {/* Auction House Modal */}
+                {
+                    showAuction && (
+                        <AuctionHouseView
+                            playerState={playerStats}
+                            onClose={() => setShowAuction(false)}
+                            onBid={(listingId, amount) => {
+                                // Deduct gold for bid (in real app, only when won)
+                            }}
+                            onBuyout={(listingId) => {
+                                // Handle buyout purchase
+                            }}
+                            onCreateListing={(item, startPrice, buyoutPrice, duration) => {
+                                // Logic handled in view via onUpdatePlayer
+                            }}
+                            onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
+                        />
+                    )
+                }
 
-            {/* World Map Modal */}
-            {
-                showWorldMap && (
-                    <WorldMapView
-                        playerState={playerStats}
-                        currentZoneId={activeZone || 1}
-                        onClose={() => setShowWorldMap(false)}
-                        onNavigate={(zoneId) => { setActiveZone(zoneId); setShowWorldMap(false); }}
-                    />
-                )
-            }
+                {/* World Map Modal */}
+                {
+                    showWorldMap && (
+                        <WorldMapView
+                            playerState={playerStats}
+                            currentZoneId={activeZone || 1}
+                            onClose={() => setShowWorldMap(false)}
+                            onNavigate={(zoneId) => { setActiveZone(zoneId); setShowWorldMap(false); }}
+                        />
+                    )
+                }
 
-            {/* Controls Guide Modal */}
-            {
-                showControls && (
-                    <ControlsGuideView
-                        onClose={() => setShowControls(false)}
-                    />
-                )
-            }
+                {/* Controls Guide Modal */}
+                {
+                    showControls && (
+                        <ControlsGuideView
+                            onClose={() => setShowControls(false)}
+                        />
+                    )
+                }
 
-            {/* Mount System Modal */}
-            {
-                showMounts && (
-                    <MountSystemView
-                        playerState={playerStats}
-                        onClose={() => setShowMounts(false)}
-                        onEquipMount={(mount) => {
-                            // Apply speed bonus to player
-                        }}
-                        onPurchaseMount={(mount) => {
-                            if (mount.gemPrice) {
-                                setPlayerStats(prev => ({ ...prev, gems: prev.gems - (mount.gemPrice || 0) }));
-                            } else if (mount.price) {
-                                setPlayerStats(prev => ({ ...prev, credits: prev.credits - (mount.price || 0) }));
-                            }
-                        }}
-                    />
-                )
-            }
+                {/* Mount System Modal */}
+                {
+                    showMounts && (
+                        <MountSystemView
+                            playerState={playerStats}
+                            onClose={() => setShowMounts(false)}
+                            onEquipMount={(mount) => {
+                                // Apply speed bonus to player
+                            }}
+                            onPurchaseMount={(mount) => {
+                                if (mount.gemPrice) {
+                                    setPlayerStats(prev => ({ ...prev, gems: prev.gems - (mount.gemPrice || 0) }));
+                                } else if (mount.price) {
+                                    setPlayerStats(prev => ({ ...prev, credits: prev.credits - (mount.price || 0) }));
+                                }
+                            }}
+                        />
+                    )
+                }
         </ErrorBoundary >
     );
 };

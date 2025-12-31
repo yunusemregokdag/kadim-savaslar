@@ -575,7 +575,7 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
                                 value={nickname}
                                 onChange={(e) => setNickname(e.target.value)}
                                 placeholder={t.ENTER_NAME}
-                                className="w-full bg-slate-900/80 border border-slate-700 text-white text-center py-4 rounded-xl focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-all font-bold placeholder:text-slate-600 uppercase tracking-widest"
+                                className="w-full bg-slate-900/80 border border-slate-700 text-white text-center py-4 rounded-xl focus:border-yellow-500 focus:outline-none focus:ring-1 focus:ring-yellow-500 transition-all font-bold placeholder:text-slate-600"
                                 maxLength={12}
                             />
                         </div>

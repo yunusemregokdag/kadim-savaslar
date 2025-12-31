@@ -1,0 +1,197 @@
+﻿
+> kadim-savaslar-mmorpg-asil-proje@1.0.0 build
+> node scripts/validate-assets.js --production && vite build
+
+
+[1m[36m╔══════════════════════════════════════════════════════════════╗[0m
+[1m[36m║          KADIM SAVAŞLAR - ASSET BUILD VALIDATION             ║[0m
+[1m[36m╚══════════════════════════════════════════════════════════════╝[0m
+
+[36mℹ️  Mode: PRODUCTION[0m
+[36mℹ️  Fix Mode: DISABLED[0m
+[36mℹ️  Assets Directory: C:\Users\yunus\OneDrive\Masaüstü\Kadim savaşlar\public\assets[0m
+
+[35m📁 Checking folder structure...[0m
+[35m📦 Checking materials assets...[0m
+[35m📦 Checking skills assets...[0m
+[35m📦 Checking items assets...[0m
+[35m📦 Checking vfx assets...[0m
+[35m📦 Checking mounts assets...[0m
+[35m📦 Checking ui assets...[0m
+[35m🔍 Scanning for _PH_ placeholder files...[0m
+
+[1m═══════════════════════════════════════════════════════════════[0m
+[1m                      VALIDATION SUMMARY                        [0m
+[1m═══════════════════════════════════════════════════════════════[0m
+
+[36mℹ️  Total assets checked: 139[0m
+[32m✅ Valid assets: 0[0m
+[33m⚠️  Placeholder assets: 108[0m
+[31m❌ Missing assets: 31[0m
+
+[33m⚠️  Placeholder Assets Detected:[0m
+
+[33m  [MATERIALS][0m
+    - iron_ore: assets\materials\iron_ore.png (69 bytes)
+    - copper_ore: assets\materials\copper_ore.png (69 bytes)
+    - gold_ore: assets\materials\gold_ore.png (69 bytes)
+    - diamond_ore: assets\materials\diamond_ore.png (69 bytes)
+    - wood_log: assets\materials\wood_log.png (69 bytes)
+    - stone: assets\materials\stone.png (69 bytes)
+    - leather_scrap: assets\materials\leather_scrap.png (69 bytes)
+    - herb_green: assets\materials\herb_green.png (69 bytes)
+    - cloth: assets\materials\cloth.png (69 bytes)
+    - bone: assets\materials\bone.png (69 bytes)
+    - dragon_scale: assets\materials\dragon_scale.png (69 bytes)
+    - phoenix_feather: assets\materials\phoenix_feather.png (69 bytes)
+    - titan_essence: assets\materials\titan_essence.png (69 bytes)
+    - void_crystal: assets\materials\void_crystal.png (69 bytes)
+    - ancient_rune: assets\materials\ancient_rune.png (69 bytes)
+    - soul_shard: assets\materials\soul_shard.png (69 bytes)
+    - magic_dust: assets\materials\magic_dust.png (69 bytes)
+    - enchant_scroll: assets\materials\enchant_scroll.png (69 bytes)
+    - upgrade_stone: assets\materials\upgrade_stone.png (69 bytes)
+    - protection_scroll: assets\materials\protection_scroll.png (69 bytes)
+
+[33m  [SKILLS][0m
+    - warrior/sword_strike: assets\skills\warrior\sword_strike.png (69 bytes)
+    - warrior/shield_wall: assets\skills\warrior\shield_wall.png (69 bytes)
+    - warrior/rage_burst: assets\skills\warrior\rage_burst.png (69 bytes)
+    - warrior/ground_slam: assets\skills\warrior\ground_slam.png (69 bytes)
+    - warrior/spear_throw: assets\skills\warrior\spear_throw.png (69 bytes)
+    - warrior/war_cry: assets\skills\warrior\war_cry.png (69 bytes)
+    - warrior/whirlwind: assets\skills\warrior\whirlwind.png (69 bytes)
+    - mage/fireball: assets\skills\mage\fireball.png (69 bytes)
+    - mage/ice_shield: assets\skills\mage\ice_shield.png (69 bytes)
+    - mage/teleport: assets\skills\mage\teleport.png (69 bytes)
+    - mage/lightning_chain: assets\skills\mage\lightning_chain.png (69 bytes)
+    - mage/meteor: assets\skills\mage\meteor.png (69 bytes)
+    - mage/mana_drain: assets\skills\mage\mana_drain.png (69 bytes)
+    - mage/cosmic_destruction: assets\skills\mage\cosmic_destruction.png (69 bytes)
+    - shaman/spirit_bolt: assets\skills\shaman\spirit_bolt.png (69 bytes)
+    - shaman/heal_light: assets\skills\shaman\heal_light.png (69 bytes)
+    - shaman/speed_totem: assets\skills\shaman\speed_totem.png (69 bytes)
+    - shaman/poison_vine: assets\skills\shaman\poison_vine.png (69 bytes)
+    - shaman/earth_shield: assets\skills\shaman\earth_shield.png (69 bytes)
+    - shaman/cleanse: assets\skills\shaman\cleanse.png (69 bytes)
+    - shaman/ancestor_wrath: assets\skills\shaman\ancestor_wrath.png (69 bytes)
+    - archer/arrow_shot: assets\skills\archer\arrow_shot.png (69 bytes)
+    - archer/evasion: assets\skills\archer\evasion.png (69 bytes)
+    - archer/multishot: assets\skills\archer\multishot.png (69 bytes)
+    - archer/poison_arrow: assets\skills\archer\poison_arrow.png (69 bytes)
+    - archer/trap: assets\skills\archer\trap.png (69 bytes)
+    - archer/eagle_eye: assets\skills\archer\eagle_eye.png (69 bytes)
+    - archer/arrow_rain: assets\skills\archer\arrow_rain.png (69 bytes)
+    - common/sword: assets\skills\common\sword.png (69 bytes)
+    - common/shield: assets\skills\common\shield.png (69 bytes)
+    - common/zap: assets\skills\common\zap.png (69 bytes)
+    - common/flame: assets\skills\common\flame.png (69 bytes)
+    - common/heart: assets\skills\common\heart.png (69 bytes)
+    - common/snowflake: assets\skills\common\snowflake.png (69 bytes)
+    - common/wind: assets\skills\common\wind.png (69 bytes)
+    - common/orbit: assets\skills\common\orbit.png (69 bytes)
+    - common/droplet: assets\skills\common\droplet.png (69 bytes)
+    - common/sun: assets\skills\common\sun.png (69 bytes)
+    - common/sparkles: assets\skills\common\sparkles.png (69 bytes)
+    - common/feather: assets\skills\common\feather.png (69 bytes)
+    - common/trees: assets\skills\common\trees.png (69 bytes)
+    - common/ghost: assets\skills\common\ghost.png (69 bytes)
+    - common/move_down: assets\skills\common\move_down.png (69 bytes)
+    - common/arrow_up: assets\skills\common\arrow_up.png (69 bytes)
+    - common/mic: assets\skills\common\mic.png (69 bytes)
+    - common/rotate: assets\skills\common\rotate.png (69 bytes)
+    - common/target: assets\skills\common\target.png (69 bytes)
+    - common/crosshair: assets\skills\common\crosshair.png (69 bytes)
+
+[33m  [ITEMS][0m
+    - weapons/sword: assets\items\weapons\sword.png (69 bytes)
+    - weapons/axe: assets\items\weapons\axe.png (69 bytes)
+    - weapons/staff: assets\items\weapons\staff.png (69 bytes)
+    - weapons/bow: assets\items\weapons\bow.png (69 bytes)
+    - weapons/dagger: assets\items\weapons\dagger.png (69 bytes)
+    - weapons/mace: assets\items\weapons\mace.png (69 bytes)
+    - weapons/spear: assets\items\weapons\spear.png (69 bytes)
+    - armor/helmet: assets\items\armor\helmet.png (69 bytes)
+    - armor/chest: assets\items\armor\chest.png (69 bytes)
+    - armor/gloves: assets\items\armor\gloves.png (69 bytes)
+    - armor/boots: assets\items\armor\boots.png (69 bytes)
+    - armor/shield: assets\items\armor\shield.png (69 bytes)
+    - accessories/ring: assets\items\accessories\ring.png (69 bytes)
+    - accessories/necklace: assets\items\accessories\necklace.png (69 bytes)
+    - accessories/earring: assets\items\accessories\earring.png (69 bytes)
+    - consumables/hp_potion: assets\items\consumables\hp_potion.png (69 bytes)
+    - consumables/mp_potion: assets\items\consumables\mp_potion.png (69 bytes)
+    - consumables/buff_potion: assets\items\consumables\buff_potion.png (69 bytes)
+    - cosmetics/pet: assets\items\cosmetics\pet.png (69 bytes)
+    - cosmetics/wing: assets\items\cosmetics\wing.png (69 bytes)
+    - cosmetics/costume: assets\items\cosmetics\costume.png (69 bytes)
+
+[33m  [VFX][0m
+    - fire_particles: assets\vfx\fire_particles.png (69 bytes)
+    - ice_particles: assets\vfx\ice_particles.png (69 bytes)
+    - lightning_particles: assets\vfx\lightning_particles.png (69 bytes)
+    - heal_particles: assets\vfx\heal_particles.png (69 bytes)
+    - poison_particles: assets\vfx\poison_particles.png (69 bytes)
+    - physical_particles: assets\vfx\physical_particles.png (69 bytes)
+    - dark_particles: assets\vfx\dark_particles.png (69 bytes)
+    - holy_particles: assets\vfx\holy_particles.png (69 bytes)
+
+[33m  [MOUNTS][0m
+    - horse_brown: assets\mounts\horse_brown.png (436242 bytes)
+    - donkey: assets\mounts\donkey.png (452851 bytes)
+    - camel: assets\mounts\camel.png (465515 bytes)
+    - horse_white: assets\mounts\horse_white.png (613526 bytes)
+    - elephant: assets\mounts\elephant.png (491516 bytes)
+    - wolf: assets\mounts\wolf.png (548552 bytes)
+    - tiger: assets\mounts\tiger.png (588263 bytes)
+    - lion: assets\mounts\lion.png (675751 bytes)
+    - bear: assets\mounts\bear.png (559717 bytes)
+    - dragon_small: assets\mounts\dragon_small.png (555239 bytes)
+    - phoenix: assets\mounts\phoenix.png (655925 bytes)
+
+[31m❌ Missing Assets:[0m
+
+[31m  [MOUNTS][0m
+    - griffin: assets\mounts\griffin.png
+    - dragon_ancient: assets\mounts\dragon_ancient.png
+    - unicorn_divine: assets\mounts\unicorn_divine.png
+    - nightmare: assets\mounts\nightmare.png
+
+[31m  [UI][0m
+    - tier_bronze: assets\ui\tier_bronze.png
+    - tier_silver: assets\ui\tier_silver.png
+    - tier_gold: assets\ui\tier_gold.png
+    - tier_diamond: assets\ui\tier_diamond.png
+    - tier_t4: assets\ui\tier_t4.png
+    - tier_t5: assets\ui\tier_t5.png
+    - boss_essence: assets\ui\boss_essence.png
+    - void_shard: assets\ui\void_shard.png
+    - gold_coin: assets\ui\gold_coin.png
+    - diamond_gem: assets\ui\diamond_gem.png
+    - puzzle_piece: assets\ui\puzzle_piece.png
+    - blocked: assets\ui\blocked.png
+    - crafting: assets\ui\crafting.png
+    - hammer: assets\ui\hammer.png
+    - locked: assets\ui\locked.png
+    - success: assets\ui\success.png
+    - failed: assets\ui\failed.png
+    - fire: assets\ui\fire.png
+    - shop: assets\ui\shop.png
+    - blacksmith: assets\ui\blacksmith.png
+    - healer: assets\ui\healer.png
+    - arena: assets\ui\arena.png
+    - castle: assets\ui\castle.png
+    - safe_zone: assets\ui\safe_zone.png
+    - danger_zone: assets\ui\danger_zone.png
+    - boss_zone: assets\ui\boss_zone.png
+    - map_marker: assets\ui\map_marker.png
+
+[1m[31m╔════════════════════════════════════════════════════════════════╗[0m
+[1m[31m║  ❌ PRODUCTION BUILD FAILED!                                   ║[0m
+[1m[31m║                                                                ║[0m
+[1m[31m║  • Missing assets must be added before release.               ║[0m
+[1m[31m║  • Placeholder assets detected! Replace with real PNGs.       ║[0m
+[1m[31m║                                                                ║[0m
+[1m[31m║  All icons must be real PNG files (>100 bytes) with alpha.    ║[0m
+[1m[31m╚════════════════════════════════════════════════════════════════╝[0m
+

@@ -1223,7 +1223,19 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                                                 <spotLight position={[5, 10, 5]} angle={0.5} penumbra={1} intensity={2} castShadow color="#ffedd5" />
                                                 <pointLight position={[-5, 5, -5]} intensity={0.5} color="#3b82f6" />
                                                 <Suspense fallback={null}>
-                                                    <VoxelSpartan charClass={playerStats.class} rotation={[0, 0, 0]} isMoving={false} isAttacking={false} weaponItem={playerStats.equipment.weapon} />
+                                                    <VoxelSpartan
+                                                        charClass={playerStats.class}
+                                                        rotation={[0, 0, 0]}
+                                                        isMoving={false}
+                                                        isAttacking={false}
+                                                        weaponItem={playerStats.equipment.weapon}
+                                                        helmetItem={playerStats.equipment.helmet}
+                                                        armorItem={playerStats.equipment.armor}
+                                                        pantsItem={playerStats.equipment.pants}
+                                                        wingType={playerStats.equippedWing}
+                                                        petType={playerStats.equippedPet}
+                                                        skinId={playerStats.equippedSkin}
+                                                    />
                                                 </Suspense>
                                                 <Environment preset="city" />
                                             </Canvas>
@@ -1263,114 +1275,146 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                                     </div>
 
                                     {/* ═══════════════════════════════════════════════════════════════ */}
-                                    {/* RIGHT COLUMN - FLEX (Stats Primary + Companions Secondary) */}
+                                    {/* RIGHT COLUMN - FLEX (Stats Compact + Companions Large) */}
                                     {/* ═══════════════════════════════════════════════════════════════ */}
-                                    <div className="flex-1 flex flex-col gap-4">
+                                    <div className="flex-1 flex flex-col gap-3 h-full overflow-hidden">
 
                                         {/* ─────────────────────────────────────────────────────────── */}
-                                        {/* TOP RIGHT: PRIMARY PANEL - CHARACTER STATS */}
-                                        {/* This is the VISUAL ANCHOR - Wide, clean, readable */}
+                                        {/* TOP: COMPACT STATS PANEL */}
                                         {/* ─────────────────────────────────────────────────────────── */}
-                                        <div className="bg-gradient-to-b from-slate-900/90 to-slate-950 rounded-xl border border-amber-900/30 shadow-lg overflow-hidden">
+                                        <div className="bg-gradient-to-b from-slate-900/90 to-slate-950 rounded-xl border border-amber-900/30 shadow-lg flex-shrink-0">
                                             <StatPointsPanel playerState={playerStats} onAddStat={handleStatIncrease} />
                                         </div>
 
                                         {/* ─────────────────────────────────────────────────────────── */}
-                                        {/* BOTTOM RIGHT: SECONDARY PANELS - Companions + Wings */}
-                                        {/* Smaller visual weight, must NOT dominate */}
+                                        {/* BOTTOM: EXPANDED COMPANIONS (Pets & Wings) */}
                                         {/* ─────────────────────────────────────────────────────────── */}
-                                        <div className="grid grid-cols-2 gap-3">
+                                        <div className="flex-1 grid grid-cols-2 gap-3 min-h-0">
 
-                                            {/* PET CARD (Compact) */}
-                                            <div className="bg-gradient-to-b from-slate-900/80 to-slate-950 rounded-lg border border-emerald-900/30 shadow overflow-hidden">
-                                                <div className="px-2 py-1.5 border-b border-emerald-900/20 bg-emerald-950/20 flex justify-between items-center">
-                                                    <h3 className="font-bold text-emerald-400 flex items-center gap-1.5 text-xs">
-                                                        <span className="text-sm">🐾</span> Yoldaşlar
+                                            {/* PET CARD (Large) */}
+                                            <div className="bg-gradient-to-b from-slate-900/80 to-slate-950 rounded-xl border border-emerald-900/30 shadow-lg overflow-hidden flex flex-col">
+                                                <div className="px-4 py-2 border-b border-emerald-900/20 bg-emerald-950/20 flex justify-between items-center flex-shrink-0">
+                                                    <h3 className="font-bold text-emerald-400 flex items-center gap-2">
+                                                        <span className="text-xl">🐾</span>
+                                                        <span className="tracking-wide">YOLDAŞLAR</span>
                                                     </h3>
-                                                    <span className="text-[9px] text-emerald-600 font-mono bg-emerald-950/40 px-1 py-0.5 rounded">{playerStats.ownedPets?.length || 0}</span>
+                                                    <span className="text-xs text-emerald-600 font-bold bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-900/30">
+                                                        {playerStats.ownedPets?.length || 0} / 20
+                                                    </span>
                                                 </div>
 
-                                                <div className="p-2 flex gap-2">
-                                                    {/* Equipped Preview (Smaller) */}
-                                                    <div className="w-12 h-12 flex-shrink-0">
+                                                <div className="p-4 flex-1 flex flex-col gap-4 overflow-hidden">
+                                                    {/* Large Preview */}
+                                                    <div className="w-full h-24 flex-shrink-0 bg-[#0a2f1c]/30 rounded-lg border border-dashed border-emerald-800/50 flex items-center justify-center relative overflow-hidden group">
                                                         {playerStats.equippedPet ? (
-                                                            <div className="w-full h-full rounded bg-emerald-950/40 border border-emerald-500 flex flex-col items-center justify-center shadow-[0_0_10px_rgba(34,197,94,0.15)]">
-                                                                <span className="text-lg">🐉</span>
-                                                                <div className="text-[7px] text-emerald-400 font-bold truncate w-full text-center">{playerStats.equippedPet.name}</div>
-                                                            </div>
+                                                            <>
+                                                                <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/40 to-transparent"></div>
+                                                                <div className="z-10 text-4xl drop-shadow-[0_0_15px_rgba(34,197,94,0.6)] animate-bounce-slow">🐉</div>
+                                                                <div className="absolute bottom-1 left-0 right-0 text-center text-[10px] font-bold text-emerald-300 uppercase tracking-widest">
+                                                                    {playerStats.equippedPet.name}
+                                                                </div>
+                                                            </>
                                                         ) : (
-                                                            <div className="w-full h-full rounded border border-dashed border-emerald-900/40 flex items-center justify-center text-slate-600 text-sm">?</div>
+                                                            <span className="text-emerald-800/50 text-xs font-bold uppercase tracking-widest">Yoldaş Seçilmedi</span>
                                                         )}
                                                     </div>
 
-                                                    {/* Pet Grid (Compact) */}
-                                                    <div className="flex-1 grid grid-cols-4 gap-1">
-                                                        {playerStats.ownedPets?.slice(0, 8).map(pet => {
-                                                            const displayData = getItemDisplayData(pet);
-                                                            const isEquipped = playerStats.equippedPet?.id === pet.id;
-                                                            return (
-                                                                <ItemTooltip key={pet.id} item={pet}>
-                                                                    <button
-                                                                        onClick={() => setPlayerStats(prev => ({ ...prev, equippedPet: isEquipped ? null : pet }))}
-                                                                        className={`aspect-square rounded border flex items-center justify-center text-sm transition-all relative
-                                                                            ${isEquipped
-                                                                                ? 'bg-emerald-900/40 border-emerald-500 shadow-[0_0_6px_rgba(34,197,94,0.25)]'
-                                                                                : 'bg-slate-900/50 border-slate-700 hover:border-emerald-600'
-                                                                            }`}
-                                                                    >
-                                                                        🐉
-                                                                        <div className="absolute top-0 right-0 px-0.5 bg-black/80 rounded-bl text-[6px] font-bold text-emerald-400">{displayData.tierLabel}</div>
-                                                                    </button>
-                                                                </ItemTooltip>
-                                                            );
-                                                        })}
+                                                    {/* Scrollable Grid */}
+                                                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
+                                                        <div className="grid grid-cols-4 gap-2 content-start">
+                                                            {playerStats.ownedPets?.map(pet => {
+                                                                const displayData = getItemDisplayData(pet);
+                                                                const isEquipped = playerStats.equippedPet?.id === pet.id;
+                                                                return (
+                                                                    <ItemTooltip key={pet.id} item={pet}>
+                                                                        <button
+                                                                            onClick={() => setPlayerStats(prev => ({ ...prev, equippedPet: isEquipped ? null : pet }))}
+                                                                            className={`aspect-square rounded-lg border-2 flex flex-col items-center justify-center transition-all relative group
+                                                                                    ${isEquipped
+                                                                                    ? 'bg-emerald-900/40 border-emerald-500 shadow-[0_0_10px_rgba(34,197,94,0.3)]'
+                                                                                    : 'bg-slate-900/50 border-slate-700/50 hover:border-emerald-500/50 hover:bg-slate-800'
+                                                                                }`}
+                                                                        >
+                                                                            <span className="text-xl group-hover:scale-110 transition-transform">🐉</span>
+                                                                            <div className={`absolute top-0 right-0 px-1 rounded-bl-md text-[8px] font-bold
+                                                                                    ${displayData.tierLabel.includes('T5') ? 'bg-red-900 text-red-100' : 'bg-black/60 text-emerald-400'}
+                                                                                `}>
+                                                                                {displayData.tierLabel}
+                                                                            </div>
+                                                                        </button>
+                                                                    </ItemTooltip>
+                                                                );
+                                                            })}
+                                                            {/* Empty slots placeholders */}
+                                                            {Array.from({ length: Math.max(0, 16 - (playerStats.ownedPets?.length || 0)) }).map((_, i) => (
+                                                                <div key={`empty-${i}`} className="aspect-square rounded-lg border border-slate-800/50 bg-slate-900/20"></div>
+                                                            ))}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            {/* WING CARD (Compact) */}
-                                            <div className="bg-gradient-to-b from-slate-900/80 to-slate-950 rounded-lg border border-violet-900/30 shadow overflow-hidden">
-                                                <div className="px-2 py-1.5 border-b border-violet-900/20 bg-violet-950/20 flex justify-between items-center">
-                                                    <h3 className="font-bold text-violet-400 flex items-center gap-1.5 text-xs">
-                                                        <div className="w-3 h-3"><PixelWing color="#a78bfa" /></div> Kanatlar
+                                            {/* WING CARD (Large) */}
+                                            <div className="bg-gradient-to-b from-slate-900/80 to-slate-950 rounded-xl border border-violet-900/30 shadow-lg overflow-hidden flex flex-col">
+                                                <div className="px-4 py-2 border-b border-violet-900/20 bg-violet-950/20 flex justify-between items-center flex-shrink-0">
+                                                    <h3 className="font-bold text-violet-400 flex items-center gap-2">
+                                                        <div className="w-5 h-5"><PixelWing color="#a78bfa" /></div>
+                                                        <span className="tracking-wide">KANATLAR</span>
                                                     </h3>
-                                                    <span className="text-[9px] text-violet-600 font-mono bg-violet-950/40 px-1 py-0.5 rounded">{playerStats.ownedWings?.length || 0}</span>
+                                                    <span className="text-xs text-violet-600 font-bold bg-violet-950/40 px-2 py-0.5 rounded-full border border-violet-900/30">
+                                                        {playerStats.ownedWings?.length || 0} / 20
+                                                    </span>
                                                 </div>
 
-                                                <div className="p-2 flex gap-2">
-                                                    {/* Equipped Preview (Smaller) */}
-                                                    <div className="w-12 h-12 flex-shrink-0">
+                                                <div className="p-4 flex-1 flex flex-col gap-4 overflow-hidden">
+                                                    {/* Large Preview */}
+                                                    <div className="w-full h-24 flex-shrink-0 bg-[#1e1b4b]/30 rounded-lg border border-dashed border-violet-800/50 flex items-center justify-center relative overflow-hidden group">
                                                         {playerStats.equippedWing ? (
-                                                            <div className="w-full h-full rounded bg-violet-950/40 border border-violet-500 flex flex-col items-center justify-center shadow-[0_0_10px_rgba(139,92,246,0.15)]">
-                                                                <div className="w-6 h-6"><PixelWing color={playerStats.equippedWing.color || '#a78bfa'} /></div>
-                                                                <div className="text-[7px] text-violet-400 font-bold truncate w-full text-center">{playerStats.equippedWing.name}</div>
-                                                            </div>
+                                                            <>
+                                                                <div className="absolute inset-0 bg-gradient-to-t from-violet-900/40 to-transparent"></div>
+                                                                <div className="z-10 w-16 h-16 drop-shadow-[0_0_15px_rgba(139,92,246,0.6)] animate-pulse-slow">
+                                                                    <PixelWing color={playerStats.equippedWing.color || '#a78bfa'} />
+                                                                </div>
+                                                                <div className="absolute bottom-1 left-0 right-0 text-center text-[10px] font-bold text-violet-300 uppercase tracking-widest">
+                                                                    {playerStats.equippedWing.name}
+                                                                </div>
+                                                            </>
                                                         ) : (
-                                                            <div className="w-full h-full rounded border border-dashed border-violet-900/40 flex items-center justify-center text-slate-600 text-sm">?</div>
+                                                            <span className="text-violet-800/50 text-xs font-bold uppercase tracking-widest">Kanat Seçilmedi</span>
                                                         )}
                                                     </div>
 
-                                                    {/* Wing Grid (Compact) */}
-                                                    <div className="flex-1 grid grid-cols-4 gap-1">
-                                                        {playerStats.ownedWings?.slice(0, 8).map(wing => {
-                                                            const displayData = getItemDisplayData(wing);
-                                                            const isEquipped = playerStats.equippedWing?.id === wing.id;
-                                                            return (
-                                                                <ItemTooltip key={wing.id} item={wing}>
-                                                                    <button
-                                                                        onClick={() => setPlayerStats(prev => ({ ...prev, equippedWing: isEquipped ? null : wing }))}
-                                                                        className={`aspect-square rounded border flex items-center justify-center transition-all relative
-                                                                            ${isEquipped
-                                                                                ? 'bg-violet-900/40 border-violet-500 shadow-[0_0_6px_rgba(139,92,246,0.25)]'
-                                                                                : 'bg-slate-900/50 border-slate-700 hover:border-violet-600'
-                                                                            }`}
-                                                                    >
-                                                                        <div className="w-5 h-5"><PixelWing color={wing.color || '#a78bfa'} /></div>
-                                                                        <div className="absolute top-0 right-0 px-0.5 bg-black/80 rounded-bl text-[6px] font-bold text-violet-400">{displayData.tierLabel}</div>
-                                                                    </button>
-                                                                </ItemTooltip>
-                                                            );
-                                                        })}
+                                                    {/* Scrollable Grid */}
+                                                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
+                                                        <div className="grid grid-cols-4 gap-2 content-start">
+                                                            {playerStats.ownedWings?.map(wing => {
+                                                                const displayData = getItemDisplayData(wing);
+                                                                const isEquipped = playerStats.equippedWing?.id === wing.id;
+                                                                return (
+                                                                    <ItemTooltip key={wing.id} item={wing}>
+                                                                        <button
+                                                                            onClick={() => setPlayerStats(prev => ({ ...prev, equippedWing: isEquipped ? null : wing }))}
+                                                                            className={`aspect-square rounded-lg border-2 flex flex-col items-center justify-center transition-all relative group
+                                                                                    ${isEquipped
+                                                                                    ? 'bg-violet-900/40 border-violet-500 shadow-[0_0_10px_rgba(139,92,246,0.3)]'
+                                                                                    : 'bg-slate-900/50 border-slate-700/50 hover:border-violet-500/50 hover:bg-slate-800'
+                                                                                }`}
+                                                                        >
+                                                                            <div className="w-6 h-6 group-hover:scale-110 transition-transform"><PixelWing color={wing.color || '#a78bfa'} /></div>
+                                                                            <div className={`absolute top-0 right-0 px-1 rounded-bl-md text-[8px] font-bold
+                                                                                    ${displayData.tierLabel.includes('T5') ? 'bg-red-900 text-red-100' : 'bg-black/60 text-violet-400'}
+                                                                                `}>
+                                                                                {displayData.tierLabel}
+                                                                            </div>
+                                                                        </button>
+                                                                    </ItemTooltip>
+                                                                );
+                                                            })}
+                                                            {/* Empty slots placeholders */}
+                                                            {Array.from({ length: Math.max(0, 16 - (playerStats.ownedWings?.length || 0)) }).map((_, i) => (
+                                                                <div key={`empty-${i}`} className="aspect-square rounded-lg border border-slate-800/50 bg-slate-900/20"></div>
+                                                            ))}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

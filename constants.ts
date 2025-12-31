@@ -194,8 +194,8 @@ export const PETS_DATA: PetItem[] = [
     { id: 'pet_skelly_warlock', name: 'Skelly Warlock', type: 'owl', tier: 5, bonusExpRate: 55, bonusDamage: 180, bonusHp: 800, bonusDefense: 90, color: '#3d0066', modelPath: '/models/pets/Cubee Black Magic pet/cubee-skelly_warlock.gltf' },
     { id: 'pet_soul_weaver', name: 'Soul Weaver', type: 'owl', tier: 5, bonusExpRate: 60, bonusDamage: 250, bonusHp: 600, bonusDefense: 70, color: '#7b2cbf', modelPath: '/models/pets/Cubee Black Magic pet/cubee-soul_weaver.gltf' },
 
-    // ANGEL/DEMON HYBRID PET (T5 PREMIUM) - Melek ve Şeytan Ruhu
-    { id: 'pet_angel_demon', name: 'Cennet Cehennemi', type: 'phoenix', tier: 5, bonusExpRate: 55, bonusDamage: 220, bonusHp: 1500, bonusDefense: 120, color: '#FFD700', modelPath: '/models/pets/cubee-angel-demon.gltf' },
+    // ANGEL/DEMON HYBRID PET (T5 PREMIUM) - Melek ve Şeytan Ruhu (uses evil pet model as fallback)
+    { id: 'pet_angel_demon', name: 'Cennet Cehennemi', type: 'phoenix', tier: 5, bonusExpRate: 55, bonusDamage: 220, bonusHp: 1500, bonusDefense: 120, color: '#FFD700', modelPath: '/models/pets/cubee-evil.gltf' },
 ];
 
 // --- CLASSES WITH 7 SKILLS (UPDATED CDS) ---

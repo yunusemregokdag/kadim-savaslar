@@ -122,6 +122,44 @@ const AdvancedWings: React.FC<{ type: WingItem['type']; color: string; isMoving:
                     </group>
                 </>
             )}
+            {/* ANGEL/DEMON HYBRID WINGS */}
+            {type === 'angel_demon' && (
+                <>
+                    {/* Left Wing - ANGEL (White/Gold) */}
+                    <group ref={leftWingRef} position={[-0.2, 0, 0]} rotation={[0, -0.6, -0.2]}>
+                        <mesh position={[-0.35, 0.15, 0]} rotation={[0, 0, -0.25]} castShadow>
+                            <boxGeometry args={[0.7, 0.12, 0.04]} />
+                            <meshStandardMaterial color="#ffffff" emissive="#ffd700" emissiveIntensity={0.8} toneMapped={false} />
+                        </mesh>
+                        <mesh position={[-0.6, 0.35, 0]} rotation={[0, 0, -0.45]} castShadow>
+                            <boxGeometry args={[0.5, 0.1, 0.03]} />
+                            <meshStandardMaterial color="#fef3c7" emissive="#fbbf24" emissiveIntensity={1.0} toneMapped={false} />
+                        </mesh>
+                        <mesh position={[-0.45, -0.1, 0]} rotation={[0, 0, 0.15]} castShadow>
+                            <boxGeometry args={[0.6, 0.12, 0.04]} />
+                            <meshStandardMaterial color="#fffbeb" emissive="#f59e0b" emissiveIntensity={0.6} toneMapped={false} />
+                        </mesh>
+                    </group>
+                    {/* Right Wing - DEMON (Black/Red) */}
+                    <group ref={rightWingRef} position={[0.15, 0, 0]} rotation={[0, 0.5, 0.2]}>
+                        <mesh position={[0.25, 0.05, 0]} rotation={[0, 0, 0.3]} castShadow>
+                            <boxGeometry args={[0.5, 0.06, 0.03]} />
+                            <meshStandardMaterial color="#1a1a1a" emissive="#991b1b" emissiveIntensity={0.6} toneMapped={false} />
+                        </mesh>
+                        <mesh position={[0.55, 0.2, 0]} rotation={[0, 0, 0.5]} castShadow>
+                            <boxGeometry args={[0.4, 0.05, 0.025]} />
+                            <meshStandardMaterial color="#0a0a0a" emissive="#dc2626" emissiveIntensity={0.8} toneMapped={false} />
+                        </mesh>
+                        <mesh position={[0.4, 0.05, 0.01]} rotation={[0, 0, 0.15]}>
+                            <planeGeometry args={[0.6, 0.4]} />
+                            <meshStandardMaterial color="#1f1f1f" emissive="#7f1d1d" emissiveIntensity={0.4} side={THREE.DoubleSide} transparent opacity={0.7} />
+                        </mesh>
+                    </group>
+                    {/* Mixed Sparkles */}
+                    <Sparkles count={8} scale={1.2} size={5} speed={0.5} opacity={0.8} color="#ffd700" position={[-0.4, 0.2, 0]} />
+                    <Sparkles count={8} scale={1.2} size={5} speed={0.5} opacity={0.8} color="#dc2626" position={[0.4, 0.2, 0]} />
+                </>
+            )}
         </group>
     );
 };

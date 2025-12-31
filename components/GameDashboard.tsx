@@ -1518,8 +1518,17 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                                                             if (id.includes('gold')) updates.credits = (updates.credits ?? currentCredits) + (amount || 0);
                                                             else updates.gems = (updates.gems ?? currentGems) + (amount || 0);
                                                         } else if (category === 'item') {
-                                                            const skins = prev.ownedSkins || [];
-                                                            if (!skins.includes(id)) updates.ownedSkins = [...skins, id];
+                                                            // Check if it's a costume set
+                                                            if (id.startsWith('costume_')) {
+                                                                const costumes = prev.ownedCostumes || [];
+                                                                if (!costumes.includes(id)) {
+                                                                    updates.ownedCostumes = [...costumes, id];
+                                                                    updates.equippedCostume = id; // Auto-equip on purchase
+                                                                }
+                                                            } else {
+                                                                const skins = prev.ownedSkins || [];
+                                                                if (!skins.includes(id)) updates.ownedSkins = [...skins, id];
+                                                            }
                                                         } else if (category === 'subscription') {
                                                             updates.vipStatus = { tier: 1, expiresAt: Date.now() + 2592000000 };
                                                             updates.gems = (updates.gems ?? currentGems) + 50;
@@ -1527,6 +1536,10 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                                                         return { ...prev, ...updates };
                                                     });
                                                     soundManager.playSFX('coin');
+                                                }}
+                                                onEquipCostume={(costumeId) => {
+                                                    setPlayerStats(prev => ({ ...prev, equippedCostume: costumeId }));
+                                                    soundManager.playSFX('equip');
                                                 }}
                                                 onClose={() => { }}
                                                 isEmbedded={true}

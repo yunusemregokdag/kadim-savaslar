@@ -8,11 +8,12 @@ import { COSTUME_SETS } from '../constants';
 interface PremiumMarketViewProps {
     playerState: PlayerState;
     onBuyData: (category: 'currency' | 'item' | 'subscription', id: string, cost: number, currency: 'real' | 'gold' | 'gems', amount?: number) => void;
+    onEquipCostume?: (costumeId: string | null) => void;
     onClose: () => void;
     isEmbedded?: boolean;
 }
 
-export const PremiumMarketView: React.FC<PremiumMarketViewProps> = ({ playerState, onBuyData, onClose, isEmbedded = false }) => {
+export const PremiumMarketView: React.FC<PremiumMarketViewProps> = ({ playerState, onBuyData, onEquipCostume, onClose, isEmbedded = false }) => {
     const [activeTab, setActiveTab] = useState<'currency' | 'items' | 'costumes' | 'subscription'>('costumes'); // Default to costumes to show new sets first
 
     const PREMIUM_CURRENCY_PACKS = [
@@ -122,7 +123,7 @@ export const PremiumMarketView: React.FC<PremiumMarketViewProps> = ({ playerStat
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {COSTUME_SETS.map(set => {
                                 const isOwned = playerState.ownedCostumes && playerState.ownedCostumes.includes(set.id);
-
+                                const isEquipped = playerState.equippedCostume === set.id;
                                 return (
                                     <div key={set.id} className={`relative overflow-hidden rounded-2xl border-2 transition-all group hover:scale-[1.02] hover:shadow-2xl
                                         ${isOwned ? 'border-emerald-500/50 bg-emerald-950/20' : 'border-slate-700 bg-slate-900/50 hover:border-emerald-500/30'}`}>
@@ -187,9 +188,18 @@ export const PremiumMarketView: React.FC<PremiumMarketViewProps> = ({ playerStat
                                                     <span className="text-xl font-black text-white">{set.price}</span>
                                                 </div>
                                                 {isOwned ? (
-                                                    <button disabled className="px-4 py-2 bg-emerald-900/50 text-emerald-400 rounded-lg font-bold flex items-center gap-2 cursor-default">
-                                                        <Check size={16} />
-                                                        Sahipsin
+                                                    <button
+                                                        onClick={() => onEquipCostume && onEquipCostume(isEquipped ? null : set.id)}
+                                                        className={`px-4 py-2 rounded-lg font-bold flex items-center gap-2 transition-all
+                                                            ${isEquipped
+                                                                ? 'bg-red-900/50 text-red-400 hover:bg-red-800/50'
+                                                                : 'bg-emerald-900/50 text-emerald-400 hover:bg-emerald-800/50'}`}
+                                                    >
+                                                        {isEquipped ? (
+                                                            <><span className="text-lg">❌</span> Çıkar</>
+                                                        ) : (
+                                                            <><Sparkles size={16} /> Kuşan</>
+                                                        )}
                                                     </button>
                                                 ) : (
                                                     <button

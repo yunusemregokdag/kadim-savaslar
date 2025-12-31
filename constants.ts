@@ -94,7 +94,73 @@ export const WINGS_DATA: WingItem[] = [
     { id: 'wing_angel_demon', name: 'Melek Şeytan Kanatları', type: 'angel_demon', tier: 5, bonusDamage: 280, bonusHp: 2800, bonusDefense: 180, bonusGoldRate: 20, bonusHonorRate: 20, color: '#FFD700', secondaryColor: '#991b1b' },
 ];
 
-// --- NEW: PETS DATA (REBALANCED T4/T5) ---
+// ═══════════════════════════════════════════════════════════════════════════
+// COSTUME SETS - Premium Kozmetik Paketleri
+// Her set sınıfa özel silah + kanat + zırh texture içerir
+// ═══════════════════════════════════════════════════════════════════════════
+export interface CostumeSet {
+    id: string;
+    name: string;
+    description: string;
+    theme: string;
+    tier: number;
+    price: number; // Gem cinsinden
+    color: string;
+    // Sınıf bazlı silah modelleri
+    weapons: {
+        warrior: string;
+        archer: string;
+        archmage: string;
+        cleric: string;
+        reaper: string;
+        gale_glaive: string;
+        arctic_knight: string;
+        martial_artist: string;
+        monk: string;
+        bard: string;
+    };
+    // Ortak kozmetikler
+    wing?: string;
+    hat?: string;
+    armorTexture1?: string;
+    armorTexture2?: string;
+    // Bonus statlar
+    bonusDamage?: number;
+    bonusHp?: number;
+    bonusDefense?: number;
+}
+
+export const COSTUME_SETS: CostumeSet[] = [
+    {
+        id: 'costume_carnivoret',
+        name: 'Carnivoret Seti',
+        description: 'Dinozor temalı efsanevi kostüm seti. Tüm sınıflar için özel silahlar, kanat ve zırh içerir.',
+        theme: 'dinosaur',
+        tier: 5,
+        price: 500, // 500 Gem
+        color: '#22c55e',
+        weapons: {
+            warrior: '/models/costumes/carnivoret/sword.gltf',
+            archer: '/models/costumes/carnivoret/bow.gltf',
+            archmage: '/models/costumes/carnivoret/staff.gltf',
+            cleric: '/models/costumes/carnivoret/hammer.gltf',
+            reaper: '/models/costumes/carnivoret/scythe.gltf',
+            gale_glaive: '/models/costumes/carnivoret/spear.gltf',
+            arctic_knight: '/models/costumes/carnivoret/spear.gltf',
+            martial_artist: '/models/costumes/carnivoret/axe.gltf',
+            monk: '/models/costumes/carnivoret/staff.gltf',
+            bard: '/models/costumes/carnivoret/hoe.gltf',
+        },
+        wing: '/models/costumes/carnivoret/wing.gltf',
+        hat: '/models/costumes/carnivoret/hat.gltf',
+        armorTexture1: '/models/costumes/carnivoret/carnivoret_armor_layer_1.png',
+        armorTexture2: '/models/costumes/carnivoret/carnivoret_armor_layer_2.png',
+        bonusDamage: 50,
+        bonusHp: 500,
+        bonusDefense: 25,
+    },
+];
+
 export const PETS_DATA: PetItem[] = [
     // TIER 1
     { id: 'pet_plains', name: 'Plains', type: 'dragon_baby', tier: 1, bonusExpRate: 5, bonusDefense: 10, color: '#a3e635', modelPath: '/models/pets/cubee-plains.gltf' },

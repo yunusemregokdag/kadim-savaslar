@@ -369,7 +369,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                 inventory: adminInventory,
                 equipment: { weapon: godWeapon, armor: null, helmet: null, pants: null, boots: null, necklace: null, earring: null },
                 ownedWings: WINGS_DATA, equippedWing: WINGS_DATA[4], ownedPets: PETS_DATA, equippedPet: PETS_DATA[4],
-                ownedSkins: [], equippedSkin: null, activeQuest: null, settings: defaultSettings,
+                ownedSkins: [], equippedSkin: null, ownedCostumes: ['costume_carnivoret'], equippedCostume: 'costume_carnivoret', activeQuest: null, settings: defaultSettings,
                 dailyLogin: { lastLoginDate: '', consecutiveDays: 0, claimedToday: false, totalLogins: 0 },
                 achievements: DEFAULT_ACHIEVEMENTS
             };
@@ -383,7 +383,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
             strength: baseStats.str, dexterity: baseStats.dex, intelligence: baseStats.int, vitality: baseStats.vit, statPoints: 0,
             inventory: getClassStarterItems(charClass), equipment: { weapon: null, armor: null, helmet: null, pants: null, boots: null, necklace: null, earring: null },
             ownedWings: [], equippedWing: null, ownedPets: PETS_DATA, equippedPet: null,
-            ownedSkins: [], equippedSkin: null, activeQuest: null, settings: defaultSettings,
+            ownedSkins: [], equippedSkin: null, ownedCostumes: [], equippedCostume: null, activeQuest: null, settings: defaultSettings,
             dailyLogin: { lastLoginDate: '', consecutiveDays: 0, claimedToday: false, totalLogins: 0 },
             achievements: DEFAULT_ACHIEVEMENTS.map(a => ({ ...a }))
         };

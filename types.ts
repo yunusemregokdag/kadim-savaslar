@@ -328,6 +328,10 @@ export interface PlayerState {
   ownedSkins: string[];
   equippedSkin: string | null;
 
+  // NEW: 3D Costume Sets (Premium)
+  ownedCostumes: string[];
+  equippedCostume: string | null;
+
   activeQuest: Quest | null;
   settings: Settings;
 

@@ -1631,6 +1631,7 @@ const GameScene: React.FC<GameSceneProps> = ({
                         pantsItem={playerStats?.equipment?.pants || null}
                         necklaceItem={playerStats?.equipment?.necklace || null}
                         earringItem={playerStats?.equipment?.earring || null}
+                        costumeId={playerStats?.equippedCostume || null}
                     />
                 </React.Suspense>
 

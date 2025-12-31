@@ -1234,6 +1234,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                                                         wingType={playerStats.equippedWing}
                                                         petType={playerStats.equippedPet}
                                                         skinId={playerStats.equippedSkin}
+                                                        costumeId={playerStats.equippedCostume}
                                                     />
                                                 </Suspense>
                                                 <Environment preset="city" />

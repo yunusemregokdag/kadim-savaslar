@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { CharacterClass, Item, WingItem, PetItem } from '../types';
 import { DynamicPet } from './DynamicPet';
 import { getGlowEffect, getClassParticleType, CLASS_COLORS, GlowEffect } from '../systems/GlowEffects';
+import { COSTUME_SETS } from '../constants';
 
 // --- WEAPON REGISTRY ---
 export const WEAPON_MAP: Record<CharacterClass, string> = {
@@ -148,6 +149,7 @@ interface VoxelSpartanProps {
     earringItem?: Item | null;
     castEffect?: string | null;
     skinId?: string | null;
+    costumeId?: string | null; // Equipped costume set ID (e.g., 'costume_carnivoret')
     showDebug?: boolean; // Debug modunu aç/kapat
     debugOffsets?: {
         headY: number;
@@ -515,8 +517,17 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
     const appearance = CLASS_APPEARANCE[charClass] || CLASS_APPEARANCE['warrior'];
     const weaponHold = WEAPON_HOLD[charClass] || WEAPON_HOLD['warrior'];
 
-    // Load weapon model - SAFETY: Always fallback to warrior weapon
-    const weaponPath = WEAPON_MAP[charClass] || WEAPON_MAP['warrior'];
+    // COSTUME SYSTEM: Check if a costume set is equipped and get its assets
+    const equippedCostume = useMemo(() => {
+        if (!props.costumeId) return null;
+        return COSTUME_SETS.find(c => c.id === props.costumeId) || null;
+    }, [props.costumeId]);
+
+    // Get costume-specific weapon for this class, or fall back to default
+    const costumeWeaponPath = equippedCostume?.weapons?.[charClass] || null;
+
+    // Load weapon model - COSTUME OVERRIDE or DEFAULT: Always fallback to warrior weapon
+    const weaponPath = costumeWeaponPath || WEAPON_MAP[charClass] || WEAPON_MAP['warrior'];
     const { scene: weaponScene } = useGLTF(weaponPath);
 
     // Clone and prepare weapon
@@ -997,14 +1008,25 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
             {/* Trail Effect REMOVED as per user request */}
 
             {/* =========== WINGS =========== */}
-            {props.wingType && (
+            {/* Costume wing takes priority, then regular wingType */}
+            {(equippedCostume?.wing || props.wingType) && (
                 <group position={[0, 1.0, -0.15]}>
-                    <AdvancedWings
-                        type={props.wingType.type}
-                        color={props.wingType.color}
-                        isMoving={props.isMoving || false}
-                        modelPath={(props.wingType as any).modelPath}
-                    />
+                    {equippedCostume?.wing ? (
+                        // Use costume's GLTF wing model
+                        <GltfWings
+                            modelPath={equippedCostume.wing}
+                            color={equippedCostume.color || '#10b981'}
+                            isMoving={props.isMoving || false}
+                        />
+                    ) : props.wingType ? (
+                        // Use normal wingType
+                        <AdvancedWings
+                            type={props.wingType.type}
+                            color={props.wingType.color}
+                            isMoving={props.isMoving || false}
+                            modelPath={(props.wingType as any).modelPath}
+                        />
+                    ) : null}
                 </group>
             )}
 

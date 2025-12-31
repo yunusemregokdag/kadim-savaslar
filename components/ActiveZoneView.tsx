@@ -3981,7 +3981,8 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         </div>
                         <div className="flex flex-col gap-1 w-56 bg-black/60 p-2 rounded-r-xl border-y border-r border-slate-700 backdrop-blur-sm -ml-4 pl-6 z-10">
                             <div className="flex justify-between items-center text-xs font-bold text-white mb-1">
-                                <span style={playerState.premiumBenefits?.nameColor ? { color: playerState.premiumBenefits.nameColor } : {}}>
+                                <span className={`flex items-center ${(playerState.vipUntil || 0) > Date.now() ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]' : ''}`} style={playerState.premiumBenefits?.nameColor ? { color: playerState.premiumBenefits.nameColor } : {}}>
+                                    {(playerState.vipUntil || 0) > Date.now() && <span className="mr-1 text-sm animate-pulse filter drop-shadow hover:scale-110 transition-transform">👑</span>}
                                     {playerState.premiumBenefits?.badge && <span className="mr-1">{playerState.premiumBenefits.badge}</span>}
                                     {playerState.nickname}
                                 </span>

@@ -4,6 +4,7 @@ import { useGLTF, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 import { SKILL_ASSETS, SkillAssetConfig } from './SkillAssetRegistry';
 import { soundManager } from './SoundManager';
+import { SpriteSkillEffect, VISUAL_TO_SPRITE, SPRITE_SKILLS } from './SpriteSkillEffects';
 
 // --- FALLBACK ASSET (Prevents Crash) ---
 const SAFE_MODEL_PATH = '/models/items/weapons/warrior/warrior_sword_shiny.gltf';
@@ -178,24 +179,44 @@ const SkillTypePool: React.FC<{
 };
 
 export const SkillEffects: React.FC<SkillEffectsProps> = ({ activeSkills, onEffectComplete }) => {
-    // Determine which pools we need (based on SKILL_ASSETS keys)
-    // To be safe and simple, we iterate all defined skills in registry.
-    // In a huge MMO, we would dynamic load, but for specific class skills this is fine.
+    // Split skills into sprite-based and 3D model-based
+    const spriteSkills = useMemo(() => {
+        return activeSkills.filter(skill => {
+            const spriteKey = VISUAL_TO_SPRITE[skill.visual];
+            return spriteKey && SPRITE_SKILLS[spriteKey];
+        });
+    }, [activeSkills]);
 
-    // Optimization: Only render pools for skills that have been requested at least once
-    // OR: Just render known skill types.
-
-    // We will render pools for keys present in SKILL_ASSETS.
-    // Since useGLTF is inside, it will trigger suspense/load.
+    const modelSkills = useMemo(() => {
+        return activeSkills.filter(skill => {
+            const spriteKey = VISUAL_TO_SPRITE[skill.visual];
+            return !(spriteKey && SPRITE_SKILLS[spriteKey]);
+        });
+    }, [activeSkills]);
 
     return (
         <group>
+            {/* === SPRITE-BASED SKILL EFFECTS (PNG Animations) === */}
+            {spriteSkills.map(skill => {
+                const spriteKey = VISUAL_TO_SPRITE[skill.visual];
+                return (
+                    <SpriteSkillEffect
+                        key={skill.id}
+                        skillKey={spriteKey}
+                        position={skill.position}
+                        onComplete={() => onEffectComplete(skill.id)}
+                        active={true}
+                    />
+                );
+            })}
+
+            {/* === 3D MODEL-BASED SKILL EFFECTS (GLTF Fallback) === */}
             {Object.keys(SKILL_ASSETS).map(key => (
                 <SkillTypePool
                     key={key}
                     type={key}
                     config={SKILL_ASSETS[key]}
-                    activeRequests={activeSkills.filter(s => s.visual === key)}
+                    activeRequests={modelSkills.filter(s => s.visual === key)}
                     onComplete={onEffectComplete}
                 />
             ))}

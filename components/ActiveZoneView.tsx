@@ -4008,7 +4008,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 </div>
             </DraggableHUDElement>
 
-            {/* MAP & MENU BUTTONS */}
+            {/* MAP ONLY (Buttons moved out) */}
             <DraggableHUDElement id="map" element={hudLayout.elements.map} isEditing={isHudEditing} isSelected={selectedElementId === 'map'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
                 <div style={{ opacity: settings.hudOpacity / 100, transformOrigin: 'top right' }}>
                     <div className="flex flex-col items-end gap-2 pointer-events-auto">
@@ -4017,17 +4017,51 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                                 <MiniMap playerPos={playerPosUI} entities={entities} portals={zoneData?.portals || []} zoneLimit={100} onClick={() => setShowMap(true)} smallMap={playerState.settings.smallMap} />
                             </div>
                         )}
-                        <div className="flex gap-2">
-                            <div className="bg-black/50 px-3 py-2 rounded text-white font-bold backdrop-blur-sm border border-slate-700 text-xs hidden md:block">{zoneData?.name}</div>
-                            <button title="Sohbet" onClick={() => setShowChat(!showChat)} className={`p-2 rounded border border-slate-700 hover:text-white ${showChat ? 'bg-yellow-900/80 text-yellow-500' : 'bg-slate-900/80 text-slate-400'}`}><MessageSquare size={20} /></button>
-                            <button title="Envanter" onClick={() => setShowInventory(true)} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-yellow-500 hover:text-white"><Backpack size={20} /></button>
-                            <button title="Demirci & Pazar" onClick={() => setBlacksmithState({ isOpen: true, tab: 'market' })} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-green-400 hover:text-white"><ShoppingBag size={20} /></button>
-                            <button title="Ayarlar" onClick={() => setShowSettings(true)} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-slate-400 hover:text-white"><SettingsIcon size={20} /></button>
-                            <button title="Başarımlar" onClick={() => setShowAchievements(true)} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-yellow-500 hover:text-white"><Trophy size={20} /></button>
-                            <button title="Çıkış" onClick={onExit} className="bg-slate-900/80 text-red-400 p-2 rounded border border-slate-700 hover:bg-slate-800 hover:text-red-200"><X size={20} /></button>
-                        </div>
+                        <div className="bg-black/50 px-3 py-2 rounded text-white font-bold backdrop-blur-sm border border-slate-700 text-xs hidden md:block">{zoneData?.name}</div>
                     </div>
                 </div>
+            </DraggableHUDElement>
+
+            {/* TOP MENU - CHAT */}
+            <DraggableHUDElement id="top_chat" element={hudLayout.elements.top_chat || { x: 50, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_chat'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+                <button title="Sohbet" onClick={() => setShowChat(!showChat)} className={`p-2 rounded border border-slate-700 hover:text-white pointer-events-auto shadow-lg backdrop-blur-sm transition-transform active:scale-95 ${showChat ? 'bg-yellow-900/80 text-yellow-500 border-yellow-500' : 'bg-slate-900/80 text-slate-400'}`}>
+                    <MessageSquare size={24} />
+                </button>
+            </DraggableHUDElement>
+
+            {/* TOP MENU - INVENTORY */}
+            <DraggableHUDElement id="top_inventory" element={hudLayout.elements.top_inventory || { x: 55, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_inventory'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+                <button title="Envanter" onClick={() => setShowInventory(true)} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-yellow-500 hover:text-white pointer-events-auto shadow-lg backdrop-blur-sm transition-transform active:scale-95 hover:border-yellow-500">
+                    <Backpack size={24} />
+                </button>
+            </DraggableHUDElement>
+
+            {/* TOP MENU - MARKET */}
+            <DraggableHUDElement id="top_market" element={hudLayout.elements.top_market || { x: 60, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_market'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+                <button title="Demirci & Pazar" onClick={() => setBlacksmithState({ isOpen: true, tab: 'market' })} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-green-400 hover:text-white pointer-events-auto shadow-lg backdrop-blur-sm transition-transform active:scale-95 hover:border-green-400">
+                    <ShoppingBag size={24} />
+                </button>
+            </DraggableHUDElement>
+
+            {/* TOP MENU - SETTINGS */}
+            <DraggableHUDElement id="top_settings" element={hudLayout.elements.top_settings || { x: 65, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_settings'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+                <button title="Ayarlar" onClick={() => setShowSettings(true)} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-slate-400 hover:text-white pointer-events-auto shadow-lg backdrop-blur-sm transition-transform active:scale-95 hover:border-slate-400">
+                    <SettingsIcon size={24} />
+                </button>
+            </DraggableHUDElement>
+
+            {/* TOP MENU - ACHIEVEMENTS */}
+            <DraggableHUDElement id="top_achievements" element={hudLayout.elements.top_achievements || { x: 70, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_achievements'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+                <button title="Başarımlar" onClick={() => setShowAchievements(true)} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-yellow-500 hover:text-white pointer-events-auto shadow-lg backdrop-blur-sm transition-transform active:scale-95 hover:border-yellow-600">
+                    <Trophy size={24} />
+                </button>
+            </DraggableHUDElement>
+
+            {/* TOP MENU - EXIT */}
+            <DraggableHUDElement id="top_exit" element={hudLayout.elements.top_exit || { x: 75, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_exit'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+                <button title="Çıkış" onClick={onExit} className="bg-slate-900/80 text-red-500 p-2 rounded border border-slate-700 hover:bg-red-900/50 hover:text-red-200 pointer-events-auto shadow-lg backdrop-blur-sm transition-transform active:scale-95 hover:border-red-500">
+                    <X size={24} />
+                </button>
             </DraggableHUDElement>
 
             {/* CHAT SYSTEM */}

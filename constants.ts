@@ -832,8 +832,16 @@ export const DEFAULT_HUD_LAYOUT: HUDLayout = {
         joystick: { x: 8, y: 75, scale: 1, enabled: true, opacity: 1, locked: false },
 
         // ═══════════ SAĞ ÜST ═══════════
-        // Map + Menu Buttons - Sağ üst köşe (Minimap, Zone ismi, butonlar)
-        map: { x: 72, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
+        // Map - Sağ üst köşe (Minimap, Zone ismi)
+        map: { x: 80, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
+
+        // Top Menu Buttons - Ayrıştırılmış Butonlar (Varsayılan olarak yan yana dizili)
+        top_chat: { x: 50, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
+        top_inventory: { x: 55, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
+        top_market: { x: 60, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
+        top_settings: { x: 65, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
+        top_achievements: { x: 70, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
+        top_exit: { x: 75, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
 
         // ═══════════ SAĞ TARAF SKİLL'LER ═══════════
         // Eye Button (Free Look) - Sağ orta

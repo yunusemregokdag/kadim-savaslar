@@ -160,83 +160,101 @@ interface VoxelSpartanProps {
     };
 }
 
-// --- VOXEL WINGS COMPONENT (PIXEL ART STYLE) ---
+// --- VOXEL WINGS COMPONENT (VOLUMETRIC STYLE) ---
+// High-resolution patterns (approx 16-20px height)
 const WING_PATTERNS: Record<string, string[]> = {
     angel: [
-        "....OOOO....",
-        "...OWWWWO...",
-        "..OWWWWWWO..",
-        ".OWWWWWWWWO.",
-        "OWWWWWWWWWO.",
-        "OWWWWWWWWO..",
-        "OWWWWWWWO...",
-        ".OWWWWWO....",
-        "..OWOOO.....",
-        "...OO.......",
-        "....O.......",
-    ],
-    seraph: [
-        "....GGGGG....",
-        "...GWWWWWWG...",
-        "..GWWWWWWWWG..",
-        ".GWWWWWWWWWWG.",
-        "GWWWWWWWWWWWG.",
-        "GWWWWWWWWWWGOO",
-        "GWWWWWWWWWGOOO",
-        ".GWWWWWWWGOO..",
-        "..GWWWWWWGO...",
-        "...GWWWWGO....",
-        "....GGGG......",
+        "......OOOO.......",
+        "....OOEEEEmm.....",
+        "...OEEEEEEEEm....",
+        "..OEEEEEEEEEEm...",
+        ".OEEEEEEEEEEEEm..",
+        "OEEEEEEEEEEEEEm..",
+        "OEEEEEEEEEEEEm...",
+        "OEEEEEEEEEEEm....",
+        "OEEEEEEEEEEm.....",
+        ".OEEEEEEEEm......",
+        "..OEEEEEEm.......",
+        "...OEEEEm........",
+        "....OEEm.........",
+        ".....Om..........",
+        ".....m..........."
     ],
     demon: [
-        "O..........OO",
-        "OB........OOB",
-        "OIB......OOIB",
-        "OIIB....OOIIB",
-        "OIIIB..OOIIIB",
-        "OIIIIBOOIIIII",
-        "OIIIIIIIIIII.",
-        "OIIIIIIIIII..",
-        ".OIIIIIII....",
-        "..OIIIII.....",
-        "...OII.......",
-        "....O........"
+        "B.........BB.....",
+        "BB.......BEEB....",
+        "BEB.....BEEEB....",
+        "BEEB...BEEEEEB...",
+        "BEEEB.BEEEEEEEB..",
+        "BEEEEBBEEEEEEEEB.",
+        "BEEEEEEEEEEEEEEB.",
+        "BEEEEEEEEEEEEEEB.",
+        "BEEEEEEEEEEBBB...",
+        ".BEEEEEEEEB......",
+        "..BEEEEEEB.......",
+        "...BEEEEB........",
+        "....BEEB.........",
+        ".....BB.........."
     ],
     dragon: [
-        "R.........R",
-        "RO.......RO",
-        "ROO.....ROO",
-        "ROOO...ROOO",
-        "ROOOO.ROOOO",
-        "ROOOOOOROOOO",
-        "ROOOOOOOOOO",
-        "ROOOOOOOOO.",
-        ".ROOOOOOO..",
-        "..ROOOOO...",
-        "...ROO.....",
+        "D.........D......",
+        "DD.......DMD.....",
+        "DMD.....DMMMD....",
+        "DMMD...DMMMMMD...",
+        "DMMMD.DMMMMMMMD..",
+        "DMMMMDDMMMMMMMMD.",
+        "DMMMMMMMMMMMMMMD.",
+        "DMMMMMMMMMMMMMMD.",
+        "DMMMMMMMMMMDDDD..",
+        ".DMMMMMMMMD......",
+        "..DMMMMMMD.......",
+        "...DMMMMD........",
+        "....DMMD.........",
+        ".....DD.........."
     ],
     fairy: [
-        ".PP......PP.",
-        "PCCP....PCCP",
-        "PCCCP..PCCCP",
-        ".PCCCPOPCCC.",
-        "..PCCCCCCP..",
-        "...PCCCCP...",
-        "..PCCCCCCP..",
-        ".PCCCPOPCCC.",
-        "PCCCP..PCCCP",
-        "PCCP....PCCP",
-        ".PP......PP.",
+        "..PP.......PP....",
+        ".PCCP.....PCCP...",
+        "PCCCCP...PCCCCP..",
+        "PCCCCCP.PCCCCCP..",
+        ".PCCCCCPPCCCCCP..",
+        "..PCCCCCCCCCP....",
+        "...PCCCCCCCP.....",
+        "..PCCCCCCCCCP....",
+        ".PCCCCCPCCCCCP...",
+        "PCCCCCP.PCCCCCP..",
+        "PCCCCP...PCCCCP..",
+        ".PCCP.....PCCP...",
+        "..PP.......PP...."
     ],
     void: [
-        "V.V.V.V.V",
-        ".V.V.V.V.",
-        "V.IIIII.V",
-        ".IIIIIII.",
-        "V.IIIII.V",
-        ".V.V.V.V.",
-        "V.V.V.V.V",
+        "V...V...V...V....",
+        ".V..V..V..V......",
+        "..V.V.V.V.V......",
+        "V..IIIIIII..V....",
+        ".V.IIIIIII.V.....",
+        "..VIIIIIIIV......",
+        ".V.IIIIIII.V.....",
+        "V..IIIIIII..V....",
+        "..V.V.V.V.V......",
+        ".V..V..V..V......",
+        "V...V...V...V...."
     ],
+    seraph: [ // Gold/Holy variant
+        "......GGGG.......",
+        "....GGWWWWGG.....",
+        "...GWWWWWWWWG....",
+        "..GWWWWWWWWWWG...",
+        ".GWWWWWWWWWWWWG..",
+        "GWWWWWWWWWWWWWG..",
+        "GWWWWWWWWWWWWGO..",
+        "GWWWWWWWWWWWGO...",
+        "GWWWWWWWWWWGO....",
+        ".GWWWWWWWWGO.....",
+        "..GWWWWWWGO......",
+        "...GWWWWGO.......",
+        "....GGGGO........"
+    ]
 };
 
 const AdvancedWings: React.FC<{ type: WingItem['type']; color: string; isMoving: boolean; modelPath?: string; offsetY?: number }> = ({ type, color, isMoving, modelPath, offsetY }) => {
@@ -247,20 +265,28 @@ const AdvancedWings: React.FC<{ type: WingItem['type']; color: string; isMoving:
 
     const rightWingRef = useRef<THREE.Group>(null);
     const leftWingRef = useRef<THREE.Group>(null);
+    const glowRef = useRef<any>(null);
 
     useFrame((state) => {
         const t = state.clock.elapsedTime;
-        const flapSpeed = isMoving ? 10 : 2; // Pixel art wings flap snappier
-        const flapAmp = isMoving ? 0.5 : 0.15;
+        // More organic, heavier flap animation
+        const flapSpeed = isMoving ? 8 : 1.5;
+        const flapAmpY = isMoving ? 0.6 : 0.15; // Back/Forth swing
+        const flapAmpZ = isMoving ? 0.2 : 0.05; // Up/Down tilt
 
-        // Flap animation
         if (rightWingRef.current) {
-            rightWingRef.current.rotation.y = -0.2 + Math.sin(t * flapSpeed) * flapAmp;
-            rightWingRef.current.rotation.z = Math.cos(t * flapSpeed) * 0.1;
+            // Complex compound rotation for natural feel
+            rightWingRef.current.rotation.y = -0.3 + Math.sin(t * flapSpeed) * flapAmpY;
+            rightWingRef.current.rotation.z = Math.cos(t * flapSpeed) * flapAmpZ;
         }
         if (leftWingRef.current) {
-            leftWingRef.current.rotation.y = 0.2 - Math.sin(t * flapSpeed) * flapAmp;
-            leftWingRef.current.rotation.z = -Math.cos(t * flapSpeed) * 0.1;
+            leftWingRef.current.rotation.y = 0.3 - Math.sin(t * flapSpeed) * flapAmpY;
+            leftWingRef.current.rotation.z = -Math.cos(t * flapSpeed) * flapAmpZ;
+        }
+
+        // Pulse glow
+        if (glowRef.current) {
+            glowRef.current.intensity = 0.8 + Math.sin(t * 3) * 0.3;
         }
     });
 
@@ -268,51 +294,86 @@ const AdvancedWings: React.FC<{ type: WingItem['type']; color: string; isMoving:
     const patternName = type === 'angel_demon' ? 'angel' : (WING_PATTERNS[type] ? type : 'angel');
     const pattern = WING_PATTERNS[patternName];
 
-    // Color Mapping Logic
-    const getColor = (char: string) => {
+    // Helper: Determine voxel depth/thickness based on character
+    const getVoxelDepth = (char: string): number => {
         switch (char) {
-            case 'O': return color; // Outline/Main Color (from prop)
-            case 'W': return '#ffffff'; // White
-            case 'B': return '#1a1a1a'; // Black
+            case 'O': return 3; // Bones/Outline (Thickest)
+            case 'B': return 3; // Demon Bone
+            case 'D': return 3; // Dragon Bone
+            case 'G': return 3; // Gold Bone
+            case 'W': return 1; // Feathers (Thin)
+            case 'E': return 1; // Energy/Feather fill
+            case 'M': return 1; // Membrane
+            case 'm': return 1; // Minor feather
+            case 'I': return 1; // Inner void
+            case 'P': return 2; // Fairy Outline
+            case 'C': return 1; // Fairy Inner
+            case 'V': return 2; // Void Outer
+            default: return 1;
+        }
+    };
+
+    // Helper: Determine Color
+    const getVoxelColor = (char: string): string => {
+        switch (char) {
+            case 'O': return '#e2e8f0'; // Bone White
+            case 'E': return color;     // Main Energy/Feather Color
+            case 'm': return '#94a3b8'; // Tips/Shadow
+            case 'B': return '#1a1a1a'; // Demon Bone
+            case 'D': return '#7f1d1d'; // Dragon Bone
+            case 'M': return '#ef4444'; // Dragon Membrane (Red default, or specialized) - actually use prop color for flexible dragon types?
             case 'G': return '#fbbf24'; // Gold
-            case 'R': return '#991b1b'; // Dark Red (Demon outline)
-            case 'I':
-                if (type === 'demon') return '#7f1d1d'; // Inner Red
-                if (type === 'void') return '#000000'; // Inner Void
-                return '#333333';
-            case 'P': return '#ec4899'; // Pink (Fairy Outline)
-            case 'C': return '#06b6d4'; // Cyan (Fairy Inner)
-            case 'V': return '#7c3aed'; // Violet
+            case 'W': return '#ffffff'; // White Feathers
+            case 'I': return '#000000'; // Void/Darkness
+            case 'P': return '#f472b6'; // Pink
+            case 'C': return '#22d3ee'; // Cyan
+            case 'V': return '#4c1d95'; // Violet Void
             default: return color;
         }
     };
 
-    // Voxel Block Size
-    const s = 0.05;
+    // Voxel Block Size - Smaller for higher res
+    const s = 0.04;
 
-    // Generate Voxel Mesh Data
+    // Generate Volumetric Mesh Data
     const voxels = useMemo(() => {
         const els: JSX.Element[] = [];
         pattern.forEach((row, y) => {
             row.split('').forEach((char, x) => {
                 if (char !== '.') {
-                    els.push(
-                        <mesh key={`${x}-${y}`} position={[x * s, (pattern.length - y) * s, 0]} castShadow>
-                            <boxGeometry args={[s, s, s]} />
-                            <meshStandardMaterial color={getColor(char)} />
-                        </mesh>
-                    );
+                    const depth = getVoxelDepth(char);
+                    const vColor = char === 'M' || char === 'E' ? color : getVoxelColor(char); // Dynamic override for fills
+
+                    // Center the stack on Z=0
+                    // If depth is 3, we create blocks at -1, 0, 1 relative units
+                    const zStart = -Math.floor(depth / 2);
+
+                    for (let z = 0; z < depth; z++) {
+                        const zPos = (zStart + z) * s;
+                        els.push(
+                            <mesh key={`${x}-${y}-${z}`} position={[x * s, (pattern.length - y) * s, zPos]} castShadow receiveShadow>
+                                <boxGeometry args={[s, s, s]} />
+                                <meshStandardMaterial
+                                    color={vColor}
+                                    roughness={0.7}
+                                    metalness={char === 'O' || char === 'G' ? 0.5 : 0.1}
+                                    emissive={char === 'I' || char === 'E' ? vColor : '#000000'}
+                                    emissiveIntensity={char === 'I' || char === 'E' ? 0.3 : 0}
+                                />
+                            </mesh>
+                        );
+                    }
                 }
             });
         });
         return els;
-    }, [pattern, color, type]); // Re-generate only if type/color changes
+    }, [pattern, color, type]);
 
     return (
-        <group position={[0, offsetY ? offsetY - 0.2 : 0.6, -0.2]} scale={[1.2, 1.2, 1.2]}>
+        <group position={[0, offsetY ? offsetY - 0.1 : 0.65, -0.25]} scale={[1.5, 1.5, 1.5]}>
             {/* Right Wing */}
             <group ref={rightWingRef} position={[0.1, 0, 0]}>
-                {/* Center the wing pattern relative to pivot */}
+                {/* Center Pivot: Start drawing slightly to the right of 0 */}
                 <group position={[0, -pattern.length * s * 0.5, 0]}>
                     {voxels}
                 </group>
@@ -320,14 +381,15 @@ const AdvancedWings: React.FC<{ type: WingItem['type']; color: string; isMoving:
 
             {/* Left Wing (Mirrored) */}
             <group ref={leftWingRef} position={[-0.1, 0, 0]}>
+                {/* Scale X -1 mirrors it geometry */}
                 <group position={[0, -pattern.length * s * 0.5, 0]} scale={[-1, 1, 1]}>
                     {voxels}
                 </group>
             </group>
 
-            {/* Glow Light */}
-            <pointLight position={[0, 0.5, 0.2]} color={color} intensity={0.8} distance={3} />
-            <Sparkles count={10} scale={1.5} size={3} speed={0.4} opacity={0.5} color={color} />
+            {/* Central Glow/Binder */}
+            <pointLight ref={glowRef} position={[0, 0, 0.2]} color={color} intensity={0.5} distance={2} />
+            {isMoving && <Sparkles count={5} scale={1.2} size={4} speed={0.8} opacity={0.3} color={color} />}
         </group>
     );
 };
@@ -736,10 +798,10 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                     <boxGeometry args={[bodyWidth, bodyHeight, bodyDepth]} />
                     {equippedCostume?.armorTexture1 ? (
                         // Zırh Texture'ı varsa kullan
-                        <CostumeBodyMaterial texturePath={equippedCostume.armorTexture1} baseColor={appearance.body} />
+                        <CostumeBodyMaterial texturePath={equippedCostume.armorTexture1} baseColor={equippedCostume.color || appearance.body} />
                     ) : (
-                        // Yoksa normal renk
-                        <meshStandardMaterial color={appearance.body} />
+                        // Yoksa kostüm rengini veya normal rengi kullan
+                        <meshStandardMaterial color={equippedCostume?.color || appearance.body} />
                     )}
                 </mesh>
                 {/* Body accent (belt/trim) */}
@@ -750,7 +812,7 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                 {/* Collar */}
                 <mesh position={[0, 0.35, 0.05]} castShadow>
                     <boxGeometry args={[0.35, 0.08, 0.15]} />
-                    <meshStandardMaterial color={appearance.bodyAccent} />
+                    <meshStandardMaterial color={equippedCostume?.color || appearance.bodyAccent} />
                 </mesh>
             </group>
 
@@ -762,7 +824,7 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                 {/* Upper arm (shoulder pivot) */}
                 <mesh position={[0, -armHeight / 2 + 0.1, 0]} castShadow receiveShadow>
                     <boxGeometry args={[armWidth, armHeight, armWidth]} />
-                    <meshStandardMaterial color={appearance.body} />
+                    <meshStandardMaterial color={equippedCostume?.color || appearance.body} />
                 </mesh>
                 {/* Hand */}
                 <mesh position={[0, -armHeight + 0.05, 0]} castShadow>
@@ -789,7 +851,7 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
             >
                 <mesh position={[0, -armHeight / 2 + 0.1, 0]} castShadow receiveShadow>
                     <boxGeometry args={[armWidth, armHeight, armWidth]} />
-                    <meshStandardMaterial color={appearance.body} />
+                    <meshStandardMaterial color={equippedCostume?.color || appearance.body} />
                 </mesh>
                 {/* Hand */}
                 <mesh position={[0, -armHeight + 0.05, 0]} castShadow>
@@ -818,7 +880,7 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
             >
                 <mesh position={[0, 0, 0]} castShadow receiveShadow>
                     <boxGeometry args={[legWidth, legHeight, legWidth]} />
-                    <meshStandardMaterial color={appearance.legs} />
+                    <meshStandardMaterial color={equippedCostume?.color || appearance.legs} />
                 </mesh>
                 {/* Foot highlight */}
                 <mesh position={[0, -legHeight / 2 + 0.05, 0.02]} castShadow>
@@ -834,7 +896,7 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
             >
                 <mesh position={[0, 0, 0]} castShadow receiveShadow>
                     <boxGeometry args={[legWidth, legHeight, legWidth]} />
-                    <meshStandardMaterial color={appearance.legs} />
+                    <meshStandardMaterial color={equippedCostume?.color || appearance.legs} />
                 </mesh>
                 {/* Foot highlight */}
                 <mesh position={[0, -legHeight / 2 + 0.05, 0.02]} castShadow>

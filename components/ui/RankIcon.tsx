@@ -15,35 +15,21 @@ const SIZES = {
 };
 
 export const RankIcon: React.FC<RankIconProps> = ({ rank, size = 'md', className = '' }) => {
-    // Ensure rank is within valid range (1-21)
-    const validRank = Math.max(1, Math.min(rank, 21));
-    const rankIndex = validRank - 1;
+    // Find rank data
+    const rankData = RANKS.find(r => r.id === rank);
 
-    // Sprite Sheet Configuration
-    const COLS = 7;
-    const ROWS = 3; // Though generated image might be padded, we assume a focused grid
-
-    const col = rankIndex % COLS;
-    const row = Math.floor(rankIndex / COLS);
-
-    // Calculate position percentages
-    // For background-position: (index / (total - 1)) * 100%
-    const posX = (col / (COLS - 1)) * 100;
-    const posY = (row / (ROWS - 1)) * 100;
+    if (!rankData) return null;
 
     return (
         <div
             className={`relative inline-block ${SIZES[size]} ${className} shrink-0`}
-            title={RANKS[validRank]?.title || `Rank ${validRank}`}
+            title={rankData.title}
         >
-            <div
-                className="w-full h-full bg-no-repeat"
-                style={{
-                    backgroundImage: 'url("/ranks/all_ranks.png")',
-                    backgroundSize: `${COLS * 100}% ${ROWS * 100}%`,
-                    backgroundPosition: `${posX}% ${posY}%`,
-                    imageRendering: 'pixelated', // Keep pixels crisp
-                }}
+            <img
+                src={rankData.image}
+                alt={rankData.title}
+                className="w-full h-full object-contain drop-shadow-md"
+                loading="lazy"
             />
         </div>
     );

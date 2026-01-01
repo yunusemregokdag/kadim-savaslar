@@ -3373,8 +3373,117 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             }]);
         }
 
+        // --- SPECIAL CLASS MECHANICS (BUFFS / UTILITY) ---
+
+        // 1. ARCTIC KNIGHT (ak)
+        if (skill.id === 'ak2') { // Buz Zırhı
+            addFloatingText("BUZ ZIRHI AKTİF!", playerPosRef.current.x, 3, playerPosRef.current.y, "text-cyan-400 font-bold");
+            const originalDef = playerState.defense;
+            handleUpdatePlayerSafe({ defense: Math.floor(originalDef * 1.5) }); // +50% Def
+            setTimeout(() => {
+                handleUpdatePlayerSafe({ defense: originalDef });
+                addFloatingText("Buz Zırhı Bitti", playerPosRef.current.x, 3, playerPosRef.current.y, "text-slate-400");
+            }, 10000);
+        }
+        if (skill.id === 'ak5') { // Kaygan Zemin (Slow Area)
+            // Implementation note: Ideally spawns a 'Zone' entity. For now, we slow nearby mobs.
+            setEntities(prev => prev.map(ent => {
+                const dist = Math.sqrt(Math.pow(ent.x / 15 - playerPosRef.current.x, 2) + Math.pow(ent.y / 15 - playerPosRef.current.y, 2));
+                if (dist < 8 && ent.isHostile) {
+                    addFloatingText("Yavaşladı!", ent.x / 15, 3, ent.y / 15, "text-cyan-300");
+                    // We can't easily slow them without mob logic specific 'speed' prop, 
+                    // but we can simulate it or apply a debuff state if available.
+                    // For visual feel:
+                    spawnVisualEffect(ent.x / 15, ent.y / 15, '#22d3ee');
+                }
+                return ent;
+            }));
+        }
+
+        // 2. GALE GLAIVE (gg)
+        if (skill.id === 'gg2') { // Atılma (Dash)
+            // Teleport player forward 5 units
+            const rot = playerGroupRef.current?.rotation.y || 0;
+            const dashDist = 5;
+            const newX = playerPosRef.current.x + Math.sin(rot) * dashDist;
+            const newZ = playerPosRef.current.y + Math.cos(rot) * dashDist;
+
+            // Basic collision check (very simple)
+            if (newX > -50 && newX < 50 && newZ > -50 && newZ < 50) {
+                playerGroupRef.current?.position.set(newX, 0, newZ);
+                playerPosRef.current = { x: newX, y: newZ };
+                spawnVisualEffect(newX, newZ, '#2dd4bf'); // Dash finish effect
+            }
+        }
+        if (skill.id === 'gg6') { // Hız Patlaması
+            addFloatingText("HIZLANDIN!", playerPosRef.current.x, 3, playerPosRef.current.y, "text-teal-400 font-bold");
+            // Note: Speed is controlled by 'movementSpeed' in input logic which reads from stats.
+            // We assume 'speed' stat exists or we modify it. 
+            // Currently input logic uses constant speed. 
+            // We'll simulate by updating a hypothetical speed multiplier if we had one.
+            // Visual Only for now as speed logic is hardcoded in updateMovement.
+        }
+
+        // 3. MARTIAL ARTIST (ma)
+        if (skill.id === 'ma3') { // Focus
+            addFloatingText("ODAKLANMA!", playerPosRef.current.x, 3, playerPosRef.current.y, "text-yellow-400");
+            handleUpdatePlayerSafe({ mana: Math.min(playerState.maxMana, playerState.mana + 50) }); // Restore Mana
+        }
+        if (skill.id === 'ma7') { // Dragon Fury
+            addFloatingText("EJDERHA ÖFKESİ!", playerPosRef.current.x, 3, playerPosRef.current.y, "text-orange-500 font-bold text-xl");
+            const originalDmg = playerState.damage;
+            handleUpdatePlayerSafe({ damage: Math.floor(originalDmg * 2.0) }); // Double Damage
+            setTimeout(() => {
+                handleUpdatePlayerSafe({ damage: originalDmg });
+                addFloatingText("Öfke Dindi", playerPosRef.current.x, 3, playerPosRef.current.y, "text-slate-400");
+            }, 10000);
+        }
+
+        // 4. REAPER (rp)
+        if (skill.id === 'rp2') { // Soul Harvest (Heal on hit - represented as immediate small heal for simplicity)
+            const stealAmount = Math.floor(playerState.maxHp * 0.1);
+            handleUpdatePlayerSafe({ hp: Math.min(playerState.maxHp, playerState.hp + stealAmount) });
+            addFloatingText(`+${stealAmount} HP (Ruh Çalma)`, playerPosRef.current.x, 2, playerPosRef.current.y, "text-purple-400");
+        }
+        if (skill.id === 'rp6') { // Ghost Form
+            addFloatingText("HAYALET FORMU", playerPosRef.current.x, 3, playerPosRef.current.y, "text-purple-300");
+            // Add evasion/stealth logic in combat calc if possible
+            // For now just visual message
+        }
+
+        // 5. ARCHER (r)
+        if (skill.id === 'r3') { // Görünmezlik
+            addFloatingText("Görünmezlik Aktif", playerPosRef.current.x, 3, playerPosRef.current.y, "text-green-300");
+            // Logic would go here
+        }
+
+        // 6. MONK (mn)
+        if (skill.id === 'mn2') { // Mantra (Heal)
+            handleUpdatePlayerSafe({ hp: Math.min(playerState.maxHp, playerState.hp + Math.floor(playerState.maxHp * 0.2)) });
+            addFloatingText("Mantra: İyileşme", playerPosRef.current.x, 3, playerPosRef.current.y, "text-yellow-300");
+        }
+        if (skill.id === 'mn6') { // Ruh Kalkanı (Defense Buff)
+            addFloatingText("Ruh Kalkanı", playerPosRef.current.x, 3, playerPosRef.current.y, "text-amber-400");
+            const originalDef = playerState.defense;
+            handleUpdatePlayerSafe({ defense: Math.floor(originalDef * 1.3) });
+            setTimeout(() => {
+                handleUpdatePlayerSafe({ defense: originalDef });
+            }, 8000);
+        }
+        if (skill.id === 'mn7') { // Nirvana (Invincible)
+            addFloatingText("NIRVANA!", playerPosRef.current.x, 3, playerPosRef.current.y, "text-yellow-500 font-bold text-xl");
+            // Logic: Set a flag 'isInvincible' in state or just huge defense
+            const originalDef = playerState.defense;
+            handleUpdatePlayerSafe({ defense: 999999 });
+            spawnVisualEffect(playerPosRef.current.x, playerPosRef.current.y, '#fcd34d');
+            setTimeout(() => {
+                handleUpdatePlayerSafe({ defense: originalDef });
+                addFloatingText("Nirvana Bitti", playerPosRef.current.x, 3, playerPosRef.current.y, "text-slate-400");
+            }, 5000); // 5 sec invincibility
+        }
+
         // --- BARD SPECIAL MECHANICS ---
-        if (skill.id === 'bd3') {
+        if (skill.id === 'b3') {
             // Defense Break (Yıkım Notası)
             const range = 10;
             setEntities(prev => prev.map(ent => {
@@ -3403,7 +3512,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             if (skill.type === 'utility') return;
         }
 
-        if (skill.id === 'bd7') {
+        if (skill.id === 'b7') {
             // Bard Ultimate Buff Logic (Destansı Final)
             // Effect: +50% All Stats for 20s
             addFloatingText("TAKIM GÜÇLENDİ!", playerPosRef.current.x, 3, playerPosRef.current.y, "text-purple-400 font-bold text-xl");
@@ -3430,7 +3539,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             }, duration * 1000);
 
             // TODO: In a real multiplayer scenario, emit socket event to buff party members
-            // if (socketRef.current) socketRef.current.emit('cast_buff', { skillId: 'bd7', duration });
+            // if (socketRef.current) socketRef.current.emit('cast_buff', { skillId: 'b7', duration });
         }
 
         if (skill.type === 'damage' || skill.type === 'ultimate') {

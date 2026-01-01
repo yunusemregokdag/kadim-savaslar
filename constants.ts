@@ -151,10 +151,10 @@ export const COSTUME_SETS: CostumeSet[] = [
             monk: '/models/items/weapons/warrior/warrior_sword_shiny.gltf', // Placeholder
             bard: '/models/items/weapons/bard/bard_harp_shiny.gltf', // Placeholder
         },
-        // wing: '/models/costumes/carnivoret/wing.gltf', // Commented out until file exists
-        // hat: '/models/costumes/carnivoret/hat.gltf', // Commented out until file exists
-        armorTexture1: '/models/costumes/carnivoret/carnivoret_armor_layer_1.png',
-        armorTexture2: '/models/costumes/carnivoret/carnivoret_armor_layer_2.png',
+        wing: '/models/costumes/carnivoret/wing.gltf',
+        hat: '/models/costumes/carnivoret/hat.gltf',
+        // armorTexture1: REMOVED - using body color instead
+        // armorTexture2: REMOVED
         bonusDamage: 50,
         bonusHp: 500,
         bonusDefense: 25,
@@ -498,7 +498,7 @@ export const RANKS: Rank[] = [
     { id: 17, title: 'Seçkin Şövalye', minRP: 5000000, bonusDamage: 25, bonusShield: 10, icon: '⚜️', image: '/ranks/rank_17.png', limitType: 'count', limitValue: 20, order: 5 },
     { id: 18, title: 'Savaş Lordu', minRP: 10000000, bonusDamage: 30, bonusShield: 12, icon: '👹', image: '/ranks/rank_18.png', limitType: 'count', limitValue: 5, order: 4 },
     { id: 19, title: 'Kurmay Komutan', minRP: 20000000, bonusDamage: 35, bonusShield: 15, icon: '👑', image: '/ranks/rank_19.png', limitType: 'count', limitValue: 3, order: 3 },
-    { id: 20, title: 'Kadim General', minRP: 50000000, bonusDamage: 40, bonusShield: 20, icon: '🌟', image: '/ranks/rank_19.png', limitType: 'count', limitValue: 2, order: 2 },
+    { id: 20, title: 'Kadim General', minRP: 50000000, bonusDamage: 40, bonusShield: 20, icon: '🌟', image: '/ranks/rank_20.png', limitType: 'count', limitValue: 2, order: 2 },
     { id: 21, title: 'Yüce Hükümdar', minRP: 100000000, bonusDamage: 50, bonusShield: 25, icon: '👑🔥', image: '/ranks/rank_21.png', limitType: 'count', limitValue: 1, order: 1 },
 ];
 

@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
-import { useGLTF, Sparkles } from '@react-three/drei';
+import React, { useEffect, useRef, useMemo } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { SKILL_ASSETS, SkillAssetConfig } from './SkillAssetRegistry';
 import { soundManager } from './SoundManager';
-import { SpriteSkillEffect, VISUAL_TO_SPRITE, SPRITE_SKILLS } from './SpriteSkillEffects';
 
 // --- FALLBACK ASSET (Prevents Crash) ---
 const SAFE_MODEL_PATH = '/models/items/weapons/warrior/warrior_sword_shiny.gltf';
@@ -18,17 +17,13 @@ const applyVisualEnhancements = (scene: THREE.Object3D, visualType: string, colo
                 m.transparent = true;
                 m.alphaTest = 0.5;
                 m.side = THREE.DoubleSide;
-
-                // Optimized Material Settings for Mobile
                 m.precision = 'lowp';
                 m.flatShading = false;
 
-                // Color Logic
                 let targetColor = new THREE.Color(0xffffff);
 
                 if (visualType.includes('arctic') || visualType.includes('frost')) targetColor.set('#00ffff');
                 else if (visualType.includes('warrior')) targetColor.set('#ff4500');
-                else if (visualType.includes('gale')) targetColor.set('#14b8a6');
                 else if (visualType.includes('archer')) targetColor.set('#22c55e');
                 else if (visualType.includes('mage')) targetColor.set('#8b5cf6');
                 else if (visualType.includes('cleric')) targetColor.set('#fef3c7');
@@ -49,7 +44,6 @@ interface SkillEffectsProps {
 }
 
 // --- SINGLE POOL COMPONENT ---
-// Manages N instances of a specific skill type
 const SkillTypePool: React.FC<{
     type: string;
     config: SkillAssetConfig;
@@ -57,43 +51,32 @@ const SkillTypePool: React.FC<{
     onComplete: (id: string) => void;
 }> = ({ type, config, activeRequests, onComplete }) => {
 
-    // 1. LOAD ASSET (ONCE)
-    // Detect if we need fallback
     const isMissing = config.path.includes('/models/skills');
     const loadPath = isMissing
         ? SAFE_MODEL_PATH
         : (config.extension === 'gltf' && (!config.count || config.count <= 1))
             ? `${config.path}${config.modelBase}.gltf`
-            : SAFE_MODEL_PATH; // Fallback for complex sequences for now to ensure stability
+            : SAFE_MODEL_PATH;
 
     const { scene } = useGLTF(loadPath);
-    const POOL_SIZE = 6; // Max concurrent effects of this type
+    const POOL_SIZE = 6;
 
-    // 2. CREATE TEMPLATE (ONCE)
     const template = useMemo(() => {
         const t = scene.clone();
         applyVisualEnhancements(t, type, config.color);
-
-        // Add default sparkles to template to avoid re-creating them
-        // Note: Sparkles defined in JSX are expensive to pool manually in pure Three.js
-        // We will stick to Mesh pooling here.
         return t;
     }, [scene, type, config.color]);
 
-    // 3. POOL STATE
-    // We use a Ref to store the actual Three.js objects (Pool)
     const poolRef = useRef<{
         group: THREE.Group;
         active: boolean;
         id: string | null;
         startTime: number;
-        targetPos?: THREE.Vector3;
     }[]>([]);
 
     const groupRef = useRef<THREE.Group>(null);
     const initialized = useRef(false);
 
-    // Initialize Pool
     useEffect(() => {
         if (initialized.current || !groupRef.current) return;
 
@@ -112,17 +95,13 @@ const SkillTypePool: React.FC<{
         initialized.current = true;
     }, [template]);
 
-    // 4. HANDLE REQUESTS (Effect Trigger)
     useEffect(() => {
         activeRequests.forEach(req => {
-            // Check if already handling this ID
             const existing = poolRef.current.find(p => p.id === req.id);
             if (existing) return;
 
-            // Find free slot
             const slot = poolRef.current.find(p => !p.active);
             if (slot) {
-                // ACTIVATE
                 slot.active = true;
                 slot.id = req.id;
                 slot.startTime = Date.now();
@@ -130,18 +109,11 @@ const SkillTypePool: React.FC<{
                 slot.group.position.set(req.position[0], req.position[1], req.position[2]);
                 slot.group.scale.setScalar(config.scale || 1);
 
-                if (type.includes('projectile') && req.targetPosition) {
-                    slot.targetPos = new THREE.Vector3(...req.targetPosition);
-                    slot.group.lookAt(slot.targetPos);
-                }
-
-                // Play Sound
                 if (config.sound) soundManager.playUrl(config.sound);
             }
         });
-    }, [activeRequests, config.sound, config.scale, type]);
+    }, [activeRequests, config.sound, config.scale]);
 
-    // 5. ANIMATION LOOP (Single useFrame for all instances)
     useFrame((state, delta) => {
         const now = Date.now();
         poolRef.current.forEach(slot => {
@@ -150,22 +122,12 @@ const SkillTypePool: React.FC<{
             const elapsed = now - slot.startTime;
             const duration = (config.duration || 1) * 1000;
 
-            // Movement Logic
-            if (slot.targetPos) {
-                const t = Math.min(1, elapsed / 500);
-                slot.group.position.lerp(slot.targetPos, 0.1);
-            } else {
-                // Simple Idle Anim
-                slot.group.rotation.y += delta * 5;
+            slot.group.rotation.y += delta * 5;
+            let s = config.scale || 1;
+            if (elapsed < 100) s *= elapsed / 100;
+            if (elapsed > duration - 200) s *= (duration - elapsed) / 200;
+            slot.group.scale.setScalar(Math.max(0.01, s));
 
-                // Pop-in/out scale
-                let s = config.scale || 1;
-                if (elapsed < 100) s *= elapsed / 100;
-                if (elapsed > duration - 200) s *= (duration - elapsed) / 200;
-                slot.group.scale.setScalar(Math.max(0.01, s));
-            }
-
-            // Finish
             if (elapsed > duration) {
                 slot.active = false;
                 slot.group.visible = false;
@@ -179,44 +141,14 @@ const SkillTypePool: React.FC<{
 };
 
 export const SkillEffects: React.FC<SkillEffectsProps> = ({ activeSkills, onEffectComplete }) => {
-    // Split skills into sprite-based and 3D model-based
-    const spriteSkills = useMemo(() => {
-        return activeSkills.filter(skill => {
-            const spriteKey = VISUAL_TO_SPRITE[skill.visual];
-            return spriteKey && SPRITE_SKILLS[spriteKey];
-        });
-    }, [activeSkills]);
-
-    const modelSkills = useMemo(() => {
-        return activeSkills.filter(skill => {
-            const spriteKey = VISUAL_TO_SPRITE[skill.visual];
-            return !(spriteKey && SPRITE_SKILLS[spriteKey]);
-        });
-    }, [activeSkills]);
-
     return (
         <group>
-            {/* === SPRITE-BASED SKILL EFFECTS (PNG Animations) === */}
-            {spriteSkills.map(skill => {
-                const spriteKey = VISUAL_TO_SPRITE[skill.visual];
-                return (
-                    <SpriteSkillEffect
-                        key={skill.id}
-                        skillKey={spriteKey}
-                        position={skill.position}
-                        onComplete={() => onEffectComplete(skill.id)}
-                        active={true}
-                    />
-                );
-            })}
-
-            {/* === 3D MODEL-BASED SKILL EFFECTS (GLTF Fallback) === */}
             {Object.keys(SKILL_ASSETS).map(key => (
                 <SkillTypePool
                     key={key}
                     type={key}
                     config={SKILL_ASSETS[key]}
-                    activeRequests={modelSkills.filter(s => s.visual === key)}
+                    activeRequests={activeSkills.filter(s => s.visual === key)}
                     onComplete={onEffectComplete}
                 />
             ))}

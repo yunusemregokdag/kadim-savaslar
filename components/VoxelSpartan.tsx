@@ -144,100 +144,202 @@ interface VoxelSpartanProps {
     };
 }
 
-// --- VOXEL WINGS COMPONENT (VOLUMETRIC STYLE) ---
-// High-resolution patterns (approx 16-20px height)
+// --- VOXEL WINGS COMPONENT (PIXEL ART STYLE) ---
+// F = Feather (main color), T = Tip (darker), B = Bone/Edge (outline)
+// L = Light highlight, S = Shadow, G = Gold/Glow
+// Larger patterns for detailed pixel-art look (20-25 rows)
+
 const WING_PATTERNS: Record<string, string[]> = {
+    // ═══════════════════════════════════════════════════════════════
+    // ANGEL WINGS - Pure white with golden tips
+    // ═══════════════════════════════════════════════════════════════
     angel: [
-        "......OOOO.......",
-        "....OOEEEEmm.....",
-        "...OEEEEEEEEm....",
-        "..OEEEEEEEEEEm...",
-        ".OEEEEEEEEEEEEm..",
-        "OEEEEEEEEEEEEEm..",
-        "OEEEEEEEEEEEEm...",
-        "OEEEEEEEEEEEm....",
-        "OEEEEEEEEEEm.....",
-        ".OEEEEEEEEm......",
-        "..OEEEEEEm.......",
-        "...OEEEEm........",
-        "....OEEm.........",
-        ".....Om..........",
-        ".....m..........."
+        "...............BB...............",
+        ".............BBLLB..............",
+        "............BLFFFB..............",
+        "...........BLFFFFB..............",
+        "..........BLFFFFFB..............",
+        ".........BLFFFFFFB..............",
+        "........BLFFFFFFFLB.............",
+        ".......BLFFFFFFFFFLB............",
+        "......BLFFFFFFFFFFFLB...........",
+        ".....BLFFFFFFFFFFFFLB..........",
+        "....BLFFFFFFFFFFFFFLB..........",
+        "...BLFFFFFFFFFFFFFFFLB.........",
+        "..BLFFFFFFFFFFFFFFFFFLB........",
+        ".BLFFFFFFFFFFFFFFFFFFFB........",
+        "BLFFFFFFFFFFFFFFFFFFFFTB.......",
+        "BLFFFFFFFFFFFFFFFFFFTTTB.......",
+        ".BFFFFFFFFFFFFFFFFFFFFTTB......",
+        "..BFFFFFFFFFFFFFFFFFFFFTB......",
+        "...BFFFFFFFFFFFFFFFFFFTB.......",
+        "....BFFFFFFFFFFFFFFFFTB........",
+        ".....BFFFFFFFFFFFFFFTB.........",
+        "......BFFFFFFFFFFFFTTB.........",
+        ".......BFFFFFFFFFFTTB..........",
+        "........BFFFFFFFFTTTB..........",
+        ".........BFFFFFFTTTB...........",
+        "..........BFFFFTTTB............",
+        "...........BFFTTTTB............",
+        "............BTTTTTB............",
+        ".............BTTTTB............",
+        "..............BTTB.............",
     ],
+
+    // ═══════════════════════════════════════════════════════════════
+    // DEMON WINGS - Dark bat-like with red membrane
+    // ═══════════════════════════════════════════════════════════════
     demon: [
-        "B.........BB.....",
-        "BB.......BEEB....",
-        "BEB.....BEEEB....",
-        "BEEB...BEEEEEB...",
-        "BEEEB.BEEEEEEEB..",
-        "BEEEEBBEEEEEEEEB.",
-        "BEEEEEEEEEEEEEEB.",
-        "BEEEEEEEEEEEEEEB.",
-        "BEEEEEEEEEEBBB...",
-        ".BEEEEEEEEB......",
-        "..BEEEEEEB.......",
-        "...BEEEEB........",
-        "....BEEB.........",
-        ".....BB.........."
+        "B.........................B.....",
+        "BB.......................BB.....",
+        "BBB.....................BBB.....",
+        "BMMB...................BMMB.....",
+        "BMMMB.................BMMMB.....",
+        "BMMMMB...............BMMMMB.....",
+        "BMMMMMB.............BMMMMMB.....",
+        "BMMMMMMB...........BMMMMMMB.....",
+        "BMMMMMMMB.........BMMMMMMMB.....",
+        "BMMMMMMMMB.......BMMMMMMMMB.....",
+        "BMMMMMMMMMB.....BMMMMMMMMMB.....",
+        "BMMMMMMMMMMB...BMMMMMMMMMMB.....",
+        "BMMMMMMMMMMMB.BMMMMMMMMMMMB.....",
+        "BMMMMMMMMMMMMBBMMMMMMMMMMMMB....",
+        "BMMMMMMMMMMMMMMMMMMMMMMMMMMMB...",
+        ".BMMMMMMMMMMMMMMMMMMMMMMMMMMB...",
+        "..BMMMMMMMMMMMMMMMMMMMMMMMMB....",
+        "...BMMMMMMMMMMMMMMMMMMMMMMB.....",
+        "....BMMMMMMMMMMMMMMMMMMMMB......",
+        ".....BMMMMMMMMMMMMMMMMMMB.......",
+        "......BMMMMMMMMMMMMMMMMB........",
+        ".......BMMMMMMMMMMMMMB.........",
+        "........BMMMMMMMMMMB...........",
+        ".........BMMMMMMMB.............",
+        "..........BMMMMB...............",
+        "...........BMMB................",
+        "............BB.................",
     ],
+
+    // ═══════════════════════════════════════════════════════════════
+    // DRAGON WINGS - Leathery with spikes and fire colors
+    // ═══════════════════════════════════════════════════════════════
     dragon: [
-        "D.........D......",
-        "DD.......DMD.....",
-        "DMD.....DMMMD....",
-        "DMMD...DMMMMMD...",
-        "DMMMD.DMMMMMMMD..",
-        "DMMMMDDMMMMMMMMD.",
-        "DMMMMMMMMMMMMMMD.",
-        "DMMMMMMMMMMMMMMD.",
-        "DMMMMMMMMMMDDDD..",
-        ".DMMMMMMMMD......",
-        "..DMMMMMMD.......",
-        "...DMMMMD........",
-        "....DMMD.........",
-        ".....DD.........."
+        "B...............................B",
+        "SB.............................BS",
+        "SSB...........................BSS",
+        "SSSB.........................BSSS",
+        "BSSSB.......................BSSSB",
+        "BBSSSB.....................BSSSBB",
+        "BMBSSSB...................BSSSBMB",
+        "BMMBSSSB.................BSSSBMMB",
+        "BMMMBSSSB...............BSSSBMMMB",
+        "BMMMMMSSSB.............BSSSMMMMMMB",
+        "BMMMMMMSSSB...........BSSSMMMMMMMB",
+        "BMMMMMMMSSSB.........BSSSMMMMMMMMMB",
+        "BMMMMMMMMSSSB.......BSSSMMMMMMMMMMMB",
+        "BMMMMMMMMMSSSB.....BSSSMMMMMMMMMMMMMB",
+        "BMMMMMMMMMMMSSSB..BSSSMMMMMMMMMMMMMMB",
+        ".BMMMMMMMMMMMMSSBSSSMMMMMMMMMMMMMMB.",
+        "..BMMMMMMMMMMMMMSSSMMMMMMMMMMMMMMB..",
+        "...BMMMMMMMMMMMMMMMMMMMMMMMMMMMB....",
+        "....BMMMMMMMMMMMMMMMMMMMMMMMMB......",
+        ".....BMMMMMMMMMMMMMMMMMMMMB.........",
+        "......BMMMMMMMMMMMMMMMMB............",
+        ".......BMMMMMMMMMMMMMB..............",
+        "........BMMMMMMMMMMB................",
+        ".........BMMMMMMMB..................",
+        "..........BMMMMB....................",
+        "...........BMMB.....................",
+        "............BB......................",
     ],
+
+    // ═══════════════════════════════════════════════════════════════
+    // FAIRY WINGS - Butterfly-style, colorful with sparkle
+    // ═══════════════════════════════════════════════════════════════
     fairy: [
-        "..PP.......PP....",
-        ".PCCP.....PCCP...",
-        "PCCCCP...PCCCCP..",
-        "PCCCCCP.PCCCCCP..",
-        ".PCCCCCPPCCCCCP..",
-        "..PCCCCCCCCCP....",
-        "...PCCCCCCCP.....",
-        "..PCCCCCCCCCP....",
-        ".PCCCCCPCCCCCP...",
-        "PCCCCCP.PCCCCCP..",
-        "PCCCCP...PCCCCP..",
-        ".PCCP.....PCCP...",
-        "..PP.......PP...."
+        "............GGGG.................",
+        "..........GGLLLLGG...............",
+        ".........GLLFFFFFLG..............",
+        "........GLFFFFFFFLG..............",
+        ".......GLFFFFFFFFFG..............",
+        "......GLFFFFFFFFFFFLG............",
+        ".....GLFFFFFFFFFFFFLG............",
+        "....GLFFFFFFFFFFFFFFFFG..........",
+        "...GLFFFFFFFFFFFFFFFFFFLG........",
+        "..GLFFFFFFFFFFFFFFFFFFFFLG.......",
+        ".GLFFFFFFFFFFFFFFFFFFFFFLLG......",
+        "GLFFFFFFFFFFFFFFFFFFFFFFFLLLG....",
+        "GLFFFFFFFFFFFFFFFFFFFFFFFFFLG....",
+        ".GLFFFFFFFFFFFFFFFFFFFFFFFLG.....",
+        "..GFFFFFFFFFFFFFFFFFFFFFLG.......",
+        "...GLFFFFFFFFFFFFFFFFFLG.........",
+        ".....GLFFFFFFFFFFFFFFFG..........",
+        ".......GLFFFFFFFFFFFG............",
+        ".........GLFFFFFFFFG.............",
+        "...........GFFFFFFG..............",
+        ".............GFFFG...............",
+        "...............GG................",
     ],
+
+    // ═══════════════════════════════════════════════════════════════
+    // VOID WINGS - Dark purple with energy particles
+    // ═══════════════════════════════════════════════════════════════
     void: [
-        "V...V...V...V....",
-        ".V..V..V..V......",
-        "..V.V.V.V.V......",
-        "V..IIIIIII..V....",
-        ".V.IIIIIII.V.....",
-        "..VIIIIIIIV......",
-        ".V.IIIIIII.V.....",
-        "V..IIIIIII..V....",
-        "..V.V.V.V.V......",
-        ".V..V..V..V......",
-        "V...V...V...V...."
+        "S.......S.......S.......S........",
+        ".S.....S.S.....S.S.....S.........",
+        "..S...S...S...S...S...S..........",
+        "...S.S.....S.S.....S.S...........",
+        "....S.......S.......S............",
+        "...SBBBBBBBBBBBBBBBBBS...........",
+        "..SBIIIIIIIIIIIIIIIIIBS..........",
+        ".SBIIIIIIIIIIIIIIIIIIIIBS........",
+        "SBIIIIIIIIIIIIIIIIIIIIIIIBS......",
+        "SBIIIIIIIIIIIIIIIIIIIIIIIIIBS....",
+        "SBIIIIIIIIIIIIIIIIIIIIIIIIIIBS...",
+        "SBIIIIIIIIIIIIIIIIIIIIIIIIIIIBS..",
+        ".SBIIIIIIIIIIIIIIIIIIIIIIIIIIBS..",
+        "..SBIIIIIIIIIIIIIIIIIIIIIIIBS....",
+        "...SBIIIIIIIIIIIIIIIIIIIIBS......",
+        "....SBIIIIIIIIIIIIIIIIIBS........",
+        ".....SBIIIIIIIIIIIIIIBS..........",
+        "......SBIIIIIIIIIIIBS............",
+        ".......SBIIIIIIIIBS..............",
+        "........SBIIIIIBS................",
+        ".........SBIIBS..................",
+        "..........SBS....................",
+        "...........S.....................",
     ],
-    seraph: [ // Gold/Holy variant
-        "......GGGG.......",
-        "....GGWWWWGG.....",
-        "...GWWWWWWWWG....",
-        "..GWWWWWWWWWWG...",
-        ".GWWWWWWWWWWWWG..",
-        "GWWWWWWWWWWWWWG..",
-        "GWWWWWWWWWWWWGO..",
-        "GWWWWWWWWWWWGO...",
-        "GWWWWWWWWWWGO....",
-        ".GWWWWWWWWGO.....",
-        "..GWWWWWWGO......",
-        "...GWWWWGO.......",
-        "....GGGGO........"
+
+    // ═══════════════════════════════════════════════════════════════
+    // SERAPH WINGS - Divine golden with white feathers
+    // ═══════════════════════════════════════════════════════════════
+    seraph: [
+        "...............GG...............",
+        ".............GGLLGG.............",
+        "............GLWWWWLG............",
+        "...........GLWWWWWWLG...........",
+        "..........GLWWWWWWWWLG..........",
+        ".........GLWWWWWWWWWWLG.........",
+        "........GLWWWWWWWWWWWWLG........",
+        ".......GLWWWWWWWWWWWWWWLG.......",
+        "......GLWWWWWWWWWWWWWWWWLG......",
+        ".....GLWWWWWWWWWWWWWWWWWWLG.....",
+        "....GLWWWWWWWWWWWWWWWWWWWWLG....",
+        "...GLWWWWWWWWWWWWWWWWWWWWWWLG...",
+        "..GLWWWWWWWWWWWWWWWWWWWWWWWWLG..",
+        ".GLWWWWWWWWWWWWWWWWWWWWWWWWWWLG.",
+        "GLWWWWWWWWWWWWWWWWWWWWWWWWWWWWLG",
+        "GLWWWWWWWWWWWWWWWWWWWWWWWWWWWGLG",
+        ".GLWWWWWWWWWWWWWWWWWWWWWWWWWGLG.",
+        "..GLWWWWWWWWWWWWWWWWWWWWWWGLG...",
+        "...GLWWWWWWWWWWWWWWWWWWWGLG.....",
+        "....GLWWWWWWWWWWWWWWWWGLG.......",
+        ".....GLWWWWWWWWWWWWWGLG.........",
+        "......GLWWWWWWWWWWGLG...........",
+        ".......GLWWWWWWWGLG.............",
+        "........GLWWWWGLG...............",
+        ".........GLWGLG.................",
+        "..........GGLG..................",
+        "...........GG...................",
     ]
 };
 
@@ -281,43 +383,37 @@ const AdvancedWings: React.FC<{ type: WingItem['type']; color: string; isMoving:
     // Helper: Determine voxel depth/thickness based on character
     const getVoxelDepth = (char: string): number => {
         switch (char) {
-            case 'O': return 3; // Bones/Outline (Thickest)
-            case 'B': return 3; // Demon Bone
-            case 'D': return 3; // Dragon Bone
-            case 'G': return 3; // Gold Bone
-            case 'W': return 1; // Feathers (Thin)
-            case 'E': return 1; // Energy/Feather fill
-            case 'M': return 1; // Membrane
-            case 'm': return 1; // Minor feather
-            case 'I': return 1; // Inner void
-            case 'P': return 2; // Fairy Outline
-            case 'C': return 1; // Fairy Inner
-            case 'V': return 2; // Void Outer
+            case 'B': return 2; // Bone/Edge (outline)
+            case 'F': return 1; // Feather (main fill)
+            case 'T': return 1; // Tip (darker edge)
+            case 'L': return 1; // Light highlight
+            case 'S': return 2; // Spike/Shadow
+            case 'G': return 2; // Gold/Glow border
+            case 'W': return 1; // White feather
+            case 'M': return 1; // Membrane (dragon/demon)
+            case 'I': return 1; // Inner (void darkness)
             default: return 1;
         }
     };
 
-    // Helper: Determine Color
+    // Helper: Determine Color based on character
     const getVoxelColor = (char: string): string => {
         switch (char) {
-            case 'O': return '#e2e8f0'; // Bone White
-            case 'E': return color;     // Main Energy/Feather Color
-            case 'm': return '#94a3b8'; // Tips/Shadow
-            case 'B': return '#1a1a1a'; // Demon Bone
-            case 'D': return '#7f1d1d'; // Dragon Bone
-            case 'M': return '#ef4444'; // Dragon Membrane (Red default, or specialized) - actually use prop color for flexible dragon types?
-            case 'G': return '#fbbf24'; // Gold
-            case 'W': return '#ffffff'; // White Feathers
-            case 'I': return '#000000'; // Void/Darkness
-            case 'P': return '#f472b6'; // Pink
-            case 'C': return '#22d3ee'; // Cyan
-            case 'V': return '#4c1d95'; // Violet Void
+            case 'B': return '#1e293b'; // Dark outline
+            case 'F': return color;     // Main feather color (uses prop)
+            case 'T': return '#64748b'; // Tip shade (grey)
+            case 'L': return '#f8fafc'; // Light highlight (almost white)
+            case 'S': return '#991b1b'; // Spike (dark red for dragon)
+            case 'G': return '#fbbf24'; // Gold glow
+            case 'W': return '#ffffff'; // White
+            case 'M': return color;     // Membrane uses prop color
+            case 'I': return '#0f172a'; // Void inner (deep dark)
             default: return color;
         }
     };
 
-    // Voxel Block Size - Smaller for higher res
-    const s = 0.04;
+    // Voxel Block Size - Slightly larger for better visibility
+    const s = 0.025;
 
     // Generate Volumetric Mesh Data
     const voxels = useMemo(() => {
@@ -326,23 +422,26 @@ const AdvancedWings: React.FC<{ type: WingItem['type']; color: string; isMoving:
             row.split('').forEach((char, x) => {
                 if (char !== '.') {
                     const depth = getVoxelDepth(char);
-                    const vColor = char === 'M' || char === 'E' ? color : getVoxelColor(char); // Dynamic override for fills
+                    const vColor = getVoxelColor(char);
 
                     // Center the stack on Z=0
-                    // If depth is 3, we create blocks at -1, 0, 1 relative units
                     const zStart = -Math.floor(depth / 2);
 
                     for (let z = 0; z < depth; z++) {
                         const zPos = (zStart + z) * s;
+                        // Should this character glow?
+                        const shouldGlow = char === 'G' || char === 'L' || char === 'F';
+                        const glowIntensity = char === 'G' ? 0.8 : (char === 'L' ? 0.4 : 0.2);
+
                         els.push(
-                            <mesh key={`${x}-${y}-${z}`} position={[x * s, (pattern.length - y) * s, zPos]} castShadow receiveShadow>
-                                <boxGeometry args={[s, s, s]} />
+                            <mesh key={`${x}-${y}-${z}`} position={[x * s, (pattern.length - y) * s, zPos]}>
+                                <boxGeometry args={[s * 0.95, s * 0.95, s * 0.95]} />
                                 <meshStandardMaterial
                                     color={vColor}
-                                    roughness={0.7}
-                                    metalness={char === 'O' || char === 'G' ? 0.5 : 0.1}
-                                    emissive={char === 'I' || char === 'E' ? vColor : '#000000'}
-                                    emissiveIntensity={char === 'I' || char === 'E' ? 0.3 : 0}
+                                    roughness={0.6}
+                                    metalness={char === 'G' ? 0.6 : 0.1}
+                                    emissive={shouldGlow ? vColor : '#000000'}
+                                    emissiveIntensity={shouldGlow ? glowIntensity : 0}
                                 />
                             </mesh>
                         );
@@ -353,27 +452,28 @@ const AdvancedWings: React.FC<{ type: WingItem['type']; color: string; isMoving:
         return els;
     }, [pattern, color, type]);
 
+    // Calculate pattern width for proper centering
+    const patternWidth = pattern[0]?.length || 20;
+
     return (
-        <group position={[0, offsetY ? offsetY - 0.1 : 0.65, -0.25]} scale={[1.5, 1.5, 1.5]}>
+        <group position={[0, offsetY ? offsetY - 0.1 : 0.55, -0.2]} scale={[1.2, 1.2, 1.2]}>
             {/* Right Wing */}
-            <group ref={rightWingRef} position={[0.1, 0, 0]}>
-                {/* Center Pivot: Start drawing slightly to the right of 0 */}
-                <group position={[0, -pattern.length * s * 0.5, 0]}>
+            <group ref={rightWingRef} position={[0.08, 0, 0]}>
+                <group position={[-patternWidth * s * 0.1, -pattern.length * s * 0.5, 0]}>
                     {voxels}
                 </group>
             </group>
 
             {/* Left Wing (Mirrored) */}
-            <group ref={leftWingRef} position={[-0.1, 0, 0]}>
-                {/* Scale X -1 mirrors it geometry */}
-                <group position={[0, -pattern.length * s * 0.5, 0]} scale={[-1, 1, 1]}>
+            <group ref={leftWingRef} position={[-0.08, 0, 0]}>
+                <group position={[patternWidth * s * 0.1, -pattern.length * s * 0.5, 0]} scale={[-1, 1, 1]}>
                     {voxels}
                 </group>
             </group>
 
-            {/* Central Glow/Binder */}
-            <pointLight ref={glowRef} position={[0, 0, 0.2]} color={color} intensity={0.5} distance={2} />
-            {isMoving && <Sparkles count={5} scale={1.2} size={4} speed={0.8} opacity={0.3} color={color} />}
+            {/* Central Glow */}
+            <pointLight ref={glowRef} position={[0, 0, 0.1]} color={color} intensity={0.6} distance={1.5} />
+            {isMoving && <Sparkles count={8} scale={1.5} size={3} speed={0.6} opacity={0.4} color={color} />}
         </group>
     );
 };

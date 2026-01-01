@@ -333,43 +333,92 @@ export const PixelCart = ({ color = '#f59e0b' }: { color?: string }) => (
 export const PixelWing = ({ color = '#a78bfa', secondaryColor, wingType }: { color?: string; secondaryColor?: string; wingType?: string }) => {
     // For Angel/Demon hybrid: Left wing = Angel (white/gold), Right wing = Demon (black/red)
     const leftColor = color;
-    const rightColor = wingType === 'angel_demon' ? (secondaryColor || '#1a1a1a') : color;
+    const rightColor = wingType === 'angel_demon' ? (secondaryColor || '#991b1b') : color;
 
-    // Enhanced pixel art style based on reference images
+    // Lighter and darker variants for depth
+    const lighten = (c: string, amt: number) => c; // simplified
+
+    // More detailed pixel art wing - inspired by reference images
     return (
-        <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
-            {/* Left Wing (Primary Color - Angel side for hybrid) */}
-            <rect x="0" y="4" width="1" height="1" fill={leftColor} style={{ filter: 'brightness(1.3)' }} />
-            <rect x="1" y="3" width="1" height="2" fill={leftColor} style={{ filter: 'brightness(1.2)' }} />
-            <rect x="1" y="5" width="1" height="3" fill={leftColor} />
-            <rect x="2" y="2" width="1" height="2" fill={leftColor} style={{ filter: 'brightness(1.3)' }} />
-            <rect x="2" y="4" width="1" height="4" fill={leftColor} />
-            <rect x="3" y="2" width="1" height="1" fill={leftColor} style={{ filter: 'brightness(1.4)' }} />
-            <rect x="3" y="3" width="1" height="5" fill={leftColor} style={{ filter: 'brightness(1.1)' }} />
-            <rect x="4" y="3" width="1" height="5" fill={leftColor} />
-            <rect x="5" y="4" width="1" height="5" fill={leftColor} style={{ filter: 'brightness(0.9)' }} />
-            <rect x="6" y="5" width="1" height="4" fill={leftColor} style={{ filter: 'brightness(0.85)' }} />
-            {/* Feather details for left wing */}
-            <rect x="1" y="6" width="1" height="1" fill={leftColor} style={{ filter: 'brightness(1.5)' }} />
-            <rect x="3" y="7" width="1" height="1" fill={leftColor} style={{ filter: 'brightness(1.4)' }} />
+        <svg viewBox="0 0 24 20" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+            {/* Glow effect behind wings */}
+            <defs>
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="0.5" result="coloredBlur" />
+                    <feMerge>
+                        <feMergeNode in="coloredBlur" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+            </defs>
 
-            {/* Right Wing (Secondary Color - Demon side for hybrid) */}
-            <rect x="15" y="4" width="1" height="1" fill={rightColor} style={{ filter: 'brightness(1.3)' }} />
-            <rect x="14" y="3" width="1" height="2" fill={rightColor} style={{ filter: 'brightness(1.2)' }} />
-            <rect x="14" y="5" width="1" height="3" fill={rightColor} />
-            <rect x="13" y="2" width="1" height="2" fill={rightColor} style={{ filter: 'brightness(1.3)' }} />
-            <rect x="13" y="4" width="1" height="4" fill={rightColor} />
-            <rect x="12" y="2" width="1" height="1" fill={rightColor} style={{ filter: 'brightness(1.4)' }} />
-            <rect x="12" y="3" width="1" height="5" fill={rightColor} style={{ filter: 'brightness(1.1)' }} />
-            <rect x="11" y="3" width="1" height="5" fill={rightColor} />
-            <rect x="10" y="4" width="1" height="5" fill={rightColor} style={{ filter: 'brightness(0.9)' }} />
-            <rect x="9" y="5" width="1" height="4" fill={rightColor} style={{ filter: 'brightness(0.85)' }} />
-            {/* Feather details for right wing */}
-            <rect x="14" y="6" width="1" height="1" fill={rightColor} style={{ filter: 'brightness(1.5)' }} />
-            <rect x="12" y="7" width="1" height="1" fill={rightColor} style={{ filter: 'brightness(1.4)' }} />
+            {/* ═══════════ LEFT WING ═══════════ */}
+            {/* Top feathers */}
+            <rect x="0" y="2" width="1" height="1" fill={leftColor} opacity="0.8" />
+            <rect x="1" y="1" width="1" height="2" fill={leftColor} filter="url(#glow)" />
+            <rect x="2" y="0" width="1" height="3" fill={leftColor} opacity="0.9" />
+            <rect x="3" y="0" width="1" height="4" fill={leftColor} filter="url(#glow)" />
+            <rect x="4" y="1" width="1" height="4" fill={leftColor} />
+            <rect x="5" y="2" width="1" height="5" fill={leftColor} opacity="0.95" />
 
-            {/* Center body connection */}
-            <rect x="7" y="5" width="2" height="5" fill={leftColor} style={{ filter: 'brightness(0.7)' }} />
+            {/* Main wing body */}
+            <rect x="2" y="3" width="1" height="4" fill={leftColor} />
+            <rect x="3" y="4" width="1" height="5" fill={leftColor} opacity="0.9" />
+            <rect x="4" y="5" width="1" height="5" fill={leftColor} />
+            <rect x="5" y="7" width="1" height="4" fill={leftColor} opacity="0.85" />
+            <rect x="6" y="6" width="1" height="5" fill={leftColor} />
+            <rect x="7" y="7" width="1" height="5" fill={leftColor} opacity="0.8" />
+            <rect x="8" y="8" width="1" height="4" fill={leftColor} />
+            <rect x="9" y="9" width="1" height="3" fill={leftColor} opacity="0.7" />
+
+            {/* Lower feather tips */}
+            <rect x="1" y="5" width="1" height="3" fill={leftColor} opacity="0.7" />
+            <rect x="2" y="7" width="1" height="4" fill={leftColor} opacity="0.75" />
+            <rect x="3" y="9" width="1" height="4" fill={leftColor} opacity="0.8" />
+            <rect x="4" y="10" width="1" height="5" fill={leftColor} opacity="0.85" />
+            <rect x="5" y="11" width="1" height="5" fill={leftColor} opacity="0.9" />
+            <rect x="6" y="11" width="1" height="5" fill={leftColor} />
+            <rect x="7" y="12" width="1" height="4" fill={leftColor} opacity="0.9" />
+
+            {/* Highlight pixels */}
+            <rect x="2" y="1" width="1" height="1" fill="#fff" opacity="0.4" />
+            <rect x="4" y="2" width="1" height="1" fill="#fff" opacity="0.3" />
+
+            {/* ═══════════ RIGHT WING ═══════════ */}
+            {/* Top feathers */}
+            <rect x="23" y="2" width="1" height="1" fill={rightColor} opacity="0.8" />
+            <rect x="22" y="1" width="1" height="2" fill={rightColor} filter="url(#glow)" />
+            <rect x="21" y="0" width="1" height="3" fill={rightColor} opacity="0.9" />
+            <rect x="20" y="0" width="1" height="4" fill={rightColor} filter="url(#glow)" />
+            <rect x="19" y="1" width="1" height="4" fill={rightColor} />
+            <rect x="18" y="2" width="1" height="5" fill={rightColor} opacity="0.95" />
+
+            {/* Main wing body */}
+            <rect x="21" y="3" width="1" height="4" fill={rightColor} />
+            <rect x="20" y="4" width="1" height="5" fill={rightColor} opacity="0.9" />
+            <rect x="19" y="5" width="1" height="5" fill={rightColor} />
+            <rect x="18" y="7" width="1" height="4" fill={rightColor} opacity="0.85" />
+            <rect x="17" y="6" width="1" height="5" fill={rightColor} />
+            <rect x="16" y="7" width="1" height="5" fill={rightColor} opacity="0.8" />
+            <rect x="15" y="8" width="1" height="4" fill={rightColor} />
+            <rect x="14" y="9" width="1" height="3" fill={rightColor} opacity="0.7" />
+
+            {/* Lower feather tips */}
+            <rect x="22" y="5" width="1" height="3" fill={rightColor} opacity="0.7" />
+            <rect x="21" y="7" width="1" height="4" fill={rightColor} opacity="0.75" />
+            <rect x="20" y="9" width="1" height="4" fill={rightColor} opacity="0.8" />
+            <rect x="19" y="10" width="1" height="5" fill={rightColor} opacity="0.85" />
+            <rect x="18" y="11" width="1" height="5" fill={rightColor} opacity="0.9" />
+            <rect x="17" y="11" width="1" height="5" fill={rightColor} />
+            <rect x="16" y="12" width="1" height="4" fill={rightColor} opacity="0.9" />
+
+            {/* Highlight pixels */}
+            <rect x="21" y="1" width="1" height="1" fill="#fff" opacity="0.4" />
+            <rect x="19" y="2" width="1" height="1" fill="#fff" opacity="0.3" />
+
+            {/* ═══════════ CENTER BODY ═══════════ */}
+            <rect x="10" y="8" width="4" height="6" fill={leftColor} opacity="0.5" />
+            <rect x="11" y="9" width="2" height="4" fill={leftColor} opacity="0.7" />
         </svg>
     );
 };

@@ -127,32 +127,7 @@ export interface CostumeSet {
 }
 
 export const COSTUME_SETS: CostumeSet[] = [
-    {
-        id: 'costume_carnivoret',
-        name: 'Carnivoret Seti',
-        description: 'Dinozor temalı efsanevi kostüm seti. Tüm sınıflar için özel silahlar, kanat ve zırh içerir.',
-        theme: 'dinosaur',
-        tier: 5,
-        price: 500, // 500 Gem
-        color: '#22c55e',
-        weapons: {
-            warrior: '/models/items/weapons/warrior/warrior_sword_shiny.gltf',
-            archer: '/models/items/weapons/archer/archer_bow_shiny.gltf',
-            archmage: '/models/items/weapons/archmage/archmage_staff_shiny.gltf',
-            cleric: '/models/items/weapons/cleric/cleric_mace_shiny.gltf',
-            reaper: '/models/items/weapons/reaper/scythe_reaper_shiny.gltf',
-            arctic_knight: '/models/items/weapons/warrior/warrior_sword_shiny.gltf',
-            martial_artist: '/models/items/weapons/warrior/warrior_sword_shiny.gltf',
-            bard: '/models/items/weapons/bard/bard_harp_shiny.gltf',
-        },
-        wing: '/models/costumes/carnivoret/wing.gltf',
-        hat: '/models/costumes/carnivoret/hat.gltf',
-        // armorTexture1: REMOVED - using body color instead
-        // armorTexture2: REMOVED
-        bonusDamage: 50,
-        bonusHp: 500,
-        bonusDefense: 25,
-    },
+    // Costume sets will be added here in future updates
 ];
 
 export const PETS_DATA: PetItem[] = [

@@ -11,13 +11,11 @@ import { COSTUME_SETS } from '../constants';
 export const WEAPON_MAP: Record<CharacterClass, string> = {
     warrior: '/models/items/weapons/warrior/warrior_sword_shiny.gltf',
     arctic_knight: '/models/items/weapons/arctic_knight/frigid_lance_arctic_knight.gltf',
-    gale_glaive: '/models/items/weapons/gale_glaive/gale_glaive_windreaver_ancient.gltf',
     archer: '/models/items/weapons/archer/archer_bow_shiny.gltf',
     archmage: '/models/items/weapons/archmage/archmage_staff_shiny.gltf',
     bard: '/models/items/weapons/bard/bard_harp_shiny.gltf',
     cleric: '/models/items/weapons/cleric/cleric_mace_shiny.gltf',
     martial_artist: '/models/items/weapons/martial_artist/martial_artist_gauntlet.gltf',
-    monk: '/models/items/weapons/monk/monk_gauntlet_shiny.gltf',
     reaper: '/models/items/weapons/reaper/scythe_reaper_shiny.gltf',
 };
 
@@ -46,14 +44,7 @@ const CLASS_APPEARANCE: Record<CharacterClass, {
         skin: '#f5e6d3',       // Pale skin
         eyes: '#00ced1',       // Cyan eyes
     },
-    gale_glaive: {
-        body: '#27ae60',       // Emerald green
-        bodyAccent: '#1e8449', // Dark emerald
-        legs: '#145a32',       // Forest green
-        hair: '#4a4a4a',       // Grey hair
-        skin: '#deb887',       // Tan skin
-        eyes: '#27ae60',       // Green eyes
-    },
+
     archer: {
         body: '#2d5a27',       // Forest green tunic
         bodyAccent: '#1e3d14', // Dark forest trim
@@ -94,14 +85,7 @@ const CLASS_APPEARANCE: Record<CharacterClass, {
         skin: '#d2a679',       // Tan skin
         eyes: '#2c3e50',       // Dark eyes
     },
-    monk: {
-        body: '#e67e22',       // Orange monk robes
-        bodyAccent: '#d35400', // Burnt orange
-        legs: '#a04000',       // Brown-orange
-        hair: '#bdc3c7',       // Shaved/grey
-        skin: '#d2a679',       // Tan skin
-        eyes: '#5d4037',       // Brown eyes
-    },
+
     reaper: {
         body: '#1a1a2e',       // Dark purple-black cloak
         bodyAccent: '#16213e', // Darker trim
@@ -121,13 +105,13 @@ const WEAPON_HOLD: Record<CharacterClass, {
 }> = {
     warrior: { position: [0.00, 0.10, 0.60], rotation: [1.36, -0.04, 0.00], scale: 0.85 }, // Kılıç - doğru pozisyon
     arctic_knight: { position: [0.00, 0.00, 0.20], rotation: [1.36, -0.04, -0.04], scale: 0.80 }, // Mızrak - doğru pozisyon
-    gale_glaive: { position: [0.00, 0.00, 0.00], rotation: [1.26, 0.00, 0.06], scale: 0.75 }, // Mızrak - doğru pozisyon
+
     archer: { position: [0.00, 0.20, 0.05], rotation: [-2.34, 0.00, 0.00], scale: 0.40 },  // Yay - doğru pozisyon
     archmage: { position: [0.00, 0.05, 0.15], rotation: [1.16, -0.04, -0.04], scale: 0.45 }, // Asa - doğru pozisyon
     bard: { position: [0.05, 0.10, 0.25], rotation: [1.16, 3.06, 0.16], scale: 0.55 },      // Harp - doğru pozisyon
     cleric: { position: [0.05, 0.10, 0.25], rotation: [1.16, 3.06, 0.26], scale: 0.50 },    // Topuz - doğru pozisyon
     martial_artist: { position: [0.00, 0.00, 0.00], rotation: [0.06, -3.14, -0.04], scale: 0.70 }, // Eldiven - doğru pozisyon
-    monk: { position: [0.05, 0.00, 0.00], rotation: [0.16, -3.14, -0.14], scale: 0.60 },    // Eldiven - doğru pozisyon
+
     reaper: { position: [0, -0.10, 0.30], rotation: [1.06, 3.06, 0.06], scale: 0.55 }, // Tırpan - doğru pozisyon
 };
 
@@ -551,7 +535,7 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
             const castSpeed = 12;
 
             // Sınıfa göre farklı skill animasyonları
-            if (charClass === 'warrior' || charClass === 'arctic_knight' || charClass === 'gale_glaive') {
+            if (charClass === 'warrior' || charClass === 'arctic_knight') {
                 // Savaşçı tipi: Güçlü kılıç/mızrak sallama
                 if (skillNum === 1 || skillNum === 2) {
                     // Overhead slam - yukarıdan aşağı güçlü vuruş
@@ -600,7 +584,7 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                     leftArmRef.current.rotation.x = -0.3 - Math.abs(Math.sin(t * castSpeed)) * 0.4;
                     leftArmRef.current.rotation.z = -0.3;
                 }
-            } else if (charClass === 'martial_artist' || charClass === 'monk') {
+            } else if (charClass === 'martial_artist') {
                 // Dövüşçü: Hızlı yumruk/tekme kombinasyonu (YÖN DEĞİŞTİRMEZ)
                 const combo = skillNum % 3;
                 if (combo === 1) {
@@ -859,8 +843,8 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                     <meshStandardMaterial color={appearance.skin} />
                 </mesh>
 
-                {/* ======= LEFT HAND WEAPON (for martial_artist and monk) ======= */}
-                {(charClass === 'martial_artist' || charClass === 'monk') && (
+                {/* ======= LEFT HAND WEAPON (for martial_artist) ======= */}
+                {charClass === 'martial_artist' && (
                     <group position={[0, -armHeight + 0.05, 0]}>
                         <group
                             position={[-weaponHold.position[0], weaponHold.position[1], weaponHold.position[2]]}

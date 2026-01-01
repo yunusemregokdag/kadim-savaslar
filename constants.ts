@@ -27,13 +27,11 @@ export const FACTIONS: Record<Faction, { name: string, color: string, descriptio
 export const CLASS_BASE_STATS: Record<CharacterClass, { str: number, dex: number, int: number, vit: number }> = {
     warrior: { str: 12, dex: 4, int: 2, vit: 15 },     // Tank: High HP (VIT), Good Dmg (STR)
     arctic_knight: { str: 10, dex: 5, int: 4, vit: 14 },
-    gale_glaive: { str: 8, dex: 14, int: 3, vit: 8 },
     archer: { str: 4, dex: 15, int: 3, vit: 8 },
     archmage: { str: 2, dex: 4, int: 16, vit: 5 },
     bard: { str: 4, dex: 12, int: 12, vit: 6 },
     cleric: { str: 6, dex: 4, int: 12, vit: 12 },
     martial_artist: { str: 14, dex: 12, int: 2, vit: 8 },
-    monk: { str: 10, dex: 10, int: 8, vit: 10 },
     reaper: { str: 14, dex: 8, int: 6, vit: 6 },
 };
 
@@ -113,10 +111,8 @@ export interface CostumeSet {
         archmage: string;
         cleric: string;
         reaper: string;
-        gale_glaive: string;
         arctic_knight: string;
         martial_artist: string;
-        monk: string;
         bard: string;
     };
     // Ortak kozmetikler
@@ -140,16 +136,14 @@ export const COSTUME_SETS: CostumeSet[] = [
         price: 500, // 500 Gem
         color: '#22c55e',
         weapons: {
-            warrior: '/models/items/weapons/warrior/warrior_sword_shiny.gltf', // Placeholder
-            archer: '/models/items/weapons/archer/archer_bow_shiny.gltf', // Placeholder
-            archmage: '/models/items/weapons/archmage/archmage_staff_shiny.gltf', // Placeholder
-            cleric: '/models/items/weapons/cleric/cleric_mace_shiny.gltf', // Placeholder
-            reaper: '/models/items/weapons/reaper/scythe_reaper_shiny.gltf', // Placeholder
-            gale_glaive: '/models/items/weapons/warrior/warrior_sword_shiny.gltf', // Placeholder
-            arctic_knight: '/models/items/weapons/warrior/warrior_sword_shiny.gltf', // Placeholder
-            martial_artist: '/models/items/weapons/warrior/warrior_sword_shiny.gltf', // Placeholder
-            monk: '/models/items/weapons/warrior/warrior_sword_shiny.gltf', // Placeholder
-            bard: '/models/items/weapons/bard/bard_harp_shiny.gltf', // Placeholder
+            warrior: '/models/items/weapons/warrior/warrior_sword_shiny.gltf',
+            archer: '/models/items/weapons/archer/archer_bow_shiny.gltf',
+            archmage: '/models/items/weapons/archmage/archmage_staff_shiny.gltf',
+            cleric: '/models/items/weapons/cleric/cleric_mace_shiny.gltf',
+            reaper: '/models/items/weapons/reaper/scythe_reaper_shiny.gltf',
+            arctic_knight: '/models/items/weapons/warrior/warrior_sword_shiny.gltf',
+            martial_artist: '/models/items/weapons/warrior/warrior_sword_shiny.gltf',
+            bard: '/models/items/weapons/bard/bard_harp_shiny.gltf',
         },
         wing: '/models/costumes/carnivoret/wing.gltf',
         hat: '/models/costumes/carnivoret/hat.gltf',
@@ -237,25 +231,6 @@ export const CLASSES: Record<CharacterClass, ClassData> = {
             { id: 'ak4', name: 'Donduran Bakış', name_en: 'Freezing Gaze', description: 'Düşmanları yavaşlatır.', description_en: 'Slows down enemies.', cd: 12, manaCost: 30, levelReq: 8, type: 'utility', icon: '/models/icons/arctic_knight/icon_frostbite_e.png', visual: 'arctic_freeze', modelPath: '/models/skills/arctic_knight/fx_frostbite.gltf' },
             { id: 'ak5', name: 'Çığ', name_en: 'Avalanche', description: 'Alana buz hasarı.', description_en: 'Area of effect ice damage.', cd: 15, manaCost: 40, levelReq: 3, type: 'damage', icon: '/models/icons/arctic_knight/icon_arctic_charge.png', visual: 'arctic_charge', modelPath: '/models/skills/arctic_knight/fx_arctic_charge.gltf' },
             { id: 'ak7', name: 'Kar Fırtınası (Ulti)', name_en: 'Blizzard (Ulti)', description: 'Geniş alan dondurucu hasar.', description_en: 'Massive freezing AoE damage.', cd: 45, manaCost: 80, levelReq: 20, type: 'ultimate', icon: '/models/icons/arctic_knight/icon_glacier_smash_e.png', visual: 'arctic_crater', modelPath: '/models/skills/arctic_knight/fx_ice_crater_big.gltf' },
-        ]
-    },
-    gale_glaive: {
-        id: 'gale_glaive',
-        name: 'Fırtına Süvarisi',
-        name_en: 'Gale Glaive',
-        role: 'DPS / Mobile',
-        role_en: 'DPS / Mobile',
-        description: 'Rüzgar hızında saldıran mızrak ustası.',
-        description_en: 'Spear master attacking at wind speed.',
-        mechanic: 'Özellik: Hareket ettikçe saldırı hızı artar.',
-        mechanic_en: 'Mechanic: Attack speed increases with movement.',
-        skills: [
-            { id: 'gg1', name: 'Rüzgar Delici', name_en: 'Wind Piercer', description: 'Delici mızrak saldırısı.', description_en: 'Piercing spear attack.', cd: 1.0, manaCost: 5, levelReq: 1, type: 'damage', icon: '/models/icons/gale_glaive/icon_cloudpiercer.png', visual: 'gale_thrust', modelPath: '/models/skills/gale_glaive/vfx_gale_thrust_1.gltf' },
-            { id: 'gg2', name: 'Hava Akımı', name_en: 'Air Current', description: 'Hareket hızını artırır.', description_en: 'Increases movement speed.', cd: 10, manaCost: 25, levelReq: 8, type: 'buff', icon: '/models/icons/gale_glaive/icon_windbound_fury.png', visual: 'gale_dash', modelPath: '/models/skills/gale_glaive/vfx_gale_dash_1.gltf' },
-            { id: 'gg3', name: 'Kasırga Dönüşü', name_en: 'Hurricane Spin', description: 'Etrafındaki düşmanlara hasar.', description_en: 'Damage to surrounding enemies.', cd: 12, manaCost: 35, type: 'damage', icon: '/models/icons/gale_glaive/icon_dancing_blade.png', visual: 'gale_whirlwind', modelPath: '/models/skills/gale_glaive/vfx_gale_spin.gltf' },
-            { id: 'gg4', name: 'Gökten İniş', name_en: 'Skyfall', description: 'Havadan yere çarpar.', description_en: 'Crashes down from the sky.', cd: 15, manaCost: 40, levelReq: 3, type: 'damage', icon: '/models/icons/gale_glaive/icon_vault.png', visual: 'gale_vault', modelPath: '/models/skills/gale_glaive/vfx_gale_vault_1.gltf' },
-            { id: 'gg5', name: 'Rüzgar Duvarı', name_en: 'Wind Wall', description: 'Gelen hasarı azaltır.', description_en: 'Reduces incoming damage.', cd: 20, manaCost: 30, type: 'buff', icon: '/models/icons/gale_glaive/icon_windrune_blade.png', visual: 'gale_tornado', modelPath: '/models/skills/gale_glaive/vfx_gale_tornado.gltf' },
-            { id: 'gg7', name: 'Fırtına Öfkesi (Ulti)', name_en: 'Storm Fury (Ulti)', description: 'Seri mızrak darbeleri.', description_en: 'Rapid spear strikes.', cd: 40, manaCost: 70, type: 'ultimate', icon: '/models/icons/gale_glaive/icon_torrent.png', visual: 'gale_slash', modelPath: '/models/skills/gale_glaive/vfx_gale_slash_1.gltf' },
         ]
     },
     archer: {
@@ -353,25 +328,6 @@ export const CLASSES: Record<CharacterClass, ClassData> = {
             { id: 'ma7', name: 'Yedi Yıldız (Ulti)', name_en: 'Seven Stars (Ulti)', description: 'Hasar: 7 Vuruşluk Ölümcül Kombo.', description_en: 'Dmg: 7-Hit Lethal Combo.', cd: 50, manaCost: 80, type: 'ultimate', icon: '/models/icons/martial_artist/icon_multi_strike_e.png', visual: 'martial_multi', modelPath: '/models/skills/martial_artist/multi_strike_1.json' },
         ]
     },
-    monk: {
-        id: 'monk',
-        name: 'Ruhban',
-        name_en: 'Monk',
-        role: 'Hybrid / Support',
-        role_en: 'Hybrid / Support',
-        description: 'Ruhsal ve fiziksel denge.',
-        description_en: 'Spiritual and physical balance.',
-        mechanic: 'Özellik: Hasar verirken takımı iyileştirebilir.',
-        mechanic_en: 'Mechanic: Can heal allies while dealing damage.',
-        skills: [
-            { id: 'mk1', name: 'Asa Vuruşu', name_en: 'Staff Strike', description: 'Hasar: %110 Fiziksel.', description_en: 'Dmg: 110% Phys.', cd: 1.0, manaCost: 5, levelReq: 1, type: 'damage', icon: '/models/icons/monk/icon_counterstrike_e.png', visual: 'monk_punch', modelPath: '/models/skills/monk/vfx_monk_impact_1.gltf' },
-            { id: 'mk2', name: 'Mantra', name_en: 'Mantra', description: 'Buff: +50% Defans (10sn).', description_en: 'Buff: +50% Def (10s).', cd: 15, manaCost: 30, levelReq: 10, type: 'buff', icon: '/models/icons/monk/icon_beads_of_karma.png', visual: 'monk_meditation', modelPath: '/models/skills/monk/vfx_meditation_beads.gltf', duration: 10 },
-            { id: 'mk3', name: 'Ruh Darbesi', name_en: 'Soul Strike', description: 'Hasar: Zırh Delici Büyü Hasarı.', description_en: 'Dmg: Armor Piercing Magic Dmg.', cd: 8, manaCost: 20, levelReq: 5, type: 'damage', icon: '/models/icons/monk/icon_chi_blast_e.png', visual: 'monk_blast', modelPath: '/models/skills/monk/vfx_chi_blast.gltf' },
-            { id: 'mk4', name: 'Huzur', name_en: 'Serenity', description: 'CC: Alan Sakinleştirme (5sn).', description_en: 'CC: AoE Pacify (5s).', cd: 20, manaCost: 30, type: 'utility', icon: '/models/icons/monk/icon_focus_chi_e.png', visual: 'monk_heal', modelPath: '/models/skills/monk/vfx_chi_heal.gltf', duration: 5 },
-            { id: 'mk5', name: 'Bin El', name_en: 'Thousand Hands', description: 'Hasar: 10x Hızlı Vuruş.', description_en: 'Dmg: 10x Rapid Strike.', cd: 12, manaCost: 40, type: 'damage', icon: '/models/icons/monk/icon_swift_strikes_e.png', visual: 'monk_punch', modelPath: '/models/skills/monk/vfx_swift_strikes_1.gltf' },
-            { id: 'mk7', name: 'Nirvana (Ulti)', name_en: 'Nirvana (Ulti)', description: 'Buff: Ölümsüzlük + %100 Hasar (8sn).', description_en: 'Buff: Invulnerable + 100% Dmg (8s).', cd: 80, manaCost: 100, levelReq: 25, type: 'ultimate', icon: '/models/icons/monk/icon_dragon_fists_e.png', visual: 'monk_palm', modelPath: '/models/skills/monk/vfx_monk_dragon_fists.gltf', duration: 8 },
-        ]
-    },
     reaper: {
         id: 'reaper',
         name: 'Ölüm Meleği',
@@ -411,10 +367,6 @@ export const CLASS_STARTER_ITEMS: Record<CharacterClass, Item[]> = {
         { id: 'start_ak_1', name: 'Buz Mızrağı', tier: 1, type: 'weapon', rarity: 'common', classReq: 'arctic_knight', visuals: { model: '/models/items/weapons/arctic_knight/frigid_lance_arctic_knight.gltf', primaryColor: '#38bdf8' } },
         { id: 'start_ak_2', name: 'Buz Zırhı', tier: 1, type: 'armor', rarity: 'common', classReq: 'arctic_knight' }
     ],
-    gale_glaive: [
-        { id: 'start_gg_1', name: 'Rüzgar Mızrağı', tier: 1, type: 'weapon', rarity: 'common', classReq: 'gale_glaive', visuals: { model: '/models/items/weapons/gale_glaive/gale_glaive_windreaver_ancient.gltf', primaryColor: '#14b8a6' } },
-        { id: 'start_gg_2', name: 'Hafif Zırh', tier: 1, type: 'armor', rarity: 'common', classReq: 'gale_glaive' }
-    ],
     archer: [
         { id: 'start_ar_1', name: 'Avcı Yayı', tier: 1, type: 'weapon', rarity: 'common', classReq: 'archer', visuals: { model: '/models/items/weapons/archer/archer_bow_shiny.gltf', primaryColor: '#a3e635' } },
         { id: 'start_ar_2', name: 'Deri Zırh', tier: 1, type: 'armor', rarity: 'common', classReq: 'archer' }
@@ -434,10 +386,6 @@ export const CLASS_STARTER_ITEMS: Record<CharacterClass, Item[]> = {
     martial_artist: [
         { id: 'start_ma_1', name: 'Dövüş Eldiveni', tier: 1, type: 'weapon', rarity: 'common', classReq: 'martial_artist', visuals: { model: '/models/items/weapons/martial_artist/martial_artist_gauntlet.gltf', primaryColor: '#fca5a5' } },
         { id: 'start_ma_2', name: 'Dövüşçü Giysisi', tier: 1, type: 'armor', rarity: 'common', classReq: 'martial_artist' }
-    ],
-    monk: [
-        { id: 'start_mk_1', name: 'Keşiş Eldiveni', tier: 1, type: 'weapon', rarity: 'common', classReq: 'monk', visuals: { model: '/models/items/weapons/monk/monk_gauntlet_shiny.gltf', primaryColor: '#fbbf24' } },
-        { id: 'start_mk_2', name: 'Keşiş Cübbesi', tier: 1, type: 'armor', rarity: 'common', classReq: 'monk' }
     ],
     reaper: [
         { id: 'start_rp_1', name: 'Ölüm Tırpanı', tier: 1, type: 'weapon', rarity: 'common', classReq: 'reaper', visuals: { model: '/models/items/weapons/reaper/scythe_reaper_shiny.gltf', primaryColor: '#1e293b' } },

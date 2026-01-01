@@ -1,5 +1,5 @@
 import React, { useRef, useMemo } from 'react';
-import { useGLTF, Sparkles, Trail } from '@react-three/drei';
+import { useGLTF, Sparkles, Trail, useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { CharacterClass, Item, WingItem, PetItem } from '../types';
@@ -485,15 +485,24 @@ const GltfWings: React.FC<{ modelPath: string; color: string; isMoving: boolean 
     useFrame((state) => {
         if (groupRef.current) {
             const t = state.clock.elapsedTime;
-            const flapSpeed = isMoving ? 5 : 2;
-            const flapAmp = isMoving ? 0.1 : 0.05;
-            // Gentle hovering motion
-            groupRef.current.position.y = 0.5 + Math.sin(t * flapSpeed) * flapAmp;
+            const flapSpeed = isMoving ? 8 : 3;
+            const flapAmp = isMoving ? 0.15 : 0.05;
+
+            // Sırtına takılı olduğu için hafif bir süzülme/çırpma efekti (Rotasyonel)
+            // Z ekseninde hafifçe öne arkaya gidip gelme (çırpma benzeri)
+            // Kanatların uçlarını (primitive scale ile) simüle edebiliriz ama basit rotasyon yeterli.
+
+            // Hafif yukarı aşağı (Hover)
+            groupRef.current.position.y = 0.1 + Math.sin(t * flapSpeed) * 0.02;
+
+            // Hafif rotasyon (Çırpma hissi) - X ekseninde hafif eğilip kalkma
+            groupRef.current.rotation.x = Math.PI + Math.sin(t * flapSpeed) * flapAmp;
         }
     });
 
     return (
-        <group ref={groupRef} position={[0, 0.5, -0.2]} scale={[0.8, 0.8, 0.8]} rotation={[0, Math.PI, 0]}>
+        // Sırtın tam ortasına denk gelecek pozisyon
+        <group ref={groupRef} position={[0, 0.1, -0.15]} scale={[0.8, 0.8, 0.8]} rotation={[0, Math.PI, 0]}>
             <primitive object={clonedScene} />
             <Sparkles count={8} scale={0.8} size={2} speed={0.4} opacity={0.5} color={color} />
         </group>
@@ -503,6 +512,28 @@ const GltfWings: React.FC<{ modelPath: string; color: string; isMoving: boolean 
 // ============================================
 // MAIN VOXEL SPARTAN COMPONENT
 // Minecraft-style blocky character with weapon attached to hand
+// --- HELPER COMPONENT FOR HAT ---
+const CostumeHat = ({ modelPath }: { modelPath: string }) => {
+    const { scene } = useGLTF(modelPath);
+    const cloned = useMemo(() => scene.clone(), [scene]);
+    return <primitive object={cloned} />;
+};
+
+// --- HELPER COMPONENT FOR BODY MATERIAL ---
+const CostumeBodyMaterial = ({ texturePath, baseColor }: { texturePath: string, baseColor: string }) => {
+    // Falls back to baseColor if texture fails loads (or blank)
+    // Note: useTexture should ideally be handled with Suspense or preload.
+    // For safety, we use a simple texture load.
+    const texture = useTexture(texturePath);
+
+    // Texture ayarları
+    texture.flipY = false;
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.magFilter = THREE.NearestFilter; // Pixel art look
+
+    return <meshStandardMaterial map={texture} color="#ffffff" />;
+};
+
 // ============================================
 export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
     const groupRef = useRef<THREE.Group>(null);
@@ -767,25 +798,35 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                     <meshStandardMaterial color={appearance.skin} />
                 </mesh>
 
-                {/* Hair (top and back) */}
-                <mesh position={[0, 0.15, -0.05]} castShadow>
-                    <boxGeometry args={[headSize + 0.02, 0.22, headSize - 0.05]} />
-                    <meshStandardMaterial color={appearance.hair} />
-                </mesh>
-                {/* Hair bangs (front) */}
-                <mesh position={[0, 0.22, 0.2]} castShadow>
-                    <boxGeometry args={[headSize - 0.05, 0.1, 0.1]} />
-                    <meshStandardMaterial color={appearance.hair} />
-                </mesh>
-                {/* Side hair */}
-                <mesh position={[0.22, 0.05, 0]} castShadow>
-                    <boxGeometry args={[0.08, 0.35, 0.4]} />
-                    <meshStandardMaterial color={appearance.hair} />
-                </mesh>
-                <mesh position={[-0.22, 0.05, 0]} castShadow>
-                    <boxGeometry args={[0.08, 0.35, 0.4]} />
-                    <meshStandardMaterial color={appearance.hair} />
-                </mesh>
+                {/* Hat (Costume) Or Hair (Default) */}
+                {equippedCostume?.hat ? (
+                    // Load Hat Model
+                    <group position={[0, 0.35, 0]} scale={[0.6, 0.6, 0.6]}>
+                        <CostumeHat modelPath={equippedCostume.hat} />
+                    </group>
+                ) : (
+                    <>
+                        {/* Hair (top and back) */}
+                        <mesh position={[0, 0.15, -0.05]} castShadow>
+                            <boxGeometry args={[headSize + 0.02, 0.22, headSize - 0.05]} />
+                            <meshStandardMaterial color={appearance.hair} />
+                        </mesh>
+                        {/* Hair bangs (front) */}
+                        <mesh position={[0, 0.22, 0.2]} castShadow>
+                            <boxGeometry args={[headSize - 0.05, 0.1, 0.1]} />
+                            <meshStandardMaterial color={appearance.hair} />
+                        </mesh>
+                        {/* Side hair */}
+                        <mesh position={[0.22, 0.05, 0]} castShadow>
+                            <boxGeometry args={[0.08, 0.35, 0.4]} />
+                            <meshStandardMaterial color={appearance.hair} />
+                        </mesh>
+                        <mesh position={[-0.22, 0.05, 0]} castShadow>
+                            <boxGeometry args={[0.08, 0.35, 0.4]} />
+                            <meshStandardMaterial color={appearance.hair} />
+                        </mesh>
+                    </>
+                )}
 
                 {/* Face features */}
                 {/* Eyes */}
@@ -816,9 +857,16 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
             {/* =========== BODY =========== */}
             <group ref={bodyRef} position={[0, offsets.bodyY, 0]}>
                 {/* Main torso */}
+                {/* Gövde Mesh'i - Zırh Texture Desteği */}
                 <mesh castShadow receiveShadow>
                     <boxGeometry args={[bodyWidth, bodyHeight, bodyDepth]} />
-                    <meshStandardMaterial color={appearance.body} />
+                    {equippedCostume?.armorTexture1 ? (
+                        // Zırh Texture'ı varsa kullan
+                        <CostumeBodyMaterial texturePath={equippedCostume.armorTexture1} baseColor={appearance.body} />
+                    ) : (
+                        // Yoksa normal renk
+                        <meshStandardMaterial color={appearance.body} />
+                    )}
                 </mesh>
                 {/* Body accent (belt/trim) */}
                 <mesh position={[0, -0.32, 0.01]} castShadow>
@@ -1010,16 +1058,14 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
             {/* =========== WINGS =========== */}
             {/* Costume wing takes priority, then regular wingType */}
             {(equippedCostume?.wing || props.wingType) && (
-                <group position={[0, 1.0, -0.15]}>
+                <group position={[0, 0.75, -0.15]}> {/* Düzeltilmiş Sırt Pozisyonu */}
                     {equippedCostume?.wing ? (
-                        // Use costume's GLTF wing model
                         <GltfWings
                             modelPath={equippedCostume.wing}
                             color={equippedCostume.color || '#10b981'}
                             isMoving={props.isMoving || false}
                         />
                     ) : props.wingType ? (
-                        // Use normal wingType
                         <AdvancedWings
                             type={props.wingType.type}
                             color={props.wingType.color}
@@ -1030,7 +1076,6 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                 </group>
             )}
 
-            {/* =========== PET =========== */}
             {/* =========== PET =========== */}
             {props.petType && (
                 <group position={[-0.8, 0, -0.5]} rotation={[0, Math.PI, 0]}> {/* Sol taraf, arkada, 180 derece dönük */}

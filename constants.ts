@@ -140,19 +140,19 @@ export const COSTUME_SETS: CostumeSet[] = [
         price: 500, // 500 Gem
         color: '#22c55e',
         weapons: {
-            warrior: '/models/costumes/carnivoret/sword.gltf',
-            archer: '/models/costumes/carnivoret/bow.gltf',
-            archmage: '/models/costumes/carnivoret/staff.gltf',
-            cleric: '/models/costumes/carnivoret/hammer.gltf',
-            reaper: '/models/costumes/carnivoret/scythe.gltf',
-            gale_glaive: '/models/costumes/carnivoret/spear.gltf',
-            arctic_knight: '/models/costumes/carnivoret/spear.gltf',
-            martial_artist: '/models/costumes/carnivoret/axe.gltf',
-            monk: '/models/costumes/carnivoret/staff.gltf',
-            bard: '/models/costumes/carnivoret/hoe.gltf',
+            warrior: '/models/items/weapons/warrior/warrior_sword_shiny.gltf', // Placeholder
+            archer: '/models/items/weapons/archer/archer_bow_shiny.gltf', // Placeholder
+            archmage: '/models/items/weapons/archmage/archmage_staff_shiny.gltf', // Placeholder
+            cleric: '/models/items/weapons/cleric/cleric_mace_shiny.gltf', // Placeholder
+            reaper: '/models/items/weapons/reaper/scythe_reaper_shiny.gltf', // Placeholder
+            gale_glaive: '/models/items/weapons/warrior/warrior_sword_shiny.gltf', // Placeholder
+            arctic_knight: '/models/items/weapons/warrior/warrior_sword_shiny.gltf', // Placeholder
+            martial_artist: '/models/items/weapons/warrior/warrior_sword_shiny.gltf', // Placeholder
+            monk: '/models/items/weapons/warrior/warrior_sword_shiny.gltf', // Placeholder
+            bard: '/models/items/weapons/bard/bard_harp_shiny.gltf', // Placeholder
         },
-        wing: '/models/costumes/carnivoret/wing.gltf',
-        hat: '/models/costumes/carnivoret/hat.gltf',
+        // wing: '/models/costumes/carnivoret/wing.gltf', // Commented out until file exists
+        // hat: '/models/costumes/carnivoret/hat.gltf', // Commented out until file exists
         armorTexture1: '/models/costumes/carnivoret/carnivoret_armor_layer_1.png',
         armorTexture2: '/models/costumes/carnivoret/carnivoret_armor_layer_2.png',
         bonusDamage: 50,

@@ -344,136 +344,144 @@ const WING_PATTERNS: Record<string, string[]> = {
 };
 
 const AdvancedWings: React.FC<{ type: WingItem['type']; color: string; isMoving: boolean; modelPath?: string; offsetY?: number }> = ({ type, color, isMoving, modelPath, offsetY }) => {
-    // If GLTF model exists (e.g. for complex custom models), use it
+    // If GLTF model exists (e.g. for butterfly custom models), use it
     if (modelPath) {
         return <GltfWings modelPath={modelPath} color={color} isMoving={isMoving} />;
     }
 
     const rightWingRef = useRef<THREE.Group>(null);
     const leftWingRef = useRef<THREE.Group>(null);
-    const glowRef = useRef<any>(null);
 
     useFrame((state) => {
         const t = state.clock.elapsedTime;
-        // More organic, heavier flap animation
-        const flapSpeed = isMoving ? 8 : 1.5;
-        const flapAmpY = isMoving ? 0.6 : 0.15; // Back/Forth swing
-        const flapAmpZ = isMoving ? 0.2 : 0.05; // Up/Down tilt
+        const flapSpeed = isMoving ? 6 : 1.2;
+        const flapAmp = isMoving ? 0.4 : 0.1;
 
         if (rightWingRef.current) {
-            // Complex compound rotation for natural feel
-            rightWingRef.current.rotation.y = -0.3 + Math.sin(t * flapSpeed) * flapAmpY;
-            rightWingRef.current.rotation.z = Math.cos(t * flapSpeed) * flapAmpZ;
+            rightWingRef.current.rotation.y = -0.2 + Math.sin(t * flapSpeed) * flapAmp;
+            rightWingRef.current.rotation.z = Math.cos(t * flapSpeed) * 0.05;
         }
         if (leftWingRef.current) {
-            leftWingRef.current.rotation.y = 0.3 - Math.sin(t * flapSpeed) * flapAmpY;
-            leftWingRef.current.rotation.z = -Math.cos(t * flapSpeed) * flapAmpZ;
-        }
-
-        // Pulse glow
-        if (glowRef.current) {
-            glowRef.current.intensity = 0.8 + Math.sin(t * 3) * 0.3;
+            leftWingRef.current.rotation.y = 0.2 - Math.sin(t * flapSpeed) * flapAmp;
+            leftWingRef.current.rotation.z = -Math.cos(t * flapSpeed) * 0.05;
         }
     });
 
-    // Select pattern based on wing type
-    const patternName = type === 'angel_demon' ? 'angel' : (WING_PATTERNS[type] ? type : 'angel');
-    const pattern = WING_PATTERNS[patternName];
+    // Wing color variants
+    const mainColor = color;
+    const darkColor = '#1e293b';
+    const lightColor = '#ffffff';
 
-    // Helper: Determine voxel depth/thickness based on character
-    const getVoxelDepth = (char: string): number => {
-        switch (char) {
-            case 'B': return 2; // Bone/Edge (outline)
-            case 'F': return 1; // Feather (main fill)
-            case 'T': return 1; // Tip (darker edge)
-            case 'L': return 1; // Light highlight
-            case 'S': return 2; // Spike/Shadow
-            case 'G': return 2; // Gold/Glow border
-            case 'W': return 1; // White feather
-            case 'M': return 1; // Membrane (dragon/demon)
-            case 'I': return 1; // Inner (void darkness)
-            default: return 1;
-        }
+    // Get secondary color for hybrid wings
+    const getSecondaryColor = () => {
+        if (type === 'angel_demon') return '#991b1b';
+        if (type === 'demon') return '#7f1d1d';
+        if (type === 'dragon') return '#ea580c';
+        if (type === 'void') return '#4c1d95';
+        return color;
+    };
+    const secondaryColor = getSecondaryColor();
+
+    // Simple but beautiful wing shape using planes
+    const WingShape = ({ side, wingColor }: { side: 'left' | 'right', wingColor: string }) => {
+        const isRight = side === 'right';
+        const xDir = isRight ? 1 : -1;
+
+        // Wing segments - from center outward
+        return (
+            <group rotation={[0, isRight ? -0.3 : 0.3, 0]}>
+                {/* Main Wing Structure - 3 large segments */}
+
+                {/* Inner segment (closest to body) */}
+                <mesh position={[0.15 * xDir, 0.1, 0]} rotation={[0, 0, isRight ? -0.2 : 0.2]}>
+                    <boxGeometry args={[0.25, 0.5, 0.03]} />
+                    <meshStandardMaterial
+                        color={wingColor}
+                        emissive={wingColor}
+                        emissiveIntensity={0.3}
+                        roughness={0.4}
+                        metalness={0.2}
+                    />
+                </mesh>
+
+                {/* Middle segment */}
+                <mesh position={[0.35 * xDir, 0.15, 0]} rotation={[0, 0, isRight ? -0.35 : 0.35]}>
+                    <boxGeometry args={[0.2, 0.6, 0.025]} />
+                    <meshStandardMaterial
+                        color={wingColor}
+                        emissive={wingColor}
+                        emissiveIntensity={0.25}
+                        roughness={0.5}
+                    />
+                </mesh>
+
+                {/* Outer segment (wing tip) */}
+                <mesh position={[0.5 * xDir, 0.05, 0]} rotation={[0, 0, isRight ? -0.5 : 0.5]}>
+                    <boxGeometry args={[0.15, 0.65, 0.02]} />
+                    <meshStandardMaterial
+                        color={wingColor}
+                        emissive={wingColor}
+                        emissiveIntensity={0.2}
+                        roughness={0.6}
+                    />
+                </mesh>
+
+                {/* Lower feathers */}
+                <mesh position={[0.2 * xDir, -0.2, 0]} rotation={[0, 0, isRight ? 0.1 : -0.1]}>
+                    <boxGeometry args={[0.12, 0.4, 0.02]} />
+                    <meshStandardMaterial
+                        color={secondaryColor}
+                        roughness={0.5}
+                    />
+                </mesh>
+                <mesh position={[0.35 * xDir, -0.15, 0]} rotation={[0, 0, isRight ? 0.2 : -0.2]}>
+                    <boxGeometry args={[0.1, 0.45, 0.02]} />
+                    <meshStandardMaterial
+                        color={secondaryColor}
+                        roughness={0.5}
+                    />
+                </mesh>
+                <mesh position={[0.48 * xDir, -0.1, 0]} rotation={[0, 0, isRight ? 0.3 : -0.3]}>
+                    <boxGeometry args={[0.08, 0.5, 0.02]} />
+                    <meshStandardMaterial
+                        color={secondaryColor}
+                        roughness={0.5}
+                    />
+                </mesh>
+
+                {/* Edge highlights */}
+                <mesh position={[0.15 * xDir, 0.35, 0.02]}>
+                    <boxGeometry args={[0.22, 0.04, 0.01]} />
+                    <meshStandardMaterial
+                        color={lightColor}
+                        emissive={lightColor}
+                        emissiveIntensity={0.5}
+                    />
+                </mesh>
+            </group>
+        );
     };
 
-    // Helper: Determine Color based on character
-    const getVoxelColor = (char: string): string => {
-        switch (char) {
-            case 'B': return '#1e293b'; // Dark outline
-            case 'F': return color;     // Main feather color (uses prop)
-            case 'T': return '#64748b'; // Tip shade (grey)
-            case 'L': return '#f8fafc'; // Light highlight (almost white)
-            case 'S': return '#991b1b'; // Spike (dark red for dragon)
-            case 'G': return '#fbbf24'; // Gold glow
-            case 'W': return '#ffffff'; // White
-            case 'M': return color;     // Membrane uses prop color
-            case 'I': return '#0f172a'; // Void inner (deep dark)
-            default: return color;
-        }
-    };
-
-    // Voxel Block Size - Slightly larger for better visibility
-    const s = 0.025;
-
-    // Generate Volumetric Mesh Data
-    const voxels = useMemo(() => {
-        const els: JSX.Element[] = [];
-        pattern.forEach((row, y) => {
-            row.split('').forEach((char, x) => {
-                if (char !== '.') {
-                    const depth = getVoxelDepth(char);
-                    const vColor = getVoxelColor(char);
-
-                    // Center the stack on Z=0
-                    const zStart = -Math.floor(depth / 2);
-
-                    for (let z = 0; z < depth; z++) {
-                        const zPos = (zStart + z) * s;
-                        // Should this character glow?
-                        const shouldGlow = char === 'G' || char === 'L' || char === 'F';
-                        const glowIntensity = char === 'G' ? 0.8 : (char === 'L' ? 0.4 : 0.2);
-
-                        els.push(
-                            <mesh key={`${x}-${y}-${z}`} position={[x * s, (pattern.length - y) * s, zPos]}>
-                                <boxGeometry args={[s * 0.95, s * 0.95, s * 0.95]} />
-                                <meshStandardMaterial
-                                    color={vColor}
-                                    roughness={0.6}
-                                    metalness={char === 'G' ? 0.6 : 0.1}
-                                    emissive={shouldGlow ? vColor : '#000000'}
-                                    emissiveIntensity={shouldGlow ? glowIntensity : 0}
-                                />
-                            </mesh>
-                        );
-                    }
-                }
-            });
-        });
-        return els;
-    }, [pattern, color, type]);
-
-    // Calculate pattern width for proper centering
-    const patternWidth = pattern[0]?.length || 20;
+    // Wing position: On the BACK, larger scale
+    const wingY = offsetY !== undefined ? offsetY : 0.5;
 
     return (
-        <group position={[0, offsetY ? offsetY - 0.1 : 0.55, -0.2]} scale={[1.2, 1.2, 1.2]}>
+        <group position={[0, wingY, -0.25]} scale={[1.8, 1.8, 1.8]}>
             {/* Right Wing */}
-            <group ref={rightWingRef} position={[0.08, 0, 0]}>
-                <group position={[-patternWidth * s * 0.1, -pattern.length * s * 0.5, 0]}>
-                    {voxels}
-                </group>
+            <group ref={rightWingRef}>
+                <WingShape side="right" wingColor={mainColor} />
             </group>
 
-            {/* Left Wing (Mirrored) */}
-            <group ref={leftWingRef} position={[-0.08, 0, 0]}>
-                <group position={[patternWidth * s * 0.1, -pattern.length * s * 0.5, 0]} scale={[-1, 1, 1]}>
-                    {voxels}
-                </group>
+            {/* Left Wing */}
+            <group ref={leftWingRef}>
+                <WingShape side="left" wingColor={type === 'angel_demon' ? '#f8fafc' : mainColor} />
             </group>
 
-            {/* Central Glow */}
-            <pointLight ref={glowRef} position={[0, 0, 0.1]} color={color} intensity={0.6} distance={1.5} />
-            {isMoving && <Sparkles count={8} scale={1.5} size={3} speed={0.6} opacity={0.4} color={color} />}
+            {/* Center connection glow */}
+            <pointLight position={[0, 0, 0.05]} color={mainColor} intensity={1} distance={1} />
+
+            {/* Sparkle effect when moving */}
+            {isMoving && <Sparkles count={12} scale={1.2} size={4} speed={0.8} opacity={0.5} color={mainColor} />}
         </group>
     );
 };

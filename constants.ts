@@ -741,50 +741,61 @@ export const LEVEL_XP_REQUIREMENTS: number[] = [
 // ═══════════════════════════════════════════════════════════════════════════
 export const DEFAULT_HUD_LAYOUT: HUDLayout = {
     elements: {
-        // ═══════════ SOL TARAF ═══════════
-        // Profile - Sol üst köşe (Seviye, İsim, HP/MP barları)
-        profile: { x: 2, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
+        // ═══════════════════════════════════════════════════════════════════
+        // ALBION ONLINE STYLE LAYOUT - Mobile Optimized
+        // ═══════════════════════════════════════════════════════════════════
 
-        // Quest Tracker - Profilin hemen altında
-        quest: { x: 2, y: 14, scale: 1, enabled: true, opacity: 1, locked: false },
+        // ═══════════ SOL ÜST - KARAKTER BİLGİSİ ═══════════
+        // Profile - HP/MP barları, seviye, isim
+        profile: { x: 1, y: 1, scale: 1, enabled: true, opacity: 1, locked: false },
 
-        // Chat - Quest'in altında (Genel/Parti/Klan sekmeleri)
-        chat: { x: 2, y: 28, scale: 1, enabled: true, opacity: 1, locked: false },
+        // Quest Tracker - Profilin altında, kompakt
+        quest: { x: 1, y: 12, scale: 0.9, enabled: true, opacity: 0.9, locked: false },
 
-        // Joystick - Sol alt köşe (sabit)
-        joystick: { x: 8, y: 75, scale: 1, enabled: true, opacity: 1, locked: false },
+        // ═══════════ SAĞ ÜST - MİNİMAP & MENÜ ═══════════
+        // Minimap - Sağ üst köşede (Albion tarzı yuvarlak)
+        map: { x: 82, y: 1, scale: 1, enabled: true, opacity: 1, locked: false },
 
-        // ═══════════ SAĞ ÜST ═══════════
-        // Map - Sağ üst köşe (Minimap, Zone ismi)
-        map: { x: 80, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
+        // Top Menu Buttons - Minimap altında yatay sıralı
+        top_chat: { x: 40, y: 1, scale: 0.85, enabled: true, opacity: 0.8, locked: false },
+        top_inventory: { x: 46, y: 1, scale: 0.85, enabled: true, opacity: 0.8, locked: false },
+        top_market: { x: 52, y: 1, scale: 0.85, enabled: true, opacity: 0.8, locked: false },
+        top_settings: { x: 58, y: 1, scale: 0.85, enabled: true, opacity: 0.8, locked: false },
+        top_achievements: { x: 64, y: 1, scale: 0.85, enabled: true, opacity: 0.8, locked: false },
+        top_exit: { x: 70, y: 1, scale: 0.85, enabled: true, opacity: 0.8, locked: false },
 
-        // Top Menu Buttons - Ayrıştırılmış Butonlar (Varsayılan olarak yan yana dizili)
-        top_chat: { x: 50, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
-        top_inventory: { x: 55, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
-        top_market: { x: 60, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
-        top_settings: { x: 65, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
-        top_achievements: { x: 70, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
-        top_exit: { x: 75, y: 2, scale: 1, enabled: true, opacity: 1, locked: false },
+        // ═══════════ SOL ALT - HAREKET ═══════════
+        // Joystick - Sol alt köşe (sabit, ergonomik)
+        joystick: { x: 5, y: 70, scale: 1, enabled: true, opacity: 1, locked: false },
 
-        // ═══════════ SAĞ TARAF SKİLL'LER ═══════════
-        // Eye Button (Free Look) - Sağ orta
-        eye: { x: 92, y: 30, scale: 1, enabled: true, opacity: 1, locked: false },
+        // ═══════════ ALT ORTA - CHAT ═══════════
+        // Chat - Altta ortalanmış, minimal (Albion tarzı)
+        chat: { x: 25, y: 88, scale: 0.85, enabled: true, opacity: 0.7, locked: false },
 
-        // HP/MP Potları - Eye'ın altında
-        hp_pot: { x: 92, y: 38, scale: 0.85, enabled: true, opacity: 1, locked: false },
-        mp_pot: { x: 92, y: 46, scale: 0.85, enabled: true, opacity: 1, locked: false },
+        // ═══════════ SAĞ TARAF - ALBION STYLE SKİLL ARC ═══════════
+        // Skills yay şeklinde sağ tarafa dizilmiş (başparmak ergonomisi)
+        // Daire formunda yukarıdan aşağı doğru
 
-        // Skills - Dikey sıralı, sağ tarafta (ekran içinde)
-        skill1: { x: 70, y: 30, scale: 1, enabled: true, opacity: 1, locked: false },
-        skill2: { x: 70, y: 38, scale: 1, enabled: true, opacity: 1, locked: false },
-        skill3: { x: 70, y: 46, scale: 1, enabled: true, opacity: 1, locked: false },
-        skill4: { x: 70, y: 54, scale: 1, enabled: true, opacity: 1, locked: false },
-        skill5: { x: 70, y: 62, scale: 1, enabled: true, opacity: 1, locked: false },
-        skill6: { x: 70, y: 70, scale: 1, enabled: true, opacity: 1, locked: false },
+        // Üst skill'ler (Q, W, E eşdeğeri)
+        skill1: { x: 78, y: 25, scale: 1.1, enabled: true, opacity: 1, locked: false }, // Sol üst
+        skill2: { x: 85, y: 32, scale: 1.1, enabled: true, opacity: 1, locked: false }, // Orta üst
+        skill3: { x: 90, y: 42, scale: 1.1, enabled: true, opacity: 1, locked: false }, // Sağ orta
 
-        // ═══════════ SAĞ ALT ═══════════
-        // Attack Button - Sağ alt köşe (büyük kırmızı, ekran içinde)
-        attack: { x: 85, y: 75, scale: 1.2, enabled: true, opacity: 1, locked: false },
+        // Alt skill'ler (R, F, S eşdeğeri)
+        skill4: { x: 90, y: 55, scale: 1.1, enabled: true, opacity: 1, locked: false }, // Sağ alt
+        skill5: { x: 85, y: 65, scale: 1.1, enabled: true, opacity: 1, locked: false }, // Orta alt
+        skill6: { x: 78, y: 72, scale: 1.1, enabled: true, opacity: 1, locked: false }, // Sol alt
+
+        // Eye Button (Free Look) - Arc'ın içinde ortada
+        eye: { x: 72, y: 48, scale: 0.9, enabled: true, opacity: 0.9, locked: false },
+
+        // HP/MP Potları - Skill arc'ın içinde
+        hp_pot: { x: 72, y: 35, scale: 0.9, enabled: true, opacity: 1, locked: false },
+        mp_pot: { x: 72, y: 60, scale: 0.9, enabled: true, opacity: 1, locked: false },
+
+        // ═══════════ SAĞ ALT - ANA SALDIRI ═══════════
+        // Attack Button - Büyük, belirgin, Albion sarı/turuncu tarzı
+        attack: { x: 82, y: 80, scale: 1.4, enabled: true, opacity: 1, locked: false },
     }
 };
 

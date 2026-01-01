@@ -628,45 +628,41 @@ export const LEVEL_XP_REQUIREMENTS: number[] = [
     2684354560000       // Level 30 (Max XP needed to reach here)
 ];
 
-// --- DEFAULT HUD LAYOUT (SYNCED WITH MAIN CONSTANTS) ---
+// --- DEFAULT HUD LAYOUT (ALBION ONLINE STYLE) ---
 export const DEFAULT_HUD_LAYOUT: HUDLayout = {
     elements: {
-        // ═══════════ SOL TARAF ═══════════
-        // Profile - Sol üst köşe (Seviye, İsim, HP/MP barları)
-        profile: { x: 2, y: 2, scale: 1, opacity: 1, enabled: true, locked: false },
+        // ═══════════════════════════════════════════════════════════════════
+        // ALBION ONLINE STYLE LAYOUT - Mobile Optimized
+        // ═══════════════════════════════════════════════════════════════════
 
-        // Quest Tracker - Profilin hemen altında
-        quest: { x: 2, y: 14, scale: 1, opacity: 0.9, enabled: true, locked: false },
+        // ═══════════ SOL ÜST - KARAKTER BİLGİSİ ═══════════
+        profile: { x: 1, y: 1, scale: 1, opacity: 1, enabled: true, locked: false },
+        quest: { x: 1, y: 12, scale: 0.9, opacity: 0.9, enabled: true, locked: false },
 
-        // Chat - Quest'in altında (Genel/Parti/Klan sekmeleri)
-        chat: { x: 2, y: 35, scale: 1, opacity: 0.8, enabled: true, locked: false },
+        // ═══════════ SAĞ ÜST - MİNİMAP ═══════════
+        map: { x: 82, y: 1, scale: 1, opacity: 1, enabled: true, locked: false },
 
-        // Joystick - Sol alt köşe (sabit)
-        joystick: { x: 8, y: 75, scale: 1, opacity: 0.8, enabled: true, locked: false },
+        // ═══════════ SOL ALT - HAREKET ═══════════
+        joystick: { x: 5, y: 70, scale: 1, opacity: 1, enabled: true, locked: false },
 
-        // ═══════════ SAĞ ÜST ═══════════
-        // Map + Menu Buttons - Sağ üst köşe (Minimap, Zone ismi, butonlar)
-        map: { x: 72, y: 2, scale: 1, opacity: 1, enabled: true, locked: false },
+        // ═══════════ ALT ORTA - CHAT ═══════════
+        chat: { x: 25, y: 88, scale: 0.85, opacity: 0.7, enabled: true, locked: false },
 
-        // ═══════════ SAĞ TARAF SKİLL'LER ═══════════
-        // Eye Button (Free Look) - Sağ orta
-        eye: { x: 92, y: 30, scale: 0.85, opacity: 1, enabled: true, locked: false },
+        // ═══════════ SAĞ TARAF - ALBION STYLE SKİLL ARC ═══════════
+        skill1: { x: 78, y: 25, scale: 1.1, opacity: 1, enabled: true, locked: false },
+        skill2: { x: 85, y: 32, scale: 1.1, opacity: 1, enabled: true, locked: false },
+        skill3: { x: 90, y: 42, scale: 1.1, opacity: 1, enabled: true, locked: false },
+        skill4: { x: 90, y: 55, scale: 1.1, opacity: 1, enabled: true, locked: false },
+        skill5: { x: 85, y: 65, scale: 1.1, opacity: 1, enabled: true, locked: false },
+        skill6: { x: 78, y: 72, scale: 1.1, opacity: 1, enabled: true, locked: false },
 
-        // HP/MP Potları - Eye'ın altında
-        hp_pot: { x: 92, y: 38, scale: 0.9, opacity: 1, enabled: true, locked: false },
-        mp_pot: { x: 92, y: 46, scale: 0.9, opacity: 1, enabled: true, locked: false },
+        // Eye, Pot buttons - Arc içinde
+        eye: { x: 72, y: 48, scale: 0.9, opacity: 0.9, enabled: true, locked: false },
+        hp_pot: { x: 72, y: 35, scale: 0.9, opacity: 1, enabled: true, locked: false },
+        mp_pot: { x: 72, y: 60, scale: 0.9, opacity: 1, enabled: true, locked: false },
 
-        // Skills - Dikey sıralı, sağ tarafta (ekran içinde)
-        skill1: { x: 70, y: 30, scale: 1, opacity: 1, enabled: true, locked: false },
-        skill2: { x: 70, y: 38, scale: 1, opacity: 1, enabled: true, locked: false },
-        skill3: { x: 70, y: 46, scale: 1, opacity: 1, enabled: true, locked: false },
-        skill4: { x: 70, y: 54, scale: 1, opacity: 1, enabled: true, locked: false },
-        skill5: { x: 70, y: 62, scale: 1, opacity: 1, enabled: true, locked: false },
-        skill6: { x: 70, y: 70, scale: 1, opacity: 1, enabled: true, locked: false },
-
-        // ═══════════ SAĞ ALT ═══════════
-        // Attack Button - Sağ alt köşe (büyük kırmızı, ekran içinde)
-        attack: { x: 85, y: 75, scale: 1.2, opacity: 1, enabled: true, locked: false },
+        // ═══════════ SAĞ ALT - ANA SALDIRI ═══════════
+        attack: { x: 82, y: 80, scale: 1.4, opacity: 1, enabled: true, locked: false },
     }
 };
 

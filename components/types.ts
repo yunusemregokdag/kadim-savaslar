@@ -1,8 +1,6 @@
+import React from 'react';
 
-
-
-
-export type CharacterClass = 'warrior' | 'mage' | 'shaman' | 'ranger' | 'assassin' | 'arctic_knight' | 'gale_glaive' | 'archer' | 'archmage' | 'bard' | 'cleric' | 'martial_artist' | 'monk' | 'reaper';
+export type CharacterClass = 'warrior' | 'arctic_knight' | 'gale_glaive' | 'archer' | 'archmage' | 'bard' | 'cleric' | 'martial_artist' | 'monk' | 'reaper';
 export type Faction = 'marsu' | 'terya' | 'venu';
 
 export enum SkillPathType {
@@ -14,26 +12,36 @@ export enum SkillPathType {
 export interface Skill {
   id: string;
   name: string;
+  name_en?: string;
   description: string;
-  cd: number; // Cooldown in seconds
+  description_en?: string;
+  cd: number;
   manaCost: number;
+  levelReq?: number;
   type: 'damage' | 'buff' | 'heal' | 'utility' | 'ultimate';
-  icon: string; // Lucide icon name placeholder
-  visual: string; // Effect key
+  icon: string;
+  visual: string;
+  modelPath?: string;
+  isAoE?: boolean;
+  duration?: number;
 }
 
 export interface ClassData {
   id: CharacterClass;
   name: string;
+  name_en?: string;
   role: string;
+  role_en?: string;
   description: string;
+  description_en?: string;
   mechanic: string;
-  skills: Skill[]; // Flat list of 7 active skills for the HUD
+  mechanic_en?: string;
+  skills: Skill[];
 }
 
 export interface ItemVisuals {
-  model: 'sword' | 'axe' | 'dagger' | 'staff' | 'bow' | 'shield' | 'hammer' | 'book';
-  subType?: 'long' | 'short' | 'curved' | 'double' | 'ornate';
+  model: 'sword' | 'axe' | 'spear' | 'glaive' | 'harp' | 'gauntlet' | 'beads' | 'scythe' | 'staff' | 'bow' | 'hammer' | 'lance' | 'mace' | 'shield' | string;
+  subType?: 'long' | 'short' | 'curved' | 'double' | 'ornate' | 'nature' | 'recurve' | 'broad' | 'battle' | 'crystal' | 'magma';
   primaryColor?: string;
   secondaryColor?: string;
   glowColor?: string;
@@ -41,72 +49,114 @@ export interface ItemVisuals {
   particleEffect?: 'fire' | 'ice' | 'void' | 'lightning';
 }
 
-export interface Item {
-  id: string;
-  name: string;
-  tier: number;
-  plus?: number; // 0 to 10
-  type: 'weapon' | 'armor' | 'helmet' | 'pants' | 'material' | 'consumable' | 'pet_egg' | 'wing_fragment' | 'costume' | 'upgrade_scroll';
-  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'ancient';
-  value?: number;
-  stats?: ItemStats;
-  image?: string; // URL/Path to custom icon
-  visuals?: ItemVisuals; // Data-driven rendering
-  classReq?: CharacterClass; // Class restriction
-}
-
 export interface ItemStats {
   damage?: number;
   defense?: number;
   hp?: number;
   mana?: number;
-  strength?: number;     // STR
-  dexterity?: number;    // DEX
-  intelligence?: number; // INT
-  vitality?: number;     // VIT
-  critChance?: number;   // %
-  critDamage?: number;   // %
-  attackSpeed?: number;  // %
-  bonusGold?: number;    // % (Premium)
-  bonusExp?: number;     // % (Premium)
+  strength?: number;
+  dexterity?: number;
+  intelligence?: number;
+  vitality?: number;
+  luck?: number;
+  critChance?: number;
+  critDamage?: number;
+  attackSpeed?: number;
+  speed?: number;
+  bonusGold?: number;
+  bonusExp?: number;
+  fireDamage?: number;
+  iceDamage?: number;
+  lightningDamage?: number;
+  voidDamage?: number;
+  fireResist?: number;
+  iceResist?: number;
+  lightningResist?: number;
+  lifesteal?: number;
+  manaRegen?: number;
+  hpRegen?: number;
+  cooldownReduction?: number;
 }
 
-// NEW: Wing Definition
+export interface Item {
+  id: string;
+  name: string;
+  tier: number;
+  plus?: number;
+  type: 'weapon' | 'armor' | 'helmet' | 'pants' | 'boots' | 'necklace' | 'earring' | 'material' | 'consumable' | 'pet_egg' | 'wing_fragment' | 'costume' | 'upgrade_scroll' | 'mount';
+  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'ancient';
+  value?: number;
+  stats?: ItemStats;
+  image?: string;
+  icon?: string;
+  desc?: string;
+  visuals?: ItemVisuals;
+  classReq?: CharacterClass;
+  levelReq?: number;
+  description?: string;
+  setId?: string;
+  effect?: {
+    type: 'heal' | 'mana' | 'combo' | 'buff' | 'cleanse';
+    amount?: number;
+    hpAmount?: number;
+    manaAmount?: number;
+    buffType?: 'exp' | 'gold' | 'damage' | 'defense';
+    duration?: number;
+  };
+  durability?: number;
+  maxDurability?: number;
+}
+
 export interface WingItem {
   id: string;
   name: string;
-  type: 'angel' | 'demon' | 'dragon' | 'fairy' | 'seraph' | 'void';
+  type: 'angel' | 'demon' | 'dragon' | 'fairy' | 'seraph' | 'void' | 'angel_demon';
   tier: number;
   bonusDamage: number;
   bonusHp: number;
-  bonusDefense?: number; // New for premium
-  bonusGoldRate?: number; // New for premium
-  bonusHonorRate?: number; // New for premium
+  bonusDefense?: number;
+  bonusGoldRate?: number;
+  bonusHonorRate?: number;
   color: string;
-  expiresAt?: number; // Timestamp for rental expiration
+  secondaryColor?: string;
+  modelPath?: string;
+  expiresAt?: number;
 }
 
-// NEW: Pet Definition
 export interface PetItem {
   id: string;
   name: string;
   type: 'dragon_baby' | 'floating_crystal' | 'spirit_wolf' | 'owl' | 'phoenix';
   tier: number;
-  bonusExpRate: number; // Percentage
+  bonusExpRate: number;
   bonusDefense: number;
-  bonusDamage?: number; // New
-  bonusHp?: number;     // New
-  bonusMana?: number;   // New
+  bonusDamage?: number;
+  bonusHp?: number;
+  bonusMana?: number;
   color: string;
-  modelPath?: string;   // New: Path to GLTF file
-  expiresAt?: number; // Timestamp for rental expiration
+  modelPath?: string;
+  expiresAt?: number;
+}
+
+export interface MountItem {
+  id: string;
+  name: string;
+  tier: number;
+  speedBonus: number;
+  icon: string;
+  description?: string;
+  modelPath?: string;
+  expiresAt?: number;
 }
 
 export interface Equipment {
   weapon: Item | null;
-  helmet: Item | null; // Kafa
-  armor: Item | null;  // Gövde (+Kollar)
-  pants: Item | null;  // Pantolon (+Ayak)
+  helmet: Item | null;
+  armor: Item | null;
+  pants: Item | null;
+  boots: Item | null;
+  necklace: Item | null;
+  earring: Item | null;
 }
 
 export interface Quest {
@@ -118,7 +168,7 @@ export interface Quest {
   currentCount: number;
   rewardGold: number;
   rewardXp: number;
-  rewardHonor: number; // Added Honor Reward
+  rewardHonor: number;
   rewardItem?: Item;
   isCompleted: boolean;
 }
@@ -129,20 +179,23 @@ export interface Rank {
   minRP: number;
   bonusDamage: number;
   bonusShield: number;
-  icon: string;        // Emoji fallback (DEV only)
-  iconPath?: string;   // Local PNG path (e.g., '/ranks/rank_01.png')
+  icon: string;
+  iconPath?: string;
+  image?: string;
+  limitType?: 'count' | 'percent';
+  limitValue?: number;
+  order?: number;
 }
 
 export interface HUDElement {
-  x: number; // Percentage 0-100
-  y: number; // Percentage 0-100
-  scale: number; // 0.5 to 2.0
-  opacity: number; // 0.0 to 1.0
+  x: number;
+  y: number;
+  scale: number;
   enabled: boolean;
+  opacity: number;
   locked: boolean;
 }
 
-// Flexible Layout for separate customization
 export interface HUDLayout {
   elements: Record<string, HUDElement>;
 }
@@ -150,60 +203,82 @@ export interface HUDLayout {
 export interface Settings {
   pvpPriority: boolean;
   showNames: boolean;
-  // New UI Settings
   deviceMode: 'auto' | 'mobile' | 'desktop';
   skillBarMode: 'linear' | 'arc';
-  hudScale: number; // Global HUD scale (0.5 - 1.5)
-  buttonOpacity: number; // Button opacity (0.5 - 1.0)
+  hudScale: number;
+  buttonOpacity: number;
   transparentMap: boolean;
   smallMap: boolean;
   minimizeQuest: boolean;
-  hudLayout: HUDLayout; // Updated type
+  hudLayout: HUDLayout;
+  nameColor?: string;
+  autoLoot: boolean;
 }
 
 export interface PlayerState {
   nickname: string;
+  userId?: string;
   class: CharacterClass | null;
   faction: Faction | null;
+  lastPosition?: { x: number, y: number, z: number };
   guildName: string | null;
   level: number;
   exp: number;
   maxExp: number;
   credits: number;
   gems: number;
-
+  donateCoins: number;
   honor: number;
-  premiumUntil?: number; // Timestamp for subscription expiry
+  vipUntil?: number;
+  vipTier?: number;
+  lastVipClaim?: number;
+  premiumUntil?: number;
+  premiumTier?: 'none' | 'bronze' | 'silver' | 'gold' | 'diamond';
+  premiumBenefits?: {
+    expMultiplier: number;
+    goldMultiplier: number;
+    dropRateBonus: number;
+    inventorySlots: number;
+    storageSlots: number;
+    dailyGems: number;
+    nameColor: string;
+    badge: string;
+    discountPercent: number;
+  };
   rankPoints: number;
   rank: number;
-
+  dailyHonor: number;
+  dailyAdsWatched: number;
+  extraMarketSlots?: number;
+  extraStorage?: number;
   questStage: number;
-
   hp: number;
   maxHp: number;
   mana: number;
   maxMana: number;
   damage: number;
   defense: number;
-
-  // Character Stats (RPG Build System)
-  strength: number;      // STR: Increases Melee Dmg
-  dexterity: number;     // DEX: Increases Ranged Dmg / Defense
-  intelligence: number;  // INT: Increases Magic Dmg / Mana
-  vitality: number;      // VIT: Increases HP / Defense
-  statPoints: number;    // Points available to distribute
-
+  strength: number;
+  dexterity: number;
+  intelligence: number;
+  vitality: number;
+  statPoints: number;
   inventory: Item[];
   equipment: Equipment;
-
-  // NEW: Wing and Pet System Storage
   ownedWings: WingItem[];
   equippedWing: WingItem | null;
   ownedPets: PetItem[];
   equippedPet: PetItem | null;
-
+  ownedMounts: MountItem[];
+  equippedMount: MountItem | null;
+  ownedSkins: string[];
+  equippedSkin: string | null;
+  ownedCostumes: string[];
+  equippedCostume: string | null;
   activeQuest: Quest | null;
   settings: Settings;
+  dailyLogin?: DailyLoginState;
+  achievements?: Achievement[];
 }
 
 export type EntityType = 'player' | 'mob' | 'npc' | 'boss' | 'elite' | 'slime';
@@ -222,6 +297,20 @@ export interface GameEntity {
   lastAttackTime?: number;
   isAttacking?: boolean;
   hitFlash?: number;
+  npcType?: NPCType;
+  modelPath?: string;
+  defense?: number;
+  damage?: number;
+  attackRange?: number;
+  exp?: number;
+  gold?: number;
+  diamond?: number;
+  bossData?: {
+    phase: 1 | 2 | 3;
+    isRaged: boolean;
+    currentSkill: string | null;
+    skillTarget?: { x: number, y: number, radius: number, warnTime: number };
+  };
 }
 
 export interface LootLog {
@@ -264,7 +353,7 @@ export interface Portal {
   x: number;
   z: number;
   targetZone: number;
-  target: number; // Alias for targetZone
+  target?: number; // Alias for targetZone (backward compatibility)
   levelReq: number;
   name: string;
 }
@@ -280,5 +369,128 @@ export interface CraftingRecipe {
   materials: CraftingMaterial[];
   goldCost: number;
   levelReq: number;
-  category: 'weapon' | 'armor' | 'consumable' | 'material';
+  category: 'weapon' | 'armor' | 'accessory' | 'consumable' | 'material';
+}
+
+export type NPCType = 'shop' | 'quest' | 'blacksmith' | 'healer' | 'guide' | 'merchant' | 'quest_giver' | 'arena_master' | 'guild_master' | 'craftmaster';
+
+export interface NPCData {
+  id: string;
+  name: string;
+  type: NPCType;
+  dialogue?: string[];
+  zoneId?: number;
+  modelPath?: string;
+}
+
+export interface DailyLoginReward {
+  day: number;
+  gold?: number;
+  gems?: number;
+  exp?: number;
+  honor?: number;
+  item?: Item;
+  icon: string;
+}
+
+export interface DailyLoginState {
+  lastLoginDate: string;
+  consecutiveDays: number;
+  claimedToday: boolean;
+  totalLogins: number;
+}
+
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  category: 'combat' | 'collection' | 'social' | 'misc';
+  currentProgress: number;
+  maxProgress: number;
+  isCompleted: boolean;
+  rewardGold?: number;
+  rewardGems?: number;
+  rewardExp?: number;
+  rewardItem?: Item;
+  rewardTitle?: string;
+}
+
+export type GuildRank = 'leader' | 'co_leader' | 'officer' | 'member' | 'recruit';
+
+export interface GuildMember {
+  id: string;
+  nickname: string;
+  class: CharacterClass;
+  level: number;
+  rank: GuildRank;
+  contribution: number;
+  lastOnline: number;
+  joinedAt: number;
+}
+
+export interface PartyMember {
+  id: string;
+  nickname: string;
+  class: CharacterClass;
+  level: number;
+  hp: number;
+  maxHp: number;
+  mana: number;
+  maxMana: number;
+  isOnline: boolean;
+  isLeader: boolean;
+  zoneId: number;
+}
+
+export interface Party {
+  id: string;
+  name: string;
+  leaderId: string;
+  members: PartyMember[];
+  maxMembers: number;
+  createdAt: number;
+  isPublic: boolean;
+  lootRule: 'free_for_all' | 'round_robin' | 'leader_only';
+}
+
+export interface Guild {
+  id: string;
+  name: string;
+  tag: string;
+  leaderId: string;
+  members: GuildMember[];
+  maxMembers: number;
+  level: number;
+  exp: number;
+  gold: number;
+  createdAt: number;
+  description: string;
+  motd: string;
+  emblemColor: string;
+  isRecruiting: boolean;
+  minLevelReq: number;
+  bonusExp: number;
+  bonusGold: number;
+  bonusDamage: number;
+}
+
+export interface TradeOffer {
+  playerId: string;
+  isReady: boolean;
+  isConfirmed: boolean;
+  gold: number;
+  items: Item[];
+}
+
+export interface Trade {
+  id: string;
+  senderId: string;
+  senderNickname?: string;
+  receiverId: string;
+  receiverNickname?: string;
+  sender: TradeOffer;
+  receiver: TradeOffer;
+  status: 'pending' | 'active' | 'completed' | 'cancelled';
+  createdAt: number;
 }

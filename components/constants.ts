@@ -12,7 +12,7 @@
 
 
 
-import { ClassData, CharacterClass, Item, GameEntity, Faction, Portal, Quest, Rank, WingItem, PetItem, HUDLayout } from './types';
+import { ClassData, CharacterClass, Item, GameEntity, Faction, Portal, Quest, Rank, WingItem, PetItem, MountItem, HUDLayout } from './types';
 import { ALL_CLASS_ITEMS } from './ItemGenerator';
 export { ALL_CLASS_ITEMS };
 
@@ -25,11 +25,16 @@ export const FACTIONS: Record<Faction, { name: string, color: string, descriptio
 
 // --- BASE STATS FOR BALANCING (UPDATED FOR RPG ROLES) ---
 export const CLASS_BASE_STATS: Record<CharacterClass, { str: number, dex: number, int: number, vit: number }> = {
-    warrior: { str: 12, dex: 4, int: 2, vit: 15 },     // Tank: High HP (VIT), Good Dmg (STR)
-    mage: { str: 2, dex: 4, int: 15, vit: 6 },         // DPS: High Magic (INT), Low HP
-    ranger: { str: 4, dex: 15, int: 3, vit: 8 },       // DPS: High Speed/Range (DEX), Med HP
-    assassin: { str: 12, dex: 14, int: 2, vit: 4 },    // Burst: Very High Dmg (STR/DEX), Very Low HP (Glass Cannon)
-    shaman: { str: 4, dex: 4, int: 10, vit: 10 },      // Support: Balanced Magic/HP for survival & healing
+    warrior: { str: 12, dex: 4, int: 2, vit: 15 },
+    arctic_knight: { str: 10, dex: 5, int: 8, vit: 14 },
+    gale_glaive: { str: 8, dex: 14, int: 4, vit: 8 },
+    archer: { str: 4, dex: 15, int: 3, vit: 8 },
+    archmage: { str: 2, dex: 4, int: 15, vit: 6 },
+    bard: { str: 3, dex: 8, int: 12, vit: 8 },
+    cleric: { str: 4, dex: 4, int: 10, vit: 10 },
+    martial_artist: { str: 14, dex: 12, int: 2, vit: 10 },
+    monk: { str: 10, dex: 10, int: 6, vit: 12 },
+    reaper: { str: 12, dex: 14, int: 4, vit: 6 },
 };
 
 // --- NEW: WINGS DATA (REBALANCED T4/T5) ---
@@ -100,6 +105,21 @@ export const PETS_DATA: PetItem[] = [
     { id: 'pet_good', name: 'Good', type: 'owl', tier: 5, bonusExpRate: 50, bonusDamage: 100, bonusHp: 2000, bonusDefense: 150, color: '#fcd34d', modelPath: '/Pets/cubee-good.gltf' },
 ];
 
+// --- NEW: MOUNTS DATA ---
+export const MOUNTS_DATA: MountItem[] = [
+    { id: 'mount_donkey', name: 'Eşek', tier: 1, speedBonus: 20, icon: '/assets/mounts/donkey.png', description: 'İnatçı ama sadık.' },
+    { id: 'mount_horse_brown', name: 'Kahverengi At', tier: 2, speedBonus: 40, icon: '/assets/mounts/horse_brown.png', description: 'Güvenilir bir binek.' },
+    { id: 'mount_horse_white', name: 'Beyaz At', tier: 2, speedBonus: 45, icon: '/assets/mounts/horse_white.png', description: 'Asil bir görünüm.' },
+    { id: 'mount_camel', name: 'Deve', tier: 2, speedBonus: 35, icon: '/assets/mounts/camel.png', description: 'Çöllere dayanıklı.' },
+    { id: 'mount_wolf', name: 'Kurt', tier: 3, speedBonus: 60, icon: '/assets/mounts/wolf.png', description: 'Vahşi ve hızlı.' },
+    { id: 'mount_bear', name: 'Ayı', tier: 3, speedBonus: 50, icon: '/assets/mounts/bear.png', description: 'Güçlü ve korkutucu.' },
+    { id: 'mount_tiger', name: 'Kaplan', tier: 4, speedBonus: 75, icon: '/assets/mounts/tiger.png', description: 'Ormanın kralı.' },
+    { id: 'mount_lion', name: 'Aslan', tier: 4, speedBonus: 80, icon: '/assets/mounts/lion.png', description: 'Savaş alanının lideri.' },
+    { id: 'mount_elephant', name: 'Fil', tier: 4, speedBonus: 60, icon: '/assets/mounts/elephant.png', description: 'Devasa ve yıkılmaz.' },
+    { id: 'mount_dragon_small', name: 'Yavru Ejderha', tier: 5, speedBonus: 100, icon: '/assets/mounts/dragon_small.png', description: 'Efsanevi bir dost.' },
+    { id: 'mount_phoenix', name: 'Zümrüdüanka', tier: 5, speedBonus: 120, icon: '/assets/mounts/phoenix.png', description: 'Küllerinden doğan hız.' },
+];
+
 // --- CLASSES WITH 7 SKILLS (UPDATED CDS) ---
 export const CLASSES: Record<CharacterClass, ClassData> = {
     warrior: {
@@ -118,41 +138,41 @@ export const CLASSES: Record<CharacterClass, ClassData> = {
             { id: 'w7', name: 'Kıyım (Ulti)', description: '360 derece dönerek ölümcül hasar verir.', cd: 40, manaCost: 60, type: 'ultimate', icon: 'RotateCw', visual: 'whirlwind' },
         ]
     },
-    mage: {
-        id: 'mage',
-        name: 'Büyücü (Mage)',
-        role: 'DPS / Ranged',
-        description: 'Yüksek alan hasarı ama kırılgan yapı.',
-        mechanic: 'Özellik: Yüksek büyü gücü, düşük defans.',
+    arctic_knight: {
+        id: 'arctic_knight',
+        name: 'Arktik Şövalye',
+        role: 'Tank / Control',
+        description: 'Buz gücüyle düşmanları donduran dayanıklı savaşçı.',
+        mechanic: 'Özellik: Düşmanları yavaşlatır ve dondurur.',
         skills: [
-            { id: 'm1', name: 'Ateş Topu', description: 'Tekli hedefe hasar.', cd: 1.0, manaCost: 10, type: 'damage', icon: 'Flame', visual: 'fireball' },
-            { id: 'm2', name: 'Buz Kalkanı', description: 'Hasarı emer ve dondurur.', cd: 18, manaCost: 40, type: 'buff', icon: 'Snowflake', visual: 'iceblock' },
-            { id: 'm3', name: 'Işınlanma', description: 'İleriye sıçrar.', cd: 8, manaCost: 20, type: 'utility', icon: 'Wind', visual: 'teleport' },
-            { id: 'm4', name: 'Yıldırım Zinciri', description: '3 düşmana seken hasar.', cd: 12, manaCost: 35, type: 'damage', icon: 'Zap', visual: 'lightning' },
-            { id: 'm5', name: 'Meteor', description: 'Alana devasa hasar verir.', cd: 20, manaCost: 60, type: 'damage', icon: 'Orbit', visual: 'meteor' },
-            { id: 'm6', name: 'Mana Emilimi', description: 'Düşmandan mana çalar.', cd: 30, manaCost: 0, type: 'utility', icon: 'Droplet', visual: 'drain' },
-            { id: 'm7', name: 'Kozmik Yıkım', description: 'Tüm haritayı titretir.', cd: 60, manaCost: 100, type: 'ultimate', icon: 'Sun', visual: 'blackhole' },
+            { id: 'ak1', name: 'Buz Kılıcı', description: 'Soğuk hasar verir.', cd: 1.0, manaCost: 5, type: 'damage', icon: 'Snowflake', visual: 'ice_slash' },
+            { id: 'ak2', name: 'Buz Zırhı', description: 'Defansı artırır.', cd: 15, manaCost: 30, type: 'buff', icon: 'Shield', visual: 'ice_armor' },
+            { id: 'ak3', name: 'Dondurucu Nefes', description: 'Önündeki düşmanları dondurur.', cd: 12, manaCost: 40, type: 'utility', icon: 'Wind', visual: 'freeze_breath' },
+            { id: 'ak4', name: 'Buz Mızrağı', description: 'Uzaktaki düşmana buz fırlatır.', cd: 8, manaCost: 20, type: 'damage', icon: 'ArrowUp', visual: 'ice_spear' },
+            { id: 'ak5', name: 'Kaygan Zemin', description: 'Alanı buzla kaplar.', cd: 20, manaCost: 35, type: 'utility', icon: 'MoveDown', visual: 'ice_floor' },
+            { id: 'ak6', name: 'Kışın Öfkesi', description: 'Saldırı hızını artırır.', cd: 25, manaCost: 30, type: 'buff', icon: 'Zap', visual: 'winter_fury' },
+            { id: 'ak7', name: 'Kar Fırtınası (Ulti)', description: 'Geniş alanda sürekli hasar.', cd: 50, manaCost: 80, type: 'ultimate', icon: 'CloudSnow', visual: 'blizzard' },
         ]
     },
-    shaman: {
-        id: 'shaman',
-        name: 'Şaman (Healer)',
-        role: 'Support / Buff',
-        description: 'Takım iyileştirme ve totem ustası.',
-        mechanic: 'Özellik: Totem dikerek alan buffları sağlar.',
+    gale_glaive: {
+        id: 'gale_glaive',
+        name: 'Rüzgar Süvarisi',
+        role: 'DPS / Mobility',
+        description: 'Hızlı ve çevik, rüzgar hızında saldırılar.',
+        mechanic: 'Özellik: Hareket ettikçe hızlanır.',
         skills: [
-            { id: 's1', name: 'Ruh Oku', description: 'Büyü hasarı verir.', cd: 1.0, manaCost: 5, type: 'damage', icon: 'Sparkles', visual: 'spirit' },
-            { id: 's2', name: 'Şifa Işığı', description: 'Kendini ve dostları iyileştirir (AoE).', cd: 10, manaCost: 30, type: 'heal', icon: 'Heart', visual: 'heal' },
-            { id: 's3', name: 'Hız Totemi', description: 'Takımın hızını artırır.', cd: 20, manaCost: 40, type: 'buff', icon: 'Feather', visual: 'totem_speed' },
-            { id: 's4', name: 'Zehirli Sarmaşık', description: 'Düşmanları yavaşlatır ve zehirler.', cd: 15, manaCost: 25, type: 'utility', icon: 'Trees', visual: 'roots' },
-            { id: 's5', name: 'Toprak Kalkanı', description: 'Takımın defansını artırır.', cd: 25, manaCost: 35, type: 'buff', icon: 'Shield', visual: 'earth_shield' },
-            { id: 's6', name: 'Arındırma', description: 'Negatif etkileri siler.', cd: 20, manaCost: 20, type: 'utility', icon: 'Droplet', visual: 'cleanse' },
-            { id: 's7', name: 'Ataların Gazabı', description: 'Devasa bir ruh çağırır.', cd: 50, manaCost: 80, type: 'ultimate', icon: 'Ghost', visual: 'ancestor' },
+            { id: 'gg1', name: 'Rüzgar Kesigi', description: 'Hızlı saldırı.', cd: 0.8, manaCost: 5, type: 'damage', icon: 'Wind', visual: 'wind_slash' },
+            { id: 'gg2', name: 'Atılma', description: 'İleriye atılır.', cd: 5, manaCost: 15, type: 'utility', icon: 'ArrowRight', visual: 'dash' },
+            { id: 'gg3', name: 'Hortum', description: 'Düşmanları havaya savurur.', cd: 15, manaCost: 30, type: 'utility', icon: 'Tornado', visual: 'tornado' },
+            { id: 'gg4', name: 'Rüzgar Duvarı', description: 'Atışları engeller.', cd: 20, manaCost: 40, type: 'buff', icon: 'Shield', visual: 'wind_wall' },
+            { id: 'gg5', name: 'Keskin Rüzgar', description: 'Uzak mesafeye rüzgar atar.', cd: 8, manaCost: 20, type: 'damage', icon: 'MoveUp', visual: 'air_blade' },
+            { id: 'gg6', name: 'Hız Patlaması', description: 'Hareket hızını %50 artırır.', cd: 30, manaCost: 30, type: 'buff', icon: 'Zap', visual: 'speed_boost' },
+            { id: 'gg7', name: 'Fırtına (Ulti)', description: 'Etrafında fırtına yaratır.', cd: 45, manaCost: 70, type: 'ultimate', icon: 'CloudLightning', visual: 'storm' },
         ]
     },
-    ranger: {
-        id: 'ranger',
-        name: 'Okçu (Ranger)',
+    archer: {
+        id: 'archer',
+        name: 'Okçu (Archer)',
         role: 'Sniper / Scout',
         description: 'Uzak mesafe ve tuzak uzmanı.',
         mechanic: 'Özellik: Mesafe arttıkça hasar artar.',
@@ -166,20 +186,100 @@ export const CLASSES: Record<CharacterClass, ClassData> = {
             { id: 'r7', name: 'Ok Yağmuru', description: 'Gökten ok yağdırır.', cd: 40, manaCost: 50, type: 'ultimate', icon: 'CloudRain', visual: 'arrow_rain' },
         ]
     },
-    assassin: {
-        id: 'assassin',
-        name: 'Suikastçı (Assassin)',
-        role: 'Burst / Stealth',
-        description: 'Gölge savaşçısı. Kritik hasar ustası.',
-        mechanic: 'Özellik: Arkadan vuruşlarda %200 hasar.',
+    archmage: {
+        id: 'archmage',
+        name: 'Baş Büyücü',
+        role: 'DPS / Ranged',
+        description: 'Yüksek alan hasarı ama kırılgan yapı.',
+        mechanic: 'Özellik: Yüksek büyü gücü, düşük defans.',
         skills: [
-            { id: 'a1', name: 'Hançer Darbesi', description: 'Hızlı yakın saldırı.', cd: 1.0, manaCost: 5, type: 'damage', icon: 'Sword', visual: 'stab' },
-            { id: 'a2', name: 'Gölge Adım', description: 'Düşmanın arkasına ışınlanır.', cd: 10, manaCost: 25, type: 'utility', icon: 'Ghost', visual: 'shadow_step' },
-            { id: 'a3', name: 'Sis Bombası', description: 'Görünmez olur ve hedef şaşırtır.', cd: 20, manaCost: 30, type: 'buff', icon: 'Cloud', visual: 'smoke' },
-            { id: 'a4', name: 'Zehirli Bıçak', description: 'Kanama hasarı verir.', cd: 15, manaCost: 20, type: 'damage', icon: 'Droplet', visual: 'poison_blade' },
-            { id: 'a5', name: 'Suikast', description: 'Tek seferlik devasa kritik hasar.', cd: 30, manaCost: 50, type: 'damage', icon: 'Target', visual: 'assassinate' },
-            { id: 'a6', name: 'Refleks', description: 'Saldırılardan kaçınma şansı.', cd: 25, manaCost: 30, type: 'buff', icon: 'Activity', visual: 'dodge' },
-            { id: 'a7', name: 'Gölge Kopyası', description: 'Kendinin 3 kopyasını yaratır.', cd: 60, manaCost: 70, type: 'ultimate', icon: 'Users', visual: 'clones' },
+            { id: 'm1', name: 'Ateş Topu', description: 'Tekli hedefe hasar.', cd: 1.0, manaCost: 10, type: 'damage', icon: 'Flame', visual: 'fireball' },
+            { id: 'm2', name: 'Buz Kalkanı', description: 'Hasarı emer ve dondurur.', cd: 18, manaCost: 40, type: 'buff', icon: 'Snowflake', visual: 'iceblock' },
+            { id: 'm3', name: 'Işınlanma', description: 'İleriye sıçrar.', cd: 8, manaCost: 20, type: 'utility', icon: 'Wind', visual: 'teleport' },
+            { id: 'm4', name: 'Yıldırım Zinciri', description: '3 düşmana seken hasar.', cd: 12, manaCost: 35, type: 'damage', icon: 'Zap', visual: 'lightning' },
+            { id: 'm5', name: 'Meteor', description: 'Alana devasa hasar verir.', cd: 20, manaCost: 60, type: 'damage', icon: 'Orbit', visual: 'meteor' },
+            { id: 'm6', name: 'Mana Emilimi', description: 'Düşmandan mana çalar.', cd: 30, manaCost: 0, type: 'utility', icon: 'Droplet', visual: 'drain' },
+            { id: 'm7', name: 'Kozmik Yıkım', description: 'Tüm haritayı titretir.', cd: 60, manaCost: 100, type: 'ultimate', icon: 'Sun', visual: 'blackhole' },
+        ]
+    },
+    bard: {
+        id: 'bard',
+        name: 'Ozan (Bard)',
+        role: 'Support / Buff',
+        description: 'Müzikle takımını güçlendirir.',
+        mechanic: 'Özellik: Şarkılarla sürekli buff sağlar.',
+        skills: [
+            { id: 'b1', name: 'Nota Vuruşu', description: 'Ses dalgası hasarı.', cd: 1.0, manaCost: 5, type: 'damage', icon: 'Music', visual: 'note_hit' },
+            { id: 'b2', name: 'Cesaret Marşı', description: 'Takımın hasarını artırır.', cd: 20, manaCost: 30, type: 'buff', icon: 'Mic', visual: 'anthem' },
+            { id: 'b3', name: 'Ninni', description: 'Düşmanları uyutur.', cd: 25, manaCost: 40, type: 'utility', icon: 'Moon', visual: 'lullaby' },
+            { id: 'b4', name: 'Şifa Melodisi', description: 'Takımı iyileştirir.', cd: 15, manaCost: 35, type: 'heal', icon: 'Heart', visual: 'heal_song' },
+            { id: 'b5', name: 'Hız Rtimi', description: 'Hareket hızını artırır.', cd: 18, manaCost: 25, type: 'buff', icon: 'Zap', visual: 'speed_song' },
+            { id: 'b6', name: 'Gürültü', description: 'Düşmanları sersemletir.', cd: 12, manaCost: 20, type: 'damage', icon: 'Speaker', visual: 'noise' },
+            { id: 'b7', name: 'Senfoni (Ulti)', description: 'Tüm takıma devasa bufflar.', cd: 60, manaCost: 80, type: 'ultimate', icon: 'Music', visual: 'symphony' },
+        ]
+    },
+    cleric: {
+        id: 'cleric',
+        name: 'Rahip (Cleric)',
+        role: 'Support / Healer',
+        description: 'Takım iyileştirme ve koruma ustası.',
+        mechanic: 'Özellik: Kutsal büyü ile korur.',
+        skills: [
+            { id: 'c1', name: 'Kutsal Işık', description: 'Büyü hasarı verir.', cd: 1.0, manaCost: 5, type: 'damage', icon: 'Sun', visual: 'holy_light' },
+            { id: 'c2', name: 'Büyük Şifa', description: 'Tekli hedefi iyileştirir.', cd: 8, manaCost: 30, type: 'heal', icon: 'Heart', visual: 'great_heal' },
+            { id: 'c3', name: 'Koruma Kalkanı', description: 'Hasarı emer.', cd: 15, manaCost: 25, type: 'buff', icon: 'Shield', visual: 'bubble' },
+            { id: 'c4', name: 'Arındırma', description: 'Negatif etkileri siler.', cd: 12, manaCost: 20, type: 'utility', icon: 'Droplet', visual: 'cleanse' },
+            { id: 'c5', name: 'Kutsal Alan', description: 'Alandaki dostları iyileştirir.', cd: 20, manaCost: 50, type: 'heal', icon: 'Circle', visual: 'sanctuary' },
+            { id: 'c6', name: 'Diriliş', description: 'Düşen müttefiği kaldırır.', cd: 60, manaCost: 100, type: 'utility', icon: 'UserPlus', visual: 'resurrect' },
+            { id: 'c7', name: 'İlahi Müdahale (Ulti)', description: 'Tüm takımı ölümsüz yapar (3sn).', cd: 90, manaCost: 100, type: 'ultimate', icon: 'Sun', visual: 'divine_intervention' },
+        ]
+    },
+    martial_artist: {
+        id: 'martial_artist',
+        name: 'Dövüş Ustası',
+        role: 'Melee / Combo',
+        description: 'Yakın dövüşte seri yumruklar.',
+        mechanic: 'Özellik: Kombo yaptıkça hasar artar.',
+        skills: [
+            { id: 'ma1', name: 'Yumruk', description: 'Hızlı vuruş.', cd: 0.5, manaCost: 2, type: 'damage', icon: 'Hand', visual: 'punch' },
+            { id: 'ma2', name: 'Uçan Tekme', description: 'Havadan tekme atar.', cd: 8, manaCost: 15, type: 'damage', icon: 'ArrowUp', visual: 'kick' },
+            { id: 'ma3', name: 'Odak', description: 'Kritik şansını artırır.', cd: 15, manaCost: 20, type: 'buff', icon: 'Eye', visual: 'focus' },
+            { id: 'ma4', name: 'Süpürme', description: 'Düşmanları yere düşürür.', cd: 12, manaCost: 25, type: 'utility', icon: 'MoveDown', visual: 'sweep' },
+            { id: 'ma5', name: 'Ejder Yumruğu', description: 'Güçlü alevli yumruk.', cd: 10, manaCost: 30, type: 'damage', icon: 'Flame', visual: 'dragon_punch' },
+            { id: 'ma6', name: 'Demir Vücut', description: 'Hasarı azaltır.', cd: 20, manaCost: 30, type: 'buff', icon: 'Shield', visual: 'iron_body' },
+            { id: 'ma7', name: '100 Yumruk (Ulti)', description: 'Ultra seri saldırı.', cd: 40, manaCost: 60, type: 'ultimate', icon: 'Zap', visual: 'ora_ora' },
+        ]
+    },
+    monk: {
+        id: 'monk',
+        name: 'Keşiş (Monk)',
+        role: 'Tank / Utility',
+        description: 'Denge ve ruhsal güç.',
+        mechanic: 'Özellik: Hasarı saptırır.',
+        skills: [
+            { id: 'mn1', name: 'Asa Vuruşu', description: 'Temel hasar.', cd: 1.0, manaCost: 5, type: 'damage', icon: 'GitCommit', visual: 'staff_hit' },
+            { id: 'mn2', name: 'Mantra', description: 'Can yeniler.', cd: 10, manaCost: 20, type: 'heal', icon: 'Heart', visual: 'mantra' },
+            { id: 'mn3', name: 'Yansıtma', description: 'Hasarı geri yansıtır.', cd: 15, manaCost: 30, type: 'buff', icon: 'RefreshCcw', visual: 'reflect' },
+            { id: 'mn4', name: 'Sersemletme', description: 'Tekme ile sersemletir.', cd: 12, manaCost: 20, type: 'utility', icon: 'Zap', visual: 'stun_kick' },
+            { id: 'mn5', name: 'Meditasyon', description: 'Mana yeniler.', cd: 30, manaCost: 0, type: 'utility', icon: 'Moon', visual: 'meditate' },
+            { id: 'mn6', name: 'Ruh Kalkanı', description: 'Büyü hasarını emer.', cd: 18, manaCost: 35, type: 'buff', icon: 'Shield', visual: 'spirit_shield' },
+            { id: 'mn7', name: 'Nirvana (Ulti)', description: 'Kısa süreliğine hasar almaz.', cd: 60, manaCost: 80, type: 'ultimate', icon: 'Sun', visual: 'nirvana' },
+        ]
+    },
+    reaper: {
+        id: 'reaper',
+        name: 'Azrail (Reaper)',
+        role: 'Burst / DPS',
+        description: 'Can alıcı tırpan darbeleri.',
+        mechanic: 'Özellik: Düşman canı azaldıkça hasar artar.',
+        skills: [
+            { id: 'rp1', name: 'Tırpan Biçişi', description: 'Geniş alan hasarı.', cd: 1.2, manaCost: 8, type: 'damage', icon: 'Moon', visual: 'scythe_slash' },
+            { id: 'rp2', name: 'Ruh Çekme', description: 'Düşmanı kendine çeker.', cd: 12, manaCost: 25, type: 'utility', icon: 'LogIn', visual: 'pull' },
+            { id: 'rp3', name: 'Karanlık Örtü', description: 'Görünmezlik ve hız.', cd: 18, manaCost: 30, type: 'buff', icon: 'EyeOff', visual: 'shroud' },
+            { id: 'rp4', name: 'Ölüm İşareti', description: 'Düşman daha fazla hasar alır.', cd: 15, manaCost: 20, type: 'utility', icon: 'Target', visual: 'mark' },
+            { id: 'rp5', name: 'Kan Hasadı', description: 'Can çalar.', cd: 10, manaCost: 30, type: 'damage', icon: 'Droplet', visual: 'lifesteal' },
+            { id: 'rp6', name: 'Gölge Patlaması', description: 'Karanlık alan hasarı.', cd: 8, manaCost: 25, type: 'damage', icon: 'Cloud', visual: 'shadow_blast' },
+            { id: 'rp7', name: 'Kıyamet (Ulti)', description: 'Tüm düşmanların canını %20 azaltır.', cd: 60, manaCost: 100, type: 'ultimate', icon: 'Skull', visual: 'doom' },
         ]
     }
 };
@@ -198,21 +298,41 @@ export const CLASS_STARTER_ITEMS: Record<CharacterClass, Item[]> = {
         { id: 'start_w_2', name: 'Eski Pantolon', tier: 1, type: 'pants', rarity: 'common', classReq: 'warrior' },
         { id: 'start_w_3', name: 'Paslı Zırh', tier: 1, type: 'armor', rarity: 'common', classReq: 'warrior' }
     ],
-    mage: [
-        { id: 'start_m_1', name: 'Çırak Asası', tier: 1, type: 'weapon', rarity: 'common', classReq: 'mage', visuals: { model: 'staff', primaryColor: '#8b5cf6', glowColor: '#a78bfa' } },
-        { id: 'start_m_2', name: 'Büyücü Cübbesi', tier: 1, type: 'armor', rarity: 'common', classReq: 'mage' }
+    arctic_knight: [
+        { id: 'start_ak_1', name: 'Buzdan Mızrak', tier: 1, type: 'weapon', rarity: 'common', classReq: 'arctic_knight', visuals: { model: 'spear', primaryColor: '#a8d8ea' } },
+        { id: 'start_ak_2', name: 'Buzul Zırh', tier: 1, type: 'armor', rarity: 'common', classReq: 'arctic_knight' }
     ],
-    ranger: [
-        { id: 'start_r_1', name: 'Avcı Yayı', tier: 1, type: 'weapon', rarity: 'common', classReq: 'ranger', visuals: { model: 'bow', primaryColor: '#a3e635' } },
-        { id: 'start_r_2', name: 'Deri Zırh', tier: 1, type: 'armor', rarity: 'common', classReq: 'ranger' }
+    gale_glaive: [
+        { id: 'start_gg_1', name: 'Rüzgar Mızrağı', tier: 1, type: 'weapon', rarity: 'common', classReq: 'gale_glaive', visuals: { model: 'glaive', primaryColor: '#27ae60' } },
+        { id: 'start_gg_2', name: 'Hafif Zırh', tier: 1, type: 'armor', rarity: 'common', classReq: 'gale_glaive' }
     ],
-    shaman: [
-        { id: 'start_s_1', name: 'Ruh Değneği', tier: 1, type: 'weapon', rarity: 'common', classReq: 'shaman', visuals: { model: 'hammer', primaryColor: '#14b8a6' } },
-        { id: 'start_s_2', name: 'Kabile Zırhı', tier: 1, type: 'armor', rarity: 'common', classReq: 'shaman' }
+    archer: [
+        { id: 'start_a_1', name: 'Avcı Yayı', tier: 1, type: 'weapon', rarity: 'common', classReq: 'archer', visuals: { model: 'bow', primaryColor: '#a3e635' } },
+        { id: 'start_a_2', name: 'Deri Zırh', tier: 1, type: 'armor', rarity: 'common', classReq: 'archer' }
     ],
-    assassin: [
-        { id: 'start_a_1', name: 'Paslı Hançer', tier: 1, type: 'weapon', rarity: 'common', classReq: 'assassin', visuals: { model: 'dagger', primaryColor: '#64748b' } },
-        { id: 'start_a_2', name: 'Kamuflaj Zırhı', tier: 1, type: 'armor', rarity: 'common', classReq: 'assassin' }
+    archmage: [
+        { id: 'start_m_1', name: 'Çırak Asası', tier: 1, type: 'weapon', rarity: 'common', classReq: 'archmage', visuals: { model: 'staff', primaryColor: '#8b5cf6', glowColor: '#a78bfa' } },
+        { id: 'start_m_2', name: 'Büyücü Cübbesi', tier: 1, type: 'armor', rarity: 'common', classReq: 'archmage' }
+    ],
+    bard: [
+        { id: 'start_b_1', name: 'Eski Lir', tier: 1, type: 'weapon', rarity: 'common', classReq: 'bard', visuals: { model: 'harp', primaryColor: '#f4d03f' } },
+        { id: 'start_b_2', name: 'Ozan Kıyafeti', tier: 1, type: 'armor', rarity: 'common', classReq: 'bard' }
+    ],
+    cleric: [
+        { id: 'start_c_1', name: 'Ruh Değneği', tier: 1, type: 'weapon', rarity: 'common', classReq: 'cleric', visuals: { model: 'hammer', primaryColor: '#14b8a6' } },
+        { id: 'start_c_2', name: 'Rahip Cübbesi', tier: 1, type: 'armor', rarity: 'common', classReq: 'cleric' }
+    ],
+    martial_artist: [
+        { id: 'start_ma_1', name: 'Eldivenler', tier: 1, type: 'weapon', rarity: 'common', classReq: 'martial_artist', visuals: { model: 'gauntlet', primaryColor: '#e74c3c' } },
+        { id: 'start_ma_2', name: 'Dövüş Giysisi', tier: 1, type: 'armor', rarity: 'common', classReq: 'martial_artist' }
+    ],
+    monk: [
+        { id: 'start_mn_1', name: 'Keşiş Tesbihi', tier: 1, type: 'weapon', rarity: 'common', classReq: 'monk', visuals: { model: 'beads', primaryColor: '#e67e22' } },
+        { id: 'start_mn_2', name: 'Keşiş Cübbesi', tier: 1, type: 'armor', rarity: 'common', classReq: 'monk' }
+    ],
+    reaper: [
+        { id: 'start_r_1', name: 'Paslı Tırpan', tier: 1, type: 'weapon', rarity: 'common', classReq: 'reaper', visuals: { model: 'scythe', primaryColor: '#64748b' } },
+        { id: 'start_r_2', name: 'Gölge Pelerini', tier: 1, type: 'armor', rarity: 'common', classReq: 'reaper' }
     ]
 };
 
@@ -275,7 +395,7 @@ export const RANKS: Rank[] = [
     { id: 16, title: 'Savaş Lordu', minRP: 20000000, bonusDamage: 30, bonusShield: 12, icon: '👹', iconPath: '/ranks/rank_16.png' },
     { id: 17, title: 'Kurmay Komutan', minRP: 50000000, bonusDamage: 35, bonusShield: 15, icon: '👑', iconPath: '/ranks/rank_17.png' },
     { id: 18, title: 'Kadim General', minRP: 100000000, bonusDamage: 40, bonusShield: 20, icon: '🌟', iconPath: '/ranks/rank_18.png' },
-    { id: 19, title: 'Yüce Hükümdar', minRP: 500000000, bonusDamage: 50, bonusShield: 25, icon: '👑🔥', iconPath: '/ranks/yuce_hukumdar.png' },
+    { id: 19, title: 'Yüce Hükümdar', minRP: 500000000, bonusDamage: 50, bonusShield: 25, icon: '👑🔥', iconPath: '/ranks/rank_19.png' },
 ];
 
 export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwner?: Faction, minLevel: number, isSafeZone?: boolean, enemies: Partial<GameEntity>[], npcs: Partial<GameEntity>[], portals: Portal[] }> = {

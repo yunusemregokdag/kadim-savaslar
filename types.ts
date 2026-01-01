@@ -417,7 +417,7 @@ export interface Portal {
   x: number;
   z: number;
   targetZone: number;
-  target: number; // Alias for targetZone (backward compatibility)
+  target?: number; // Alias for targetZone (backward compatibility)
   levelReq: number;
   name: string;
 }

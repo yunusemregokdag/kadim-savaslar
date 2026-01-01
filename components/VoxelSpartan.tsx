@@ -239,7 +239,7 @@ const WING_PATTERNS: Record<string, string[]> = {
     ],
 };
 
-const AdvancedWings: React.FC<{ type: WingItem['type']; color: string; isMoving: boolean; modelPath?: string }> = ({ type, color, isMoving, modelPath }) => {
+const AdvancedWings: React.FC<{ type: WingItem['type']; color: string; isMoving: boolean; modelPath?: string; offsetY?: number }> = ({ type, color, isMoving, modelPath, offsetY }) => {
     // If GLTF model exists (e.g. for complex custom models), use it
     if (modelPath) {
         return <GltfWings modelPath={modelPath} color={color} isMoving={isMoving} />;
@@ -309,7 +309,7 @@ const AdvancedWings: React.FC<{ type: WingItem['type']; color: string; isMoving:
     }, [pattern, color, type]); // Re-generate only if type/color changes
 
     return (
-        <group position={[0, offsets.bodyY ? offsets.bodyY - 0.2 : 0.6, -0.2]} scale={[1.2, 1.2, 1.2]}>
+        <group position={[0, offsetY ? offsetY - 0.2 : 0.6, -0.2]} scale={[1.2, 1.2, 1.2]}>
             {/* Right Wing */}
             <group ref={rightWingRef} position={[0.1, 0, 0]}>
                 {/* Center the wing pattern relative to pivot */}
@@ -419,6 +419,15 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
     const appearance = CLASS_APPEARANCE[charClass] || CLASS_APPEARANCE['warrior'];
     const weaponHold = WEAPON_HOLD[charClass] || WEAPON_HOLD['warrior'];
 
+    // Voxel Character Part Offsets (Minecraft-like proportions)
+    const offsets = props.debugOffsets || {
+        headY: 1.45,
+        bodyY: 0.83,
+        armY: 1.12,
+        legY: 0.10,
+        scale: 1.30
+    };
+
     // COSTUME SYSTEM: Check if a costume set is equipped and get its assets
     const equippedCostume = useMemo(() => {
         if (!props.costumeId) return null;
@@ -468,13 +477,7 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
     // Debug offsets (use props if provided, otherwise defaults)
     // MUST be defined before useFrame so it can be used in animations
     // Kullanıcının ayarladığı kalıcı karakter pozisyon değerleri
-    const offsets = props.debugOffsets || {
-        headY: 1.45,   // Kafa yüksekliği
-        bodyY: 0.83,   // Gövde yüksekliği
-        armY: 1.12,    // Kol (omuz) yüksekliği
-        legY: 0.10,    // Bacak yüksekliği
-        scale: 1.30,   // Karakter ölçeği
-    };
+
 
     // Animation loop
     useFrame((state) => {
@@ -942,6 +945,7 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                             color={props.wingType.color}
                             isMoving={props.isMoving || false}
                             modelPath={(props.wingType as any).modelPath}
+                            offsetY={offsets.bodyY}
                         />
                     ) : null}
                 </group>

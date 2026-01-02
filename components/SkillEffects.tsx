@@ -80,8 +80,8 @@ const SingleSpriteFrame: React.FC<{
     }
 
     return (
-        <Billboard position={position}>
-            <mesh scale={[scale, scale, 1]}>
+        <Billboard position={position} follow={true} lockX={false} lockY={false} lockZ={false}>
+            <mesh scale={[scale, scale, 1]} rotation={[0, 0, Math.PI / 2]}>
                 <planeGeometry args={[1, 1]} />
                 <meshBasicMaterial
                     map={texture}

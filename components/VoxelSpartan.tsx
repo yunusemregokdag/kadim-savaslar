@@ -617,6 +617,9 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
     // Get costume-specific weapon for this class, or fall back to default
     const costumeWeaponPath = equippedCostume?.weapons?.[charClass] || null;
 
+    // Class color for effects (MUST be defined before weapon clone)
+    const classColor = CLASS_COLORS[charClass] || '#ffffff';
+
     // Load weapon model - COSTUME OVERRIDE or DEFAULT: Always fallback to warrior weapon
     const weaponPath = costumeWeaponPath || WEAPON_MAP[charClass] || WEAPON_MAP['warrior'];
     const { scene: weaponScene } = useGLTF(weaponPath);
@@ -862,7 +865,6 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
 
     // Character aura only with full set +7+
     const characterGlowEffect = useMemo(() => isFullSetPlus7 ? getGlowEffect(minSetLevel, charClass) : null, [isFullSetPlus7, minSetLevel, charClass]);
-    const classColor = CLASS_COLORS[charClass] || '#ffffff';
 
     // Trail için ref
     const trailTargetRef = useRef<THREE.Mesh>(null);

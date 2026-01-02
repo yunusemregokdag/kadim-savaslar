@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useState, useEffect } from 'react';
 import { useGLTF, Sparkles, Trail, useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -883,6 +883,22 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
     // Trail için ref
     const trailTargetRef = useRef<THREE.Mesh>(null);
 
+    // MOUNT SYSTEM - I tuşu ile bineğe binme
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        const handleKeyPress = (e: KeyboardEvent) => {
+            if (e.key.toLowerCase() === 'i' && props.mountType) {
+                setIsMounted(prev => !prev);
+            }
+        };
+        window.addEventListener('keydown', handleKeyPress);
+        return () => window.removeEventListener('keydown', handleKeyPress);
+    }, [props.mountType]);
+
+    // Mounted olunca karakter pozisyonu offset
+    const characterYOffset = isMounted ? 0.8 : 0; // Binek üstünde 0.8 birim yukarı
+
     // Block dimensions (Minecraft Steve proportions)
     const headSize = 0.5;
     const bodyWidth = 0.5;
@@ -901,415 +917,418 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
             dispose={null}
             scale={[offsets.scale, offsets.scale, offsets.scale]}
         >
-            {/* =========== HEAD =========== */}
-            <group position={[0, offsets.headY, 0]}>
-                {/* Main head block */}
-                <mesh castShadow receiveShadow>
-                    <boxGeometry args={[headSize, headSize, headSize]} />
-                    <meshStandardMaterial color={appearance.skin} />
-                </mesh>
+            {/* Character wrapper - Y offset when mounted */}
+            <group position={[0, characterYOffset, 0]}>
+                {/* =========== HEAD =========== */}
+                <group position={[0, offsets.headY, 0]}>
+                    {/* Main head block */}
+                    <mesh castShadow receiveShadow>
+                        <boxGeometry args={[headSize, headSize, headSize]} />
+                        <meshStandardMaterial color={appearance.skin} />
+                    </mesh>
 
-                {/* Hat (Costume) Or Hair (Default) */}
-                {equippedCostume?.hat ? (
-                    // Load Hat Model
-                    <group position={[0, 0.35, 0]} scale={[0.6, 0.6, 0.6]}>
-                        <CostumeHat modelPath={equippedCostume.hat} />
-                    </group>
-                ) : (
-                    <>
-                        {/* Hair (top and back) */}
-                        <mesh position={[0, 0.15, -0.05]} castShadow>
-                            <boxGeometry args={[headSize + 0.02, 0.22, headSize - 0.05]} />
-                            <meshStandardMaterial color={appearance.hair} />
-                        </mesh>
-                        {/* Hair bangs (front) */}
-                        <mesh position={[0, 0.22, 0.2]} castShadow>
-                            <boxGeometry args={[headSize - 0.05, 0.1, 0.1]} />
-                            <meshStandardMaterial color={appearance.hair} />
-                        </mesh>
-                        {/* Side hair */}
-                        <mesh position={[0.22, 0.05, 0]} castShadow>
-                            <boxGeometry args={[0.08, 0.35, 0.4]} />
-                            <meshStandardMaterial color={appearance.hair} />
-                        </mesh>
-                        <mesh position={[-0.22, 0.05, 0]} castShadow>
-                            <boxGeometry args={[0.08, 0.35, 0.4]} />
-                            <meshStandardMaterial color={appearance.hair} />
-                        </mesh>
-                    </>
-                )}
-
-                {/* Face features */}
-                {/* Eyes */}
-                <mesh position={[-0.1, 0.02, 0.251]}>
-                    <boxGeometry args={[0.1, 0.08, 0.01]} />
-                    <meshStandardMaterial color="#ffffff" />
-                </mesh>
-                <mesh position={[0.1, 0.02, 0.251]}>
-                    <boxGeometry args={[0.1, 0.08, 0.01]} />
-                    <meshStandardMaterial color="#ffffff" />
-                </mesh>
-                {/* Pupils */}
-                <mesh position={[-0.1, 0.02, 0.26]}>
-                    <boxGeometry args={[0.05, 0.05, 0.01]} />
-                    <meshStandardMaterial color={appearance.eyes} />
-                </mesh>
-                <mesh position={[0.1, 0.02, 0.26]}>
-                    <boxGeometry args={[0.05, 0.05, 0.01]} />
-                    <meshStandardMaterial color={appearance.eyes} />
-                </mesh>
-                {/* Mouth */}
-                <mesh position={[0, -0.12, 0.251]}>
-                    <boxGeometry args={[0.15, 0.04, 0.01]} />
-                    <meshStandardMaterial color="#8b4513" />
-                </mesh>
-            </group>
-
-            {/* =========== BODY =========== */}
-            <group ref={bodyRef} position={[0, offsets.bodyY, 0]}>
-                {/* Main torso */}
-                {/* Gövde Mesh'i - Zırh Texture Desteği */}
-                <mesh castShadow receiveShadow>
-                    <boxGeometry args={[bodyWidth, bodyHeight, bodyDepth]} />
-                    {equippedCostume?.armorTexture1 ? (
-                        // Zırh Texture'ı varsa kullan
-                        <CostumeBodyMaterial texturePath={equippedCostume.armorTexture1} baseColor={equippedCostume.color || appearance.body} />
+                    {/* Hat (Costume) Or Hair (Default) */}
+                    {equippedCostume?.hat ? (
+                        // Load Hat Model
+                        <group position={[0, 0.35, 0]} scale={[0.6, 0.6, 0.6]}>
+                            <CostumeHat modelPath={equippedCostume.hat} />
+                        </group>
                     ) : (
-                        // Yoksa kostüm rengini veya normal rengi kullan - +7 ARMOR set varsa AMPUL GİBİ PARLA
+                        <>
+                            {/* Hair (top and back) */}
+                            <mesh position={[0, 0.15, -0.05]} castShadow>
+                                <boxGeometry args={[headSize + 0.02, 0.22, headSize - 0.05]} />
+                                <meshStandardMaterial color={appearance.hair} />
+                            </mesh>
+                            {/* Hair bangs (front) */}
+                            <mesh position={[0, 0.22, 0.2]} castShadow>
+                                <boxGeometry args={[headSize - 0.05, 0.1, 0.1]} />
+                                <meshStandardMaterial color={appearance.hair} />
+                            </mesh>
+                            {/* Side hair */}
+                            <mesh position={[0.22, 0.05, 0]} castShadow>
+                                <boxGeometry args={[0.08, 0.35, 0.4]} />
+                                <meshStandardMaterial color={appearance.hair} />
+                            </mesh>
+                            <mesh position={[-0.22, 0.05, 0]} castShadow>
+                                <boxGeometry args={[0.08, 0.35, 0.4]} />
+                                <meshStandardMaterial color={appearance.hair} />
+                            </mesh>
+                        </>
+                    )}
+
+                    {/* Face features */}
+                    {/* Eyes */}
+                    <mesh position={[-0.1, 0.02, 0.251]}>
+                        <boxGeometry args={[0.1, 0.08, 0.01]} />
+                        <meshStandardMaterial color="#ffffff" />
+                    </mesh>
+                    <mesh position={[0.1, 0.02, 0.251]}>
+                        <boxGeometry args={[0.1, 0.08, 0.01]} />
+                        <meshStandardMaterial color="#ffffff" />
+                    </mesh>
+                    {/* Pupils */}
+                    <mesh position={[-0.1, 0.02, 0.26]}>
+                        <boxGeometry args={[0.05, 0.05, 0.01]} />
+                        <meshStandardMaterial color={appearance.eyes} />
+                    </mesh>
+                    <mesh position={[0.1, 0.02, 0.26]}>
+                        <boxGeometry args={[0.05, 0.05, 0.01]} />
+                        <meshStandardMaterial color={appearance.eyes} />
+                    </mesh>
+                    {/* Mouth */}
+                    <mesh position={[0, -0.12, 0.251]}>
+                        <boxGeometry args={[0.15, 0.04, 0.01]} />
+                        <meshStandardMaterial color="#8b4513" />
+                    </mesh>
+                </group>
+
+                {/* =========== BODY =========== */}
+                <group ref={bodyRef} position={[0, offsets.bodyY, 0]}>
+                    {/* Main torso */}
+                    {/* Gövde Mesh'i - Zırh Texture Desteği */}
+                    <mesh castShadow receiveShadow>
+                        <boxGeometry args={[bodyWidth, bodyHeight, bodyDepth]} />
+                        {equippedCostume?.armorTexture1 ? (
+                            // Zırh Texture'ı varsa kullan
+                            <CostumeBodyMaterial texturePath={equippedCostume.armorTexture1} baseColor={equippedCostume.color || appearance.body} />
+                        ) : (
+                            // Yoksa kostüm rengini veya normal rengi kullan - +7 ARMOR set varsa AMPUL GİBİ PARLA
+                            <meshStandardMaterial
+                                color={equippedCostume?.color || appearance.body}
+                                emissive={isArmorSetPlus7 ? classColor : '#000000'}
+                                emissiveIntensity={isArmorSetPlus7 ? (minArmorLevel >= 10 ? 1.5 : minArmorLevel >= 9 ? 1.2 : 0.8) : 0}
+                            />
+                        )}
+                    </mesh>
+                    {/* Body accent (belt/trim) */}
+                    <mesh position={[0, -0.32, 0.01]} castShadow>
+                        <boxGeometry args={[bodyWidth + 0.02, 0.1, bodyDepth]} />
+                        <meshStandardMaterial color={appearance.bodyAccent} />
+                    </mesh>
+                    {/* Collar */}
+                    <mesh position={[0, 0.35, 0.05]} castShadow>
+                        <boxGeometry args={[0.35, 0.08, 0.15]} />
+                        <meshStandardMaterial color={equippedCostume?.color || appearance.bodyAccent} />
+                    </mesh>
+
+                    {/* ═══════════ ARMOR GLOW (+7+ set) ═══════════ */}
+                    {/* Zırh/elbise +7 ve üstü olduğunda gövde etrafında parlaklık */}
+                    {isFullSetPlus7 && (
+                        <group position={[0, 0, 0]}>
+                            {/* Gövde etrafında parlayan partiküller */}
+                            <Sparkles
+                                count={Math.min(minSetLevel * 3, 30)}
+                                scale={[0.8, 1.2, 0.5]}
+                                size={minSetLevel >= 10 ? 6 : minSetLevel >= 9 ? 4 : 3}
+                                speed={1.5}
+                                opacity={0.7}
+                                color={classColor}
+                            />
+                            {/* Işık efekti */}
+                            <pointLight
+                                position={[0, 0, 0.3]}
+                                distance={1.5}
+                                intensity={minSetLevel >= 10 ? 2 : 1}
+                                color={classColor}
+                            />
+                        </group>
+                    )}
+                </group>
+
+                {/* =========== RIGHT ARM (with weapon) =========== */}
+                <group
+                    ref={rightArmRef}
+                    position={[bodyWidth / 2 + armWidth / 2, offsets.armY, 0]}
+                >
+                    {/* Upper arm (shoulder pivot) */}
+                    <mesh position={[0, -armHeight / 2 + 0.1, 0]} castShadow receiveShadow>
+                        <boxGeometry args={[armWidth, armHeight, armWidth]} />
                         <meshStandardMaterial
                             color={equippedCostume?.color || appearance.body}
                             emissive={isArmorSetPlus7 ? classColor : '#000000'}
                             emissiveIntensity={isArmorSetPlus7 ? (minArmorLevel >= 10 ? 1.5 : minArmorLevel >= 9 ? 1.2 : 0.8) : 0}
                         />
-                    )}
-                </mesh>
-                {/* Body accent (belt/trim) */}
-                <mesh position={[0, -0.32, 0.01]} castShadow>
-                    <boxGeometry args={[bodyWidth + 0.02, 0.1, bodyDepth]} />
-                    <meshStandardMaterial color={appearance.bodyAccent} />
-                </mesh>
-                {/* Collar */}
-                <mesh position={[0, 0.35, 0.05]} castShadow>
-                    <boxGeometry args={[0.35, 0.08, 0.15]} />
-                    <meshStandardMaterial color={equippedCostume?.color || appearance.bodyAccent} />
-                </mesh>
+                    </mesh>
+                    {/* Hand */}
+                    <mesh position={[0, -armHeight + 0.05, 0]} castShadow>
+                        <boxGeometry args={[armWidth - 0.02, 0.15, armWidth - 0.02]} />
+                        <meshStandardMaterial color={appearance.skin} />
+                    </mesh>
 
-                {/* ═══════════ ARMOR GLOW (+7+ set) ═══════════ */}
-                {/* Zırh/elbise +7 ve üstü olduğunda gövde etrafında parlaklık */}
-                {isFullSetPlus7 && (
-                    <group position={[0, 0, 0]}>
-                        {/* Gövde etrafında parlayan partiküller */}
-                        <Sparkles
-                            count={Math.min(minSetLevel * 3, 30)}
-                            scale={[0.8, 1.2, 0.5]}
-                            size={minSetLevel >= 10 ? 6 : minSetLevel >= 9 ? 4 : 3}
-                            speed={1.5}
-                            opacity={0.7}
-                            color={classColor}
-                        />
-                        {/* Işık efekti */}
-                        <pointLight
-                            position={[0, 0, 0.3]}
-                            distance={1.5}
-                            intensity={minSetLevel >= 10 ? 2 : 1}
-                            color={classColor}
-                        />
-                    </group>
-                )}
-            </group>
-
-            {/* =========== RIGHT ARM (with weapon) =========== */}
-            <group
-                ref={rightArmRef}
-                position={[bodyWidth / 2 + armWidth / 2, offsets.armY, 0]}
-            >
-                {/* Upper arm (shoulder pivot) */}
-                <mesh position={[0, -armHeight / 2 + 0.1, 0]} castShadow receiveShadow>
-                    <boxGeometry args={[armWidth, armHeight, armWidth]} />
-                    <meshStandardMaterial
-                        color={equippedCostume?.color || appearance.body}
-                        emissive={isArmorSetPlus7 ? classColor : '#000000'}
-                        emissiveIntensity={isArmorSetPlus7 ? (minArmorLevel >= 10 ? 1.5 : minArmorLevel >= 9 ? 1.2 : 0.8) : 0}
-                    />
-                </mesh>
-                {/* Hand */}
-                <mesh position={[0, -armHeight + 0.05, 0]} castShadow>
-                    <boxGeometry args={[armWidth - 0.02, 0.15, armWidth - 0.02]} />
-                    <meshStandardMaterial color={appearance.skin} />
-                </mesh>
-
-                {/* ======= WEAPON ATTACHED TO HAND ======= */}
-                <group position={[0, -armHeight + 0.05, 0]}>
-                    <group
-                        position={weaponHold.position}
-                        rotation={weaponHold.rotation}
-                        scale={[weaponHold.scale, weaponHold.scale, weaponHold.scale]}
-                    >
-                        <primitive object={clonedWeapon} />
-
-                        {/* ═══════════ WEAPON GLOW (+7 ve üstü) ═══════════ */}
-                        {/* +7 ve üstü silahta: Sınıf renginde parlaklık + aşağı partiküller */}
-                        {/* SABİT KONUM - DEĞİŞTİRME! */}
-                        {hasWeaponGlow && (
-                            <group position={[0, 0, 0]}>
-                                {/* Silah etrafında saran parlaklık (Resim 2'deki gibi) */}
-                                <Sparkles
-                                    count={Math.min(weaponGlowLevel * 4, 40)}
-                                    scale={1.2}
-                                    size={weaponGlowLevel >= 10 ? 8 : weaponGlowLevel >= 9 ? 6 : 4}
-                                    speed={2}
-                                    opacity={0.9}
-                                    color={classColor} // SINIF RENGİ (Warrior = Kırmızı)
-                                />
-
-                                {/* Silah üzerinde parlayan ışık */}
-                                <pointLight
-                                    position={[0, 0.5, 0]}
-                                    distance={2}
-                                    intensity={weaponGlowLevel >= 10 ? 3 : weaponGlowLevel >= 9 ? 2 : 1.5}
-                                    color={classColor}
-                                />
-
-                                {/* +7 ve üstü: AŞAĞI DÖKÜLEN PARTİKÜLLER (Her zaman) */}
-                                <Sparkles
-                                    count={weaponGlowLevel >= 10 ? 25 : weaponGlowLevel >= 9 ? 18 : 12}
-                                    scale={[0.4, 2.5, 0.4]} // Aşağı uzanan şekil
-                                    size={3}
-                                    speed={0.5}
-                                    opacity={0.7}
-                                    color={classColor} // Sınıf rengi (Kırmızı, Mavi, Mor vb.)
-                                />
-
-                                {/* +10 ve üstü: Ekstra yoğun efekt */}
-                                {weaponGlowLevel >= 10 && (
-                                    <Sparkles
-                                        count={20}
-                                        scale={[0.3, 3, 0.3]}
-                                        size={4}
-                                        speed={0.3}
-                                        opacity={0.5}
-                                        color={classColor}
-                                    />
-                                )}
-                            </group>
-                        )}
-                    </group>
-                </group>
-            </group>
-
-            {/* =========== LEFT ARM =========== */}
-            <group
-                ref={leftArmRef}
-                position={[-(bodyWidth / 2 + armWidth / 2), offsets.armY, 0]}
-            >
-                <mesh position={[0, -armHeight / 2 + 0.1, 0]} castShadow receiveShadow>
-                    <boxGeometry args={[armWidth, armHeight, armWidth]} />
-                    <meshStandardMaterial
-                        color={equippedCostume?.color || appearance.body}
-                        emissive={isFullSetPlus7 ? classColor : '#000000'}
-                        emissiveIntensity={isFullSetPlus7 ? (minSetLevel >= 10 ? 1.5 : minSetLevel >= 9 ? 1.2 : 0.8) : 0}
-                    />
-                </mesh>
-                {/* Hand */}
-                <mesh position={[0, -armHeight + 0.05, 0]} castShadow>
-                    <boxGeometry args={[armWidth - 0.02, 0.15, armWidth - 0.02]} />
-                    <meshStandardMaterial color={appearance.skin} />
-                </mesh>
-
-                {/* ======= LEFT HAND WEAPON (for martial_artist) ======= */}
-                {charClass === 'martial_artist' && (
+                    {/* ======= WEAPON ATTACHED TO HAND ======= */}
                     <group position={[0, -armHeight + 0.05, 0]}>
                         <group
-                            position={[-weaponHold.position[0], weaponHold.position[1], weaponHold.position[2]]}
-                            rotation={[weaponHold.rotation[0], -weaponHold.rotation[1], -weaponHold.rotation[2]]}
+                            position={weaponHold.position}
+                            rotation={weaponHold.rotation}
                             scale={[weaponHold.scale, weaponHold.scale, weaponHold.scale]}
                         >
-                            <primitive object={clonedWeapon.clone()} />
+                            <primitive object={clonedWeapon} />
+
+                            {/* ═══════════ WEAPON GLOW (+7 ve üstü) ═══════════ */}
+                            {/* +7 ve üstü silahta: Sınıf renginde parlaklık + aşağı partiküller */}
+                            {/* SABİT KONUM - DEĞİŞTİRME! */}
+                            {hasWeaponGlow && (
+                                <group position={[0, 0, 0]}>
+                                    {/* Silah etrafında saran parlaklık (Resim 2'deki gibi) */}
+                                    <Sparkles
+                                        count={Math.min(weaponGlowLevel * 4, 40)}
+                                        scale={1.2}
+                                        size={weaponGlowLevel >= 10 ? 8 : weaponGlowLevel >= 9 ? 6 : 4}
+                                        speed={2}
+                                        opacity={0.9}
+                                        color={classColor} // SINIF RENGİ (Warrior = Kırmızı)
+                                    />
+
+                                    {/* Silah üzerinde parlayan ışık */}
+                                    <pointLight
+                                        position={[0, 0.5, 0]}
+                                        distance={2}
+                                        intensity={weaponGlowLevel >= 10 ? 3 : weaponGlowLevel >= 9 ? 2 : 1.5}
+                                        color={classColor}
+                                    />
+
+                                    {/* +7 ve üstü: AŞAĞI DÖKÜLEN PARTİKÜLLER (Her zaman) */}
+                                    <Sparkles
+                                        count={weaponGlowLevel >= 10 ? 25 : weaponGlowLevel >= 9 ? 18 : 12}
+                                        scale={[0.4, 2.5, 0.4]} // Aşağı uzanan şekil
+                                        size={3}
+                                        speed={0.5}
+                                        opacity={0.7}
+                                        color={classColor} // Sınıf rengi (Kırmızı, Mavi, Mor vb.)
+                                    />
+
+                                    {/* +10 ve üstü: Ekstra yoğun efekt */}
+                                    {weaponGlowLevel >= 10 && (
+                                        <Sparkles
+                                            count={20}
+                                            scale={[0.3, 3, 0.3]}
+                                            size={4}
+                                            speed={0.3}
+                                            opacity={0.5}
+                                            color={classColor}
+                                        />
+                                    )}
+                                </group>
+                            )}
                         </group>
                     </group>
-                )}
-            </group>
+                </group>
 
-            {/* =========== RIGHT LEG =========== */}
-            <group
-                ref={rightLegRef}
-                position={[legWidth / 2 + 0.01, offsets.legY, 0]}
-            >
-                <mesh position={[0, 0, 0]} castShadow receiveShadow>
-                    <boxGeometry args={[legWidth, legHeight, legWidth]} />
-                    <meshStandardMaterial
-                        color={equippedCostume?.color || appearance.legs}
-                        emissive={isFullSetPlus7 ? classColor : '#000000'}
-                        emissiveIntensity={isFullSetPlus7 ? (minSetLevel >= 10 ? 1.5 : minSetLevel >= 9 ? 1.2 : 0.8) : 0}
-                    />
-                </mesh>
-                {/* Foot highlight */}
-                <mesh position={[0, -legHeight / 2 + 0.05, 0.02]} castShadow>
-                    <boxGeometry args={[legWidth, 0.1, legWidth + 0.05]} />
-                    <meshStandardMaterial color={appearance.bodyAccent} />
-                </mesh>
-            </group>
-
-            {/* =========== LEFT LEG =========== */}
-            <group
-                ref={leftLegRef}
-                position={[-(legWidth / 2 + 0.01), offsets.legY, 0]}
-            >
-                <mesh position={[0, 0, 0]} castShadow receiveShadow>
-                    <boxGeometry args={[legWidth, legHeight, legWidth]} />
-                    <meshStandardMaterial
-                        color={equippedCostume?.color || appearance.legs}
-                        emissive={isFullSetPlus7 ? classColor : '#000000'}
-                        emissiveIntensity={isFullSetPlus7 ? (minSetLevel >= 10 ? 1.5 : minSetLevel >= 9 ? 1.2 : 0.8) : 0}
-                    />
-                </mesh>
-                {/* Foot highlight */}
-                <mesh position={[0, -legHeight / 2 + 0.05, 0.02]} castShadow>
-                    <boxGeometry args={[legWidth, 0.1, legWidth + 0.05]} />
-                    <meshStandardMaterial color={appearance.bodyAccent} />
-                </mesh>
-            </group>
-
-            {/* =========== FULL SET +7+ CHARACTER AURA =========== */}
-            {/* Only shows when ALL equipped items are +7 or higher */}
-            {characterGlowEffect && (
-                <group position={[0, 1.0, 0]}>
-                    {/* Character Aura Particles */}
-                    <Sparkles
-                        count={characterGlowEffect.particleCount}
-                        scale={characterGlowEffect.level >= 10 ? 2.5 : 2}
-                        size={characterGlowEffect.level >= 10 ? 12 : characterGlowEffect.level >= 9 ? 8 : 5}
-                        speed={characterGlowEffect.intensity}
-                        opacity={0.85}
-                        color={characterGlowEffect.color}
-                    />
-
-                    {/* Secondary Class Particles (+10+) */}
-                    {characterGlowEffect.level >= 10 && (
-                        <Sparkles
-                            count={20}
-                            scale={1.5}
-                            size={4}
-                            speed={2}
-                            opacity={0.6}
-                            color={classColor}
+                {/* =========== LEFT ARM =========== */}
+                <group
+                    ref={leftArmRef}
+                    position={[-(bodyWidth / 2 + armWidth / 2), offsets.armY, 0]}
+                >
+                    <mesh position={[0, -armHeight / 2 + 0.1, 0]} castShadow receiveShadow>
+                        <boxGeometry args={[armWidth, armHeight, armWidth]} />
+                        <meshStandardMaterial
+                            color={equippedCostume?.color || appearance.body}
+                            emissive={isFullSetPlus7 ? classColor : '#000000'}
+                            emissiveIntensity={isFullSetPlus7 ? (minSetLevel >= 10 ? 1.5 : minSetLevel >= 9 ? 1.2 : 0.8) : 0}
                         />
+                    </mesh>
+                    {/* Hand */}
+                    <mesh position={[0, -armHeight + 0.05, 0]} castShadow>
+                        <boxGeometry args={[armWidth - 0.02, 0.15, armWidth - 0.02]} />
+                        <meshStandardMaterial color={appearance.skin} />
+                    </mesh>
+
+                    {/* ======= LEFT HAND WEAPON (for martial_artist) ======= */}
+                    {charClass === 'martial_artist' && (
+                        <group position={[0, -armHeight + 0.05, 0]}>
+                            <group
+                                position={[-weaponHold.position[0], weaponHold.position[1], weaponHold.position[2]]}
+                                rotation={[weaponHold.rotation[0], -weaponHold.rotation[1], -weaponHold.rotation[2]]}
+                                scale={[weaponHold.scale, weaponHold.scale, weaponHold.scale]}
+                            >
+                                <primitive object={clonedWeapon.clone()} />
+                            </group>
+                        </group>
                     )}
+                </group>
 
-                    {/* Point Light - Aura Glow */}
-                    <pointLight
-                        position={[0.4, 0.3, 0.3]}
-                        distance={characterGlowEffect.level >= 12 ? 6 : 4}
-                        intensity={characterGlowEffect.intensity * 4}
-                        color={characterGlowEffect.color}
-                    />
+                {/* =========== RIGHT LEG =========== */}
+                <group
+                    ref={rightLegRef}
+                    position={[legWidth / 2 + 0.01, offsets.legY, 0]}
+                >
+                    <mesh position={[0, 0, 0]} castShadow receiveShadow>
+                        <boxGeometry args={[legWidth, legHeight, legWidth]} />
+                        <meshStandardMaterial
+                            color={equippedCostume?.color || appearance.legs}
+                            emissive={isFullSetPlus7 ? classColor : '#000000'}
+                            emissiveIntensity={isFullSetPlus7 ? (minSetLevel >= 10 ? 1.5 : minSetLevel >= 9 ? 1.2 : 0.8) : 0}
+                        />
+                    </mesh>
+                    {/* Foot highlight */}
+                    <mesh position={[0, -legHeight / 2 + 0.05, 0.02]} castShadow>
+                        <boxGeometry args={[legWidth, 0.1, legWidth + 0.05]} />
+                        <meshStandardMaterial color={appearance.bodyAccent} />
+                    </mesh>
+                </group>
 
-                    {/* +9+ Golden Ring */}
-                    {characterGlowEffect.level >= 9 && (
-                        <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, -0.5, 0]}>
-                            <ringGeometry args={[0.6, 0.7, 32]} />
-                            <meshBasicMaterial
-                                color={characterGlowEffect.color}
-                                transparent
-                                opacity={0.4}
-                                side={THREE.DoubleSide}
-                            />
-                        </mesh>
-                    )}
+                {/* =========== LEFT LEG =========== */}
+                <group
+                    ref={leftLegRef}
+                    position={[-(legWidth / 2 + 0.01), offsets.legY, 0]}
+                >
+                    <mesh position={[0, 0, 0]} castShadow receiveShadow>
+                        <boxGeometry args={[legWidth, legHeight, legWidth]} />
+                        <meshStandardMaterial
+                            color={equippedCostume?.color || appearance.legs}
+                            emissive={isFullSetPlus7 ? classColor : '#000000'}
+                            emissiveIntensity={isFullSetPlus7 ? (minSetLevel >= 10 ? 1.5 : minSetLevel >= 9 ? 1.2 : 0.8) : 0}
+                        />
+                    </mesh>
+                    {/* Foot highlight */}
+                    <mesh position={[0, -legHeight / 2 + 0.05, 0.02]} castShadow>
+                        <boxGeometry args={[legWidth, 0.1, legWidth + 0.05]} />
+                        <meshStandardMaterial color={appearance.bodyAccent} />
+                    </mesh>
+                </group>
 
-                    {/* +11+ Second Ring */}
-                    {characterGlowEffect.level >= 11 && (
-                        <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, -0.6, 0]}>
-                            <ringGeometry args={[0.8, 0.9, 32]} />
-                            <meshBasicMaterial
+                {/* =========== FULL SET +7+ CHARACTER AURA =========== */}
+                {/* Only shows when ALL equipped items are +7 or higher */}
+                {characterGlowEffect && (
+                    <group position={[0, 1.0, 0]}>
+                        {/* Character Aura Particles */}
+                        <Sparkles
+                            count={characterGlowEffect.particleCount}
+                            scale={characterGlowEffect.level >= 10 ? 2.5 : 2}
+                            size={characterGlowEffect.level >= 10 ? 12 : characterGlowEffect.level >= 9 ? 8 : 5}
+                            speed={characterGlowEffect.intensity}
+                            opacity={0.85}
+                            color={characterGlowEffect.color}
+                        />
+
+                        {/* Secondary Class Particles (+10+) */}
+                        {characterGlowEffect.level >= 10 && (
+                            <Sparkles
+                                count={20}
+                                scale={1.5}
+                                size={4}
+                                speed={2}
+                                opacity={0.6}
                                 color={classColor}
-                                transparent
-                                opacity={0.3}
-                                side={THREE.DoubleSide}
                             />
-                        </mesh>
-                    )}
+                        )}
 
-                    {/* +12 Ground Effect */}
-                    {characterGlowEffect.level >= 12 && (
-                        <group position={[0, -1.2, 0]}>
-                            <mesh rotation={[Math.PI / 2, 0, 0]}>
-                                <circleGeometry args={[1.2, 32]} />
+                        {/* Point Light - Aura Glow */}
+                        <pointLight
+                            position={[0.4, 0.3, 0.3]}
+                            distance={characterGlowEffect.level >= 12 ? 6 : 4}
+                            intensity={characterGlowEffect.intensity * 4}
+                            color={characterGlowEffect.color}
+                        />
+
+                        {/* +9+ Golden Ring */}
+                        {characterGlowEffect.level >= 9 && (
+                            <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, -0.5, 0]}>
+                                <ringGeometry args={[0.6, 0.7, 32]} />
                                 <meshBasicMaterial
                                     color={characterGlowEffect.color}
                                     transparent
-                                    opacity={0.2}
+                                    opacity={0.4}
+                                    side={THREE.DoubleSide}
                                 />
                             </mesh>
-                            <Sparkles
-                                count={30}
-                                scale={2}
-                                size={3}
-                                speed={0.5}
-                                opacity={0.4}
-                                color={classColor}
+                        )}
+
+                        {/* +11+ Second Ring */}
+                        {characterGlowEffect.level >= 11 && (
+                            <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, -0.6, 0]}>
+                                <ringGeometry args={[0.8, 0.9, 32]} />
+                                <meshBasicMaterial
+                                    color={classColor}
+                                    transparent
+                                    opacity={0.3}
+                                    side={THREE.DoubleSide}
+                                />
+                            </mesh>
+                        )}
+
+                        {/* +12 Ground Effect */}
+                        {characterGlowEffect.level >= 12 && (
+                            <group position={[0, -1.2, 0]}>
+                                <mesh rotation={[Math.PI / 2, 0, 0]}>
+                                    <circleGeometry args={[1.2, 32]} />
+                                    <meshBasicMaterial
+                                        color={characterGlowEffect.color}
+                                        transparent
+                                        opacity={0.2}
+                                    />
+                                </mesh>
+                                <Sparkles
+                                    count={30}
+                                    scale={2}
+                                    size={3}
+                                    speed={0.5}
+                                    opacity={0.4}
+                                    color={classColor}
+                                />
+                            </group>
+                        )}
+                    </group>
+                )}
+
+                {/* Trail Effect REMOVED as per user request */}
+
+                {/* =========== WINGS =========== */}
+                {/* Costume wing takes priority, then regular wingType */}
+                {(equippedCostume?.wing || props.wingType) && (
+                    <group position={[0, 0.75, -0.15]}> {/* Düzeltilmiş Sırt Pozisyonu */}
+                        {equippedCostume?.wing ? (
+                            <GltfWings
+                                modelPath={equippedCostume.wing}
+                                color={equippedCostume.color || '#10b981'}
+                                isMoving={props.isMoving || false}
                             />
-                        </group>
-                    )}
-                </group>
-            )}
+                        ) : props.wingType ? (
+                            <AdvancedWings
+                                type={props.wingType.type}
+                                color={props.wingType.color}
+                                isMoving={props.isMoving || false}
+                                modelPath={(props.wingType as any).modelPath}
+                                offsetY={offsets.bodyY}
+                            />
+                        ) : null}
+                    </group>
+                )}
 
-            {/* Trail Effect REMOVED as per user request */}
-
-            {/* =========== WINGS =========== */}
-            {/* Costume wing takes priority, then regular wingType */}
-            {(equippedCostume?.wing || props.wingType) && (
-                <group position={[0, 0.75, -0.15]}> {/* Düzeltilmiş Sırt Pozisyonu */}
-                    {equippedCostume?.wing ? (
-                        <GltfWings
-                            modelPath={equippedCostume.wing}
-                            color={equippedCostume.color || '#10b981'}
-                            isMoving={props.isMoving || false}
+                {/* =========== NORMAL PET (SOL TARAF - SİLAHIN KARŞISI) =========== */}
+                {props.petType && (
+                    <group position={[-0.9, 0, 0.4]} rotation={[0, 0, 0]}> {/* Sol taraf, düz karşıya bakıyor */}
+                        <DynamicPet
+                            modelPath={(props.petType as any).modelPath || '/models/pets/cubee-jungle.gltf'}
+                            color={props.petType.color}
+                            scale={0.7}
                         />
-                    ) : props.wingType ? (
-                        <AdvancedWings
-                            type={props.wingType.type}
-                            color={props.wingType.color}
-                            isMoving={props.isMoving || false}
-                            modelPath={(props.wingType as any).modelPath}
-                            offsetY={offsets.bodyY}
-                        />
-                    ) : null}
-                </group>
-            )}
+                    </group>
+                )}
 
-            {/* =========== NORMAL PET (SOL TARAF - SİLAHIN KARŞISI) =========== */}
-            {props.petType && (
-                <group position={[-0.9, 0, 0.4]} rotation={[0, 0, 0]}> {/* Sol taraf, düz karşıya bakıyor */}
-                    <DynamicPet
-                        modelPath={(props.petType as any).modelPath || '/models/pets/cubee-jungle.gltf'}
-                        color={props.petType.color}
-                        scale={0.7}
-                    />
-                </group>
-            )}
-
-            {/* =========== MOUNT PET (SAĞ TARAF) =========== */}
-            {props.mountType && (
-                <group position={[0.9, 0, 0.4]} rotation={[0, 0, 0]}> {/* Sağ taraf, düz karşıya bakıyor */}
-                    <DynamicPet
-                        modelPath={(props.mountType as any).modelPath || '/models/pets/cubee-plains.gltf'}
-                        color={props.mountType.color}
-                        scale={0.75}
-                    />
-                    {/* Mount için hız göstergesi */}
-                    {props.mountType.bonusSpeed && (
-                        <Sparkles
-                            count={5}
-                            scale={0.5}
-                            size={2}
-                            speed={2}
-                            opacity={0.4}
-                            color="#22c55e"
+                {/* =========== MOUNT PET (SAĞ TARAF) =========== */}
+                {props.mountType && (
+                    <group position={[0.9, 0, 0.4]} rotation={[0, 0, 0]}> {/* Sağ taraf, düz karşıya bakıyor */}
+                        <DynamicPet
+                            modelPath={(props.mountType as any).modelPath || '/models/pets/cubee-plains.gltf'}
+                            color={props.mountType.color}
+                            scale={0.75}
                         />
-                    )}
-                </group>
-            )}
+                        {/* Mount için hız göstergesi */}
+                        {props.mountType.bonusSpeed && (
+                            <Sparkles
+                                count={5}
+                                scale={0.5}
+                                size={2}
+                                speed={2}
+                                opacity={0.4}
+                                color="#22c55e"
+                            />
+                        )}
+                    </group>
+                )}
+            </group> {/* Close character wrapper */}
         </group>
     );
 };

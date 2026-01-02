@@ -335,7 +335,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
             const setTypes: Item['type'][] = ['helmet', 'armor', 'pants', 'boots', 'necklace', 'earring'];
             setTypes.forEach(t => {
                 adminInventory.push({
-                    id: uuidv4(), name: `GOD ${t.toUpperCase()} +12`, tier: 5,
+                    id: uuidv4(), name: `GOD ${t.toUpperCase()}`, tier: 5,
                     type: t, rarity: 'ancient',
                     value: 999999, plus: 12, // +12 Requested!
                     stats: generateRandomStats(t, 5, 'ancient', charClass)
@@ -344,7 +344,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
 
             // 4. Starter +12 Item (The God Slayer)
             const godWeapon: Item = {
-                id: uuidv4(), name: 'GOD SLAYER TESTER +12', tier: 5,
+                id: uuidv4(), name: 'GOD SLAYER TESTER', tier: 5,
                 type: 'weapon', rarity: 'ancient',
                 value: 999999, plus: 12,
                 stats: {

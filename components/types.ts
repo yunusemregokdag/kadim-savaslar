@@ -126,13 +126,14 @@ export interface WingItem {
 export interface PetItem {
   id: string;
   name: string;
-  type: 'dragon_baby' | 'floating_crystal' | 'spirit_wolf' | 'owl' | 'phoenix';
+  type: 'dragon_baby' | 'floating_crystal' | 'spirit_wolf' | 'owl' | 'phoenix' | 'mount';
   tier: number;
   bonusExpRate: number;
   bonusDefense: number;
   bonusDamage?: number;
   bonusHp?: number;
   bonusMana?: number;
+  bonusSpeed?: number;  // Movement speed bonus (for mounts)
   color: string;
   modelPath?: string;
   expiresAt?: number;

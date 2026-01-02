@@ -100,20 +100,21 @@ export interface WingItem {
   expiresAt?: number; // Timestamp for rental expiration
 }
 
-// NEW: Pet Definition
+// NEW: Pet Definition (includes Mounts)
 export interface PetItem {
   id: string;
   name: string;
-  type: 'dragon_baby' | 'floating_crystal' | 'spirit_wolf' | 'owl' | 'phoenix';
+  type: 'dragon_baby' | 'floating_crystal' | 'spirit_wolf' | 'owl' | 'phoenix' | 'mount';
   tier: number;
   bonusExpRate: number; // Percentage
   bonusDefense: number;
-  bonusDamage?: number; // New
-  bonusHp?: number;     // New
-  bonusMana?: number;   // New
+  bonusDamage?: number;
+  bonusHp?: number;
+  bonusMana?: number;
+  bonusSpeed?: number;  // Movement speed bonus (for mounts)
   color: string;
-  modelPath?: string;   // New: Path to GLTF file
-  expiresAt?: number; // Timestamp for rental expiration
+  modelPath?: string;   // Path to GLTF file
+  expiresAt?: number;   // Timestamp for rental expiration
 }
 
 export interface Equipment {

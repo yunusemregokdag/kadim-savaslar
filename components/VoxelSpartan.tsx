@@ -1014,13 +1014,13 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
 
                     {/* ═══════════ ARMOR GLOW (+7+ set) ═══════════ */}
                     {/* Zırh/elbise +7 ve üstü olduğunda gövde etrafında parlaklık */}
-                    {isFullSetPlus7 && (
+                    {isArmorSetPlus7 && (
                         <group position={[0, 0, 0]}>
                             {/* Gövde etrafında parlayan partiküller */}
                             <Sparkles
-                                count={Math.min(minSetLevel * 3, 30)}
+                                count={Math.min(minArmorLevel * 3, 30)}
                                 scale={[0.8, 1.2, 0.5]}
-                                size={minSetLevel >= 10 ? 6 : minSetLevel >= 9 ? 4 : 3}
+                                size={minArmorLevel >= 10 ? 6 : minArmorLevel >= 9 ? 4 : 3}
                                 speed={1.5}
                                 opacity={0.7}
                                 color={classColor}
@@ -1029,7 +1029,7 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                             <pointLight
                                 position={[0, 0, 0.3]}
                                 distance={1.5}
-                                intensity={minSetLevel >= 10 ? 2 : 1}
+                                intensity={minArmorLevel >= 10 ? 2 : 1}
                                 color={classColor}
                             />
                         </group>

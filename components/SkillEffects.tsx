@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useMemo, useState } from 'react';
-import { useFrame, useLoader, useThree } from '@react-three/fiber';
-import { useGLTF, Billboard } from '@react-three/drei';
+import { useFrame, useThree } from '@react-three/fiber';
+import { useGLTF, Billboard, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { SKILL_ASSETS, SkillAssetConfig } from './SkillAssetRegistry';
 import { soundManager } from './SoundManager';
@@ -44,6 +44,39 @@ interface SkillEffectsProps {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// SINGLE SPRITE FRAME COMPONENT
+// ═══════════════════════════════════════════════════════════════════════════
+const SingleSpriteFrame: React.FC<{
+    texturePath: string;
+    position: [number, number, number];
+    scale: number;
+    opacity: number;
+}> = ({ texturePath, position, scale, opacity }) => {
+    const texture = useTexture(texturePath);
+
+    // Pixel art settings
+    texture.minFilter = THREE.NearestFilter;
+    texture.magFilter = THREE.NearestFilter;
+    texture.colorSpace = THREE.SRGBColorSpace;
+
+    return (
+        <Billboard position={position}>
+            <mesh scale={[scale, scale, 1]}>
+                <planeGeometry args={[1, 1]} />
+                <meshBasicMaterial
+                    map={texture}
+                    transparent={true}
+                    alphaTest={0.1}
+                    side={THREE.DoubleSide}
+                    depthWrite={false}
+                    opacity={opacity}
+                />
+            </mesh>
+        </Billboard>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
 // SPRITE ANIMATION COMPONENT (PNG Kare Kare Animasyon)
 // ═══════════════════════════════════════════════════════════════════════════
 const SpriteSkillEffect: React.FC<{
@@ -51,76 +84,55 @@ const SpriteSkillEffect: React.FC<{
     position: [number, number, number];
     onComplete: () => void;
 }> = ({ config, position, onComplete }) => {
-    const [currentFrame, setCurrentFrame] = useState(0);
+    const [currentFrame, setCurrentFrame] = useState(1);
+    const [opacity, setOpacity] = useState(1);
     const startTimeRef = useRef(Date.now());
-    const meshRef = useRef<THREE.Mesh>(null);
+    const completedRef = useRef(false);
 
     const frameCount = config.spriteFrames || 1;
     const fps = config.spriteFps || 12;
     const frameDuration = 1000 / fps;
     const totalDuration = frameDuration * frameCount;
 
-    // Load all sprite frames
-    const textures = useMemo(() => {
-        if (!config.spritePath || !config.spriteBase) return [];
-        const loadedTextures: THREE.Texture[] = [];
-        const loader = new THREE.TextureLoader();
-
-        for (let i = 1; i <= frameCount; i++) {
-            try {
-                const path = `${config.spritePath}${config.spriteBase}${i}.png`;
-                const tex = loader.load(path);
-                tex.colorSpace = THREE.SRGBColorSpace;
-                tex.minFilter = THREE.NearestFilter;
-                tex.magFilter = THREE.NearestFilter;
-                loadedTextures.push(tex);
-            } catch (e) {
-                console.warn(`Sprite frame yüklenemedi: ${config.spriteBase}${i}.png`);
-            }
-        }
-        return loadedTextures;
-    }, [config.spritePath, config.spriteBase, frameCount]);
+    // Generate texture path for current frame
+    const currentTexturePath = `${config.spritePath}${config.spriteBase}${currentFrame}.png`;
 
     useFrame(() => {
+        if (completedRef.current) return;
+
         const elapsed = Date.now() - startTimeRef.current;
-        const frameIndex = Math.floor(elapsed / frameDuration) % frameCount;
-        setCurrentFrame(frameIndex);
+        const newFrame = Math.min(Math.floor(elapsed / frameDuration) + 1, frameCount);
 
-        // Scale animation
-        if (meshRef.current) {
-            const scale = config.scale || 1.5;
-            const progress = elapsed / totalDuration;
+        if (newFrame !== currentFrame && newFrame <= frameCount) {
+            setCurrentFrame(newFrame);
+        }
 
-            if (progress < 0.1) {
-                meshRef.current.scale.setScalar(scale * (progress * 10));
-            } else if (progress > 0.8) {
-                meshRef.current.scale.setScalar(scale * Math.max(0.1, 1 - ((progress - 0.8) * 5)));
-            } else {
-                meshRef.current.scale.setScalar(scale);
-            }
+        // Fade out at end
+        const progress = elapsed / totalDuration;
+        if (progress > 0.7) {
+            setOpacity(Math.max(0, 1 - ((progress - 0.7) / 0.3)));
         }
 
         // Effect complete
-        if (elapsed > totalDuration) {
+        if (elapsed > totalDuration && !completedRef.current) {
+            completedRef.current = true;
             onComplete();
         }
     });
 
-    if (textures.length === 0) return null;
+    if (!config.spritePath || !config.spriteBase) return null;
+
+    const scale = config.scale || 1.5;
 
     return (
-        <Billboard position={position}>
-            <mesh ref={meshRef}>
-                <planeGeometry args={[1, 1]} />
-                <meshBasicMaterial
-                    map={textures[currentFrame]}
-                    transparent={true}
-                    alphaTest={0.1}
-                    side={THREE.DoubleSide}
-                    depthWrite={false}
-                />
-            </mesh>
-        </Billboard>
+        <React.Suspense fallback={null}>
+            <SingleSpriteFrame
+                texturePath={currentTexturePath}
+                position={position}
+                scale={scale}
+                opacity={opacity}
+            />
+        </React.Suspense>
     );
 };
 

@@ -1210,10 +1210,9 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                 </group>
             )}
 
-            {/* =========== NORMAL PET (ÖNDE SOL) - SABİT KONUM =========== */}
-            {/* ⚠️ BU POZİSYONLARI DEĞİŞTİRME! KİLİTLİ! */}
+            {/* =========== NORMAL PET (SOL TARAF - SİLAHIN KARŞISI) =========== */}
             {props.petType && (
-                <group position={[0.7, 0, 0.8]} rotation={[0, -Math.PI * 0.3, 0]}> {/* ÖNDE SAĞ - KİLİTLİ */}
+                <group position={[-0.9, 0, 0.4]} rotation={[0, 0, 0]}> {/* Sol taraf, düz karşıya bakıyor */}
                     <DynamicPet
                         modelPath={(props.petType as any).modelPath || '/models/pets/cubee-jungle.gltf'}
                         color={props.petType.color}
@@ -1222,10 +1221,9 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                 </group>
             )}
 
-            {/* =========== MOUNT PET (ÖNDE SAĞ) - SABİT KONUM =========== */}
-            {/* ⚠️ BU POZİSYONLARI DEĞİŞTİRME! KİLİTLİ! */}
+            {/* =========== MOUNT PET (SAĞ TARAF) =========== */}
             {props.mountType && (
-                <group position={[-0.7, 0, 0.8]} rotation={[0, Math.PI * 0.3, 0]}> {/* ÖNDE SOL - KİLİTLİ */}
+                <group position={[0.9, 0, 0.4]} rotation={[0, 0, 0]}> {/* Sağ taraf, düz karşıya bakıyor */}
                     <DynamicPet
                         modelPath={(props.mountType as any).modelPath || '/models/pets/cubee-plains.gltf'}
                         color={props.mountType.color}

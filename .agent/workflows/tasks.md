@@ -165,15 +165,15 @@ Her sınıf için 5 tier item yapıldı. **250 item oluşturuldu!**
 
 #### 🧩 UI Icons (TAMAMLANDI) ✅
 
-**Tier Badges** (6 adet):
+**Tier Badges** (5 adet):
 | Icon | Path | Size | Status |
 |------|------|------|--------|
-| `tier_bronze.png` | `public/assets/ui/` | 48x48 | ✅ |
-| `tier_silver.png` | `public/assets/ui/` | 48x48 | ✅ |
-| `tier_gold.png` | `public/assets/ui/` | 48x48 | ✅ |
-| `tier_diamond.png` | `public/assets/ui/` | 48x48 | ✅ |
-| `tier_t4.png` | `public/assets/ui/` | 48x48 | ✅ |
-| `tier_t5.png` | `public/assets/ui/` | 48x48 | ✅ |
+| `tier_t1_common.png` | `public/assets/ui/` | 48x48 | ✅ |
+| `tier_t2_uncommon.png` | `public/assets/ui/` | 48x48 | ✅ |
+| `tier_t3_rare.png` | `public/assets/ui/` | 48x48 | ✅ |
+| `tier_t4_epic.png` | `public/assets/ui/` | 48x48 | ✅ |
+| `tier_t5_legendary.png` | `public/assets/ui/` | 48x48 | ✅ |
+
 
 **Crafting / Status Icons** (12 adet):
 | Icon | Path | Size | Status |

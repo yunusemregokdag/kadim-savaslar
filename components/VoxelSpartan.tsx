@@ -969,36 +969,47 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                         <primitive object={clonedWeapon} />
 
                         {/* ═══════════ WEAPON GLOW (+7 ve üstü) ═══════════ */}
+                        {/* +7 ve üstü silahta: Sınıf renginde parlaklık + aşağı partiküller */}
                         {/* SABİT KONUM - DEĞİŞTİRME! */}
                         {hasWeaponGlow && (
                             <group position={[0, 0, 0]}>
-                                {/* Silah etrafında parlayan partiküller */}
+                                {/* Silah etrafında saran parlaklık (Resim 2'deki gibi) */}
                                 <Sparkles
-                                    count={Math.min(weaponGlowLevel * 3, 30)}
-                                    scale={1.5}
-                                    size={weaponGlowLevel >= 10 ? 6 : weaponGlowLevel >= 9 ? 4 : 3}
-                                    speed={1.5}
-                                    opacity={0.8}
-                                    color={classColor}
+                                    count={Math.min(weaponGlowLevel * 4, 40)}
+                                    scale={1.2}
+                                    size={weaponGlowLevel >= 10 ? 8 : weaponGlowLevel >= 9 ? 6 : 4}
+                                    speed={2}
+                                    opacity={0.9}
+                                    color={classColor} // SINIF RENGİ (Warrior = Kırmızı)
                                 />
 
-                                {/* Silah üzerinde ışık */}
+                                {/* Silah üzerinde parlayan ışık */}
                                 <pointLight
-                                    position={[0, 0.3, 0]}
-                                    distance={1.5}
-                                    intensity={weaponGlowLevel >= 10 ? 2 : weaponGlowLevel >= 9 ? 1.5 : 1}
+                                    position={[0, 0.5, 0]}
+                                    distance={2}
+                                    intensity={weaponGlowLevel >= 10 ? 3 : weaponGlowLevel >= 9 ? 2 : 1.5}
                                     color={classColor}
                                 />
 
-                                {/* +9 ve üstü: Aşağı doğru dökülen partiküller */}
-                                {weaponGlowLevel >= 9 && (
+                                {/* +7 ve üstü: AŞAĞI DÖKÜLEN PARTİKÜLLER (Her zaman) */}
+                                <Sparkles
+                                    count={weaponGlowLevel >= 10 ? 25 : weaponGlowLevel >= 9 ? 18 : 12}
+                                    scale={[0.4, 2.5, 0.4]} // Aşağı uzanan şekil
+                                    size={3}
+                                    speed={0.5}
+                                    opacity={0.7}
+                                    color={classColor} // Sınıf rengi (Kırmızı, Mavi, Mor vb.)
+                                />
+
+                                {/* +10 ve üstü: Ekstra yoğun efekt */}
+                                {weaponGlowLevel >= 10 && (
                                     <Sparkles
-                                        count={15}
-                                        scale={[0.3, 1.5, 0.3]}
-                                        size={2}
+                                        count={20}
+                                        scale={[0.3, 3, 0.3]}
+                                        size={4}
                                         speed={0.3}
-                                        opacity={0.6}
-                                        color={weaponGlowLevel >= 11 ? '#ffd700' : classColor}
+                                        opacity={0.5}
+                                        color={classColor}
                                     />
                                 )}
                             </group>

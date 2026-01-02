@@ -382,7 +382,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
             damage: baseStats.str * 2, defense: baseStats.vit,
             strength: baseStats.str, dexterity: baseStats.dex, intelligence: baseStats.int, vitality: baseStats.vit, statPoints: 0,
             inventory: getClassStarterItems(charClass), equipment: { weapon: null, armor: null, helmet: null, pants: null, boots: null, necklace: null, earring: null },
-            ownedWings: [], equippedWing: null, ownedPets: PETS_DATA, equippedPet: null,
+            ownedWings: [], equippedWing: null, ownedPets: [], equippedPet: null, // Yeni oyuncu pet/wing yok
             ownedSkins: [], equippedSkin: null, ownedCostumes: [], equippedCostume: null, activeQuest: null, settings: defaultSettings,
             dailyLogin: { lastLoginDate: '', consecutiveDays: 0, claimedToday: false, totalLogins: 0 },
             achievements: DEFAULT_ACHIEVEMENTS.map(a => ({ ...a }))

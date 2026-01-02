@@ -167,28 +167,28 @@ export const PETS_DATA: PetItem[] = [
     { id: 'pet_angel_demon', name: 'Cennet Cehennemi', type: 'phoenix', tier: 5, bonusExpRate: 55, bonusDamage: 220, bonusHp: 1500, bonusDefense: 120, color: '#FFD700', modelPath: '/models/pets/cubee-evil.gltf' },
 
     // ═══════════════════════════════════════════════════════════════════════════
-    // MOUNTS (Binekler) - Hız Bonus'u Verir
+    // MOUNTS (Binekler) - Sadece Hız + Hasar Bonus'u (Tier'e göre %5-%11)
     // ═══════════════════════════════════════════════════════════════════════════
 
-    // TIER 1 - Basic Mounts
-    { id: 'mount_horse', name: 'Kahverengi At', type: 'mount', tier: 1, bonusExpRate: 0, bonusDefense: 5, bonusSpeed: 15, color: '#8B4513', modelPath: '/models/pets/cubee-plains.gltf' },
-    { id: 'mount_donkey', name: 'Eşek', type: 'mount', tier: 1, bonusExpRate: 5, bonusDefense: 10, bonusSpeed: 10, color: '#808080', modelPath: '/models/pets/cubee-stone.gltf' },
+    // TIER 1 - Basic Mounts (+5% Hasar, +10-15% Hız)
+    { id: 'mount_horse', name: 'Kahverengi At', type: 'mount', tier: 1, bonusExpRate: 0, bonusDefense: 0, bonusSpeed: 15, bonusDamage: 5, color: '#8B4513', modelPath: '/models/pets/cubee-plains.gltf' },
+    { id: 'mount_donkey', name: 'Eşek', type: 'mount', tier: 1, bonusExpRate: 0, bonusDefense: 0, bonusSpeed: 10, bonusDamage: 5, color: '#808080', modelPath: '/models/pets/cubee-stone.gltf' },
 
-    // TIER 2 - War Mounts
-    { id: 'mount_war_horse', name: 'Savaş Atı', type: 'mount', tier: 2, bonusExpRate: 5, bonusDefense: 20, bonusSpeed: 25, bonusHp: 100, color: '#1a1a1a', modelPath: '/models/pets/cubee-skeleton.gltf' },
-    { id: 'mount_camel', name: 'Çöl Devesi', type: 'mount', tier: 2, bonusExpRate: 10, bonusDefense: 15, bonusSpeed: 20, color: '#D2B48C', modelPath: '/models/pets/cubee-desert.gltf' },
+    // TIER 2 - War Mounts (+6% Hasar, +20-25% Hız)
+    { id: 'mount_war_horse', name: 'Savaş Atı', type: 'mount', tier: 2, bonusExpRate: 0, bonusDefense: 0, bonusSpeed: 25, bonusDamage: 6, color: '#1a1a1a', modelPath: '/models/pets/cubee-skeleton.gltf' },
+    { id: 'mount_camel', name: 'Çöl Devesi', type: 'mount', tier: 2, bonusExpRate: 0, bonusDefense: 0, bonusSpeed: 20, bonusDamage: 6, color: '#D2B48C', modelPath: '/models/pets/cubee-desert.gltf' },
 
-    // TIER 3 - Exotic Mounts  
-    { id: 'mount_dire_wolf', name: 'Korkunç Kurt', type: 'mount', tier: 3, bonusExpRate: 10, bonusDefense: 40, bonusSpeed: 35, bonusDamage: 30, color: '#4a4a4a', modelPath: '/models/pets/cubee-evil.gltf' },
-    { id: 'mount_bear', name: 'Savaş Ayısı', type: 'mount', tier: 3, bonusExpRate: 8, bonusDefense: 60, bonusSpeed: 20, bonusHp: 300, color: '#5D4037', modelPath: '/models/pets/cubee-mushroom.gltf' },
+    // TIER 3 - Exotic Mounts (+8% Hasar, +30-35% Hız)
+    { id: 'mount_dire_wolf', name: 'Korkunç Kurt', type: 'mount', tier: 3, bonusExpRate: 0, bonusDefense: 0, bonusSpeed: 35, bonusDamage: 8, color: '#4a4a4a', modelPath: '/models/pets/cubee-evil.gltf' },
+    { id: 'mount_bear', name: 'Savaş Ayısı', type: 'mount', tier: 3, bonusExpRate: 0, bonusDefense: 0, bonusSpeed: 30, bonusDamage: 8, color: '#5D4037', modelPath: '/models/pets/cubee-mushroom.gltf' },
 
-    // TIER 4 - Legendary Mounts
-    { id: 'mount_shadow_steed', name: 'Gölge Küheylanı', type: 'mount', tier: 4, bonusExpRate: 15, bonusDefense: 50, bonusSpeed: 50, bonusDamage: 50, color: '#1a0a2e', modelPath: '/models/pets/cubee-evil.gltf' },
-    { id: 'mount_flame_horse', name: 'Ateş Atı', type: 'mount', tier: 4, bonusExpRate: 20, bonusDefense: 40, bonusSpeed: 45, bonusDamage: 80, color: '#ff4500', modelPath: '/models/pets/cubee-fire.gltf' },
+    // TIER 4 - Legendary Mounts (+10% Hasar, +40-50% Hız)
+    { id: 'mount_shadow_steed', name: 'Gölge Küheylanı', type: 'mount', tier: 4, bonusExpRate: 0, bonusDefense: 0, bonusSpeed: 50, bonusDamage: 10, color: '#1a0a2e', modelPath: '/models/pets/cubee-evil.gltf' },
+    { id: 'mount_flame_horse', name: 'Ateş Atı', type: 'mount', tier: 4, bonusExpRate: 0, bonusDefense: 0, bonusSpeed: 45, bonusDamage: 10, color: '#ff4500', modelPath: '/models/pets/cubee-fire.gltf' },
 
-    // TIER 5 - Mythical Mounts
-    { id: 'mount_dragon', name: 'Ejderha Bineği', type: 'mount', tier: 5, bonusExpRate: 30, bonusDefense: 100, bonusSpeed: 60, bonusDamage: 150, bonusHp: 500, color: '#8b0000', modelPath: '/models/pets/cubee-tnt.gltf' },
-    { id: 'mount_unicorn', name: 'Tek Boynuzlu At', type: 'mount', tier: 5, bonusExpRate: 40, bonusDefense: 80, bonusSpeed: 55, bonusMana: 200, bonusHp: 400, color: '#f8f8ff', modelPath: '/models/pets/cubee-good.gltf' },
+    // TIER 5 - Mythical Mounts (+11% Hasar, +55-60% Hız)
+    { id: 'mount_dragon', name: 'Ejderha Bineği', type: 'mount', tier: 5, bonusExpRate: 0, bonusDefense: 0, bonusSpeed: 60, bonusDamage: 11, color: '#8b0000', modelPath: '/models/pets/cubee-tnt.gltf' },
+    { id: 'mount_unicorn', name: 'Tek Boynuzlu At', type: 'mount', tier: 5, bonusExpRate: 0, bonusDefense: 0, bonusSpeed: 55, bonusDamage: 11, color: '#f8f8ff', modelPath: '/models/pets/cubee-good.gltf' },
 ];
 
 // --- CLASSES WITH 7 SKILLS (UPDATED CDS) ---

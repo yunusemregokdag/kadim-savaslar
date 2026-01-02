@@ -356,23 +356,23 @@ const AdvancedWings: React.FC<{ type: WingItem['type']; color: string; isMoving:
 
     useFrame((state) => {
         const t = state.clock.elapsedTime;
-        const flapSpeed = isMoving ? 6 : 1.2;
-        const flapAmp = isMoving ? 0.4 : 0.1;
+        const flapSpeed = isMoving ? 6 : 1.5;
+        const flapAmp = isMoving ? 0.5 : 0.15;
 
         if (rightWingRef.current) {
-            rightWingRef.current.rotation.y = -0.2 + Math.sin(t * flapSpeed) * flapAmp;
-            rightWingRef.current.rotation.z = Math.cos(t * flapSpeed) * 0.05;
+            rightWingRef.current.rotation.y = -0.3 + Math.sin(t * flapSpeed) * flapAmp;
+            rightWingRef.current.rotation.z = Math.cos(t * flapSpeed) * 0.08;
         }
         if (leftWingRef.current) {
-            leftWingRef.current.rotation.y = 0.2 - Math.sin(t * flapSpeed) * flapAmp;
-            leftWingRef.current.rotation.z = -Math.cos(t * flapSpeed) * 0.05;
+            leftWingRef.current.rotation.y = 0.3 - Math.sin(t * flapSpeed) * flapAmp;
+            leftWingRef.current.rotation.z = -Math.cos(t * flapSpeed) * 0.08;
         }
     });
 
-    // Wing color variants
+    // Wing colors
     const mainColor = color;
-    const darkColor = '#1e293b';
-    const lightColor = '#ffffff';
+    const darkColor = new THREE.Color(color).multiplyScalar(0.6).getHexString();
+    const lightColor = new THREE.Color(color).multiplyScalar(1.4).getHexString();
 
     // Get secondary color for hybrid wings
     const getSecondaryColor = () => {
@@ -380,84 +380,108 @@ const AdvancedWings: React.FC<{ type: WingItem['type']; color: string; isMoving:
         if (type === 'demon') return '#7f1d1d';
         if (type === 'dragon') return '#ea580c';
         if (type === 'void') return '#4c1d95';
-        return color;
+        return `#${darkColor}`;
     };
     const secondaryColor = getSecondaryColor();
 
-    // Simple but beautiful wing shape using planes
-    const WingShape = ({ side, wingColor }: { side: 'left' | 'right', wingColor: string }) => {
+    // NEW BEAUTIFUL WING DESIGN - Layered feathers
+    const WingShape = ({ side }: { side: 'left' | 'right' }) => {
         const isRight = side === 'right';
         const xDir = isRight ? 1 : -1;
 
-        // Wing segments - from center outward
         return (
-            <group rotation={[0, isRight ? -0.3 : 0.3, 0]}>
-                {/* Main Wing Structure - 3 large segments */}
+            <group rotation={[0, isRight ? -0.4 : 0.4, 0]}>
+                {/* PRIMARY FEATHERS - Large outer feathers */}
+                {[0, 1, 2, 3, 4].map((i) => {
+                    const angle = (i * 0.25) - 0.5;
+                    const length = 0.7 - (i * 0.08);
+                    const width = 0.15 - (i * 0.02);
+                    const xPos = (0.2 + i * 0.12) * xDir;
+                    const yPos = 0.3 - (i * 0.12);
 
-                {/* Inner segment (closest to body) */}
-                <mesh position={[0.15 * xDir, 0.1, 0]} rotation={[0, 0, isRight ? -0.2 : 0.2]}>
-                    <boxGeometry args={[0.25, 0.5, 0.03]} />
+                    return (
+                        <group key={`primary-${i}`} position={[xPos, yPos, 0]} rotation={[0, 0, isRight ? angle : -angle]}>
+                            {/* Main feather blade */}
+                            <mesh>
+                                <boxGeometry args={[width, length, 0.02]} />
+                                <meshStandardMaterial
+                                    color={mainColor}
+                                    emissive={mainColor}
+                                    emissiveIntensity={0.4 - (i * 0.05)}
+                                    roughness={0.3}
+                                    metalness={0.1}
+                                />
+                            </mesh>
+                            {/* Feather highlight */}
+                            <mesh position={[0, length * 0.3, 0.01]}>
+                                <boxGeometry args={[width * 0.6, length * 0.4, 0.01]} />
+                                <meshStandardMaterial
+                                    color={`#${lightColor}`}
+                                    emissive={`#${lightColor}`}
+                                    emissiveIntensity={0.6}
+                                    transparent
+                                    opacity={0.7}
+                                />
+                            </mesh>
+                        </group>
+                    );
+                })}
+
+                {/* SECONDARY FEATHERS - Inner layer */}
+                {[0, 1, 2, 3].map((i) => {
+                    const angle = (i * 0.2) - 0.3;
+                    const length = 0.5 - (i * 0.06);
+                    const width = 0.12 - (i * 0.015);
+                    const xPos = (0.1 + i * 0.08) * xDir;
+                    const yPos = 0.1 - (i * 0.08);
+
+                    return (
+                        <mesh
+                            key={`secondary-${i}`}
+                            position={[xPos, yPos, -0.05]}
+                            rotation={[0, 0, isRight ? angle : -angle]}
+                        >
+                            <boxGeometry args={[width, length, 0.02]} />
+                            <meshStandardMaterial
+                                color={secondaryColor}
+                                emissive={secondaryColor}
+                                emissiveIntensity={0.2}
+                                roughness={0.5}
+                            />
+                        </mesh>
+                    );
+                })}
+
+                {/* TERTIARY FEATHERS - Smallest inner feathers */}
+                {[0, 1, 2].map((i) => {
+                    const angle = (i * 0.15) - 0.15;
+                    const length = 0.35 - (i * 0.05);
+                    const width = 0.08;
+                    const xPos = (0.05 + i * 0.05) * xDir;
+                    const yPos = -0.05 - (i * 0.06);
+
+                    return (
+                        <mesh
+                            key={`tertiary-${i}`}
+                            position={[xPos, yPos, -0.08]}
+                            rotation={[0, 0, isRight ? angle : -angle]}
+                        >
+                            <boxGeometry args={[width, length, 0.015]} />
+                            <meshStandardMaterial
+                                color={`#${darkColor}`}
+                                roughness={0.6}
+                            />
+                        </mesh>
+                    );
+                })}
+
+                {/* WING BASE - Connection point */}
+                <mesh position={[0, 0, -0.02]}>
+                    <boxGeometry args={[0.15, 0.25, 0.08]} />
                     <meshStandardMaterial
-                        color={wingColor}
-                        emissive={wingColor}
-                        emissiveIntensity={0.3}
+                        color={secondaryColor}
                         roughness={0.4}
-                        metalness={0.2}
-                    />
-                </mesh>
-
-                {/* Middle segment */}
-                <mesh position={[0.35 * xDir, 0.15, 0]} rotation={[0, 0, isRight ? -0.35 : 0.35]}>
-                    <boxGeometry args={[0.2, 0.6, 0.025]} />
-                    <meshStandardMaterial
-                        color={wingColor}
-                        emissive={wingColor}
-                        emissiveIntensity={0.25}
-                        roughness={0.5}
-                    />
-                </mesh>
-
-                {/* Outer segment (wing tip) */}
-                <mesh position={[0.5 * xDir, 0.05, 0]} rotation={[0, 0, isRight ? -0.5 : 0.5]}>
-                    <boxGeometry args={[0.15, 0.65, 0.02]} />
-                    <meshStandardMaterial
-                        color={wingColor}
-                        emissive={wingColor}
-                        emissiveIntensity={0.2}
-                        roughness={0.6}
-                    />
-                </mesh>
-
-                {/* Lower feathers */}
-                <mesh position={[0.2 * xDir, -0.2, 0]} rotation={[0, 0, isRight ? 0.1 : -0.1]}>
-                    <boxGeometry args={[0.12, 0.4, 0.02]} />
-                    <meshStandardMaterial
-                        color={secondaryColor}
-                        roughness={0.5}
-                    />
-                </mesh>
-                <mesh position={[0.35 * xDir, -0.15, 0]} rotation={[0, 0, isRight ? 0.2 : -0.2]}>
-                    <boxGeometry args={[0.1, 0.45, 0.02]} />
-                    <meshStandardMaterial
-                        color={secondaryColor}
-                        roughness={0.5}
-                    />
-                </mesh>
-                <mesh position={[0.48 * xDir, -0.1, 0]} rotation={[0, 0, isRight ? 0.3 : -0.3]}>
-                    <boxGeometry args={[0.08, 0.5, 0.02]} />
-                    <meshStandardMaterial
-                        color={secondaryColor}
-                        roughness={0.5}
-                    />
-                </mesh>
-
-                {/* Edge highlights */}
-                <mesh position={[0.15 * xDir, 0.35, 0.02]}>
-                    <boxGeometry args={[0.22, 0.04, 0.01]} />
-                    <meshStandardMaterial
-                        color={lightColor}
-                        emissive={lightColor}
-                        emissiveIntensity={0.5}
+                        metalness={0.3}
                     />
                 </mesh>
             </group>
@@ -468,22 +492,22 @@ const AdvancedWings: React.FC<{ type: WingItem['type']; color: string; isMoving:
     const wingY = offsetY !== undefined ? offsetY : 0.5;
 
     return (
-        <group position={[0, wingY, -0.25]} scale={[1.8, 1.8, 1.8]}>
+        <group position={[0, wingY, -0.3]} scale={[1.6, 1.6, 1.6]}>
             {/* Right Wing */}
             <group ref={rightWingRef}>
-                <WingShape side="right" wingColor={mainColor} />
+                <WingShape side="right" />
             </group>
 
             {/* Left Wing */}
             <group ref={leftWingRef}>
-                <WingShape side="left" wingColor={type === 'angel_demon' ? '#f8fafc' : mainColor} />
+                <WingShape side="left" />
             </group>
 
             {/* Center connection glow */}
-            <pointLight position={[0, 0, 0.05]} color={mainColor} intensity={1} distance={1} />
+            <pointLight position={[0, 0, 0.1]} color={mainColor} intensity={1.5} distance={1.2} />
 
             {/* Sparkle effect when moving */}
-            {isMoving && <Sparkles count={12} scale={1.2} size={4} speed={0.8} opacity={0.5} color={mainColor} />}
+            {isMoving && <Sparkles count={15} scale={1.5} size={5} speed={1} opacity={0.6} color={mainColor} />}
         </group>
     );
 };

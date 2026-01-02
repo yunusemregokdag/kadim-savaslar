@@ -124,17 +124,19 @@ interface VoxelSpartanProps {
     isCastingSkill?: number | null; // 1-6 arası skill numarası, null = skill kullanılmıyor
     charClass?: CharacterClass;
     wingType?: WingItem | null;
-    petType?: PetItem | null;
+    petType?: PetItem | null;        // Normal pet
+    mountType?: PetItem | null;      // Mount (speed) pet - ikinci slot
     weaponItem?: Item | null;
     armorItem?: Item | null;
     helmetItem?: Item | null;
     pantsItem?: Item | null;
+    bootsItem?: Item | null;         // Çizme
     necklaceItem?: Item | null;
     earringItem?: Item | null;
     castEffect?: string | null;
     skinId?: string | null;
-    costumeId?: string | null; // Equipped costume set ID (e.g., 'costume_carnivoret')
-    showDebug?: boolean; // Debug modunu aç/kapat
+    costumeId?: string | null; // Equipped costume set ID
+    showDebug?: boolean;
     debugOffsets?: {
         headY: number;
         bodyY: number;
@@ -791,10 +793,43 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
         }
     });
 
-    // Enhancement glow - GlowEffects sisteminden al
+    // ═══════════════════════════════════════════════════════════════════════════
+    // GLOW SİSTEMİ - AYRILMIŞ
+    // 1. Silah Glow: +7 ve üstü silahta sadece silahın etrafında parlaklık
+    // 2. Karakter Aura: TÜM itemler +7 ve üstü olunca karakter etrafında aura
+    // ═══════════════════════════════════════════════════════════════════════════
+
     const weaponPlus = props.weaponItem?.plus || 0;
-    const glowEffect = useMemo(() => getGlowEffect(weaponPlus, charClass), [weaponPlus, charClass]);
-    const particleType = useMemo(() => getClassParticleType(charClass), [charClass]);
+    const armorPlus = props.armorItem?.plus || 0;
+    const helmetPlus = props.helmetItem?.plus || 0;
+    const pantsPlus = props.pantsItem?.plus || 0;
+    const bootsPlus = props.bootsItem?.plus || 0;
+    const necklacePlus = props.necklaceItem?.plus || 0;
+
+    // Silah +7 ve üstü mü? Silahın etrafında glow
+    const hasWeaponGlow = weaponPlus >= 7;
+    const weaponGlowLevel = weaponPlus;
+
+    // Full Set +7+ kontrolü: Tüm itemler takılı VE hepsi +7 veya üstü
+    const hasFullSet = Boolean(
+        props.weaponItem &&
+        props.armorItem &&
+        props.helmetItem &&
+        props.pantsItem &&
+        props.bootsItem
+    );
+    const isFullSetPlus7 = hasFullSet &&
+        weaponPlus >= 7 &&
+        armorPlus >= 7 &&
+        helmetPlus >= 7 &&
+        pantsPlus >= 7 &&
+        bootsPlus >= 7;
+
+    // Minimum set level for aura intensity
+    const minSetLevel = isFullSetPlus7 ? Math.min(weaponPlus, armorPlus, helmetPlus, pantsPlus, bootsPlus) : 0;
+
+    // Character aura only with full set +7+
+    const characterGlowEffect = useMemo(() => isFullSetPlus7 ? getGlowEffect(minSetLevel, charClass) : null, [isFullSetPlus7, minSetLevel, charClass]);
     const classColor = CLASS_COLORS[charClass] || '#ffffff';
 
     // Trail için ref
@@ -932,6 +967,42 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                         scale={[weaponHold.scale, weaponHold.scale, weaponHold.scale]}
                     >
                         <primitive object={clonedWeapon} />
+
+                        {/* ═══════════ WEAPON GLOW (+7 ve üstü) ═══════════ */}
+                        {/* SABİT KONUM - DEĞİŞTİRME! */}
+                        {hasWeaponGlow && (
+                            <group position={[0, 0, 0]}>
+                                {/* Silah etrafında parlayan partiküller */}
+                                <Sparkles
+                                    count={Math.min(weaponGlowLevel * 3, 30)}
+                                    scale={1.5}
+                                    size={weaponGlowLevel >= 10 ? 6 : weaponGlowLevel >= 9 ? 4 : 3}
+                                    speed={1.5}
+                                    opacity={0.8}
+                                    color={classColor}
+                                />
+
+                                {/* Silah üzerinde ışık */}
+                                <pointLight
+                                    position={[0, 0.3, 0]}
+                                    distance={1.5}
+                                    intensity={weaponGlowLevel >= 10 ? 2 : weaponGlowLevel >= 9 ? 1.5 : 1}
+                                    color={classColor}
+                                />
+
+                                {/* +9 ve üstü: Aşağı doğru dökülen partiküller */}
+                                {weaponGlowLevel >= 9 && (
+                                    <Sparkles
+                                        count={15}
+                                        scale={[0.3, 1.5, 0.3]}
+                                        size={2}
+                                        speed={0.3}
+                                        opacity={0.6}
+                                        color={weaponGlowLevel >= 11 ? '#ffd700' : classColor}
+                                    />
+                                )}
+                            </group>
+                        )}
                     </group>
                 </group>
             </group>
@@ -997,21 +1068,22 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                 </mesh>
             </group>
 
-            {/* =========== ENHANCEMENT GLOW SYSTEM =========== */}
-            {glowEffect && (
+            {/* =========== FULL SET +7+ CHARACTER AURA =========== */}
+            {/* Only shows when ALL equipped items are +7 or higher */}
+            {characterGlowEffect && (
                 <group position={[0, 1.0, 0]}>
-                    {/* Ana Parçacık Efekti */}
+                    {/* Character Aura Particles */}
                     <Sparkles
-                        count={glowEffect.particleCount}
-                        scale={glowEffect.level >= 10 ? 2.5 : 2}
-                        size={glowEffect.level >= 10 ? 12 : glowEffect.level >= 9 ? 8 : 5}
-                        speed={glowEffect.intensity}
+                        count={characterGlowEffect.particleCount}
+                        scale={characterGlowEffect.level >= 10 ? 2.5 : 2}
+                        size={characterGlowEffect.level >= 10 ? 12 : characterGlowEffect.level >= 9 ? 8 : 5}
+                        speed={characterGlowEffect.intensity}
                         opacity={0.85}
-                        color={glowEffect.color}
+                        color={characterGlowEffect.color}
                     />
 
-                    {/* Sınıfa Özel İkincil Parçacıklar (+10 ve üzeri) */}
-                    {glowEffect.level >= 10 && (
+                    {/* Secondary Class Particles (+10+) */}
+                    {characterGlowEffect.level >= 10 && (
                         <Sparkles
                             count={20}
                             scale={1.5}
@@ -1022,20 +1094,20 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                         />
                     )}
 
-                    {/* Point Light - Aura Işığı */}
+                    {/* Point Light - Aura Glow */}
                     <pointLight
                         position={[0.4, 0.3, 0.3]}
-                        distance={glowEffect.level >= 12 ? 6 : 4}
-                        intensity={glowEffect.intensity * 4}
-                        color={glowEffect.color}
+                        distance={characterGlowEffect.level >= 12 ? 6 : 4}
+                        intensity={characterGlowEffect.intensity * 4}
+                        color={characterGlowEffect.color}
                     />
 
-                    {/* +9 ve üzeri için altın halkası */}
-                    {glowEffect.level >= 9 && (
+                    {/* +9+ Golden Ring */}
+                    {characterGlowEffect.level >= 9 && (
                         <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, -0.5, 0]}>
                             <ringGeometry args={[0.6, 0.7, 32]} />
                             <meshBasicMaterial
-                                color={glowEffect.color}
+                                color={characterGlowEffect.color}
                                 transparent
                                 opacity={0.4}
                                 side={THREE.DoubleSide}
@@ -1043,8 +1115,8 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                         </mesh>
                     )}
 
-                    {/* +11 ve üzeri için ikinci halka */}
-                    {glowEffect.level >= 11 && (
+                    {/* +11+ Second Ring */}
+                    {characterGlowEffect.level >= 11 && (
                         <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, -0.6, 0]}>
                             <ringGeometry args={[0.8, 0.9, 32]} />
                             <meshBasicMaterial
@@ -1056,18 +1128,17 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                         </mesh>
                     )}
 
-                    {/* +12 için zemin efekti */}
-                    {glowEffect.level >= 12 && (
+                    {/* +12 Ground Effect */}
+                    {characterGlowEffect.level >= 12 && (
                         <group position={[0, -1.2, 0]}>
                             <mesh rotation={[Math.PI / 2, 0, 0]}>
                                 <circleGeometry args={[1.2, 32]} />
                                 <meshBasicMaterial
-                                    color={glowEffect.color}
+                                    color={characterGlowEffect.color}
                                     transparent
                                     opacity={0.2}
                                 />
                             </mesh>
-                            {/* Zemin parçacıkları */}
                             <Sparkles
                                 count={30}
                                 scale={2}
@@ -1105,14 +1176,38 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                 </group>
             )}
 
-            {/* =========== PET =========== */}
+            {/* =========== NORMAL PET (ÖNDE SOL) - SABİT KONUM =========== */}
+            {/* ⚠️ BU POZİSYONLARI DEĞİŞTİRME! KİLİTLİ! */}
             {props.petType && (
-                <group position={[-0.8, 0, -0.5]} rotation={[0, Math.PI, 0]}> {/* Sol taraf, arkada, 180 derece dönük */}
+                <group position={[0.7, 0, 0.8]} rotation={[0, -Math.PI * 0.3, 0]}> {/* ÖNDE SAĞ - KİLİTLİ */}
                     <DynamicPet
                         modelPath={(props.petType as any).modelPath || '/models/pets/cubee-jungle.gltf'}
                         color={props.petType.color}
-                        scale={0.8}
+                        scale={0.7}
                     />
+                </group>
+            )}
+
+            {/* =========== MOUNT PET (ÖNDE SAĞ) - SABİT KONUM =========== */}
+            {/* ⚠️ BU POZİSYONLARI DEĞİŞTİRME! KİLİTLİ! */}
+            {props.mountType && (
+                <group position={[-0.7, 0, 0.8]} rotation={[0, Math.PI * 0.3, 0]}> {/* ÖNDE SOL - KİLİTLİ */}
+                    <DynamicPet
+                        modelPath={(props.mountType as any).modelPath || '/models/pets/cubee-plains.gltf'}
+                        color={props.mountType.color}
+                        scale={0.75}
+                    />
+                    {/* Mount için hız göstergesi */}
+                    {props.mountType.bonusSpeed && (
+                        <Sparkles
+                            count={5}
+                            scale={0.5}
+                            size={2}
+                            speed={2}
+                            opacity={0.4}
+                            color="#22c55e"
+                        />
+                    )}
                 </group>
             )}
         </group>

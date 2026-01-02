@@ -622,13 +622,21 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                         mat.transparent = true;
                         mat.alphaTest = 0.1;
                         mat.side = THREE.DoubleSide;
+
+                        // +7 ve üzeri silahlar için AMPUL GİBİ PARLAMA (Warrior hariç)
+                        const weaponPlus = props.weaponItem?.plus || 0;
+                        if (weaponPlus >= 7 && charClass !== 'warrior') {
+                            mat.emissive = new THREE.Color(classColor);
+                            mat.emissiveIntensity = weaponPlus >= 10 ? 2.5 : weaponPlus >= 9 ? 2.0 : 1.5;
+                        }
+
                         mat.needsUpdate = true;
                     });
                 }
             }
         });
         return w;
-    }, [weaponScene]);
+    }, [weaponScene, props.weaponItem?.plus, charClass, classColor]);
 
     // Debug offsets (use props if provided, otherwise defaults)
     // MUST be defined before useFrame so it can be used in animations

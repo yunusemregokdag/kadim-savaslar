@@ -935,8 +935,12 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                         // Zırh Texture'ı varsa kullan
                         <CostumeBodyMaterial texturePath={equippedCostume.armorTexture1} baseColor={equippedCostume.color || appearance.body} />
                     ) : (
-                        // Yoksa kostüm rengini veya normal rengi kullan
-                        <meshStandardMaterial color={equippedCostume?.color || appearance.body} />
+                        // Yoksa kostüm rengini veya normal rengi kullan - +7 set varsa AMPUL GİBİ PARLA
+                        <meshStandardMaterial
+                            color={equippedCostume?.color || appearance.body}
+                            emissive={isFullSetPlus7 ? classColor : '#000000'}
+                            emissiveIntensity={isFullSetPlus7 ? (minSetLevel >= 10 ? 1.5 : minSetLevel >= 9 ? 1.2 : 0.8) : 0}
+                        />
                     )}
                 </mesh>
                 {/* Body accent (belt/trim) */}
@@ -982,7 +986,11 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                 {/* Upper arm (shoulder pivot) */}
                 <mesh position={[0, -armHeight / 2 + 0.1, 0]} castShadow receiveShadow>
                     <boxGeometry args={[armWidth, armHeight, armWidth]} />
-                    <meshStandardMaterial color={equippedCostume?.color || appearance.body} />
+                    <meshStandardMaterial
+                        color={equippedCostume?.color || appearance.body}
+                        emissive={isFullSetPlus7 ? classColor : '#000000'}
+                        emissiveIntensity={isFullSetPlus7 ? (minSetLevel >= 10 ? 1.5 : minSetLevel >= 9 ? 1.2 : 0.8) : 0}
+                    />
                 </mesh>
                 {/* Hand */}
                 <mesh position={[0, -armHeight + 0.05, 0]} castShadow>
@@ -1056,7 +1064,11 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
             >
                 <mesh position={[0, -armHeight / 2 + 0.1, 0]} castShadow receiveShadow>
                     <boxGeometry args={[armWidth, armHeight, armWidth]} />
-                    <meshStandardMaterial color={equippedCostume?.color || appearance.body} />
+                    <meshStandardMaterial
+                        color={equippedCostume?.color || appearance.body}
+                        emissive={isFullSetPlus7 ? classColor : '#000000'}
+                        emissiveIntensity={isFullSetPlus7 ? (minSetLevel >= 10 ? 1.5 : minSetLevel >= 9 ? 1.2 : 0.8) : 0}
+                    />
                 </mesh>
                 {/* Hand */}
                 <mesh position={[0, -armHeight + 0.05, 0]} castShadow>
@@ -1085,7 +1097,11 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
             >
                 <mesh position={[0, 0, 0]} castShadow receiveShadow>
                     <boxGeometry args={[legWidth, legHeight, legWidth]} />
-                    <meshStandardMaterial color={equippedCostume?.color || appearance.legs} />
+                    <meshStandardMaterial
+                        color={equippedCostume?.color || appearance.legs}
+                        emissive={isFullSetPlus7 ? classColor : '#000000'}
+                        emissiveIntensity={isFullSetPlus7 ? (minSetLevel >= 10 ? 1.5 : minSetLevel >= 9 ? 1.2 : 0.8) : 0}
+                    />
                 </mesh>
                 {/* Foot highlight */}
                 <mesh position={[0, -legHeight / 2 + 0.05, 0.02]} castShadow>
@@ -1101,7 +1117,11 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
             >
                 <mesh position={[0, 0, 0]} castShadow receiveShadow>
                     <boxGeometry args={[legWidth, legHeight, legWidth]} />
-                    <meshStandardMaterial color={equippedCostume?.color || appearance.legs} />
+                    <meshStandardMaterial
+                        color={equippedCostume?.color || appearance.legs}
+                        emissive={isFullSetPlus7 ? classColor : '#000000'}
+                        emissiveIntensity={isFullSetPlus7 ? (minSetLevel >= 10 ? 1.5 : minSetLevel >= 9 ? 1.2 : 0.8) : 0}
+                    />
                 </mesh>
                 {/* Foot highlight */}
                 <mesh position={[0, -legHeight / 2 + 0.05, 0.02]} castShadow>

@@ -860,8 +860,22 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
         pantsPlus >= 7 &&
         bootsPlus >= 7;
 
+    // ARMOR-ONLY glow check (for body/arms/legs emissive - weapon not required)
+    const hasArmorSet = (
+        props.armorItem &&
+        props.helmetItem &&
+        props.pantsItem &&
+        props.bootsItem
+    );
+    const isArmorSetPlus7 = hasArmorSet &&
+        armorPlus >= 7 &&
+        helmetPlus >= 7 &&
+        pantsPlus >= 7 &&
+        bootsPlus >= 7;
+
     // Minimum set level for aura intensity
     const minSetLevel = isFullSetPlus7 ? Math.min(weaponPlus, armorPlus, helmetPlus, pantsPlus, bootsPlus) : 0;
+    const minArmorLevel = isArmorSetPlus7 ? Math.min(armorPlus, helmetPlus, pantsPlus, bootsPlus) : 0;
 
     // Character aura only with full set +7+
     const characterGlowEffect = useMemo(() => isFullSetPlus7 ? getGlowEffect(minSetLevel, charClass) : null, [isFullSetPlus7, minSetLevel, charClass]);
@@ -961,11 +975,11 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                         // Zırh Texture'ı varsa kullan
                         <CostumeBodyMaterial texturePath={equippedCostume.armorTexture1} baseColor={equippedCostume.color || appearance.body} />
                     ) : (
-                        // Yoksa kostüm rengini veya normal rengi kullan - +7 set varsa AMPUL GİBİ PARLA
+                        // Yoksa kostüm rengini veya normal rengi kullan - +7 ARMOR set varsa AMPUL GİBİ PARLA
                         <meshStandardMaterial
                             color={equippedCostume?.color || appearance.body}
-                            emissive={isFullSetPlus7 ? classColor : '#000000'}
-                            emissiveIntensity={isFullSetPlus7 ? (minSetLevel >= 10 ? 1.5 : minSetLevel >= 9 ? 1.2 : 0.8) : 0}
+                            emissive={isArmorSetPlus7 ? classColor : '#000000'}
+                            emissiveIntensity={isArmorSetPlus7 ? (minArmorLevel >= 10 ? 1.5 : minArmorLevel >= 9 ? 1.2 : 0.8) : 0}
                         />
                     )}
                 </mesh>
@@ -1014,8 +1028,8 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                     <boxGeometry args={[armWidth, armHeight, armWidth]} />
                     <meshStandardMaterial
                         color={equippedCostume?.color || appearance.body}
-                        emissive={isFullSetPlus7 ? classColor : '#000000'}
-                        emissiveIntensity={isFullSetPlus7 ? (minSetLevel >= 10 ? 1.5 : minSetLevel >= 9 ? 1.2 : 0.8) : 0}
+                        emissive={isArmorSetPlus7 ? classColor : '#000000'}
+                        emissiveIntensity={isArmorSetPlus7 ? (minArmorLevel >= 10 ? 1.5 : minArmorLevel >= 9 ? 1.2 : 0.8) : 0}
                     />
                 </mesh>
                 {/* Hand */}

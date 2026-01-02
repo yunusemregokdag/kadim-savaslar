@@ -9,6 +9,11 @@ export interface SkillAssetConfig {
     duration?: number;
     scale?: number;
     color?: string;
+    // SPRITE ANIMATION (PNG frame-by-frame)
+    spritePath?: string;      // Base path: /assets/skills/warrior_texture/
+    spriteBase?: string;      // Base name: warrior_slash
+    spriteFrames?: number;    // Frame count: 7
+    spriteFps?: number;       // Frames per second: 15
     // EXTENDED VISUAL CONFIG
     visualFx?: {
         trailColor?: string;
@@ -19,17 +24,49 @@ export interface SkillAssetConfig {
     };
 }
 
+
 const BASE_PATH = '/models/skills/placeholder/';
 
 export const SKILL_ASSETS: Record<string, SkillAssetConfig> = {
-    // --- WARRIOR (w) ---
-    slash: { path: BASE_PATH, modelBase: 'slash', extension: 'gltf', count: 1, color: '#ef4444', scale: 1.0, visualFx: { trailType: 'ribbon', impactScale: 1.2 } },
+    // --- WARRIOR (w) - SPRITE ANIMASYONLARI ---
+    warrior_slash: {
+        path: BASE_PATH, modelBase: 'slash', extension: 'gltf', count: 1, color: '#ef4444', scale: 1.5,
+        spritePath: '/assets/skills/warrior_texture/', spriteBase: 'warrior_slash', spriteFrames: 7, spriteFps: 15,
+        visualFx: { trailType: 'ribbon', impactScale: 1.2 }
+    },
+    warrior_shield: {
+        path: BASE_PATH, modelBase: 'shield', extension: 'gltf', count: 1, color: '#94a3b8', scale: 1.5,
+        spritePath: '/assets/skills/warrior_texture/', spriteBase: 'shield_barrier', spriteFrames: 3, spriteFps: 10
+    },
+    warrior_charge: {
+        path: BASE_PATH, modelBase: 'rage', extension: 'gltf', count: 1, color: '#b91c1c', scale: 1.5,
+        spritePath: '/assets/skills/warrior_texture/', spriteBase: 'charge', spriteFrames: 5, spriteFps: 12,
+        visualFx: { trailType: 'particle', groundFx: 'burn' }
+    },
+    warrior_judgement: {
+        path: BASE_PATH, modelBase: 'slam', extension: 'gltf', count: 1, color: '#7f1d1d', scale: 2.0,
+        spritePath: '/assets/skills/warrior_texture/', spriteBase: 'warrior_thrust', spriteFrames: 6, spriteFps: 15,
+        visualFx: { groundFx: 'crater' }
+    },
+    warrior_pierce: {
+        path: BASE_PATH, modelBase: 'spear', extension: 'gltf', count: 1, color: '#ef4444', scale: 1.2,
+        spritePath: '/assets/skills/warrior_texture/', spriteBase: 'warrior_thrust', spriteFrames: 6, spriteFps: 15,
+        visualFx: { trailType: 'ribbon' }
+    },
+    warrior_whirlwind: {
+        path: BASE_PATH, modelBase: 'spin', extension: 'gltf', count: 1, color: '#dc2626', scale: 2.5, duration: 2,
+        spritePath: '/assets/skills/warrior_texture/', spriteBase: 'whirlwind', spriteFrames: 5, spriteFps: 12,
+        visualFx: { trailType: 'ribbon' }
+    },
+    // Legacy aliases
+    slash: { path: BASE_PATH, modelBase: 'slash', extension: 'gltf', count: 1, color: '#ef4444', scale: 1.0, spritePath: '/assets/skills/warrior_texture/', spriteBase: 'warrior_slash', spriteFrames: 7, spriteFps: 15 },
     shield: { path: BASE_PATH, modelBase: 'shield', extension: 'gltf', count: 1, color: '#94a3b8', scale: 1.5 },
-    rage: { path: BASE_PATH, modelBase: 'rage', extension: 'gltf', count: 1, color: '#b91c1c', scale: 1.5, visualFx: { trailType: 'particle', groundFx: 'burn' } },
-    slam: { path: BASE_PATH, modelBase: 'slam', extension: 'gltf', count: 1, color: '#7f1d1d', scale: 2.0, visualFx: { groundFx: 'crater' } },
-    spear: { path: BASE_PATH, modelBase: 'spear', extension: 'gltf', count: 1, color: '#ef4444', scale: 1.2, visualFx: { trailType: 'ribbon' } },
+    rage: { path: BASE_PATH, modelBase: 'rage', extension: 'gltf', count: 1, color: '#b91c1c', scale: 1.5 },
+    slam: { path: BASE_PATH, modelBase: 'slam', extension: 'gltf', count: 1, color: '#7f1d1d', scale: 2.0 },
+    spear: { path: BASE_PATH, modelBase: 'spear', extension: 'gltf', count: 1, color: '#ef4444', scale: 1.2 },
     shout: { path: BASE_PATH, modelBase: 'shout', extension: 'gltf', count: 1, color: '#fbbf24', scale: 2.0 },
-    whirlwind: { path: BASE_PATH, modelBase: 'spin', extension: 'gltf', count: 1, color: '#dc2626', scale: 2.5, duration: 2, visualFx: { trailType: 'ribbon' } },
+    whirlwind: { path: BASE_PATH, modelBase: 'spin', extension: 'gltf', count: 1, color: '#dc2626', scale: 2.5, duration: 2, spritePath: '/assets/skills/warrior_texture/', spriteBase: 'whirlwind', spriteFrames: 5, spriteFps: 12 },
+
 
     // --- ARCTIC KNIGHT (ak) ---
     ice_slash: { path: BASE_PATH, modelBase: 'slash', extension: 'gltf', count: 1, color: '#06b6d4', scale: 1.1, visualFx: { trailType: 'ribbon', trailColor: '#a5f3fc' } },

@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useMemo } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { useGLTF } from '@react-three/drei';
+import React, { useEffect, useRef, useMemo, useState } from 'react';
+import { useFrame, useLoader, useThree } from '@react-three/fiber';
+import { useGLTF, Billboard } from '@react-three/drei';
 import * as THREE from 'three';
 import { SKILL_ASSETS, SkillAssetConfig } from './SkillAssetRegistry';
 import { soundManager } from './SoundManager';
@@ -43,7 +43,90 @@ interface SkillEffectsProps {
     onEffectComplete: (id: string) => void;
 }
 
-// --- SINGLE POOL COMPONENT ---
+// ═══════════════════════════════════════════════════════════════════════════
+// SPRITE ANIMATION COMPONENT (PNG Kare Kare Animasyon)
+// ═══════════════════════════════════════════════════════════════════════════
+const SpriteSkillEffect: React.FC<{
+    config: SkillAssetConfig;
+    position: [number, number, number];
+    onComplete: () => void;
+}> = ({ config, position, onComplete }) => {
+    const [currentFrame, setCurrentFrame] = useState(0);
+    const startTimeRef = useRef(Date.now());
+    const meshRef = useRef<THREE.Mesh>(null);
+
+    const frameCount = config.spriteFrames || 1;
+    const fps = config.spriteFps || 12;
+    const frameDuration = 1000 / fps;
+    const totalDuration = frameDuration * frameCount;
+
+    // Load all sprite frames
+    const textures = useMemo(() => {
+        if (!config.spritePath || !config.spriteBase) return [];
+        const loadedTextures: THREE.Texture[] = [];
+        const loader = new THREE.TextureLoader();
+
+        for (let i = 1; i <= frameCount; i++) {
+            try {
+                const path = `${config.spritePath}${config.spriteBase}${i}.png`;
+                const tex = loader.load(path);
+                tex.colorSpace = THREE.SRGBColorSpace;
+                tex.minFilter = THREE.NearestFilter;
+                tex.magFilter = THREE.NearestFilter;
+                loadedTextures.push(tex);
+            } catch (e) {
+                console.warn(`Sprite frame yüklenemedi: ${config.spriteBase}${i}.png`);
+            }
+        }
+        return loadedTextures;
+    }, [config.spritePath, config.spriteBase, frameCount]);
+
+    useFrame(() => {
+        const elapsed = Date.now() - startTimeRef.current;
+        const frameIndex = Math.floor(elapsed / frameDuration) % frameCount;
+        setCurrentFrame(frameIndex);
+
+        // Scale animation
+        if (meshRef.current) {
+            const scale = config.scale || 1.5;
+            const progress = elapsed / totalDuration;
+
+            if (progress < 0.1) {
+                meshRef.current.scale.setScalar(scale * (progress * 10));
+            } else if (progress > 0.8) {
+                meshRef.current.scale.setScalar(scale * Math.max(0.1, 1 - ((progress - 0.8) * 5)));
+            } else {
+                meshRef.current.scale.setScalar(scale);
+            }
+        }
+
+        // Effect complete
+        if (elapsed > totalDuration) {
+            onComplete();
+        }
+    });
+
+    if (textures.length === 0) return null;
+
+    return (
+        <Billboard position={position}>
+            <mesh ref={meshRef}>
+                <planeGeometry args={[1, 1]} />
+                <meshBasicMaterial
+                    map={textures[currentFrame]}
+                    transparent={true}
+                    alphaTest={0.1}
+                    side={THREE.DoubleSide}
+                    depthWrite={false}
+                />
+            </mesh>
+        </Billboard>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 3D MODEL POOL COMPONENT (GLTF modeller için)
+// ═══════════════════════════════════════════════════════════════════════════
 const SkillTypePool: React.FC<{
     type: string;
     config: SkillAssetConfig;
@@ -51,6 +134,23 @@ const SkillTypePool: React.FC<{
     onComplete: (id: string) => void;
 }> = ({ type, config, activeRequests, onComplete }) => {
 
+    // Sprite animasyonu varsa, sprite component kullan
+    if (config.spritePath && config.spriteBase && config.spriteFrames) {
+        return (
+            <group>
+                {activeRequests.map(req => (
+                    <SpriteSkillEffect
+                        key={req.id}
+                        config={config}
+                        position={req.position}
+                        onComplete={() => onComplete(req.id)}
+                    />
+                ))}
+            </group>
+        );
+    }
+
+    // 3D Model için eski logic
     const isMissing = config.path.includes('/models/skills');
     const loadPath = isMissing
         ? SAFE_MODEL_PATH
@@ -140,6 +240,9 @@ const SkillTypePool: React.FC<{
     return <group ref={groupRef} />;
 };
 
+// ═══════════════════════════════════════════════════════════════════════════
+// MAIN SKILL EFFECTS COMPONENT
+// ═══════════════════════════════════════════════════════════════════════════
 export const SkillEffects: React.FC<SkillEffectsProps> = ({ activeSkills, onEffectComplete }) => {
     return (
         <group>

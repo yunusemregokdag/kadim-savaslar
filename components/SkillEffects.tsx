@@ -52,12 +52,32 @@ const SingleSpriteFrame: React.FC<{
     scale: number;
     opacity: number;
 }> = ({ texturePath, position, scale, opacity }) => {
-    const texture = useTexture(texturePath);
+    const [texture, setTexture] = useState<THREE.Texture | null>(null);
+    const [error, setError] = useState(false);
 
-    // Pixel art settings
-    texture.minFilter = THREE.NearestFilter;
-    texture.magFilter = THREE.NearestFilter;
-    texture.colorSpace = THREE.SRGBColorSpace;
+    useEffect(() => {
+        const loader = new THREE.TextureLoader();
+        loader.load(
+            texturePath,
+            (loadedTexture) => {
+                // Pixel art settings
+                loadedTexture.minFilter = THREE.NearestFilter;
+                loadedTexture.magFilter = THREE.NearestFilter;
+                loadedTexture.colorSpace = THREE.SRGBColorSpace;
+                loadedTexture.needsUpdate = true;
+                setTexture(loadedTexture);
+            },
+            undefined,
+            (err) => {
+                console.error('Failed to load texture:', texturePath, err);
+                setError(true);
+            }
+        );
+    }, [texturePath]);
+
+    if (error || !texture) {
+        return null; // Don't render if texture failed to load
+    }
 
     return (
         <Billboard position={position}>

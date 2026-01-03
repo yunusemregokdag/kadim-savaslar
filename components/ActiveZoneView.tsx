@@ -21,6 +21,15 @@ import { VoxelSlime } from './VoxelMobs/VoxelSlime';
 import { VoxelAxolotl } from './VoxelMobs/VoxelAxolotl';
 import { VoxelPenguin } from './VoxelMobs/VoxelPenguin';
 import { VoxelCrab } from './VoxelMobs/VoxelCrab';
+import { VoxelFireDragon } from './VoxelMobs/VoxelFireDragon';
+import { VoxelIceGiant } from './VoxelMobs/VoxelIceGiant';
+import { VoxelShadowLord } from './VoxelMobs/VoxelShadowLord';
+import { VoxelStoneGolem } from './VoxelMobs/VoxelStoneGolem';
+import { VoxelWolf } from './VoxelMobs/VoxelWolf';
+import { VoxelGoblin } from './VoxelMobs/VoxelGoblin';
+import { VoxelBat } from './VoxelMobs/VoxelBat';
+import { VoxelSkeleton } from './VoxelMobs/VoxelSkeleton';
+import { VoxelGolem } from './VoxelMobs/VoxelGolem';
 import { SkillEffects } from './SkillEffects';
 import { SKILL_ASSETS } from './SkillAssetRegistry';
 import { CharacterClass } from '../types';
@@ -754,6 +763,15 @@ const VoxelMob: React.FC<{ position: [number, number, number], color: string, le
     const isPenguin = nameLower.includes('penguen') || nameLower.includes('penguin') || nameLower.includes('papağan') || nameLower.includes('parrot');
     const isCrab = nameLower.includes('yengeç') || nameLower.includes('crab');
     const isSlime = type === 'slime' || nameLower.includes('slime');
+    const isFireDragon = nameLower.includes('ateş ejder') || nameLower.includes('fire dragon') || entity?.visual?.modelBase === 'fire_dragon';
+    const isIceGiant = nameLower.includes('buz devi') || nameLower.includes('ice giant') || entity?.visual?.modelBase === 'ice_giant';
+    const isShadowLord = nameLower.includes('gölge lord') || nameLower.includes('shadow lord') || entity?.visual?.modelBase === 'shadow_lord';
+    const isStoneGolem = nameLower.includes('taş golem') || nameLower.includes('stone golem') || entity?.visual?.modelBase === 'stone_golem';
+    const isWolf = nameLower.includes('wolf') || nameLower.includes('kurt') || entity?.visual?.modelBase === 'wolf';
+    const isGoblin = nameLower.includes('goblin') || entity?.visual?.modelBase === 'goblin';
+    const isBat = nameLower.includes('bat') || nameLower.includes('yarasa') || entity?.visual?.modelBase === 'bat';
+    const isSkeleton = nameLower.includes('iskelet') || nameLower.includes('skeleton') || entity?.visual?.modelBase === 'skeleton';
+    const isGolem = (nameLower.includes('golem') && !nameLower.includes('taş')) || entity?.visual?.modelBase === 'golem';
 
     // Dynamic Model Mapping
     const getMobModel = () => {
@@ -835,6 +853,24 @@ const VoxelMob: React.FC<{ position: [number, number, number], color: string, le
                     <VoxelCrab color={color} isHostile={isHostile} />
                 ) : isSlime ? (
                     <VoxelSlime color={color} isHostile={isHostile} />
+                ) : isFireDragon ? (
+                    <VoxelFireDragon isAttacking={botState.isAttacking} isMoving={botState.isMoving} />
+                ) : isIceGiant ? (
+                    <VoxelIceGiant isAttacking={botState.isAttacking} isMoving={botState.isMoving} />
+                ) : isShadowLord ? (
+                    <VoxelShadowLord isAttacking={botState.isAttacking} isMoving={botState.isMoving} />
+                ) : isStoneGolem ? (
+                    <VoxelStoneGolem isAttacking={botState.isAttacking} isMoving={botState.isMoving} />
+                ) : isWolf ? (
+                    <VoxelWolf isAttacking={botState.isAttacking} isMoving={botState.isMoving} />
+                ) : isGoblin ? (
+                    <VoxelGoblin isAttacking={botState.isAttacking} isMoving={botState.isMoving} />
+                ) : isBat ? (
+                    <VoxelBat isAttacking={botState.isAttacking} isMoving={botState.isMoving} />
+                ) : isSkeleton ? (
+                    <VoxelSkeleton isAttacking={botState.isAttacking} isMoving={botState.isMoving} />
+                ) : isGolem ? (
+                    <VoxelGolem isAttacking={botState.isAttacking} isMoving={botState.isMoving} isBoss={isBoss} />
                 ) : modelPath ? (
                     <GLTFMob modelPath={modelPath} isBoss={isBoss} />
                 ) : type === 'player' ? (

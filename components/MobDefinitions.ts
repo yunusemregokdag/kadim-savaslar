@@ -73,5 +73,29 @@ export const MOB_TYPES: Record<string, MobConfig> = {
             behavior: 'boss', combatStyle: 'melee', movePattern: 'charge', aggroRadius: 30, attackRange: 4, attackSpeed: 3000,
             bossPhases: [{ hpThreshold: 0.7, type: 'summon' }, { hpThreshold: 0.3, type: 'enrage' }]
         }
+    },
+    'boss_stone_golem': {
+        id: 'boss_stone_golem', name: 'Taş Golem', level: 30,
+        stats: { hp: 20000, damage: 150, speed: 0.03, exp: 8000 },
+        visual: { modelBase: 'stone_golem', scale: 3.0, color: '#78716c' },
+        aiSchema: { behavior: 'boss', combatStyle: 'melee', movePattern: 'charge', aggroRadius: 25, attackRange: 3.5, attackSpeed: 2500, bossPhases: [{ hpThreshold: 0.5, type: 'enrage' }] }
+    },
+    'boss_ice_giant': {
+        id: 'boss_ice_giant', name: 'Buz Devi', level: 40,
+        stats: { hp: 35000, damage: 250, speed: 0.025, exp: 12000 },
+        visual: { modelBase: 'ice_giant', scale: 3.5, color: '#0ea5e9' },
+        aiSchema: { behavior: 'boss', combatStyle: 'melee', movePattern: 'charge', aggroRadius: 30, attackRange: 4, attackSpeed: 3000, bossPhases: [{ hpThreshold: 0.6, type: 'summon' }] }
+    },
+    'boss_fire_dragon': {
+        id: 'boss_fire_dragon', name: 'Ateş Ejderhası', level: 50,
+        stats: { hp: 60000, damage: 500, speed: 0.04, exp: 25000 },
+        visual: { modelBase: 'fire_dragon', scale: 4.0, color: '#f97316' },
+        aiSchema: { behavior: 'boss', combatStyle: 'ranged', movePattern: 'charge', aggroRadius: 40, attackRange: 15, attackSpeed: 2000, bossPhases: [{ hpThreshold: 0.4, type: 'enrage' }] }
+    },
+    'boss_shadow_lord': {
+        id: 'boss_shadow_lord', name: 'Gölge Lordu', level: 60,
+        stats: { hp: 80000, damage: 800, speed: 0.05, exp: 50000 },
+        visual: { modelBase: 'shadow_lord', scale: 2.5, color: '#4c1d95' },
+        aiSchema: { behavior: 'boss', combatStyle: 'magic', movePattern: 'patrol', aggroRadius: 35, attackRange: 12, attackSpeed: 1500, bossPhases: [{ hpThreshold: 0.8, type: 'summon' }, { hpThreshold: 0.3, type: 'enrage' }] }
     }
 };

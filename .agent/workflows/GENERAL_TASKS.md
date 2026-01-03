@@ -1,68 +1,32 @@
-# 📋 KADIM SAVAŞLAR - GENEL GÖREV TAKİBİ
+# 📋 KADIM SAVAŞLAR - GÖREV LİSTESİ (SINGLE SOURCE OF TRUTH)
 
-Bu dosya projenin genel yol haritasını, anlık durumunu ve tüm task'leri tek bir çatı altında toplar.
-
----
-
-## 🚀 1. AKTİF GELİŞTİRME (FRONTEND & UI)
-**Durum:** Çalışılıyor 🔨
-
-### 1.1 🖥️ UI & MENÜ REFACTORING
-- [x] **Sol Menü Düzenlemesi:**
-    - [x] Kontroller butonu kaldırıldı (Rehbere taşındı).
-    - [x] Görevler sekmesi doğrulandı.
-- [x] **Boss Timer Sistemi:**
-    - [x] Eski menü butonu ve modal kaldırıldı.
-    - [x] **YENİ:** Boss doğduğunda ekran bildirimi (Notification) eklendi.
-    - [x] **YENİ:** Haritaya ışınlanma ("Git") butonu eklendi.
-    - [ ] Chat mesajı entegrasyonu (Beklemede).
-- [x] **Açık Arttırma:**
-    - [x] Eski buton ve modal kaldırıldı (Pazar'a entegre edilecek).
-- [x] **Hızlı Erişim Menüsü:**
-    - [x] Üst paneldeki tüm butonlar kaldırıldı (Temiz arayüz).
-- [x] **Yoldaşlar Sistemi (Pet + Binek):**
-    - [x] Menü adı "Binekler" -> "Yoldaşlar" yapıldı.
-    - [x] Arayüz iki sekmeye ayrılacak: "Normal Petler" ve "Hız Yoldaşları".
-    - [x] Karakterin aynı anda hem Pet hem Binek takabilmesi sağlanacak (Yazılımı eklendi).
-
-### 1.2 👾 MOB & BOSS MODELLERİ (VOXEL)
-- [x] **Özel Boss Modelleri:**
-    - [x] 🔥 Ateş Ejderhası (Fire Dragon) - Animasyonlu
-    - [x] ❄️ Buz Devi (Ice Giant) - Animasyonlu
-    - [x] 👻 Gölge Lordu (Shadow Lord) - Animasyonlu
-    - [x] 🗿 Taş Golem (Stone Golem) - Animasyonlu
-- [x] **Normal Mob Modelleri:**
-    - [x] 🐺 Kurt (Wolf)
-    - [x] 👹 Goblin
-    - [x] 🦇 Yarasa (Bat)
-    - [x] 💀 İskelet Büyücü (Skeleton)
-    - [x] 🗿 Antik Golem (Normal)
-
-### 1.3 🎨 EKSİK ASSETLER & GÖRSELLER (Sırada)
-- [x] **Materials:** `upgrade_stone.png`
-- [x] **Consumables:** HP, MP, Buff iksir ikonları.
-- [x] **Accessories:** Küpe, Kolye, Yüzük ikonları.
-- [ ] **Armor Icons:** Kask, Zırh, Eldiven, Ayakkabı, Kalkan.
-- [ ] **VFX:** 8 adet yetenek efekti sprite'ı.
+> **Durum:** ✅ Mob entegrasyonu tamamlandı. Şimdi görsel eksikleri (ikonlar ve efektler) tamamlayacağız.
 
 ---
 
-## ⚙️ 2. BACKEND & ALTYAPI (PHASE 1)
-**Durum:** Temel Atıldı ✅
+## 🚀 1. SIRADAKİ GÖREV: EKSİK ASSETLER
+**Hedef:** Oyun içindeki placeholder (geçici) görselleri gerçek pixel-art assetlerle değiştirmek.
 
-### 2.1 Backend Foundation
-- [x] **Klasör Yapısı:** `server/` dizini, `src/` alt yapısı, `models`, `routes`, `controllers`.
-- [x] **Paketler:** `mongoose`, `bcryptjs`, `jsonwebtoken`, `dotenv`, `helmet`.
-- [x] **Temel Şemalar:** User, Character, Guild (Taslak).
-- [x] **Authentication:** Register, Login, Me endpointleri.
-- [x] **Güvenlik:** Rate limiting, Helmet, CORS.
+- [ ] **Armor Icons (Zırh İkonları):**
+    - [ ] Kask (Helmet)
+    - [ ] Zırh (Chestplate)
+    - [ ] Eldiven (Gloves)
+    - [ ] Ayakkabı (Boots)
+    - [ ] Kalkan (Shield)
+- [ ] **VFX (Görsel Efektler):**
+    - [ ] 8 adet yetenek efekti sprite'ı (Pixel Art).
 
-### 2.2 Database & Kurulum (Sırada) ⏳
-- [ ] MongoDB Atlas hesabı veya Local kurulum.
-- [ ] `.env` connection string ayarı.
+---
+
+## ⚙️ 2. BACKEND & ALTYAPI (PHASE 1 - BEKLEMEDE)
+**Hedef:** LocalStorage'dan gerçek bir veritabanına geçiş (MongoDB).
+
+### 2.1 Database & Kurulum
+- [ ] MongoDB Atlas hesabı aç veya Local MongoDB kur.
+- [ ] `.env` connection string ayarla.
 - [ ] API Testleri (Postman ile Register/Login testi).
 
-### 2.3 Oyun Sistemleri Backend (Sırada) ⏳
+### 2.2 Oyun Sistemleri Backend
 - [ ] **Character API:** Create, List, Delete.
 - [ ] **Guild API:** Create, Join, Leave, Kick.
 - [ ] **Party API:** Create, Invite, Kick.
@@ -70,26 +34,24 @@ Bu dosya projenin genel yol haritasını, anlık durumunu ve tüm task'leri tek 
 
 ---
 
-## 🗺️ 3. PRODUCTION ROADMAP (UZUN VADELİ)
+## 🗺️ 3. GELECEK PLANLARI (ROADMAP)
 
-### Phase 2: Monetization & Social 💎
-- [ ] **Premium/VIP Sistemi:** VIP paketleri, bonuslar (+EXP, +Gold).
-- [ ] **Mail Sistemi:** Gelen kutusu, item gönderme, sistem mesajları.
-- [ ] **Gelişmiş Chat:** Global, Guild, Party kanalları, PM.
+### Phase 2: Monetization & Social
+- [ ] **Premium/VIP Sistemi:** VIP paketleri, bonuslar.
+- [ ] **Mail Sistemi:** Gelen kutusu, item gönderme.
+- [ ] **Gelişmiş Chat:** Global, Guild, Party kanalları.
 
-### Phase 3: Endgame Content ⚔️
-- [ ] **PVP Arena:** 1v1, 2v2 Eşleşme, Sıralama (ELO).
-- [ ] **Etkinlik Sistemi:** Haftasonu etkinlikleri, Boss istilası.
-- [ ] **Player Housing:** Kişisel ev ve dekorasyon.
-
-### Phase 4: Polish & Optimize 📱
-- [ ] **Mobil Optimizasyonu:** Dokunmatik kontroller, UI ölçekleme.
-- [ ] **Anti-Cheat:** Sunucu tarafı doğrulama.
-- [ ] **Tutorial:** Yeni oyuncu rehberi.
+### Phase 3: Endgame Content
+- [ ] **PVP Arena:** 1v1, 2v2 Eşleşme, Sıralama.
+- [ ] **Etkinlik Sistemi:** Boss istilası.
+- [ ] **Player Housing:** Kişisel ev.
 
 ---
 
-## 🧹 TEMİZLİK & DÜZEN
-- [x] `documentation` klasörü oluşturuldu.
-- [x] `GAME_ARCHITECTURE.md` (Kod Rehberi) yazıldı.
-- [x] Kök dizindeki gereksiz `.md` dosyaları arşive taşındı.
+## ✅ SON YAPILANLAR (Bu Oturum)
+- [x] **Harita & Mob Entegrasyonu:**
+    - [x] Yeni Bosslar (Ateş Ejderi, Buz Devi, Gölge Lordu, Taş Golem) tanımlandı ve haritaya eklendi.
+    - [x] Yeni Moblar (Kurt, Goblin, Yarasa, İskelet, Normal Golem) tanımlandı ve haritaya eklendi.
+    - [x] `ActiveZoneView.tsx` güncellendi, yeni Voxel modelleri bağlandı.
+    - [x] `constants.ts` güncellendi, her mob kendi seviyesine uygun haritaya (Zone 1-4, 1-5, vb.) yerleştirildi.
+- [x] **Task Temizliği:** Eski task dosyaları birleştirildi, bitenler silindi.

@@ -26,7 +26,7 @@ const STAT_INFO = {
         color: '#eab308', // Yellow
         bgColor: 'bg-yellow-900/40',
         borderColor: 'border-yellow-600/60',
-        description: '+1% Kritik Şans'
+        description: '+1% Kritik, +0.3% Blok'
     },
     intelligence: {
         name: 'Zeka (INT)',
@@ -101,7 +101,7 @@ const StatPointsPanel: React.FC<StatPointsPanelProps> = ({ playerState, onAddSta
 
     const totalCritChance = Math.min(totalDex + equipmentStats.critChance, 75); // Max 75%
     const totalAttackSpeed = 1 + (totalDex * 0.5) + equipmentStats.attackSpeed;
-    const totalBlockChance = Math.min(equipmentStats.blockChance, 50); // Max 50%
+    const totalBlockChance = Math.min(Math.floor(totalDex * 0.3) + equipmentStats.blockChance, 50); // DEX gives block + equipment
 
     // Combat Power (SG - Savaş Gücü)
     const combatPower = Math.floor(

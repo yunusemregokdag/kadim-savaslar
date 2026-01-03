@@ -30,7 +30,6 @@ description: Kadim Savaşlar - Yapılacaklar Listesi
 | `soul_shard.png` | `/assets/materials/` | ✅ Tamamlandı |
 | `stone.png` | `/assets/materials/` | ✅ Tamamlandı |
 | `titan_essence.png` | `/assets/materials/` | ✅ Tamamlandı |
-| `upgrade_stone.png` | `/assets/materials/` | ❌ Kota bitti |
 | `void_crystal.png` | `/assets/materials/` | ✅ Tamamlandı |
 | `wood_log.png` | `/assets/materials/` | ✅ Tamamlandı |
 

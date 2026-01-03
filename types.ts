@@ -79,6 +79,7 @@ export interface ItemStats {
   critChance?: number;   // %
   critDamage?: number;   // %
   attackSpeed?: number;  // %
+  blockChance?: number;  // %
   bonusGold?: number;    // % (Premium)
   bonusExp?: number;     // % (Premium)
 }

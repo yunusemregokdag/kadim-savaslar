@@ -230,7 +230,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
         };
     }, []);
 
-    // Boss Spawn Simulation (TEST - every 2 minutes)
+    // Boss Spawn Simulation (Special Bosses - every 3 hours)
     useEffect(() => {
         const bosses = [
             { bossName: 'Ateş Ejderhası', zoneName: 'Volkan Dağı', zoneId: 15 },
@@ -243,13 +243,13 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
             const randomBoss = bosses[Math.floor(Math.random() * bosses.length)];
             setBossNotification(randomBoss);
 
-            // Auto-hide after 10 seconds
-            setTimeout(() => setBossNotification(null), 10000);
+            // Auto-hide after 5 seconds
+            setTimeout(() => setBossNotification(null), 5000);
         };
 
-        // Spawn first boss after 10 seconds, then every 2 minutes
-        const initialTimer = setTimeout(spawnBoss, 10000);
-        const interval = setInterval(spawnBoss, 120000); // 2 minutes
+        // Spawn first boss after 30 seconds (for testing), then every 3 hours
+        const initialTimer = setTimeout(spawnBoss, 30000);
+        const interval = setInterval(spawnBoss, 10800000); // 3 hours = 3 * 60 * 60 * 1000
 
         return () => {
             clearTimeout(initialTimer);

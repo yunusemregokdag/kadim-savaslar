@@ -398,9 +398,11 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
                                         {selectedItem.stats?.intelligence && <StatRow label="Zeka (INT)" val={selectedItem.stats.intelligence} color="text-cyan-400" />}
                                         {selectedItem.stats?.vitality && <StatRow label="Dayanıklılık (VIT)" val={selectedItem.stats.vitality} color="text-pink-400" />}
 
-                                        {/* New Stats */}
+                                        {/* Combat Stats */}
                                         {selectedItem.stats?.critChance && <StatRow label="Kritik Şansı" val={selectedItem.stats.critChance} color="text-yellow-400" isPercent />}
                                         {selectedItem.stats?.critDamage && <StatRow label="Kritik Hasarı" val={selectedItem.stats.critDamage} color="text-red-400" isPercent />}
+                                        {selectedItem.stats?.attackSpeed && <StatRow label="Saldırı Hızı" val={selectedItem.stats.attackSpeed} color="text-green-400" isPercent />}
+                                        {selectedItem.stats?.blockChance && <StatRow label="Blok Şansı" val={selectedItem.stats.blockChance} color="text-cyan-400" isPercent />}
                                     </div>
 
                                     {/* Description/Lore */}

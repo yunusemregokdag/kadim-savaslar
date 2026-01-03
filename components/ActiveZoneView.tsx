@@ -4829,6 +4829,80 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 onUpdatePlayer={onUpdatePlayer}
             />
 
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* NOWA STYLE BOTTOM NAVIGATION BAR */}
+            {/* ═══════════════════════════════════════════════════════════════ */}
+            <nav className="fixed bottom-0 left-0 w-full z-[60] pointer-events-auto">
+                {/* Background with glass effect */}
+                <div className="bg-gradient-to-t from-black/95 via-slate-900/90 to-transparent h-20 flex items-end justify-center pb-2 px-2 gap-1 md:gap-2 border-t border-yellow-900/30 shadow-[0_-5px_30px_rgba(0,0,0,0.6)]">
+
+                    {/* Left Section - Info Buttons */}
+                    <div className="flex items-center gap-1 md:gap-2">
+                        {/* Character Button */}
+                        <button
+                            onClick={() => setShowInventory(true)}
+                            className="flex flex-col items-center gap-0.5 px-2 py-1.5 md:px-3 md:py-2 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group"
+                        >
+                            <Users size={20} className="text-blue-400 group-hover:text-yellow-400 transition-colors" />
+                            <span className="text-[9px] md:text-[10px] text-slate-400 group-hover:text-white font-bold uppercase tracking-wide">Karakter</span>
+                        </button>
+
+                        {/* Map Button */}
+                        <button
+                            onClick={() => setShowGlobalMap(true)}
+                            className="flex flex-col items-center gap-0.5 px-2 py-1.5 md:px-3 md:py-2 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-green-500/50 transition-all group"
+                        >
+                            <Compass size={20} className="text-green-400 group-hover:text-green-300 transition-colors" />
+                            <span className="text-[9px] md:text-[10px] text-slate-400 group-hover:text-white font-bold uppercase tracking-wide">Harita</span>
+                        </button>
+
+                        {/* Skills Button */}
+                        <button
+                            onClick={() => setShowGameGuide(true)}
+                            className="flex flex-col items-center gap-0.5 px-2 py-1.5 md:px-3 md:py-2 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-purple-500/50 transition-all group"
+                        >
+                            <Book size={20} className="text-purple-400 group-hover:text-purple-300 transition-colors" />
+                            <span className="text-[9px] md:text-[10px] text-slate-400 group-hover:text-white font-bold uppercase tracking-wide">Rehber</span>
+                        </button>
+                    </div>
+
+                    {/* Center Divider - Site/Server Info */}
+                    <div className="hidden md:flex items-center px-4">
+                        <span className="text-[10px] text-slate-600 font-mono tracking-wider">kadim-savaslar.vercel.app</span>
+                    </div>
+
+                    {/* Right Section - Action Buttons */}
+                    <div className="flex items-center gap-1 md:gap-2">
+                        {/* Inventory Button */}
+                        <button
+                            onClick={() => setShowInventory(true)}
+                            className="flex flex-col items-center gap-0.5 px-2 py-1.5 md:px-3 md:py-2 rounded-lg bg-amber-900/40 border border-amber-600/50 hover:bg-amber-800/60 hover:border-amber-400 transition-all group"
+                        >
+                            <Backpack size={20} className="text-amber-400 group-hover:text-amber-300 transition-colors" />
+                            <span className="text-[9px] md:text-[10px] text-amber-300 group-hover:text-white font-bold uppercase tracking-wide">Envanter</span>
+                        </button>
+
+                        {/* Trade/Market Button */}
+                        <button
+                            onClick={() => setBlacksmithState({ isOpen: true, tab: 'market' })}
+                            className="flex flex-col items-center gap-0.5 px-2 py-1.5 md:px-3 md:py-2 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-emerald-500/50 transition-all group"
+                        >
+                            <ShoppingBag size={20} className="text-emerald-400 group-hover:text-emerald-300 transition-colors" />
+                            <span className="text-[9px] md:text-[10px] text-slate-400 group-hover:text-white font-bold uppercase tracking-wide">Pazar</span>
+                        </button>
+
+                        {/* Exit Button */}
+                        <button
+                            onClick={props.onExit}
+                            className="flex flex-col items-center gap-0.5 px-2 py-1.5 md:px-3 md:py-2 rounded-lg bg-red-900/30 border border-red-700/50 hover:bg-red-800/60 hover:border-red-400 transition-all group"
+                        >
+                            <X size={20} className="text-red-400 group-hover:text-red-300 transition-colors" />
+                            <span className="text-[9px] md:text-[10px] text-red-400 group-hover:text-white font-bold uppercase tracking-wide">Çıkış</span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
             {/* LOADING OVERLAY - OYUN AÇILIŞINDA */}
             {isLoading && (
                 <div className="fixed inset-0 z-[99999] bg-[#0f0a06] flex flex-col items-center justify-center pointer-events-auto">

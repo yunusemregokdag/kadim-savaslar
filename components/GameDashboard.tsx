@@ -1160,7 +1160,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                         <button onClick={() => setShowBossTimer(true)} className="p-1.5 bg-red-900/30 hover:bg-red-800/50 rounded border border-red-700/50 text-red-400 hover:text-red-300 transition-colors text-sm" title="Boss Timer">💀</button>
                         <button onClick={() => setShowReferral(true)} className="p-1.5 bg-blue-900/30 hover:bg-blue-800/50 rounded border border-blue-700/50 text-blue-400 hover:text-blue-300 transition-colors text-sm" title="Arkadaş Davet">👥</button>
                         <button onClick={() => setShowAuction(true)} className="p-1.5 bg-amber-900/30 hover:bg-amber-800/50 rounded border border-amber-700/50 text-amber-400 hover:text-amber-300 transition-colors text-sm" title="Açık Artırma">🏛️</button>
-                        <button onClick={() => setShowMounts(true)} className="p-1.5 bg-orange-900/30 hover:bg-orange-800/50 rounded border border-orange-700/50 text-orange-400 hover:text-orange-300 transition-colors text-sm" title="Binekler">🐴</button>
+                        <button onClick={() => setShowMounts(true)} className="p-1.5 bg-orange-900/30 hover:bg-orange-800/50 rounded border border-orange-700/50 text-orange-400 hover:text-orange-300 transition-colors text-sm" title="Yoldaşlar">🐾</button>
                     </div>
 
                     {/* Sağ: Mesaj, Ayarlar, Çıkış */}

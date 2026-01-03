@@ -4929,10 +4929,11 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
                     {/* All Navigation Buttons - Scrollable on mobile */}
                     <div className="flex items-center gap-0.5 md:gap-1">
-                        {/* Character/Karakter */}
+                        {/* Character/Karakter - Opens Inventory with character preview */}
                         <button
                             onClick={() => setShowInventory(true)}
                             className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-blue-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                            title="Karakter ve Ekipman"
                         >
                             <Users size={18} className="text-blue-400 group-hover:text-blue-300 transition-colors" />
                             <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Karakter</span>
@@ -4942,40 +4943,47 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         <button
                             onClick={() => setShowInventory(true)}
                             className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-amber-900/40 border border-amber-600/50 hover:bg-amber-800/60 hover:border-amber-400 transition-all group min-w-[48px] md:min-w-[60px]"
+                            title="Envanter ve Eşyalar"
                         >
                             <Backpack size={18} className="text-amber-400 group-hover:text-amber-300 transition-colors" />
                             <span className="text-[8px] md:text-[9px] text-amber-300 group-hover:text-white font-bold uppercase">Envanter</span>
                         </button>
 
-                        {/* Skills/Yetenekler */}
+                        {/* Skills/Yetenekler - Opens Game Guide */}
                         <button
                             onClick={() => setShowGameGuide(true)}
                             className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-purple-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                            title="Yetenekler ve Rehber"
                         >
                             <Zap size={18} className="text-purple-400 group-hover:text-purple-300 transition-colors" />
                             <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Yetenek</span>
                         </button>
 
-                        {/* Quests/Görevler */}
+                        {/* Quests/Görevler - Opens Game Guide */}
                         <button
                             onClick={() => setShowGameGuide(true)}
                             className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                            title="Görevler ve Rehber"
                         >
                             <Scroll size={18} className="text-yellow-400 group-hover:text-yellow-300 transition-colors" />
                             <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Görev</span>
                         </button>
 
-                        {/* Party/Parti - Hidden on very small screens */}
+                        {/* Party/Parti - Opens Chat */}
                         <button
+                            onClick={() => setShowChat(true)}
                             className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-cyan-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                            title="Parti ve Sohbet"
                         >
                             <Users size={18} className="text-cyan-400 group-hover:text-cyan-300 transition-colors" />
                             <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Parti</span>
                         </button>
 
-                        {/* Guild/Lonca - Hidden on very small screens */}
+                        {/* Guild/Lonca - Opens Chat for guild channel */}
                         <button
+                            onClick={() => setShowChat(true)}
                             className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-violet-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                            title="Lonca ve Sohbet"
                         >
                             <Shield size={18} className="text-violet-400 group-hover:text-violet-300 transition-colors" />
                             <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Lonca</span>
@@ -4985,6 +4993,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         <button
                             onClick={() => setBlacksmithState({ isOpen: true, tab: 'market' })}
                             className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-emerald-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                            title="Pazar - Satış ve Alış"
                         >
                             <ShoppingBag size={18} className="text-emerald-400 group-hover:text-emerald-300 transition-colors" />
                             <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Pazar</span>
@@ -4994,6 +5003,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         <button
                             onClick={() => setBlacksmithState({ isOpen: true, tab: 'craft' })}
                             className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-orange-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                            title="Demirci - Geliştirme ve Üretim"
                         >
                             <Hammer size={18} className="text-orange-400 group-hover:text-orange-300 transition-colors" />
                             <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Demirci</span>
@@ -5003,15 +5013,17 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         <button
                             onClick={() => setShowGlobalMap(true)}
                             className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-green-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                            title="Dünya Haritası"
                         >
                             <Compass size={18} className="text-green-400 group-hover:text-green-300 transition-colors" />
                             <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Harita</span>
                         </button>
 
-                        {/* Leaderboard/Sıralama - Hidden on very small screens */}
+                        {/* Leaderboard/Sıralama - Opens Achievements (includes leaderboard) */}
                         <button
                             onClick={() => setShowAchievements(true)}
                             className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                            title="Başarımlar ve Sıralama"
                         >
                             <Trophy size={18} className="text-yellow-500 group-hover:text-yellow-400 transition-colors" />
                             <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Sıralama</span>
@@ -5021,6 +5033,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         <button
                             onClick={() => setShowExitConfirm(true)}
                             className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-red-900/30 border border-red-700/50 hover:bg-red-800/60 hover:border-red-400 transition-all group min-w-[48px] md:min-w-[60px]"
+                            title="Oyundan Çık"
                         >
                             <X size={18} className="text-red-400 group-hover:text-red-300 transition-colors" />
                             <span className="text-[8px] md:text-[9px] text-red-400 group-hover:text-white font-bold uppercase">Çıkış</span>
@@ -5028,6 +5041,8 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                     </div>
                 </div>
             </nav>
+
+
 
             {/* EXIT CONFIRMATION MODAL WITH COUNTDOWN */}
             {showExitConfirm && (

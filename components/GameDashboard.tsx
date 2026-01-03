@@ -1187,19 +1187,19 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                         </div>
 
                         {/* Profile Info & Bars */}
-                        <div className="flex flex-col gap-0.5 w-48">
+                        <div className="flex flex-col gap-0.5 w-72">
                             {/* Name & Rank */}
                             <div className="flex items-center justify-between px-1">
-                                <div className="flex items-center gap-1.5">
-                                    {isAdmin && <span className="text-white font-bold text-[10px]">[GM]</span>}
-                                    <span className={`text-sm font-bold tracking-wide truncate ${(playerStats.vipUntil || 0) > Date.now() ? 'text-yellow-400 font-extrabold drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]' : 'text-slate-200'}`}>
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                    {isAdmin && <span className="text-white font-bold text-[9px]">[GM]</span>}
+                                    <span className={`text-xs font-bold tracking-wide truncate ${(playerStats.vipUntil || 0) > Date.now() ? 'text-yellow-400 font-extrabold drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]' : 'text-slate-200'}`}>
                                         {playerStats.nickname}
                                     </span>
-                                    {(playerStats.vipUntil || 0) > Date.now() && <div className="text-red-500 drop-shadow-md"><Crown size={14} fill="currentColor" /></div>}
+                                    {(playerStats.vipUntil || 0) > Date.now() && <div className="text-red-500 drop-shadow-md flex-shrink-0"><Crown size={12} fill="currentColor" /></div>}
                                 </div>
-                                <div className="flex items-center gap-1.5">
+                                <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
                                     <RankIcon rank={playerStats.rank} size="sm" />
-                                    <span className="text-[10px] text-slate-300 font-bold uppercase tracking-wider">{RANKS[playerStats.rank]?.title}</span>
+                                    <span className="text-[9px] text-slate-300 font-bold uppercase tracking-wider">{RANKS[playerStats.rank]?.title}</span>
                                 </div>
                             </div>
 
@@ -1215,7 +1215,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                             </div>
 
                             {/* MP BAR */}
-                            <div className="relative h-2 w-3/4 bg-black/60 rounded-sm border border-slate-600/50 overflow-hidden">
+                            <div className="relative h-2 w-full bg-black/60 rounded-sm border border-slate-600/50 overflow-hidden">
                                 <div className="h-full bg-gradient-to-r from-blue-800 via-blue-600 to-blue-500 relative" style={{ width: `${(playerStats.mana / playerStats.maxMana) * 100}%` }}>
                                     <div className="absolute top-0 left-0 w-full h-[1px] bg-blue-400/50" />
                                 </div>

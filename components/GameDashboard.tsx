@@ -197,7 +197,6 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
     const [showReferral, setShowReferral] = useState(false);
     const [showAuction, setShowAuction] = useState(false);
     const [showWorldMap, setShowWorldMap] = useState(false);
-    const [showControls, setShowControls] = useState(false);
     const [showMounts, setShowMounts] = useState(false);
     const { shouldShow: showTutorial } = useTutorial();
     const { progress } = useProgress();
@@ -1162,7 +1161,6 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                         <button onClick={() => setShowReferral(true)} className="p-1.5 bg-blue-900/30 hover:bg-blue-800/50 rounded border border-blue-700/50 text-blue-400 hover:text-blue-300 transition-colors text-sm" title="Arkadaş Davet">👥</button>
                         <button onClick={() => setShowAuction(true)} className="p-1.5 bg-amber-900/30 hover:bg-amber-800/50 rounded border border-amber-700/50 text-amber-400 hover:text-amber-300 transition-colors text-sm" title="Açık Artırma">🏛️</button>
                         <button onClick={() => setShowMounts(true)} className="p-1.5 bg-orange-900/30 hover:bg-orange-800/50 rounded border border-orange-700/50 text-orange-400 hover:text-orange-300 transition-colors text-sm" title="Binekler">🐴</button>
-                        <button onClick={() => setShowControls(true)} className="p-1.5 bg-indigo-900/30 hover:bg-indigo-800/50 rounded border border-indigo-700/50 text-indigo-400 hover:text-indigo-300 transition-colors text-sm" title="Kontroller">⌨️</button>
                     </div>
 
                     {/* Sağ: Mesaj, Ayarlar, Çıkış */}
@@ -1710,14 +1708,6 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                 )
             }
 
-            {/* Controls Guide Modal */}
-            {
-                showControls && (
-                    <ControlsGuideView
-                        onClose={() => setShowControls(false)}
-                    />
-                )
-            }
 
             {/* Mount System Modal */}
             {

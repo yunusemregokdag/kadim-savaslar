@@ -20,7 +20,7 @@ export interface Mount {
     obtained?: 'shop' | 'quest' | 'event' | 'drop' | 'premium';
 }
 
-const ALL_MOUNTS: Mount[] = [
+export const ALL_MOUNTS: Mount[] = [
     // Tier 1 - Common
     { id: 'horse_brown', name: 'Kahverengi At', emoji: '🐴', tier: 1, rarity: 'common', speedBonus: 20, price: 1000, obtained: 'shop' },
     { id: 'donkey', name: 'Eşek', emoji: '🫏', tier: 1, rarity: 'common', speedBonus: 15, price: 500, obtained: 'shop' },

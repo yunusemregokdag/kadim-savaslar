@@ -18,10 +18,12 @@ Bu dosya projenin genel yol haritasını, anlık durumunu ve tüm task'leri tek 
     - [ ] Chat mesajı entegrasyonu (Beklemede).
 - [x] **Açık Arttırma:**
     - [x] Eski buton ve modal kaldırıldı (Pazar'a entegre edilecek).
-- [ ] **Yoldaşlar Sistemi (Pet + Binek):**
+- [x] **Hızlı Erişim Menüsü:**
+    - [x] Üst paneldeki tüm butonlar kaldırıldı (Temiz arayüz).
+- [x] **Yoldaşlar Sistemi (Pet + Binek):**
     - [x] Menü adı "Binekler" -> "Yoldaşlar" yapıldı.
-    - [ ] Arayüz iki sekmeye ayrılacak: "Normal Petler" ve "Hız Yoldaşları".
-    - [ ] Karakterin aynı anda hem Pet hem Binek takabilmesi sağlanacak.
+    - [x] Arayüz iki sekmeye ayrılacak: "Normal Petler" ve "Hız Yoldaşları".
+    - [x] Karakterin aynı anda hem Pet hem Binek takabilmesi sağlanacak (Yazılımı eklendi).
 
 ### 1.2 👾 MOB & BOSS MODELLERİ (VOXEL)
 - [x] **Özel Boss Modelleri:**

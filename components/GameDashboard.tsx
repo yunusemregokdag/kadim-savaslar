@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect, Suspense } from 'react';
+import { ALL_MOUNTS, Mount } from './MountSystemView';
 import { GameGuideModal } from './GameGuideModal';
 import { AssetLoader } from '../utils/AssetLoader';
 import { PlayerState, CharacterClass, Item, Equipment, Faction, Quest, Rank, WingItem, PetItem, HUDLayout, CraftingRecipe, DailyLoginState, Achievement, DailyLoginReward, Party, PartyMember, Guild, Trade } from '../types';
@@ -195,7 +196,21 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
     const [showPlayerStats, setShowPlayerStats] = useState(false);
     const [showReferral, setShowReferral] = useState(false);
     const [showWorldMap, setShowWorldMap] = useState(false);
-    const [showMounts, setShowMounts] = useState(false);
+    // Mount & Companion System
+    const [companionTab, setCompanionTab] = useState<'pets' | 'mounts'>('pets');
+    const [ownedMounts, setOwnedMounts] = useState<string[]>(() => {
+        const saved = localStorage.getItem('ownedMounts');
+        return saved ? JSON.parse(saved) : ['horse_brown'];
+    });
+    const [equippedMount, setEquippedMount] = useState<string | null>(() => {
+        return localStorage.getItem('equippedMount') || null;
+    });
+
+    useEffect(() => {
+        localStorage.setItem('ownedMounts', JSON.stringify(ownedMounts));
+        if (equippedMount) localStorage.setItem('equippedMount', equippedMount);
+        else localStorage.removeItem('equippedMount');
+    }, [ownedMounts, equippedMount]);
 
     // Boss Spawn Notification
     const [bossNotification, setBossNotification] = useState<{ bossName: string; zoneName: string; zoneId: number } | null>(null);
@@ -1180,15 +1195,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                         <div className="flex items-center gap-2 text-orange-400 bg-orange-900/20 px-2 py-1 rounded-full border border-orange-800/50"><Medal size={12} /><span className="font-bold text-xs">{playerStats.honor.toLocaleString()}</span></div>
                     </div>
 
-                    {/* Orta: Hızlı Erişim Butonları */}
-                    <div className="flex items-center gap-1 overflow-x-auto max-w-[60%] scrollbar-none">
-                        <button onClick={() => setShowDailyQuests(true)} className="p-1.5 bg-orange-900/30 hover:bg-orange-900/50 rounded border border-orange-700/50 text-orange-400 hover:text-orange-300 transition-colors text-sm" title="Günlük Görevler">📋</button>
-                        <button onClick={() => setShowPremium(true)} className="p-1.5 bg-yellow-900/30 hover:bg-yellow-900/50 rounded border border-yellow-700/50 text-yellow-400 hover:text-yellow-300 transition-colors text-sm" title="Premium">👑</button>
-                        <button onClick={() => setShowBattlePass(true)} className="p-1.5 bg-gradient-to-r from-orange-900/30 to-red-900/30 hover:from-orange-800/50 hover:to-red-800/50 rounded border border-orange-600/50 text-orange-400 hover:text-orange-300 transition-colors text-sm" title="Battle Pass">🎖️</button>
-                        <button onClick={() => setShowPlayerStats(true)} className="p-1.5 bg-cyan-900/30 hover:bg-cyan-800/50 rounded border border-cyan-700/50 text-cyan-400 hover:text-cyan-300 transition-colors text-sm" title="İstatistikler">📊</button>
-                        <button onClick={() => setShowReferral(true)} className="p-1.5 bg-blue-900/30 hover:bg-blue-800/50 rounded border border-blue-700/50 text-blue-400 hover:text-blue-300 transition-colors text-sm" title="Arkadaş Davet">👥</button>
-                        <button onClick={() => setShowMounts(true)} className="p-1.5 bg-orange-900/30 hover:bg-orange-800/50 rounded border border-orange-700/50 text-orange-400 hover:text-orange-300 transition-colors text-sm" title="Yoldaşlar">🐾</button>
-                    </div>
+                    {/* Orta bölüm temizlendi */}
 
                     {/* Sağ: Mesaj, Ayarlar, Çıkış */}
                     <div className="flex items-center gap-2">
@@ -1316,66 +1323,131 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                                         {/* ─────────────────────────────────────────────────────────── */}
                                         <div className="flex-1 grid grid-cols-2 gap-3 min-h-0">
 
-                                            {/* PET CARD (Large) */}
+                                            {/* COMPANION PANEL (Pets & Mounts) */}
                                             <div className="bg-gradient-to-b from-slate-900/80 to-slate-950 rounded-xl border border-emerald-900/30 shadow-lg overflow-hidden flex flex-col">
-                                                <div className="px-4 py-2 border-b border-emerald-900/20 bg-emerald-950/20 flex justify-between items-center flex-shrink-0">
-                                                    <h3 className="font-bold text-emerald-400 flex items-center gap-2">
-                                                        <span className="text-xl">🐾</span>
-                                                        <span className="tracking-wide">YOLDAŞLAR</span>
-                                                    </h3>
-                                                    <span className="text-xs text-emerald-600 font-bold bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-900/30">
-                                                        {playerStats.ownedPets?.length || 0} / 20
-                                                    </span>
+                                                {/* Tabs Header */}
+                                                <div className="px-2 py-2 border-b border-emerald-900/20 bg-emerald-950/20 flex gap-2">
+                                                    <button
+                                                        onClick={() => setCompanionTab('pets')}
+                                                        className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${companionTab === 'pets' ? 'bg-emerald-600 text-white shadow-lg ring-1 ring-emerald-400' : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700 hover:text-emerald-400'}`}
+                                                    >
+                                                        <span>🐾</span> NORMAL PETLER
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setCompanionTab('mounts')}
+                                                        className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${companionTab === 'mounts' ? 'bg-amber-600 text-white shadow-lg ring-1 ring-amber-400' : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700 hover:text-amber-400'}`}
+                                                    >
+                                                        <span>🐎</span> HIZ YOLDAŞLARI
+                                                    </button>
                                                 </div>
 
                                                 <div className="p-4 flex-1 flex flex-col gap-4 overflow-hidden">
-                                                    {/* Large Preview */}
-                                                    <div className="w-full h-24 flex-shrink-0 bg-[#0a2f1c]/30 rounded-lg border border-dashed border-emerald-800/50 flex items-center justify-center relative overflow-hidden group">
-                                                        {playerStats.equippedPet ? (
-                                                            <>
-                                                                <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/40 to-transparent"></div>
-                                                                <div className="z-10 text-4xl drop-shadow-[0_0_15px_rgba(34,197,94,0.6)] animate-bounce-slow">🐉</div>
-                                                                <div className="absolute bottom-1 left-0 right-0 text-center text-[10px] font-bold text-emerald-300 uppercase tracking-widest">
-                                                                    {playerStats.equippedPet.name}
-                                                                </div>
-                                                            </>
-                                                        ) : (
-                                                            <span className="text-emerald-800/50 text-xs font-bold uppercase tracking-widest">Yoldaş Seçilmedi</span>
-                                                        )}
-                                                    </div>
+                                                    {companionTab === 'pets' ? (
+                                                        /* ────────── PETS CONTENT ────────── */
+                                                        <>
+                                                            {/* Large Preview */}
+                                                            <div className="w-full h-24 flex-shrink-0 bg-[#0a2f1c]/30 rounded-lg border border-dashed border-emerald-800/50 flex items-center justify-center relative overflow-hidden group">
+                                                                {playerStats.equippedPet ? (
+                                                                    <>
+                                                                        <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/40 to-transparent"></div>
+                                                                        <div className="z-10 text-4xl drop-shadow-[0_0_15px_rgba(34,197,94,0.6)] animate-bounce-slow">🐉</div>
+                                                                        <div className="absolute bottom-1 left-0 right-0 text-center text-[10px] font-bold text-emerald-300 uppercase tracking-widest">
+                                                                            {playerStats.equippedPet.name}
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <span className="text-emerald-800/50 text-xs font-bold uppercase tracking-widest">Yoldaş Seçilmedi</span>
+                                                                )}
+                                                            </div>
 
-                                                    {/* Scrollable Grid */}
-                                                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
-                                                        <div className="grid grid-cols-4 gap-2 content-start">
-                                                            {playerStats.ownedPets?.map(pet => {
-                                                                const displayData = getItemDisplayData(pet);
-                                                                const isEquipped = playerStats.equippedPet?.id === pet.id;
-                                                                return (
-                                                                    <ItemTooltip key={pet.id} item={pet}>
-                                                                        <button
-                                                                            onClick={() => setPlayerStats(prev => ({ ...prev, equippedPet: isEquipped ? null : pet }))}
-                                                                            className={`aspect-square rounded-lg border-2 flex flex-col items-center justify-center transition-all relative group
-                                                                                ${isEquipped
-                                                                                    ? 'bg-emerald-900/40 border-emerald-500 shadow-[0_0_10px_rgba(34,197,94,0.3)]'
-                                                                                    : 'bg-slate-900/50 border-slate-700/50 hover:border-emerald-500/50 hover:bg-slate-800'
-                                                                                }`}
-                                                                        >
-                                                                            <span className="text-xl group-hover:scale-110 transition-transform">🐉</span>
-                                                                            <div className={`absolute top-0 right-0 px-1 rounded-bl-md text-[8px] font-bold
-                                                                                ${displayData.tierLabel.includes('T5') ? 'bg-red-900 text-red-100' : 'bg-black/60 text-emerald-400'}
-                                                                            `}>
-                                                                                {displayData.tierLabel}
-                                                                            </div>
-                                                                        </button>
-                                                                    </ItemTooltip>
-                                                                );
-                                                            })}
-                                                            {/* Empty slots placeholders */}
-                                                            {Array.from({ length: Math.max(0, 16 - (playerStats.ownedPets?.length || 0)) }).map((_, i) => (
-                                                                <div key={`empty-${i}`} className="aspect-square rounded-lg border border-slate-800/50 bg-slate-900/20"></div>
-                                                            ))}
-                                                        </div>
-                                                    </div>
+                                                            {/* Scrollable Grid */}
+                                                            <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
+                                                                <div className="grid grid-cols-4 gap-2 content-start">
+                                                                    {playerStats.ownedPets?.map(pet => {
+                                                                        const displayData = getItemDisplayData(pet);
+                                                                        const isEquipped = playerStats.equippedPet?.id === pet.id;
+                                                                        return (
+                                                                            <ItemTooltip key={pet.id} item={pet}>
+                                                                                <button
+                                                                                    onClick={() => setPlayerStats(prev => ({ ...prev, equippedPet: isEquipped ? null : pet }))}
+                                                                                    className={`aspect-square rounded-lg border-2 flex flex-col items-center justify-center transition-all relative group
+                                                                                        ${isEquipped
+                                                                                            ? 'bg-emerald-900/40 border-emerald-500 shadow-[0_0_10px_rgba(34,197,94,0.3)]'
+                                                                                            : 'bg-slate-900/50 border-slate-700/50 hover:border-emerald-500/50 hover:bg-slate-800'
+                                                                                        }`}
+                                                                                >
+                                                                                    <span className="text-xl group-hover:scale-110 transition-transform">🐉</span>
+                                                                                    <div className={`absolute top-0 right-0 px-1 rounded-bl-md text-[8px] font-bold
+                                                                                        ${displayData.tierLabel.includes('T5') ? 'bg-red-900 text-red-100' : 'bg-black/60 text-emerald-400'}
+                                                                                    `}>
+                                                                                        {displayData.tierLabel}
+                                                                                    </div>
+                                                                                </button>
+                                                                            </ItemTooltip>
+                                                                        );
+                                                                    })}
+                                                                    {/* Empty slots placeholders */}
+                                                                    {Array.from({ length: Math.max(0, 16 - (playerStats.ownedPets?.length || 0)) }).map((_, i) => (
+                                                                        <div key={`empty-${i}`} className="aspect-square rounded-lg border border-slate-800/50 bg-slate-900/20"></div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        </>
+                                                    ) : (
+                                                        /* ────────── MOUNTS CONTENT ────────── */
+                                                        <>
+                                                            {/* Large Preview */}
+                                                            <div className="w-full h-24 flex-shrink-0 bg-[#2a1b0a]/30 rounded-lg border border-dashed border-amber-800/50 flex items-center justify-center relative overflow-hidden group">
+                                                                {equippedMount ? (
+                                                                    <>
+                                                                        <div className="absolute inset-0 bg-gradient-to-t from-amber-900/40 to-transparent"></div>
+                                                                        <div className="z-10 text-4xl drop-shadow-[0_0_15px_rgba(245,158,11,0.6)] animate-bounce-slow">
+                                                                            {ALL_MOUNTS.find(m => m.id === equippedMount)?.emoji || '🐎'}
+                                                                        </div>
+                                                                        <div className="absolute bottom-1 left-0 right-0 text-center text-[10px] font-bold text-amber-300 uppercase tracking-widest">
+                                                                            {ALL_MOUNTS.find(m => m.id === equippedMount)?.name}
+                                                                        </div>
+                                                                    </>
+                                                                ) : (
+                                                                    <span className="text-amber-800/50 text-xs font-bold uppercase tracking-widest">Binek Seçilmedi</span>
+                                                                )}
+                                                            </div>
+
+                                                            {/* Scrollable Grid */}
+                                                            <div className="flex-1 overflow-y-auto custom-scrollbar pr-1">
+                                                                <div className="grid grid-cols-4 gap-2 content-start">
+                                                                    {ALL_MOUNTS.filter(m => ownedMounts.includes(m.id)).map(mount => {
+                                                                        const isEquipped = equippedMount === mount.id;
+                                                                        let borderColor = 'border-slate-700/50';
+                                                                        if (mount.rarity === 'legendary') borderColor = 'border-orange-500/50';
+                                                                        else if (mount.rarity === 'epic') borderColor = 'border-purple-500/50';
+
+                                                                        return (
+                                                                            <button
+                                                                                key={mount.id}
+                                                                                title={`${mount.name}\n${mount.speedBonus}% Hız Bonusu\n${mount.specialAbility || ''}`}
+                                                                                onClick={() => setEquippedMount(isEquipped ? null : mount.id)}
+                                                                                className={`aspect-square rounded-lg border-2 flex flex-col items-center justify-center transition-all relative group
+                                                                                    ${isEquipped
+                                                                                        ? 'bg-amber-900/40 border-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.3)]'
+                                                                                        : `bg-slate-900/50 hover:bg-slate-800 ${borderColor}`
+                                                                                    }`}
+                                                                            >
+                                                                                <span className="text-xl group-hover:scale-110 transition-transform">{mount.emoji}</span>
+                                                                                <div className="absolute top-0 right-0 px-1 rounded-bl-md text-[8px] font-bold bg-black/60 text-amber-400">
+                                                                                    T{mount.tier}
+                                                                                </div>
+                                                                            </button>
+                                                                        );
+                                                                    })}
+                                                                    {/* Empty slots placeholders */}
+                                                                    {Array.from({ length: Math.max(0, 16 - ownedMounts.length) }).map((_, i) => (
+                                                                        <div key={`empty-mount-${i}`} className="aspect-square rounded-lg border border-slate-800/50 bg-slate-900/20"></div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
 
@@ -1707,25 +1779,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
             }
 
 
-            {/* Mount System Modal */}
-            {
-                showMounts && (
-                    <MountSystemView
-                        playerState={playerStats}
-                        onClose={() => setShowMounts(false)}
-                        onEquipMount={(mount) => {
-                            // Apply speed bonus to player
-                        }}
-                        onPurchaseMount={(mount) => {
-                            if (mount.gemPrice) {
-                                setPlayerStats(prev => ({ ...prev, gems: prev.gems - (mount.gemPrice || 0) }));
-                            } else if (mount.price) {
-                                setPlayerStats(prev => ({ ...prev, credits: prev.credits - (mount.price || 0) }));
-                            }
-                        }}
-                    />
-                )
-            }
+            {/* Mount System moved to Character Panel */}
 
             {/* Boss Spawn Notification */}
             {bossNotification && (

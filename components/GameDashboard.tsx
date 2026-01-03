@@ -194,7 +194,6 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
     const [showBattlePass, setShowBattlePass] = useState(false);
     const [showPlayerStats, setShowPlayerStats] = useState(false);
     const [showReferral, setShowReferral] = useState(false);
-    const [showAuction, setShowAuction] = useState(false);
     const [showWorldMap, setShowWorldMap] = useState(false);
     const [showMounts, setShowMounts] = useState(false);
     const { shouldShow: showTutorial } = useTutorial();
@@ -1157,7 +1156,6 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                         <button onClick={() => setShowBattlePass(true)} className="p-1.5 bg-gradient-to-r from-orange-900/30 to-red-900/30 hover:from-orange-800/50 hover:to-red-800/50 rounded border border-orange-600/50 text-orange-400 hover:text-orange-300 transition-colors text-sm" title="Battle Pass">🎖️</button>
                         <button onClick={() => setShowPlayerStats(true)} className="p-1.5 bg-cyan-900/30 hover:bg-cyan-800/50 rounded border border-cyan-700/50 text-cyan-400 hover:text-cyan-300 transition-colors text-sm" title="İstatistikler">📊</button>
                         <button onClick={() => setShowReferral(true)} className="p-1.5 bg-blue-900/30 hover:bg-blue-800/50 rounded border border-blue-700/50 text-blue-400 hover:text-blue-300 transition-colors text-sm" title="Arkadaş Davet">👥</button>
-                        <button onClick={() => setShowAuction(true)} className="p-1.5 bg-amber-900/30 hover:bg-amber-800/50 rounded border border-amber-700/50 text-amber-400 hover:text-amber-300 transition-colors text-sm" title="Açık Artırma">🏛️</button>
                         <button onClick={() => setShowMounts(true)} className="p-1.5 bg-orange-900/30 hover:bg-orange-800/50 rounded border border-orange-700/50 text-orange-400 hover:text-orange-300 transition-colors text-sm" title="Yoldaşlar">🐾</button>
                     </div>
 
@@ -1664,25 +1662,6 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                 )
             }
 
-            {/* Auction House Modal */}
-            {
-                showAuction && (
-                    <AuctionHouseView
-                        playerState={playerStats}
-                        onClose={() => setShowAuction(false)}
-                        onBid={(listingId, amount) => {
-                            // Deduct gold for bid (in real app, only when won)
-                        }}
-                        onBuyout={(listingId) => {
-                            // Handle buyout purchase
-                        }}
-                        onCreateListing={(item, startPrice, buyoutPrice, duration) => {
-                            // Logic handled in view via onUpdatePlayer
-                        }}
-                        onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
-                    />
-                )
-            }
 
             {/* World Map Modal */}
             {

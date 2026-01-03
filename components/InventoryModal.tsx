@@ -3,7 +3,7 @@ import { PlayerState, Item, Equipment, ItemStats } from '../types';
 import { getItemDisplayData } from '../utils/ItemDisplayAdapter';
 import { X, Search, Sword, Shield, Zap, Heart, Star, Lock, Info, Filter, ArrowUpDown, User } from 'lucide-react';
 import { renderItemIcon } from './ui/ItemIcons';
-import { ItemTooltip } from './ui/ItemTooltip';
+import { ItemTooltipContent } from './ui/ItemTooltip';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei';
 import { VoxelSpartan } from './VoxelSpartan';
@@ -239,7 +239,7 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
                     <div className="relative h-[280px] md:h-[350px] bg-gradient-to-b from-[#1a1410] to-[#100c08] border-b border-[#3f2e24]/50">
                         <div className="absolute top-4 left-4 z-10">
                             <h2 className="text-white font-bold text-lg leading-none tracking-wider drop-shadow-md">LV.{playerState.level} {playerState.class?.toUpperCase()}</h2>
-                            <p className="text-[#8a725f] text-xs mt-1 font-semibold">{playerState.name}</p>
+                            <p className="text-[#8a725f] text-xs mt-1 font-semibold">{playerState.nickname}</p>
                         </div>
 
                         <div className="w-full h-full cursor-move">
@@ -347,8 +347,8 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
                                         key={f}
                                         onClick={() => setFilter(f)}
                                         className={`px-3 py-1.5 rounded text-xs font-bold transition-all whitespace-nowrap ${filter === f
-                                                ? 'bg-yellow-900/40 text-yellow-500 border border-yellow-700/50'
-                                                : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'
+                                            ? 'bg-yellow-900/40 text-yellow-500 border border-yellow-700/50'
+                                            : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'
                                             }`}
                                     >
                                         {f === 'all' && 'Tümü'}
@@ -398,7 +398,7 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
                             className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none w-full max-w-sm px-4"
                         >
                             <div className="pointer-events-auto shadow-2xl drop-shadow-[0_20px_20px_rgba(0,0,0,0.8)]">
-                                <ItemTooltip item={activeTooltipItem} />
+                                <ItemTooltipContent item={activeTooltipItem} />
 
                                 {/* On Mobile: Show a subtle hint to double tap */}
                                 {clickedItem && (

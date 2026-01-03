@@ -138,33 +138,50 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
     };
 
     return (
-        <div className={`${isOverlay ? 'fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4' : 'w-full h-full'}`}>
-            <div className="w-full max-w-[1400px] h-[90vh] lg:h-[85vh] bg-[#0c0906] border border-[#3f2e18] rounded-xl flex flex-col shadow-2xl overflow-hidden relative group">
+        <div className={`${isOverlay
+            ? 'fixed inset-0 z-[60] pointer-events-none flex items-start justify-end'
+            : 'w-full h-full'}`}
+        >
+            {/* NOWA Style Right Overlay Panel */}
+            <div className={`
+                ${isOverlay
+                    ? 'pointer-events-auto m-2 md:m-4 w-[calc(100%-16px)] md:w-[560px] h-[60vh] md:h-[calc(100vh-32px)] fixed bottom-2 left-2 right-2 md:bottom-auto md:left-auto md:right-4 md:top-4 rounded-2xl border border-[#3f2e18]/80 bg-[#0c0906]/90 backdrop-blur-sm shadow-[0_10px_40px_rgba(0,0,0,0.7)]'
+                    : 'w-full h-full bg-[#0c0906] border border-[#3f2e18]'
+                } 
+                flex flex-col overflow-hidden relative group
+            `}>
+                {/* Subtle MMO texture overlay */}
                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
+
+                {/* Light radial gradient for MMO feel */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.04),transparent_40%),radial-gradient(circle_at_70%_70%,rgba(255,255,255,0.02),transparent_45%)] opacity-60 pointer-events-none" />
 
                 {/* HEADLINE */}
                 {isOverlay && (
-                    <div className="h-14 border-b border-[#3f2e18] flex items-center justify-between px-6 bg-[#16100a]">
-                        <h2 className="text-[#e6cba5] font-bold text-lg flex items-center gap-3">
-                            <div className="w-2 h-2 bg-yellow-600 rotate-45" />
-                            ENVANTER & KOZMETİK MERKEZİ
+                    <div className="h-12 border-b border-[#3f2e18]/50 flex items-center justify-between px-4 bg-[#16100a]/80 shrink-0">
+                        <h2 className="text-[#e6cba5] font-bold text-sm flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 bg-yellow-600 rotate-45" />
+                            ENVANTER
                         </h2>
-                        <button onClick={onClose} className="p-2 hover:bg-red-900/30 rounded-full transition-colors text-slate-400 hover:text-red-400">
-                            <X size={20} />
+                        <button onClick={onClose} className="p-1.5 hover:bg-red-900/30 rounded-full transition-colors text-slate-400 hover:text-red-400">
+                            <X size={18} />
                         </button>
                     </div>
                 )}
 
-                {/* 3-COLUMN LAYOUT (Responsive) */}
-                <div className="flex flex-col lg:flex-row flex-1 overflow-hidden relative z-10">
+                {/* LAYOUT - Compact for overlay, 3-column for full page */}
+                <div className={`flex flex-1 overflow-hidden relative z-10 ${isOverlay ? 'flex-col' : 'flex-col lg:flex-row'}`}>
 
-                    {/* LEFT: CHARACTER & SLOTS */}
-                    <div className="w-full lg:w-[320px] flex-shrink-0 bg-[#0f0b08] border-b lg:border-b-0 lg:border-r border-[#3f2e18] flex flex-col overflow-y-auto custom-scrollbar h-[350px] lg:h-full">
-                        {/* 3D PREVIEW */}
-                        <div className="h-[320px] relative bg-gradient-to-b from-[#1a1410] to-[#0f0b08]">
+                    {/* CHARACTER & SLOTS - Compact in overlay */}
+                    <div className={`${isOverlay
+                        ? 'flex-shrink-0 bg-[#0f0b08]/50 border-b border-[#3f2e18]/30 overflow-y-auto custom-scrollbar'
+                        : 'w-full lg:w-[320px] flex-shrink-0 bg-[#0f0b08] border-b lg:border-b-0 lg:border-r border-[#3f2e18] flex flex-col overflow-y-auto custom-scrollbar h-[350px] lg:h-full'
+                        }`}>
+                        {/* 3D PREVIEW - Shorter in overlay mode */}
+                        <div className={`${isOverlay ? 'h-[160px]' : 'h-[320px]'} relative bg-gradient-to-b from-[#1a1410] to-[#0f0b08]`}>
                             <Suspense fallback={<div className="text-white/20 flex items-center justify-center h-full">...</div>}>
                                 <Canvas shadows dpr={[1, 1.5]} gl={{ preserveDrawingBuffer: true }}>
-                                    <PerspectiveCamera makeDefault position={[0, 1.4, 4.5]} fov={35} />
+                                    <PerspectiveCamera makeDefault position={[0, 1.4, isOverlay ? 5.5 : 4.5]} fov={35} />
                                     <ambientLight intensity={0.6} />
                                     <pointLight position={[10, 10, 10]} intensity={1.5} castShadow />
                                     <pointLight position={[-10, 0, 5]} intensity={1} color="#fbbf24" />
@@ -191,59 +208,80 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
                                     <OrbitControls enableZoom={false} enablePan={false} minPolarAngle={Math.PI / 3} maxPolarAngle={Math.PI / 1.8} />
                                 </Canvas>
                             </Suspense>
-                            <div className="absolute top-4 left-4 text-xs font-bold text-[#e6cba5]/50 uppercase tracking-widest">
+                            <div className={`absolute top-2 left-3 text-[10px] font-bold text-[#e6cba5]/50 uppercase tracking-widest`}>
                                 Lv.{playerState.level} {playerState.class?.toUpperCase()}
                             </div>
-                            <div className="absolute bottom-4 w-full flex justify-center gap-6 text-[#e6cba5]">
-                                <div className="text-center">
-                                    <div className="text-xs text-slate-500">HP</div>
-                                    <div className="font-bold">{playerState.hp}/{playerState.maxHp}</div>
+                            {/* HP/MP - Only show in full mode */}
+                            {!isOverlay && (
+                                <div className="absolute bottom-4 w-full flex justify-center gap-6 text-[#e6cba5]">
+                                    <div className="text-center">
+                                        <div className="text-xs text-slate-500">HP</div>
+                                        <div className="font-bold">{playerState.hp}/{playerState.maxHp}</div>
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="text-xs text-slate-500">MANA</div>
+                                        <div className="font-bold text-blue-400">{playerState.mana}/{playerState.maxMana}</div>
+                                    </div>
                                 </div>
-                                <div className="text-center">
-                                    <div className="text-xs text-slate-500">MANA</div>
-                                    <div className="font-bold text-blue-400">{playerState.mana}/{playerState.maxMana}</div>
-                                </div>
-                            </div>
+                            )}
                         </div>
 
-                        {/* SLOTS GRID */}
-                        <div className="p-6 flex flex-col gap-6">
-                            {/* Armor Section */}
-                            <div>
-                                <h3 className="text-xs font-bold text-[#e6cba5]/40 uppercase mb-3 flex items-center gap-2">
-                                    <Shield size={10} /> Ekipmanlar
-                                </h3>
-                                <div className="flex justify-center gap-4 flex-wrap">
+                        {/* SLOTS GRID - Compact horizontal in overlay */}
+                        <div className={`${isOverlay ? 'p-3 flex gap-2 overflow-x-auto' : 'p-6 flex flex-col gap-6'}`}>
+                            {isOverlay ? (
+                                /* Compact horizontal slot row */
+                                <div className="flex gap-2 flex-wrap justify-center">
                                     {renderEquipSlot('Miğfer', 'helmet', playerState.equipment.helmet)}
                                     {renderEquipSlot('Zırh', 'armor', playerState.equipment.armor)}
+                                    {renderEquipSlot('Silah', 'weapon', playerState.equipment.weapon)}
                                     {renderEquipSlot('Alt', 'pants', playerState.equipment.pants)}
                                     {renderEquipSlot('Ayak', 'boots', playerState.equipment.boots)}
-                                    {renderEquipSlot('Silah', 'weapon', playerState.equipment.weapon)}
-                                </div>
-                            </div>
-
-                            {/* Accessory Section */}
-                            <div>
-                                <h3 className="text-xs font-bold text-[#e6cba5]/40 uppercase mb-3 flex items-center gap-2">
-                                    <Star size={10} /> Takılar
-                                </h3>
-                                <div className="flex justify-center gap-4">
                                     {renderEquipSlot('Kolye', 'necklace', playerState.equipment.necklace)}
                                     {renderEquipSlot('Küpe', 'earring', playerState.equipment.earring)}
-                                </div>
-                            </div>
-
-                            {/* Cosmetics Section */}
-                            <div>
-                                <h3 className="text-xs font-bold text-[#e6cba5]/40 uppercase mb-3 flex items-center gap-2">
-                                    <User size={10} /> Görünüm
-                                </h3>
-                                <div className="flex justify-center gap-4">
-                                    {renderEquipSlot('Kostüm', 'skin', playerState.equippedSkin ? { type: 'costume', name: 'Kostüm' } : null)}
                                     {renderEquipSlot('Kanat', 'wing', playerState.equippedWing)}
                                     {renderEquipSlot('Yoldaş', 'pet', playerState.equippedPet)}
                                 </div>
-                            </div>
+                            ) : (
+                                /* Full layout with sections */
+                                <>
+                                    {/* Armor Section */}
+                                    <div>
+                                        <h3 className="text-xs font-bold text-[#e6cba5]/40 uppercase mb-3 flex items-center gap-2">
+                                            <Shield size={10} /> Ekipmanlar
+                                        </h3>
+                                        <div className="flex justify-center gap-4 flex-wrap">
+                                            {renderEquipSlot('Miğfer', 'helmet', playerState.equipment.helmet)}
+                                            {renderEquipSlot('Zırh', 'armor', playerState.equipment.armor)}
+                                            {renderEquipSlot('Alt', 'pants', playerState.equipment.pants)}
+                                            {renderEquipSlot('Ayak', 'boots', playerState.equipment.boots)}
+                                            {renderEquipSlot('Silah', 'weapon', playerState.equipment.weapon)}
+                                        </div>
+                                    </div>
+
+                                    {/* Accessory Section */}
+                                    <div>
+                                        <h3 className="text-xs font-bold text-[#e6cba5]/40 uppercase mb-3 flex items-center gap-2">
+                                            <Star size={10} /> Takılar
+                                        </h3>
+                                        <div className="flex justify-center gap-4">
+                                            {renderEquipSlot('Kolye', 'necklace', playerState.equipment.necklace)}
+                                            {renderEquipSlot('Küpe', 'earring', playerState.equipment.earring)}
+                                        </div>
+                                    </div>
+
+                                    {/* Cosmetics Section */}
+                                    <div>
+                                        <h3 className="text-xs font-bold text-[#e6cba5]/40 uppercase mb-3 flex items-center gap-2">
+                                            <User size={10} /> Görünüm
+                                        </h3>
+                                        <div className="flex justify-center gap-4">
+                                            {renderEquipSlot('Kostüm', 'skin', playerState.equippedSkin ? { type: 'costume', name: 'Kostüm' } : null)}
+                                            {renderEquipSlot('Kanat', 'wing', playerState.equippedWing)}
+                                            {renderEquipSlot('Yoldaş', 'pet', playerState.equippedPet)}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
 

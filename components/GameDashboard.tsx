@@ -1172,22 +1172,22 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
     return (
         <ErrorBoundary>
             <div className="h-full flex flex-col bg-[#0b0f19] overflow-hidden">
-                <header className="h-20 border-b border-slate-800 bg-slate-900/90 backdrop-blur flex items-center justify-between px-4 sticky top-0 z-50">
+                <header className="h-20 border-b border-slate-800 bg-slate-900/90 backdrop-blur flex items-center justify-between px-2 md:px-4 sticky top-0 z-50">
                     {/* Sol: Karakter Bilgisi + Para + Rütbe */}
                     {/* Sol: Premium Profile HUD Style */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 md:gap-4">
                         {/* Level Badge - Gold Frame */}
-                        <div className="relative w-14 h-14 flex-shrink-0">
+                        <div className="relative w-12 h-12 md:w-14 md:h-14 flex-shrink-0">
                             <div className="absolute inset-0 bg-slate-900 rounded-full border-[3px] border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.4)] flex items-center justify-center overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-b from-slate-800 to-black" />
                                 <div className="absolute top-0 w-full h-1/2 bg-white/5 rounded-t-full" />
-                                <span className="relative z-10 text-xl font-black text-white font-serif drop-shadow-md">{playerStats.level}</span>
+                                <span className="relative z-10 text-lg md:text-xl font-black text-white font-serif drop-shadow-md">{playerStats.level}</span>
                             </div>
                             <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-yellow-600 border border-yellow-400 text-white text-[8px] font-bold px-1.5 rounded shadow-sm">LVL</div>
                         </div>
 
                         {/* Profile Info & Bars */}
-                        <div className="flex flex-col gap-0.5 w-72">
+                        <div className="flex flex-col gap-0.5 w-32 md:w-72 transition-all">
                             {/* Name & Rank */}
                             <div className="flex items-center justify-between px-1">
                                 <div className="flex items-center gap-1.5 min-w-0">
@@ -1226,7 +1226,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                         </div>
 
                         {/* Currencies */}
-                        <div className="flex items-center gap-2 ml-4 border-l border-slate-700 pl-4 h-8">
+                        <div className="hidden md:flex items-center gap-2 ml-4 border-l border-slate-700 pl-4 h-8">
                             <div className="flex items-center gap-2 text-yellow-400 bg-yellow-900/20 px-2 py-1 rounded-full border border-yellow-800/50 hover:bg-yellow-900/30 transition-colors cursor-help" title="Altın"><DollarSign size={12} /><span className="font-bold text-xs">{playerStats.credits.toLocaleString()}</span></div>
                             <div className="flex items-center gap-2 text-purple-400 bg-purple-900/20 px-2 py-1 rounded-full border border-purple-800/50 hover:bg-purple-900/30 transition-colors cursor-help" title="Kristal"><Gem size={12} /><span className="font-bold text-xs">{playerStats.gems.toLocaleString()}</span></div>
                             <div className="flex items-center gap-2 text-orange-400 bg-orange-900/20 px-2 py-1 rounded-full border border-orange-800/50 hover:bg-orange-900/30 transition-colors cursor-help" title="Onur Puanı"><Medal size={12} /><span className="font-bold text-xs">{playerStats.honor.toLocaleString()}</span></div>

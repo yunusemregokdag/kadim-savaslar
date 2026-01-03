@@ -4133,9 +4133,6 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
                             {/* Icon */}
                             <Swords size={48} className="text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] z-10 group-active:rotate-12 transition-transform" />
-
-                            {/* 'Z' Hotkey Indicator (PC) */}
-                            <div className="absolute bottom-2 right-1/2 translate-x-1/2 text-[10px] font-bold text-white/60 bg-black/40 px-1.5 rounded border border-white/10 hidden lg:block">Z</div>
                         </div>
                     </button>
                 </div>
@@ -4181,37 +4178,60 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             </DraggableHUDElement>
 
 
-            {/* PROFILE UI */}
+            {/* PROFILE UI - PRO MMO STYLE */}
             <DraggableHUDElement id="profile" element={hudLayout.elements.profile} isEditing={isHudEditing} isSelected={selectedElementId === 'profile'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
-                <div style={{ transformOrigin: 'top left' }}>
-                    <div className="flex gap-3 pointer-events-auto select-none items-center">
-                        <div className="relative w-16 h-16 rounded-full border-4 border-slate-700 bg-slate-900 flex items-center justify-center shadow-2xl z-20">
-                            <div className="text-2xl font-black text-white rpg-font">{playerState.level}</div>
-                            <div className="absolute -bottom-2 bg-yellow-600 text-[9px] px-2 py-0.5 rounded border border-yellow-400 text-white font-bold">LVL</div>
+                <div style={{ transformOrigin: 'top left' }} className="pointer-events-auto select-none flex items-start -ml-2 -mt-2">
+                    {/* Level Badge - Gold Frame */}
+                    <div className="relative z-20 w-16 h-16 flex-shrink-0">
+                        <div className="absolute inset-0 bg-slate-900 rounded-full border-[3px] border-yellow-500 shadow-[0_0_20px_rgba(234,179,8,0.4)] flex items-center justify-center overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-b from-slate-800 to-black" />
+                            <div className="absolute top-0 w-full h-1/2 bg-white/5 rounded-t-full" />
+                            <span className="relative z-10 text-2xl font-black text-white font-serif drop-shadow-md">{playerState.level}</span>
                         </div>
-                        <div className="flex flex-col gap-1 w-56 bg-black/60 p-2 rounded-r-xl border-y border-r border-slate-700 backdrop-blur-sm -ml-4 pl-6 z-10">
-                            <div className="flex justify-between items-center text-xs font-bold text-white mb-1">
-                                <span className={`flex items-center ${(playerState.vipUntil || 0) > Date.now() ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]' : ''}`} style={playerState.premiumBenefits?.nameColor ? { color: playerState.premiumBenefits.nameColor } : {}}>
-                                    {(playerState.vipUntil || 0) > Date.now() && <span className="mr-1 text-sm animate-pulse filter drop-shadow hover:scale-110 transition-transform">👑</span>}
-                                    {playerState.premiumBenefits?.badge && <span className="mr-1">{playerState.premiumBenefits.badge}</span>}
-                                    {playerState.nickname}
-                                </span>
-                                <span className="text-[10px] text-yellow-500 flex items-center gap-1">
-                                    <RankIcon rank={playerState.rank} size="sm" />
-                                    <span className="font-bold tracking-wide drop-shadow-md text-amber-400">{RANKS[playerState.rank]?.title || 'Acemi'}</span>
-                                </span>
-                            </div>
-                            <div className="relative h-4 w-full bg-slate-900 rounded-sm border border-slate-800">
-                                <div className="h-full bg-gradient-to-r from-red-700 to-red-500 transition-all duration-300" style={{ width: `${(playerState.hp / playerState.maxHp) * 100}%` }} />
-                                <div className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-white shadow-black drop-shadow-md">{playerState.hp} / {playerState.maxHp} HP</div>
-                            </div>
-                            <div className="relative h-3 w-full bg-slate-900 rounded-sm border border-slate-800">
-                                <div className="h-full bg-gradient-to-r from-blue-700 to-blue-500 transition-all duration-300" style={{ width: `${(playerState.mana / playerState.maxMana) * 100}%` }} />
-                                <div className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-white shadow-black drop-shadow-md">{playerState.mana} / {playerState.maxMana} MP</div>
-                            </div>
-                            {/* EXP BAR */}
-                            <ExpBarCompact level={playerState.level} exp={playerState.exp} className="mt-1" />
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-yellow-600 border border-yellow-400 text-white text-[9px] font-bold px-1.5 rounded shadow-sm">LVL</div>
+                    </div>
 
+                    {/* Profile Info & Bars */}
+                    <div className="flex flex-col pl-6 -ml-5 pt-1 w-64 bg-gradient-to-r from-black/80 to-transparent pr-4 pb-2 rounded-r-xl backdrop-blur-sm border-t border-b border-black/20">
+                        {/* Name Layer */}
+                        <div className="flex justify-between items-center mb-0.5 pl-2">
+                            <span className="text-sm font-bold text-white drop-shadow-md tracking-wide flex items-center gap-1">
+                                {playerState.nickname}
+                                {(playerState.vipUntil || 0) > Date.now() && <span className="text-red-500 animate-pulse">♛</span>}
+                            </span>
+                            <span className="text-[10px] text-yellow-400 font-bold uppercase">{RANKS[playerState.rank]?.title || 'Warrior'}</span>
+                        </div>
+
+                        {/* HP BAR - Crystal Style */}
+                        <div className="relative h-3.5 w-full bg-black/60 rounded-sm border border-slate-600/50 mb-0.5 overflow-hidden">
+                            <div
+                                className="h-full bg-gradient-to-r from-red-800 via-red-600 to-red-500 transition-all duration-300 relative"
+                                style={{ width: `${(playerState.hp / playerState.maxHp) * 100}%` }}
+                            >
+                                <div className="absolute top-0 left-0 w-full h-[1px] bg-red-400/50" />
+                                <div className="absolute bottom-0 left-0 w-full h-[1px] bg-red-900/50" />
+                            </div>
+                            <span className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,1)] tracking-wider z-10">
+                                {playerState.hp} / {playerState.maxHp}
+                            </span>
+                        </div>
+
+                        {/* MP BAR - Crystal Style */}
+                        <div className="relative h-2.5 w-3/4 bg-black/60 rounded-sm border border-slate-600/50 overflow-hidden">
+                            <div
+                                className="h-full bg-gradient-to-r from-blue-800 via-blue-600 to-blue-500 transition-all duration-300 relative"
+                                style={{ width: `${(playerState.mana / playerState.maxMana) * 100}%` }}
+                            >
+                                <div className="absolute top-0 left-0 w-full h-[1px] bg-blue-400/50" />
+                            </div>
+                            <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,1)] tracking-wider z-10">
+                                {playerState.mana}
+                            </span>
+                        </div>
+
+                        {/* EXP Bar (Thin line at bottom) */}
+                        <div className="mt-1 h-1 w-full bg-black/50 rounded-full overflow-hidden">
+                            <div className="h-full bg-yellow-500" style={{ width: `${(playerState.exp / (playerState.level * 1000)) * 100}%` }} />
                         </div>
                     </div>
                 </div>
@@ -4233,43 +4253,45 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
             {/* TOP MENU - CHAT */}
             <DraggableHUDElement id="top_chat" element={hudLayout.elements.top_chat || { x: 50, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_chat'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
-                <button title="Sohbet" onClick={() => setShowChat(!showChat)} className={`p-2 rounded border border-slate-700 hover:text-white pointer-events-auto shadow-lg backdrop-blur-sm transition-transform active:scale-95 ${showChat ? 'bg-yellow-900/80 text-yellow-500 border-yellow-500' : 'bg-slate-900/80 text-slate-400'}`}>
-                    <MessageSquare size={24} />
+                <button title="Sohbet" onClick={() => setShowChat(!showChat)} className={`w-12 h-12 flex items-center justify-center rounded-xl pointer-events-auto backdrop-blur-md border shadow-lg transition-transform active:scale-95 group
+                    ${showChat ? 'bg-amber-600/60 border-amber-400 text-white' : 'bg-black/40 border-white/10 text-slate-300 hover:bg-black/60 hover:border-yellow-400 hover:text-yellow-400'}
+                `}>
+                    <MessageSquare size={22} className="drop-shadow-md" />
                 </button>
             </DraggableHUDElement>
 
             {/* TOP MENU - INVENTORY */}
             <DraggableHUDElement id="top_inventory" element={hudLayout.elements.top_inventory || { x: 55, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_inventory'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
-                <button title="Envanter" onClick={() => setShowInventory(true)} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-yellow-500 hover:text-white pointer-events-auto shadow-lg backdrop-blur-sm transition-transform active:scale-95 hover:border-yellow-500">
-                    <Backpack size={24} />
+                <button title="Envanter" onClick={() => setShowInventory(true)} className="w-12 h-12 flex items-center justify-center rounded-xl pointer-events-auto backdrop-blur-md border border-white/10 bg-black/40 text-slate-300 shadow-lg transition-transform active:scale-95 group hover:bg-black/60 hover:border-blue-400 hover:text-blue-400">
+                    <Backpack size={22} className="drop-shadow-md" />
                 </button>
             </DraggableHUDElement>
 
             {/* TOP MENU - MARKET */}
             <DraggableHUDElement id="top_market" element={hudLayout.elements.top_market || { x: 60, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_market'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
-                <button title="Demirci & Pazar" onClick={() => setBlacksmithState({ isOpen: true, tab: 'market' })} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-green-400 hover:text-white pointer-events-auto shadow-lg backdrop-blur-sm transition-transform active:scale-95 hover:border-green-400">
-                    <ShoppingBag size={24} />
+                <button title="Demirci & Pazar" onClick={() => setBlacksmithState({ isOpen: true, tab: 'market' })} className="w-12 h-12 flex items-center justify-center rounded-xl pointer-events-auto backdrop-blur-md border border-white/10 bg-black/40 text-slate-300 shadow-lg transition-transform active:scale-95 group hover:bg-black/60 hover:border-green-400 hover:text-green-400">
+                    <ShoppingBag size={22} className="drop-shadow-md" />
                 </button>
             </DraggableHUDElement>
 
             {/* TOP MENU - SETTINGS */}
             <DraggableHUDElement id="top_settings" element={hudLayout.elements.top_settings || { x: 65, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_settings'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
-                <button title="Ayarlar" onClick={() => setShowSettings(true)} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-slate-400 hover:text-white pointer-events-auto shadow-lg backdrop-blur-sm transition-transform active:scale-95 hover:border-slate-400">
-                    <SettingsIcon size={24} />
+                <button title="Ayarlar" onClick={() => setShowSettings(!showSettings)} className="w-12 h-12 flex items-center justify-center rounded-xl pointer-events-auto backdrop-blur-md border border-white/10 bg-black/40 text-slate-300 shadow-lg transition-transform active:scale-95 group hover:bg-black/60 hover:border-white hover:text-white">
+                    <SettingsIcon size={22} className="drop-shadow-md group-hover:rotate-45 transition-transform" />
                 </button>
             </DraggableHUDElement>
 
             {/* TOP MENU - ACHIEVEMENTS */}
             <DraggableHUDElement id="top_achievements" element={hudLayout.elements.top_achievements || { x: 70, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_achievements'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
-                <button title="Başarımlar" onClick={() => setShowAchievements(true)} className="bg-slate-900/80 p-2 rounded border border-slate-700 text-yellow-500 hover:text-white pointer-events-auto shadow-lg backdrop-blur-sm transition-transform active:scale-95 hover:border-yellow-600">
-                    <Trophy size={24} />
+                <button title="Başarımlar" onClick={() => setShowAchievements(true)} className="w-12 h-12 flex items-center justify-center rounded-xl pointer-events-auto backdrop-blur-md border border-white/10 bg-black/40 text-slate-300 shadow-lg transition-transform active:scale-95 group hover:bg-black/60 hover:border-purple-400 hover:text-purple-400">
+                    <Trophy size={22} className="drop-shadow-md" />
                 </button>
             </DraggableHUDElement>
 
             {/* TOP MENU - EXIT */}
-            <DraggableHUDElement id="top_exit" element={hudLayout.elements.top_exit || { x: 75, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_exit'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
-                <button title="Çıkış" onClick={onExit} className="bg-slate-900/80 text-red-500 p-2 rounded border border-slate-700 hover:bg-red-900/50 hover:text-red-200 pointer-events-auto shadow-lg backdrop-blur-sm transition-transform active:scale-95 hover:border-red-500">
-                    <X size={24} />
+            <DraggableHUDElement id="top_exit" element={hudLayout.elements.top_exit || { x: 80, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_exit'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
+                <button title="Çıkış" onClick={props.onExit} className="w-12 h-12 flex items-center justify-center rounded-xl pointer-events-auto backdrop-blur-md border border-red-900/40 bg-red-900/20 text-red-400 shadow-lg transition-transform active:scale-95 group hover:bg-red-900/60 hover:border-red-500 hover:text-red-200">
+                    <X size={22} className="drop-shadow-md" />
                 </button>
             </DraggableHUDElement>
 

@@ -4,33 +4,41 @@
 
 ---
 
-## 🚀 1. SIRADAKİ GÖREV: EKSİK ASSETLER
-**Hedef:** Oyun içindeki placeholder (geçici) görselleri gerçek pixel-art assetlerle değiştirmek.
+## 🚀 1. SIRADAKİ ÖNCELİK: BACKEND & DATABASE MIGRATION
+**Hedef:** LocalStorage tabanlı (istemci tarafı) veri tutma sisteminden, güvenli ve kalıcı MongoDB tabanlı backend mimarisine geçiş. Bu, oyunun çok oyunculu, hilesiz ve kalıcı olmasını sağlayacak.
 
-- [ ] **Armor Icons (Zırh İkonları):**
-    - [ ] Kask (Helmet)
-    - [ ] Zırh (Chestplate)
-    - [ ] Eldiven (Gloves)
-    - [ ] Ayakkabı (Boots)
-    - [ ] Kalkan (Shield)
-- [ ] **VFX (Görsel Efektler):**
-    - [ ] 8 adet yetenek efekti sprite'ı (Pixel Art).
-
----
-
-## ⚙️ 2. BACKEND & ALTYAPI (PHASE 1 - BEKLEMEDE)
-**Hedef:** LocalStorage'dan gerçek bir veritabanına geçiş (MongoDB).
-
-### 2.1 Database & Kurulum
+### 1.1 Database & Kurulum
 - [ ] MongoDB Atlas hesabı aç veya Local MongoDB kur.
+- [ ] Backend Server (Node.js/Express) projesini oluştur (veya mevcut yapıyı güncelle).
 - [ ] `.env` connection string ayarla.
 - [ ] API Testleri (Postman ile Register/Login testi).
 
-### 2.2 Oyun Sistemleri Backend
-- [ ] **Character API:** Create, List, Delete.
-- [ ] **Guild API:** Create, Join, Leave, Kick.
-- [ ] **Party API:** Create, Invite, Kick.
-- [ ] **Trade API:** Request, Accept, Exchange.
+### 1.2 Oyun Sistemleri Backend API
+- [ ] **Auth API:** Register, Login, Token yönetimi.
+- [ ] **Character API:** Create, List, Delete, Update Stats.
+- [ ] **Inventory API:** Eşya ekleme, çıkarma, kaydetme.
+- [ ] **Market API:** Pazar yeri listeleme ve satın alma işlemleri.
+- [ ] **Multiplayer Sync:** Oyuncu pozisyon ve hareketlerini veritabanına periyodik kaydetme.
+
+---
+
+## 🎨 2. DÜŞÜK ÖNCELİK: ASSET CİLASI (Kullanıcı Teyidi: Mevcutlar İyi)
+**Hedef:** İleride ihtiyaç duyulursa placeholder görselleri pixel-art ile güncellemek.
+- [ ] Armor Icons (Zırh İkonları)
+- [ ] Skill VFX (Yetenek Efektleri)
+
+## 🗺️ 3. GELECEK PLANLARI (ROADMAP)
+### Phase 2: Monetization & Social
+- [ ] **Guild Sistemi API:** Create, Join, Leave, Kick.
+- [ ] **Party Sistemi API:** Create, Invite, Kick.
+- [ ] **Premium/VIP Sistemi:** VIP paketleri, bonuslar.
+- [ ] **Mail Sistemi:** Gelen kutusu, item gönderme.
+- [ ] **Gelişmiş Chat:** Global, Guild, Party kanalları.
+
+### Phase 3: Endgame Content
+- [ ] **PVP Arena:** 1v1, 2v2 Eşleşme, Sıralama, Ödül sistemi.
+- [ ] **Etkinlik Sistemi:** Belirli saatlerde Boss istilası.
+- [ ] **Player Housing:** Kişisel ev ve dekorasyon.
 
 ---
 
@@ -53,5 +61,9 @@
     - [x] Yeni Bosslar (Ateş Ejderi, Buz Devi, Gölge Lordu, Taş Golem) tanımlandı ve haritaya eklendi.
     - [x] Yeni Moblar (Kurt, Goblin, Yarasa, İskelet, Normal Golem) tanımlandı ve haritaya eklendi.
     - [x] `ActiveZoneView.tsx` güncellendi, yeni Voxel modelleri bağlandı.
-    - [x] `constants.ts` güncellendi, her mob kendi seviyesine uygun haritaya (Zone 1-4, 1-5, vb.) yerleştirildi.
+- [x] **UI/UX Modernizasyon:**
+    - [x] **Karakter Paneli:** Responsive, 2 kolonlu yapı, yeni hesaplanan statlar bölümü.
+    - [x] **Envanter Paneli:** Mobil uyumlu (Stack layout), PC uyumlu (3 kolon), görsel cila.
+    - [x] **HUD (Savaş Arayüzü):** Saldırı butonu (Premium), yetenek barı (Modern), joystick (Runik).
+    - [x] **Companions:** Binek ve Pet tek panelde birleştirildi.
 - [x] **Task Temizliği:** Eski task dosyaları birleştirildi, bitenler silindi.

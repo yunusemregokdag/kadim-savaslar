@@ -139,7 +139,8 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
 
     return (
         <div className={`${isOverlay ? 'fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4' : 'w-full h-full'}`}>
-            <div className={`w-full max-w-[1400px] h-[85vh] bg-[#0c0906] border border-[#3f2e18] rounded-xl flex flex-col shadow-2xl overflow-hidden ${isOverlay ? 'animate-[scaleIn_0.2s]' : ''}`}>
+            <div className="w-full max-w-[1400px] h-[90vh] lg:h-[85vh] bg-[#0c0906] border border-[#3f2e18] rounded-xl flex flex-col shadow-2xl overflow-hidden relative group">
+                <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
 
                 {/* HEADLINE */}
                 {isOverlay && (
@@ -154,11 +155,11 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
                     </div>
                 )}
 
-                {/* 3-COLUMN LAYOUT */}
-                <div className="flex flex-1 overflow-hidden">
+                {/* 3-COLUMN LAYOUT (Responsive) */}
+                <div className="flex flex-col lg:flex-row flex-1 overflow-hidden relative z-10">
 
                     {/* LEFT: CHARACTER & SLOTS */}
-                    <div className="w-[320px] bg-[#0f0b08] border-r border-[#3f2e18] flex flex-col overflow-y-auto custom-scrollbar">
+                    <div className="w-full lg:w-[320px] flex-shrink-0 bg-[#0f0b08] border-b lg:border-b-0 lg:border-r border-[#3f2e18] flex flex-col overflow-y-auto custom-scrollbar h-[350px] lg:h-full">
                         {/* 3D PREVIEW */}
                         <div className="h-[320px] relative bg-gradient-to-b from-[#1a1410] to-[#0f0b08]">
                             <Suspense fallback={<div className="text-white/20 flex items-center justify-center h-full">...</div>}>
@@ -248,7 +249,7 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
 
 
                     {/* CENTER: INVENTORY GRID */}
-                    <div className="flex-1 bg-[#0c0906] flex flex-col border-r border-[#3f2e18]">
+                    <div className="flex-1 bg-[#0c0906] flex flex-col lg:border-r border-[#3f2e18] overflow-hidden min-h-0 order-3 lg:order-none">
                         {/* Toolbar */}
                         <div className="p-4 border-b border-[#3f2e18] flex gap-3 items-center sticky top-0 bg-[#0c0906] z-10">
                             <div className="relative flex-1">
@@ -354,7 +355,7 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
 
 
                     {/* RIGHT: SELECTED DETAILS */}
-                    <div className="w-[300px] bg-[#0f0b08] flex flex-col">
+                    <div className={`w-full lg:w-[300px] bg-[#0f0b08] flex flex-col lg:h-full border-t lg:border-t-0 border-[#3f2e18] transition-all ${selectedItem ? 'h-[350px] lg:h-full order-2 lg:order-none' : 'h-0 lg:h-full hidden lg:flex'}`}>
                         {selectedItem ? (
                             <div className="flex flex-col h-full animate-[fadeIn_0.2s]">
                                 {/* Header */}

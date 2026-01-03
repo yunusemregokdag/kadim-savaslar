@@ -1232,12 +1232,16 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                         {activeTab === 'character' && (
                             <div className="max-w-7xl mx-auto animate-fadeIn">
                                 {/* TWO-COLUMN LAYOUT: Fixed Left + Flex Right */}
-                                <div className="flex gap-4">
+                                {/* TWO-COLUMN LAYOUT: Mobile Stack / PC Row */}
+                                <div className="flex flex-col lg:flex-row gap-4 h-full">
 
                                     {/* ═══════════════════════════════════════════════════════════════ */}
-                                    {/* LEFT COLUMN - IDENTITY PANEL (FIXED WIDTH 280px) */}
                                     {/* ═══════════════════════════════════════════════════════════════ */}
-                                    <div className="w-[280px] flex-shrink-0 bg-gradient-to-b from-slate-900/90 to-slate-950 rounded-xl border border-purple-900/30 shadow-2xl overflow-hidden">
+                                    {/* LEFT COLUMN - IDENTITY PANEL (Responsive Width) */}
+                                    {/* ═══════════════════════════════════════════════════════════════ */}
+                                    <div className="w-full lg:w-[340px] flex-shrink-0 bg-gradient-to-b from-slate-900/95 to-slate-950 rounded-xl border border-purple-900/30 shadow-2xl overflow-hidden relative group">
+                                        {/* Noise Texture Overlay */}
+                                        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
                                         {/* Top Accent Bar */}
                                         <div className="h-1 bg-gradient-to-r from-purple-600 via-yellow-500 to-purple-600"></div>
 
@@ -1309,7 +1313,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                                     {/* ═══════════════════════════════════════════════════════════════ */}
                                     {/* RIGHT COLUMN - FLEX (Stats Compact + Companions Large) */}
                                     {/* ═══════════════════════════════════════════════════════════════ */}
-                                    <div className="flex-1 flex flex-col gap-3 h-full overflow-hidden">
+                                    <div className="flex-1 flex flex-col gap-3 min-h-0">
 
                                         {/* ─────────────────────────────────────────────────────────── */}
                                         {/* TOP: COMPACT STATS PANEL */}
@@ -1318,10 +1322,58 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                                             <StatPointsPanel playerState={playerStats} onAddStat={handleStatIncrease} />
                                         </div>
 
+                                        {/* 2. CALCULATED STATS (Secondary) - Visual Only */}
+                                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3 flex-shrink-0">
+                                            {/* Attack */}
+                                            <div className="bg-slate-900/60 p-2 lg:p-3 rounded-lg border border-white/5 flex items-center justify-between relative overflow-hidden">
+                                                <div className="absolute inset-0 bg-red-900/5"></div>
+                                                <div className="flex items-center gap-2 relative z-10">
+                                                    <div className="p-1.5 bg-red-900/20 rounded text-red-400 border border-red-900/30"><PixelSwords size={2} color="#f87171" /></div>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Saldırı</span>
+                                                        <span className="text-sm font-bold text-slate-200">{Math.floor(playerStats.stats.str * 2 + 10)}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {/* Defense */}
+                                            <div className="bg-slate-900/60 p-2 lg:p-3 rounded-lg border border-white/5 flex items-center justify-between relative overflow-hidden">
+                                                <div className="absolute inset-0 bg-blue-900/5"></div>
+                                                <div className="flex items-center gap-2 relative z-10">
+                                                    <div className="p-1.5 bg-blue-900/20 rounded text-blue-400 border border-blue-900/30"><PixelShield size={2} color="#60a5fa" /></div>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Defans</span>
+                                                        <span className="text-sm font-bold text-slate-200">{Math.floor(playerStats.stats.vit * 1.5 + 5)}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {/* Speed */}
+                                            <div className="bg-slate-900/60 p-2 lg:p-3 rounded-lg border border-white/5 flex items-center justify-between relative overflow-hidden">
+                                                <div className="absolute inset-0 bg-yellow-900/5"></div>
+                                                <div className="flex items-center gap-2 relative z-10">
+                                                    <div className="p-1.5 bg-yellow-900/20 rounded text-yellow-400 border border-yellow-900/30"><Zap size={14} /></div>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Hız</span>
+                                                        <span className="text-sm font-bold text-slate-200">{(100 + playerStats.stats.dex * 0.5).toFixed(0)}%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {/* Crit */}
+                                            <div className="bg-slate-900/60 p-2 lg:p-3 rounded-lg border border-white/5 flex items-center justify-between relative overflow-hidden">
+                                                <div className="absolute inset-0 bg-emerald-900/5"></div>
+                                                <div className="flex items-center gap-2 relative z-10">
+                                                    <div className="p-1.5 bg-emerald-900/20 rounded text-emerald-400 border border-emerald-900/30"><PixelTrophy size={2} color="#34d399" /></div>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Kritik</span>
+                                                        <span className="text-sm font-bold text-slate-200">{(playerStats.stats.dex * 0.2).toFixed(1)}%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         {/* ─────────────────────────────────────────────────────────── */}
                                         {/* BOTTOM: EXPANDED COMPANIONS (Pets & Wings) */}
                                         {/* ─────────────────────────────────────────────────────────── */}
-                                        <div className="flex-1 grid grid-cols-2 gap-3 min-h-0">
+                                        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-3 min-h-0">
 
                                             {/* COMPANION PANEL (Pets & Mounts) */}
                                             <div className="bg-gradient-to-b from-slate-900/80 to-slate-950 rounded-xl border border-emerald-900/30 shadow-lg overflow-hidden flex flex-col">

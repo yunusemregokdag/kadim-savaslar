@@ -196,6 +196,10 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
     const [showReferral, setShowReferral] = useState(false);
     const [showWorldMap, setShowWorldMap] = useState(false);
     const [showMounts, setShowMounts] = useState(false);
+
+    // Boss Spawn Notification
+    const [bossNotification, setBossNotification] = useState<{ bossName: string; zoneName: string; zoneId: number } | null>(null);
+
     const { shouldShow: showTutorial } = useTutorial();
     const { progress } = useProgress();
     const socketRef = React.useRef<Socket | null>(null);
@@ -223,6 +227,33 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
         return () => {
             // We don't disconnect here to prevent reconnection loops if component re-renders
             // socketRef.current?.disconnect();
+        };
+    }, []);
+
+    // Boss Spawn Simulation (TEST - every 2 minutes)
+    useEffect(() => {
+        const bosses = [
+            { bossName: 'Ateş Ejderhası', zoneName: 'Volkan Dağı', zoneId: 15 },
+            { bossName: 'Buz Devi', zoneName: 'Donmuş Ovalar', zoneId: 16 },
+            { bossName: 'Gölge Lordu', zoneName: 'Karanlık Orman', zoneId: 14 },
+            { bossName: 'Taş Golem', zoneName: 'Kayalık Geçit', zoneId: 13 },
+        ];
+
+        const spawnBoss = () => {
+            const randomBoss = bosses[Math.floor(Math.random() * bosses.length)];
+            setBossNotification(randomBoss);
+
+            // Auto-hide after 10 seconds
+            setTimeout(() => setBossNotification(null), 10000);
+        };
+
+        // Spawn first boss after 10 seconds, then every 2 minutes
+        const initialTimer = setTimeout(spawnBoss, 10000);
+        const interval = setInterval(spawnBoss, 120000); // 2 minutes
+
+        return () => {
+            clearTimeout(initialTimer);
+            clearInterval(interval);
         };
     }, []);
 
@@ -1695,6 +1726,31 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                     />
                 )
             }
+
+            {/* Boss Spawn Notification */}
+            {bossNotification && (
+                <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-[100] animate-bounce">
+                    <div className="bg-gradient-to-r from-red-900 to-orange-900 border-2 border-red-500 rounded-xl p-4 shadow-2xl min-w-[300px]">
+                        <div className="flex items-center gap-3">
+                            <div className="text-4xl">💀</div>
+                            <div className="flex-1">
+                                <div className="text-red-300 text-xs uppercase font-bold">Boss Doğdu!</div>
+                                <div className="text-white text-lg font-bold">{bossNotification.bossName}</div>
+                                <div className="text-orange-300 text-sm">{bossNotification.zoneName}</div>
+                            </div>
+                            <button
+                                onClick={() => {
+                                    setActiveZone(bossNotification.zoneId);
+                                    setBossNotification(null);
+                                }}
+                                className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition-colors"
+                            >
+                                Git
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </ErrorBoundary >
     );
 };

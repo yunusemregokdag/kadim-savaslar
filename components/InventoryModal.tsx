@@ -152,7 +152,7 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
 
                 {/* Icon */}
                 <div className="flex items-center justify-center w-full h-full p-2">
-                    {renderItemIcon(item.type, 32, display.color)}
+                    {renderItemIcon(item)}
                 </div>
 
                 {/* Plus Value */}
@@ -204,7 +204,7 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
                         <div className="absolute inset-0 bg-slate-900/40 rounded-lg"></div>
                         <div className={`absolute inset-0 border-2 rounded-lg opacity-70 ${RARITY_COLORS[item.rarity] || 'border-slate-600'}`}></div>
                         <div className="relative z-10 text-white transform scale-110 md:scale-125">
-                            {renderItemIcon(item.type, 24, getItemDisplayData(item).color)}
+                            {renderItemIcon(item)}
                         </div>
                         {item.plus > 0 && <span className="absolute bottom-0 right-1 text-[9px] md:text-[10px] font-bold text-yellow-400 drop-shadow-md">+{item.plus}</span>}
                     </>

@@ -2,14 +2,14 @@
 
 import React, { useEffect, useRef, useState, useMemo, Suspense } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Html, OrbitControls, useGLTF, useAnimations } from '@react-three/drei';
+import { Html, OrbitControls, useGLTF, useAnimations, PerspectiveCamera } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { io, Socket } from 'socket.io-client';
 import { PlayerState, GameEntity, LootLog, FloatingText, LootBox, Item, Equipment, Portal, ChatMessage, HUDElement, HUDLayout, EntityType, Skill, NPCData } from '../types';
 import { soundManager } from './SoundManager';
 import { ZONE_CONFIG, RANKS, CLASSES, LEVEL_XP_REQUIREMENTS, DEFAULT_HUD_LAYOUT, ZONE_REWARDS, ALL_CLASS_ITEMS, DEFAULT_ZONE_REWARD, ACHIEVEMENTS_LIST } from '../constants';
-import { Swords, Shield, Zap, ShoppingBag, Backpack, X, Wind, Skull, Target, Droplet, Flame, Send, Clock, Hammer, MessageSquare, Minus, Crosshair, Map as MapIcon, Settings as SettingsIcon, Crown, Star, ArrowRight, ZoomIn, Globe, AlertTriangle, Navigation, Info, Compass, Plus, Smartphone, Monitor, ChevronDown, ChevronUp, Move, RotateCw, Eye, Book, Users, Trophy, Scroll, Lock, Unlock } from 'lucide-react';
+import { Swords, Shield, Zap, ShoppingBag, Backpack, X, Wind, Skull, Target, Droplet, Flame, Send, Clock, Hammer, MessageSquare, Minus, Crosshair, Map as MapIcon, Settings as SettingsIcon, Crown, Star, ArrowRight, ZoomIn, Globe, AlertTriangle, Navigation, Info, Compass, Plus, Smartphone, Monitor, ChevronDown, ChevronUp, Move, RotateCw, Eye, Book, Users, Trophy, Scroll, Lock, Unlock, Heart, Sword, Settings } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { GameVFXOverlay, vfxManager } from './VFXSystem';
 import { VoxelSpartan } from './VoxelSpartan';
@@ -5106,14 +5106,207 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 </div>
             )}
 
-            {/* PLAYER STATS VIEW MODAL */}
+            {/* CHARACTER STATS OVERLAY - Like reference image */}
             {showPlayerStats && (
-                <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4">
-                    <div className="w-full max-w-3xl max-h-[90vh] overflow-auto">
-                        <PlayerStatsView
-                            playerState={playerState}
-                            onClose={() => setShowPlayerStats(false)}
-                        />
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-none">
+                    {/* Semi-transparent backdrop - game visible behind */}
+                    <div
+                        className="absolute inset-0 bg-black/60 pointer-events-auto"
+                        onClick={() => setShowPlayerStats(false)}
+                    />
+
+                    {/* Main Modal Container */}
+                    <div className="relative w-full max-w-4xl bg-[#0a0d14]/95 backdrop-blur-sm border border-slate-700/50 rounded-xl shadow-2xl pointer-events-auto overflow-hidden">
+                        {/* Close Button */}
+                        <button
+                            onClick={() => setShowPlayerStats(false)}
+                            className="absolute top-3 right-3 z-20 p-2 bg-red-900/50 hover:bg-red-700 rounded-full text-white transition-colors"
+                        >
+                            <X size={18} />
+                        </button>
+
+                        <div className="flex flex-col md:flex-row">
+                            {/* LEFT SIDE - Character Preview */}
+                            <div className="w-full md:w-[320px] bg-gradient-to-b from-[#1a1520] to-[#0a0d14] p-4 border-b md:border-b-0 md:border-r border-slate-700/30">
+                                {/* Player Name & Title */}
+                                <div className="text-center mb-2">
+                                    <h2 className="text-lg font-bold text-white">{playerState.name}</h2>
+                                    <p className="text-xs text-purple-400">Kadim General</p>
+                                </div>
+
+                                {/* 3D Character Preview */}
+                                <div className="h-[200px] relative bg-gradient-to-b from-[#1a1520] to-transparent rounded-lg mb-3">
+                                    <Suspense fallback={<div className="text-white/20 flex items-center justify-center h-full">...</div>}>
+                                        <Canvas shadows dpr={[1, 1.5]} gl={{ preserveDrawingBuffer: true }}>
+                                            <PerspectiveCamera makeDefault position={[0, 1.2, 4]} fov={40} />
+                                            <ambientLight intensity={0.5} />
+                                            <pointLight position={[5, 5, 5]} intensity={1} />
+                                            <VoxelSpartan
+                                                position={[0, -1, 0]}
+                                                rotation={[0, 0.3, 0]}
+                                                charClass={playerState.class || 'warrior'}
+                                                weaponItem={playerState.equipment.weapon}
+                                                armorItem={playerState.equipment.armor}
+                                                helmetItem={playerState.equipment.helmet}
+                                                pantsItem={playerState.equipment.pants}
+                                                wingType={playerState.equippedWing}
+                                                petType={playerState.equippedPet}
+                                                skinId={playerState.equippedSkin}
+                                            />
+                                        </Canvas>
+                                    </Suspense>
+                                    {/* Level Badge */}
+                                    <div className="absolute bottom-2 left-2 flex items-center gap-2 bg-black/60 px-2 py-1 rounded">
+                                        <span className="text-yellow-400 text-xs">Lv</span>
+                                        <span className="text-white font-bold">{playerState.level}</span>
+                                    </div>
+                                </div>
+
+                                {/* HP Bar */}
+                                <div className="mb-2">
+                                    <div className="flex items-center gap-2 text-xs mb-1">
+                                        <Heart size={12} className="text-red-500" />
+                                        <span className="text-slate-400">HP</span>
+                                        <span className="ml-auto text-white">{playerState.hp?.toLocaleString()}/{playerState.maxHp?.toLocaleString()}</span>
+                                    </div>
+                                    <div className="h-3 bg-slate-800 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-gradient-to-r from-red-700 to-red-500 rounded-full"
+                                            style={{ width: `${(playerState.hp / playerState.maxHp) * 100}%` }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* MP Bar */}
+                                <div>
+                                    <div className="flex items-center gap-2 text-xs mb-1">
+                                        <Zap size={12} className="text-blue-500" />
+                                        <span className="text-slate-400">MP</span>
+                                        <span className="ml-auto text-white">{playerState.mana?.toLocaleString()}/{playerState.maxMana?.toLocaleString()}</span>
+                                    </div>
+                                    <div className="h-3 bg-slate-800 rounded-full overflow-hidden">
+                                        <div
+                                            className="h-full bg-gradient-to-r from-blue-700 to-blue-500 rounded-full"
+                                            style={{ width: `${(playerState.mana / playerState.maxMana) * 100}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* RIGHT SIDE - Stats */}
+                            <div className="flex-1 p-4 overflow-y-auto max-h-[70vh]">
+                                {/* Header */}
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-lg font-bold text-yellow-400 flex items-center gap-2">
+                                        <Settings size={18} />
+                                        KARAKTER STATLARI
+                                    </h3>
+                                    <div className="bg-green-900/30 border border-green-600/50 px-3 py-1 rounded-full">
+                                        <span className="text-green-400 text-sm font-bold">{(playerState.statPoints || 0)} Puan</span>
+                                    </div>
+                                </div>
+
+                                {/* Stat Allocation */}
+                                <div className="space-y-2 mb-6">
+                                    {/* STR */}
+                                    <div className="flex items-center bg-slate-800/50 rounded-lg p-3 border border-slate-700/30">
+                                        <div className="w-8 h-8 bg-red-900/50 rounded flex items-center justify-center mr-3">
+                                            <Sword size={16} className="text-red-400" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="text-red-400 font-bold text-sm">Güç (STR)</div>
+                                            <div className="text-[10px] text-slate-500">+1 Fiziksel Hasar</div>
+                                        </div>
+                                        <span className="text-white font-bold text-lg mr-3">{playerState.stats?.strength || 100}</span>
+                                        <button className="w-7 h-7 bg-green-600 hover:bg-green-500 rounded flex items-center justify-center text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed" disabled={!playerState.statPoints}>
+                                            <Plus size={14} />
+                                        </button>
+                                    </div>
+
+                                    {/* DEX */}
+                                    <div className="flex items-center bg-slate-800/50 rounded-lg p-3 border border-slate-700/30">
+                                        <div className="w-8 h-8 bg-yellow-900/50 rounded flex items-center justify-center mr-3">
+                                            <Zap size={16} className="text-yellow-400" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="text-yellow-400 font-bold text-sm">Çeviklik (DEX)</div>
+                                            <div className="text-[10px] text-slate-500">+1% Kritik, +0.5% Hız</div>
+                                        </div>
+                                        <span className="text-white font-bold text-lg mr-3">{playerState.stats?.dexterity || 100}</span>
+                                        <button className="w-7 h-7 bg-green-600 hover:bg-green-500 rounded flex items-center justify-center text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed" disabled={!playerState.statPoints}>
+                                            <Plus size={14} />
+                                        </button>
+                                    </div>
+
+                                    {/* INT */}
+                                    <div className="flex items-center bg-slate-800/50 rounded-lg p-3 border border-slate-700/30">
+                                        <div className="w-8 h-8 bg-blue-900/50 rounded flex items-center justify-center mr-3">
+                                            <Star size={16} className="text-blue-400" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="text-blue-400 font-bold text-sm">Zeka (INT)</div>
+                                            <div className="text-[10px] text-slate-500">+5 Mana, +1 Büyü Hasarı</div>
+                                        </div>
+                                        <span className="text-white font-bold text-lg mr-3">{playerState.stats?.intelligence || 100}</span>
+                                        <button className="w-7 h-7 bg-green-600 hover:bg-green-500 rounded flex items-center justify-center text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed" disabled={!playerState.statPoints}>
+                                            <Plus size={14} />
+                                        </button>
+                                    </div>
+
+                                    {/* VIT */}
+                                    <div className="flex items-center bg-slate-800/50 rounded-lg p-3 border border-slate-700/30">
+                                        <div className="w-8 h-8 bg-pink-900/50 rounded flex items-center justify-center mr-3">
+                                            <Heart size={16} className="text-pink-400" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="text-pink-400 font-bold text-sm">Dayanıklılık (VIT)</div>
+                                            <div className="text-[10px] text-slate-500">+10 Can</div>
+                                        </div>
+                                        <span className="text-white font-bold text-lg mr-3">{playerState.stats?.vitality || 100}</span>
+                                        <button className="w-7 h-7 bg-green-600 hover:bg-green-500 rounded flex items-center justify-center text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed" disabled={!playerState.statPoints}>
+                                            <Plus size={14} />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Info */}
+                                <div className="text-center text-xs text-slate-500 mb-4">
+                                    Her levelda <span className="text-yellow-400 font-bold">5 stat puanı</span> kazanırsın!
+                                </div>
+
+                                {/* Calculated Stats */}
+                                <div className="border-t border-slate-700/50 pt-4">
+                                    <h4 className="text-sm font-bold text-red-400 mb-3">HESAPLANAN STATLAR</h4>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {/* Combat Power */}
+                                        <div className="bg-slate-800/30 rounded-lg p-3">
+                                            <div className="text-[10px] text-slate-500 mb-1">SAVAŞ GÜCÜ (GS)</div>
+                                            <div className="text-xl font-bold text-yellow-400">{((playerState.stats?.strength || 100) * 50 + (playerState.stats?.dexterity || 100) * 30 + (playerState.stats?.intelligence || 100) * 20 + (playerState.stats?.vitality || 100) * 40).toLocaleString()}</div>
+                                        </div>
+                                        {/* Damage */}
+                                        <div className="bg-slate-800/30 rounded-lg p-3">
+                                            <div className="text-[10px] text-slate-500 mb-1">Hasar</div>
+                                            <div className="text-lg font-bold text-red-400">{(playerState.stats?.strength || 100) * 10 + playerState.damage}</div>
+                                        </div>
+                                        {/* Defense */}
+                                        <div className="bg-slate-800/30 rounded-lg p-3">
+                                            <div className="text-[10px] text-slate-500 mb-1">Defans</div>
+                                            <div className="text-lg font-bold text-blue-400">{(playerState.stats?.vitality || 100) * 5 + playerState.defense}</div>
+                                        </div>
+                                        {/* Crit Chance */}
+                                        <div className="bg-slate-800/30 rounded-lg p-3">
+                                            <div className="text-[10px] text-slate-500 mb-1">Kritik Şans</div>
+                                            <div className="text-lg font-bold text-orange-400">{Math.min(75, 5 + (playerState.stats?.dexterity || 100) * 0.1).toFixed(1)}%</div>
+                                        </div>
+                                        {/* Attack Speed */}
+                                        <div className="bg-slate-800/30 rounded-lg p-3 col-span-2">
+                                            <div className="text-[10px] text-slate-500 mb-1">Saldırı Hızı</div>
+                                            <div className="text-lg font-bold text-cyan-400">{(1 + (playerState.stats?.dexterity || 100) * 0.005).toFixed(2)}x</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

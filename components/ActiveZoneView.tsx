@@ -57,6 +57,8 @@ import { getVipBonus } from '../utils/vipSystem';
 import { addDailyHonor, addDailyKill } from '../utils/dailyLeaderboard';
 import { getMaterialIcon, isDevelopmentMode } from '../utils/AssetManager';
 
+import { PixelGoldUser } from './ui/PixelVip';
+
 // --- PRELOAD ASSETS (NO FREEZE ON SPAWN) ---
 const PRELOAD_MODELS = [
     '/models/enemies/bosses/parrot%20bosses%20premium.gltf',
@@ -684,7 +686,7 @@ const GLTFMob: React.FC<{ modelPath: string, scale?: number, isBoss?: boolean }>
     );
 };
 
-const VoxelMob: React.FC<{ position: [number, number, number], color: string, level: number, name: string, isHostile: boolean, isSelected: boolean, type: string, hitFlash?: number, hp: number, maxHp: number, modelPath?: string, playerRef?: any, entity?: any }> = ({ position, color, level, name, isHostile, isSelected, type, hitFlash, hp, maxHp, modelPath, playerRef, entity }) => {
+const VoxelMob: React.FC<{ position: [number, number, number], color: string, level: number, name: string, isHostile: boolean, isSelected: boolean, type: string, hitFlash?: number, hp: number, maxHp: number, modelPath?: string, playerRef?: any, entity?: any, hasBase?: boolean, playerLastAttackTime?: number }> = ({ position, color, level, name, isHostile, isSelected, type, hitFlash, hp, maxHp, modelPath, playerRef, entity, hasBase, playerLastAttackTime }) => {
     // 1. CONSTANTS & DEFINITIONS (Moved to top to fix scope issues)
     const isBoss = type === 'boss' || type.includes('boss') || (entity && entity.bossData);
     const isElite = type === 'elite';
@@ -729,15 +731,24 @@ const VoxelMob: React.FC<{ position: [number, number, number], color: string, le
             const newX = mx + Math.cos(angle) * speed;
             const newZ = mz + Math.sin(angle) * speed;
 
-            groupRef.current.position.x = newX;
-            groupRef.current.position.z = newZ;
-            groupRef.current.rotation.y = -angle + Math.PI / 2;
+            // SAFE ZONE LOGIC (Mob Block)
+            const isSafeZone = hasBase && Math.abs(newX) < 12 && Math.abs(newZ) < 12;
+            const playerIsAggressive = playerLastAttackTime ? (Date.now() - playerLastAttackTime < 10000) : false;
 
-            // Ref Update (No React State Trigger)
-            entity.x = newX * 15;
-            entity.y = newZ * 15;
-            entity.targetX = newX * 15; // Sync target for AI
-            entity.targetY = newZ * 15;
+            if (isSafeZone && !playerIsAggressive) {
+                // Block Movement
+                moving = false;
+            } else {
+                groupRef.current.position.x = newX;
+                groupRef.current.position.z = newZ;
+                groupRef.current.rotation.y = -angle + Math.PI / 2;
+
+                // Ref Update (No React State Trigger)
+                entity.x = newX * 15;
+                entity.y = newZ * 15;
+                entity.targetX = newX * 15;
+                entity.targetY = newZ * 15;
+            }
         } else if (dist <= 2.5) {
             // Attack range
             attacking = true;
@@ -854,23 +865,23 @@ const VoxelMob: React.FC<{ position: [number, number, number], color: string, le
                 ) : isSlime ? (
                     <VoxelSlime color={color} isHostile={isHostile} />
                 ) : isFireDragon ? (
-                    <VoxelFireDragon isAttacking={botState.isAttacking} isMoving={botState.isMoving} />
+                    <VoxelFireDragon />
                 ) : isIceGiant ? (
-                    <VoxelIceGiant isAttacking={botState.isAttacking} isMoving={botState.isMoving} />
+                    <VoxelIceGiant />
                 ) : isShadowLord ? (
-                    <VoxelShadowLord isAttacking={botState.isAttacking} isMoving={botState.isMoving} />
+                    <VoxelShadowLord />
                 ) : isStoneGolem ? (
-                    <VoxelStoneGolem isAttacking={botState.isAttacking} isMoving={botState.isMoving} />
+                    <VoxelStoneGolem />
                 ) : isWolf ? (
-                    <VoxelWolf isAttacking={botState.isAttacking} isMoving={botState.isMoving} />
+                    <VoxelWolf />
                 ) : isGoblin ? (
-                    <VoxelGoblin isAttacking={botState.isAttacking} isMoving={botState.isMoving} />
+                    <VoxelGoblin />
                 ) : isBat ? (
-                    <VoxelBat isAttacking={botState.isAttacking} isMoving={botState.isMoving} />
+                    <VoxelBat />
                 ) : isSkeleton ? (
-                    <VoxelSkeleton isAttacking={botState.isAttacking} isMoving={botState.isMoving} />
+                    <VoxelSkeleton />
                 ) : isGolem ? (
-                    <VoxelGolem isAttacking={botState.isAttacking} isMoving={botState.isMoving} isBoss={isBoss} />
+                    <VoxelGolem />
                 ) : modelPath ? (
                     <GLTFMob modelPath={modelPath} isBoss={isBoss} />
                 ) : type === 'player' ? (
@@ -938,6 +949,7 @@ interface GameSceneProps {
     setIsLoading: (loading: boolean) => void;
     entitiesRef: React.MutableRefObject<GameEntity[]>;
     setLootBoxes: any;
+    lastAttackTimeRef: React.MutableRefObject<number>;
 }
 
 
@@ -947,7 +959,7 @@ const GameScene: React.FC<GameSceneProps> = ({
     zoneId, entities, setEntities, onKill, onUpdatePlayer, addFloatingText, hasBase, borderLimit,
     lootBoxes, onCollectLootBox, portals, onPortalJump, isAttacking, skillEffects, isDead, setNearbyNPC, onLoot, zoneColor,
     target, lastDamageTimeRef, setTeleporting, spawnParticles, isFreeLook, teleporting, onSpawnParticle,
-    socketRef, lastSocketUpdate, remotePlayers, targetedPlayer, setTargetedPlayer, castingSkill, setIsLoading, entitiesRef, setLootBoxes
+    socketRef, lastSocketUpdate, remotePlayers, targetedPlayer, setTargetedPlayer, castingSkill, setIsLoading, entitiesRef, setLootBoxes, lastAttackTimeRef
 }) => {
 
 
@@ -1509,10 +1521,30 @@ const GameScene: React.FC<GameSceneProps> = ({
                 const newX = playerGroupRef.current.position.x + moveX;
                 const newZ = playerGroupRef.current.position.z - moveZ; // Z ekseni ters
 
-                playerGroupRef.current.position.x = newX;
-                playerGroupRef.current.position.z = newZ;
-                playerPosRef.current.x = newX;
-                playerPosRef.current.y = newZ;
+                // SAFE ZONE LOGIC (Player Block - Invader)
+                let allowed = true;
+                if (hasBase && Math.abs(newX) < 12 && Math.abs(newZ) < 12) {
+                    // Inside Safe Zone
+                    // Check if map belongs to my faction
+                    const currentZone = ZONE_CONFIG[zoneId];
+                    const isMyBase = currentZone && currentZone.factionOwner === playerStats.faction;
+
+                    // If NOT my base (I am invading), block entry UNLESS in combat
+                    if (!isMyBase) {
+                        const inCombat = (Date.now() - lastDamageTimeRef.current < 10000) || (Date.now() - lastAttackTimeRef.current < 10000);
+                        if (!inCombat) {
+                            allowed = false;
+                            addFloatingText("GÜVENLİ BÖLGE!", newX, 2, newZ, 'text-red-500 font-bold');
+                        }
+                    }
+                }
+
+                if (allowed) {
+                    playerGroupRef.current.position.x = newX;
+                    playerGroupRef.current.position.z = newZ;
+                    playerPosRef.current.x = newX;
+                    playerPosRef.current.y = newZ;
+                }
             }
 
             // SOCKET EMIT
@@ -1774,8 +1806,11 @@ const GameScene: React.FC<GameSceneProps> = ({
                     modelPath={ent.modelPath}
                     playerRef={playerGroupRef}
                     entity={ent}
+                    hasBase={hasBase}
+                    playerLastAttackTime={lastAttackTimeRef.current}
                 />
             ))}
+            {/* GameScene was using lastAttackTimeRef.current for logic too, it is passed down now */}
         </>
     );
 };
@@ -2232,6 +2267,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     }, [playerState.lastPosition]); // lastPosition değiştikçe referansı güncelle (aslında gerek yok ama güvenli)
     const playerGroupRef = useRef<THREE.Group>(null);
     const lastDamageTimeRef = useRef(0);
+    const lastAttackTimeRef = useRef(0); // LIFTED UP from GameScene
     const keysPressed = useRef<{ [key: string]: boolean }>({});
 
     const hasBase = zoneId === 11 || zoneId === 21 || zoneId === 31 || zoneId === 18 || zoneId === 28 || zoneId === 38 || zoneId === 44;
@@ -2858,6 +2894,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     const handleAttack = () => {
         if (isHudEditing) return; // Disable while editing
         if (isAttacking) return;
+        lastAttackTimeRef.current = Date.now(); // Mark attack time
         setIsAttacking(true);
         setIsAttacking(true);
         setTimeout(() => setIsAttacking(false), 300);
@@ -3960,6 +3997,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                     castingSkill={castingSkill}
                     setIsLoading={setIsLoading}
                     entitiesRef={entitiesRef}
+                    lastAttackTimeRef={lastAttackTimeRef}
                 />
 
 
@@ -4195,11 +4233,15 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                     <div className="flex flex-col pl-6 -ml-5 pt-1 w-64 bg-gradient-to-r from-black/80 to-transparent pr-4 pb-2 rounded-r-xl backdrop-blur-sm border-t border-b border-black/20">
                         {/* Name Layer */}
                         <div className="flex justify-between items-center mb-0.5 pl-2">
-                            <span className="text-sm font-bold text-white drop-shadow-md tracking-wide flex items-center gap-1">
-                                {playerState.nickname}
-                                {(playerState.vipUntil || 0) > Date.now() && <span className="text-red-500 animate-pulse">♛</span>}
-                            </span>
-                            <span className="text-[10px] text-yellow-400 font-bold uppercase">{RANKS[playerState.rank]?.title || 'Warrior'}</span>
+                            <PixelGoldUser
+                                name={playerState.nickname}
+                                isVip={(playerState.vipUntil || 0) > Date.now()}
+                                className="text-sm tracking-wide"
+                            />
+                            <div className="flex items-center gap-1">
+                                <RankIcon rank={playerState.rank} size="sm" />
+                                <span className="text-[10px] text-yellow-400 font-bold uppercase">{RANKS[playerState.rank]?.title || 'Warrior'}</span>
+                            </div>
                         </div>
 
                         {/* HP BAR - Crystal Style */}

@@ -13,7 +13,7 @@ import { BlacksmithView } from './BlacksmithView';
 import CraftingView from './CraftingView';
 import RecipeCraftingView from './RecipeCraftingView';
 import InventoryModal from './InventoryModal';
-import { PixelWing, PixelUser, PixelBackpack, PixelShield, PixelQuest, PixelUsers, PixelHammer, PixelMap, PixelTrophy, PixelCart, PixelSwords } from './ui/ItemIcons';
+import { PixelWing, PixelUser, PixelBackpack, PixelShield, PixelQuest, PixelUsers, PixelHammer, PixelMap, PixelTrophy, PixelCart, PixelSwords, PixelBoots } from './ui/ItemIcons';
 import { ItemTooltip } from './ui/ItemTooltip';
 import { getItemDisplayData } from '../utils/ItemDisplayAdapter';
 import { loadListings, getListings } from '../utils/marketSystem';
@@ -1174,25 +1174,63 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
             <div className="h-full flex flex-col bg-[#0b0f19] overflow-hidden">
                 <header className="h-20 border-b border-slate-800 bg-slate-900/90 backdrop-blur flex items-center justify-between px-4 sticky top-0 z-50">
                     {/* Sol: Karakter Bilgisi + Para + Rütbe */}
-                    <div className="flex items-center gap-3">
-                        <div className="relative w-10 h-10 rounded bg-slate-800 flex items-center justify-center border border-slate-600 text-yellow-500 font-bold text-lg rpg-font">{playerStats.level}</div>
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <div className={`flex items-center gap-1 font-bold truncate ${(playerStats.vipUntil || 0) > Date.now() ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]' : 'text-slate-200'}`}>
-                                    {(playerStats.vipUntil || 0) > Date.now() && <span className="animate-pulse">👑</span>}
-                                    {playerStats.nickname}
+                    {/* Sol: Premium Profile HUD Style */}
+                    <div className="flex items-center gap-4">
+                        {/* Level Badge - Gold Frame */}
+                        <div className="relative w-14 h-14 flex-shrink-0">
+                            <div className="absolute inset-0 bg-slate-900 rounded-full border-[3px] border-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.4)] flex items-center justify-center overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-b from-slate-800 to-black" />
+                                <div className="absolute top-0 w-full h-1/2 bg-white/5 rounded-t-full" />
+                                <span className="relative z-10 text-xl font-black text-white font-serif drop-shadow-md">{playerStats.level}</span>
+                            </div>
+                            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-yellow-600 border border-yellow-400 text-white text-[8px] font-bold px-1.5 rounded shadow-sm">LVL</div>
+                        </div>
+
+                        {/* Profile Info & Bars */}
+                        <div className="flex flex-col gap-0.5 w-48">
+                            {/* Name & Rank */}
+                            <div className="flex items-center justify-between px-1">
+                                <div className="flex items-center gap-1.5">
+                                    {isAdmin && <span className="text-white font-bold text-[10px]">[GM]</span>}
+                                    <span className={`text-sm font-bold tracking-wide truncate ${(playerStats.vipUntil || 0) > Date.now() ? 'text-yellow-400 font-extrabold drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]' : 'text-slate-200'}`}>
+                                        {playerStats.nickname}
+                                    </span>
+                                    {(playerStats.vipUntil || 0) > Date.now() && <div className="text-red-500 drop-shadow-md"><Crown size={14} fill="currentColor" /></div>}
                                 </div>
-                                <div className={`text-[10px] px-1.5 py-0.5 rounded border ${faction === 'marsu' ? 'bg-red-900/50 border-red-800 text-red-300' : faction === 'terya' ? 'bg-blue-900/50 border-blue-800 text-blue-300' : 'bg-green-900/50 border-green-800 text-green-300'}`}>
-                                    {faction?.toUpperCase()}
+                                <div className="flex items-center gap-1.5">
+                                    <RankIcon rank={playerStats.rank} size="sm" />
+                                    <span className="text-[10px] text-slate-300 font-bold uppercase tracking-wider">{RANKS[playerStats.rank]?.title}</span>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 mt-0.5">
-                                <RankBadge rankIndex={playerStats.rank} title={RANKS[playerStats.rank]?.title || 'Acemi'} showTitle={true} />
+
+                            {/* HP BAR */}
+                            <div className="relative h-3 w-full bg-black/60 rounded-sm border border-slate-600/50 overflow-hidden">
+                                <div className="h-full bg-gradient-to-r from-red-800 via-red-600 to-red-500 relative" style={{ width: `${(playerStats.hp / playerStats.maxHp) * 100}%` }}>
+                                    <div className="absolute top-0 left-0 w-full h-[1px] bg-red-400/50" />
+                                    <div className="absolute bottom-0 left-0 w-full h-[1px] bg-red-900/50" />
+                                </div>
+                                <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,1)] tracking-wider z-10">
+                                    {playerStats.hp} / {playerStats.maxHp}
+                                </span>
+                            </div>
+
+                            {/* MP BAR */}
+                            <div className="relative h-2 w-3/4 bg-black/60 rounded-sm border border-slate-600/50 overflow-hidden">
+                                <div className="h-full bg-gradient-to-r from-blue-800 via-blue-600 to-blue-500 relative" style={{ width: `${(playerStats.mana / playerStats.maxMana) * 100}%` }}>
+                                    <div className="absolute top-0 left-0 w-full h-[1px] bg-blue-400/50" />
+                                </div>
+                                <span className="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,1)] tracking-wider z-10">
+                                    {playerStats.mana}
+                                </span>
                             </div>
                         </div>
-                        <div className="flex items-center gap-2 text-yellow-400 bg-yellow-900/20 px-2 py-1 rounded-full border border-yellow-800/50"><DollarSign size={12} /><span className="font-bold text-xs">{playerStats.credits.toLocaleString()}</span></div>
-                        <div className="flex items-center gap-2 text-purple-400 bg-purple-900/20 px-2 py-1 rounded-full border border-purple-800/50"><Gem size={12} /><span className="font-bold text-xs">{playerStats.gems.toLocaleString()}</span></div>
-                        <div className="flex items-center gap-2 text-orange-400 bg-orange-900/20 px-2 py-1 rounded-full border border-orange-800/50"><Medal size={12} /><span className="font-bold text-xs">{playerStats.honor.toLocaleString()}</span></div>
+
+                        {/* Currencies */}
+                        <div className="flex items-center gap-2 ml-4 border-l border-slate-700 pl-4 h-8">
+                            <div className="flex items-center gap-2 text-yellow-400 bg-yellow-900/20 px-2 py-1 rounded-full border border-yellow-800/50 hover:bg-yellow-900/30 transition-colors cursor-help" title="Altın"><DollarSign size={12} /><span className="font-bold text-xs">{playerStats.credits.toLocaleString()}</span></div>
+                            <div className="flex items-center gap-2 text-purple-400 bg-purple-900/20 px-2 py-1 rounded-full border border-purple-800/50 hover:bg-purple-900/30 transition-colors cursor-help" title="Kristal"><Gem size={12} /><span className="font-bold text-xs">{playerStats.gems.toLocaleString()}</span></div>
+                            <div className="flex items-center gap-2 text-orange-400 bg-orange-900/20 px-2 py-1 rounded-full border border-orange-800/50 hover:bg-orange-900/30 transition-colors cursor-help" title="Onur Puanı"><Medal size={12} /><span className="font-bold text-xs">{playerStats.honor.toLocaleString()}</span></div>
+                        </div>
                     </div>
 
                     {/* Orta bölüm temizlendi */}
@@ -1328,10 +1366,10 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                                             <div className="bg-slate-900/60 p-2 lg:p-3 rounded-lg border border-white/5 flex items-center justify-between relative overflow-hidden">
                                                 <div className="absolute inset-0 bg-red-900/5"></div>
                                                 <div className="flex items-center gap-2 relative z-10">
-                                                    <div className="p-1.5 bg-red-900/20 rounded text-red-400 border border-red-900/30"><PixelSwords size={2} color="#f87171" /></div>
+                                                    <div className="p-1.5 bg-red-900/20 rounded text-red-400 border border-red-900/30"><PixelSwords color="#f87171" size={20} /></div>
                                                     <div className="flex flex-col">
                                                         <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Saldırı</span>
-                                                        <span className="text-sm font-bold text-slate-200">{Math.floor(playerStats.stats.str * 2 + 10)}</span>
+                                                        <span className="text-sm font-bold text-slate-200">{Math.floor(playerStats.strength * 2 + 10)}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1339,10 +1377,10 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                                             <div className="bg-slate-900/60 p-2 lg:p-3 rounded-lg border border-white/5 flex items-center justify-between relative overflow-hidden">
                                                 <div className="absolute inset-0 bg-blue-900/5"></div>
                                                 <div className="flex items-center gap-2 relative z-10">
-                                                    <div className="p-1.5 bg-blue-900/20 rounded text-blue-400 border border-blue-900/30"><PixelShield size={2} color="#60a5fa" /></div>
+                                                    <div className="p-1.5 bg-blue-900/20 rounded text-blue-400 border border-blue-900/30"><PixelShield color="#60a5fa" size={20} /></div>
                                                     <div className="flex flex-col">
                                                         <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Defans</span>
-                                                        <span className="text-sm font-bold text-slate-200">{Math.floor(playerStats.stats.vit * 1.5 + 5)}</span>
+                                                        <span className="text-sm font-bold text-slate-200">{Math.floor(playerStats.vitality * 1.5 + 5)}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1350,10 +1388,10 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                                             <div className="bg-slate-900/60 p-2 lg:p-3 rounded-lg border border-white/5 flex items-center justify-between relative overflow-hidden">
                                                 <div className="absolute inset-0 bg-yellow-900/5"></div>
                                                 <div className="flex items-center gap-2 relative z-10">
-                                                    <div className="p-1.5 bg-yellow-900/20 rounded text-yellow-400 border border-yellow-900/30"><Zap size={14} /></div>
+                                                    <div className="p-1.5 bg-yellow-900/20 rounded text-yellow-400 border border-yellow-900/30"><PixelBoots color="#fbbf24" size={20} /></div>
                                                     <div className="flex flex-col">
                                                         <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Hız</span>
-                                                        <span className="text-sm font-bold text-slate-200">{(100 + playerStats.stats.dex * 0.5).toFixed(0)}%</span>
+                                                        <span className="text-sm font-bold text-slate-200">{(100 + playerStats.dexterity * 0.5).toFixed(0)}%</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1361,10 +1399,10 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                                             <div className="bg-slate-900/60 p-2 lg:p-3 rounded-lg border border-white/5 flex items-center justify-between relative overflow-hidden">
                                                 <div className="absolute inset-0 bg-emerald-900/5"></div>
                                                 <div className="flex items-center gap-2 relative z-10">
-                                                    <div className="p-1.5 bg-emerald-900/20 rounded text-emerald-400 border border-emerald-900/30"><PixelTrophy size={2} color="#34d399" /></div>
+                                                    <div className="p-1.5 bg-emerald-900/20 rounded text-emerald-400 border border-emerald-900/30"><PixelTrophy color="#34d399" size={20} /></div>
                                                     <div className="flex flex-col">
                                                         <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Kritik</span>
-                                                        <span className="text-sm font-bold text-slate-200">{(playerStats.stats.dex * 0.2).toFixed(1)}%</span>
+                                                        <span className="text-sm font-bold text-slate-200">{(playerStats.dexterity * 0.2).toFixed(1)}%</span>
                                                     </div>
                                                 </div>
                                             </div>

@@ -4,8 +4,14 @@ import { Item } from '../../types';
 import { Droplet, Box, Bird, Feather } from 'lucide-react';
 
 // Minecraft-style Pixel Art Icons
-export const PixelHelmet = ({ color = '#6b7280' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+interface PixelIconProps {
+    color?: string;
+    size?: number | string;
+    className?: string;
+}
+
+export const PixelHelmet = ({ color = '#6b7280', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         <rect x="3" y="2" width="10" height="3" fill={color} />
         <rect x="2" y="5" width="12" height="6" fill={color} />
         <rect x="3" y="11" width="10" height="3" fill={color} />
@@ -14,8 +20,8 @@ export const PixelHelmet = ({ color = '#6b7280' }: { color?: string }) => (
     </svg>
 );
 
-export const PixelChestplate = ({ color = '#6b7280' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelChestplate = ({ color = '#6b7280', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         <rect x="3" y="1" width="10" height="2" fill={color} />
         <rect x="2" y="3" width="3" height="6" fill={color} />
         <rect x="11" y="3" width="3" height="6" fill={color} />
@@ -24,16 +30,16 @@ export const PixelChestplate = ({ color = '#6b7280' }: { color?: string }) => (
     </svg>
 );
 
-export const PixelLeggings = ({ color = '#6b7280' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelLeggings = ({ color = '#6b7280', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         <rect x="4" y="1" width="8" height="3" fill={color} />
         <rect x="4" y="4" width="3" height="11" fill={color} />
         <rect x="9" y="4" width="3" height="11" fill={color} />
     </svg>
 );
 
-export const PixelBoots = ({ color = '#6b7280' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelBoots = ({ color = '#6b7280', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         <rect x="2" y="4" width="4" height="8" fill={color} />
         <rect x="10" y="4" width="4" height="8" fill={color} />
         <rect x="1" y="12" width="6" height="3" fill={color} />
@@ -41,8 +47,8 @@ export const PixelBoots = ({ color = '#6b7280' }: { color?: string }) => (
     </svg>
 );
 
-export const PixelSword = ({ color = '#ef4444' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelSword = ({ color = '#ef4444', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         <rect x="12" y="1" width="2" height="2" fill={color} />
         <rect x="10" y="3" width="2" height="2" fill={color} />
         <rect x="8" y="5" width="2" height="2" fill={color} />
@@ -53,8 +59,8 @@ export const PixelSword = ({ color = '#ef4444' }: { color?: string }) => (
     </svg>
 );
 
-export const PixelNecklace = ({ color = '#a855f7' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelNecklace = ({ color = '#a855f7', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         <rect x="4" y="2" width="8" height="2" fill="#fbbf24" />
         <rect x="3" y="4" width="2" height="4" fill="#fbbf24" />
         <rect x="11" y="4" width="2" height="4" fill="#fbbf24" />
@@ -63,8 +69,8 @@ export const PixelNecklace = ({ color = '#a855f7' }: { color?: string }) => (
     </svg>
 );
 
-export const PixelEarring = ({ color = '#ec4899' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelEarring = ({ color = '#ec4899', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         <rect x="3" y="2" width="3" height="3" fill="#fbbf24" />
         <rect x="4" y="5" width="2" height="3" fill="#fbbf24" />
         <rect x="3" y="8" width="4" height="4" fill={color} />
@@ -75,8 +81,8 @@ export const PixelEarring = ({ color = '#ec4899' }: { color?: string }) => (
 );
 
 
-export const PixelPotion = ({ color = '#ef4444' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelPotion = ({ color = '#ef4444', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         <rect x="7" y="2" width="2" height="3" fill="#cbd5e1" />
         <rect x="6" y="5" width="4" height="1" fill="#cbd5e1" />
         <rect x="5" y="6" width="6" height="8" fill={color} />
@@ -87,8 +93,8 @@ export const PixelPotion = ({ color = '#ef4444' }: { color?: string }) => (
     </svg>
 );
 
-export const PixelScroll = ({ color = '#fcd34d' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelScroll = ({ color = '#fcd34d', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         <rect x="4" y="2" width="8" height="12" fill="#fef3c7" />
         <rect x="3" y="1" width="10" height="2" fill="#d97706" />
         <rect x="3" y="13" width="10" height="2" fill="#d97706" />
@@ -96,8 +102,8 @@ export const PixelScroll = ({ color = '#fcd34d' }: { color?: string }) => (
     </svg>
 );
 
-export const PixelIngot = ({ color = '#94a3b8' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelIngot = ({ color = '#94a3b8', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         <rect x="4" y="5" width="8" height="2" fill={color} />
         <rect x="3" y="7" width="10" height="2" fill={color} />
         <rect x="2" y="9" width="12" height="3" fill={color} style={{ filter: 'brightness(0.8)' }} />
@@ -105,8 +111,8 @@ export const PixelIngot = ({ color = '#94a3b8' }: { color?: string }) => (
 );
 
 // Box/Consumable Icon
-export const PixelBox = ({ color = '#f59e0b' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelBox = ({ color = '#f59e0b', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         <rect x="3" y="4" width="10" height="2" fill={color} style={{ filter: 'brightness(1.2)' }} />
         <rect x="2" y="6" width="12" height="8" fill={color} />
         <rect x="7" y="4" width="2" height="10" fill={color} style={{ filter: 'brightness(0.7)' }} />
@@ -115,8 +121,8 @@ export const PixelBox = ({ color = '#f59e0b' }: { color?: string }) => (
 );
 
 // Shield Icon
-export const PixelShield = ({ color = '#3b82f6' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelShield = ({ color = '#3b82f6', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         <rect x="4" y="2" width="8" height="2" fill={color} />
         <rect x="3" y="4" width="10" height="6" fill={color} />
         <rect x="4" y="10" width="8" height="2" fill={color} />
@@ -129,8 +135,8 @@ export const PixelShield = ({ color = '#3b82f6' }: { color?: string }) => (
 );
 
 // Bird/Pet Icon
-export const PixelBird = ({ color = '#22c55e' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelBird = ({ color = '#22c55e', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         {/* Body */}
         <rect x="5" y="6" width="6" height="5" fill={color} />
         {/* Head */}
@@ -150,8 +156,8 @@ export const PixelBird = ({ color = '#22c55e' }: { color?: string }) => (
 );
 
 // Coin Icon
-export const PixelCoin = ({ color = '#fbbf24' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelCoin = ({ color = '#fbbf24', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         <rect x="5" y="2" width="6" height="2" fill={color} />
         <rect x="4" y="4" width="8" height="8" fill={color} />
         <rect x="5" y="12" width="6" height="2" fill={color} />
@@ -163,8 +169,8 @@ export const PixelCoin = ({ color = '#fbbf24' }: { color?: string }) => (
 );
 
 // Swords Icon (for combat/weapons)
-export const PixelSwords = ({ color = '#ef4444' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelSwords = ({ color = '#ef4444', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         {/* Left Sword */}
         <rect x="2" y="2" width="2" height="2" fill={color} />
         <rect x="3" y="4" width="2" height="2" fill={color} />
@@ -181,8 +187,8 @@ export const PixelSwords = ({ color = '#ef4444' }: { color?: string }) => (
 );
 
 // Heart Icon (for HP)
-export const PixelHeart = ({ color = '#ef4444' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelHeart = ({ color = '#ef4444', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         <rect x="2" y="4" width="4" height="4" fill={color} />
         <rect x="10" y="4" width="4" height="4" fill={color} />
         <rect x="4" y="3" width="2" height="1" fill={color} />
@@ -199,8 +205,8 @@ export const PixelHeart = ({ color = '#ef4444' }: { color?: string }) => (
 );
 
 // User/Character Icon
-export const PixelUser = ({ color = '#60a5fa' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelUser = ({ color = '#60a5fa', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         {/* Head */}
         <rect x="6" y="2" width="4" height="4" fill={color} />
         {/* Body */}
@@ -215,8 +221,8 @@ export const PixelUser = ({ color = '#60a5fa' }: { color?: string }) => (
 );
 
 // Backpack/Inventory Icon
-export const PixelBackpack = ({ color = '#f59e0b' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelBackpack = ({ color = '#f59e0b', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         {/* Straps */}
         <rect x="4" y="1" width="2" height="3" fill={color} style={{ filter: 'brightness(0.7)' }} />
         <rect x="10" y="1" width="2" height="3" fill={color} style={{ filter: 'brightness(0.7)' }} />
@@ -230,8 +236,8 @@ export const PixelBackpack = ({ color = '#f59e0b' }: { color?: string }) => (
 );
 
 // Scroll/Quest Icon
-export const PixelQuest = ({ color = '#fbbf24' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelQuest = ({ color = '#fbbf24', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         {/* Top roll */}
         <rect x="3" y="2" width="10" height="2" fill={color} />
         <rect x="2" y="3" width="1" height="2" fill={color} style={{ filter: 'brightness(0.8)' }} />
@@ -248,8 +254,8 @@ export const PixelQuest = ({ color = '#fbbf24' }: { color?: string }) => (
 );
 
 // Users/Party Icon
-export const PixelUsers = ({ color = '#8b5cf6' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelUsers = ({ color = '#8b5cf6', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         {/* Person 1 (front) */}
         <rect x="6" y="5" width="4" height="3" fill={color} />
         <rect x="5" y="8" width="6" height="5" fill={color} />
@@ -263,8 +269,8 @@ export const PixelUsers = ({ color = '#8b5cf6' }: { color?: string }) => (
 );
 
 // Hammer/Blacksmith Icon
-export const PixelHammer = ({ color = '#94a3b8' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelHammer = ({ color = '#94a3b8', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         {/* Hammer head */}
         <rect x="8" y="2" width="6" height="4" fill={color} />
         <rect x="7" y="3" width="1" height="2" fill={color} style={{ filter: 'brightness(1.2)' }} />
@@ -275,8 +281,8 @@ export const PixelHammer = ({ color = '#94a3b8' }: { color?: string }) => (
 );
 
 // Map Icon
-export const PixelMap = ({ color = '#22c55e' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelMap = ({ color = '#22c55e', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         {/* Paper background */}
         <rect x="2" y="2" width="12" height="12" fill="#fef3c7" />
         {/* Fold lines */}
@@ -295,8 +301,8 @@ export const PixelMap = ({ color = '#22c55e' }: { color?: string }) => (
 );
 
 // Trophy/Ranking Icon  
-export const PixelTrophy = ({ color = '#fbbf24' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelTrophy = ({ color = '#fbbf24', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         {/* Cup body */}
         <rect x="4" y="2" width="8" height="6" fill={color} />
         {/* Handles */}
@@ -313,8 +319,8 @@ export const PixelTrophy = ({ color = '#fbbf24' }: { color?: string }) => (
 );
 
 // Shopping Cart/Market Icon
-export const PixelCart = ({ color = '#f59e0b' }: { color?: string }) => (
-    <svg viewBox="0 0 16 16" className="w-full h-full" style={{ imageRendering: 'pixelated' }}>
+export const PixelCart = ({ color = '#f59e0b', size, className }: PixelIconProps) => (
+    <svg viewBox="0 0 16 16" className={className || "w-full h-full"} style={{ width: size, height: size, imageRendering: 'pixelated' }}>
         {/* Cart body */}
         <rect x="3" y="4" width="10" height="6" fill={color} />
         {/* Handle */}

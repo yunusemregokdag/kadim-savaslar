@@ -1248,7 +1248,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                 </header>
 
                 <div className="flex flex-1 overflow-hidden">
-                    <aside className="w-20 md:w-64 bg-slate-900 border-r border-slate-800 flex flex-col py-6 gap-2 px-2 md:px-4 overflow-hidden">
+                    <aside className="hidden md:flex w-20 md:w-64 bg-slate-900 border-r border-slate-800 flex-col py-6 gap-2 px-2 md:px-4 overflow-hidden">
                         <nav className="flex flex-col gap-2 h-full overflow-y-auto pr-1 custom-scrollbar">
                             <button onClick={() => setActiveZone(startingMap || 11)} className="w-full p-3 rounded-lg flex flex-col md:flex-row items-center gap-3 transition-all text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent">
                                 <div className="w-5 h-5"><PixelSwords color="#ef4444" /></div><span className="text-xs md:text-sm font-bold hidden md:block">OYUNA GİR</span>
@@ -1266,7 +1266,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                         </nav>
                     </aside>
 
-                    <main className="flex-1 bg-slate-950 overflow-y-auto p-4 md:p-8">
+                    <main className="flex-1 bg-slate-950 overflow-y-auto p-4 md:p-8 pb-24 md:pb-8">
                         {activeTab === 'character' && (
                             <div className="max-w-7xl mx-auto animate-fadeIn">
                                 {/* TWO-COLUMN LAYOUT: Fixed Left + Flex Right */}
@@ -1751,6 +1751,34 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                         {activeTab === 'map' && <div className="w-full h-full flex flex-col items-center"><h2 className="text-3xl rpg-font text-yellow-500 mb-6 flex items-center gap-3"><MapIcon size={32} /> HARİTA</h2><div className="w-full max-w-5xl"><SchematicMap activeZone={startingMap} onZoneSelect={(id) => setActiveZone(id)} /></div></div>}
                         {activeTab === 'leaderboard' && <LeaderboardView onJoinGuild={handleJoinGuild} />}
                     </main >
+
+                    {/* MOBILE BOTTOM NAVIGATION */}
+                    <nav className="md:hidden fixed bottom-0 left-0 w-full bg-[#0f172a] border-t border-slate-800 z-50 flex justify-around items-center px-2 py-2 pb-safe shadow-[0_-5px_20px_rgba(0,0,0,0.5)]">
+                        <button onClick={() => setActiveTab('character')} className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-all ${activeTab === 'character' ? 'text-blue-400 bg-blue-900/20' : 'text-slate-400'}`}>
+                            <div className="w-6 h-6"><PixelUser color={activeTab === 'character' ? '#60a5fa' : '#94a3b8'} /></div>
+                            <span className="text-[10px] font-bold">Karakter</span>
+                        </button>
+                        <button onClick={() => setActiveTab('inventory')} className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-all ${activeTab === 'inventory' ? 'text-amber-400 bg-amber-900/20' : 'text-slate-400'}`}>
+                            <div className="w-6 h-6"><PixelBackpack color={activeTab === 'inventory' ? '#fbbf24' : '#94a3b8'} /></div>
+                            <span className="text-[10px] font-bold">Çanta</span>
+                        </button>
+
+                        {/* PLAY BUTTON (CENTER, LARGE) */}
+                        <button onClick={() => setActiveZone(startingMap || 11)} className="relative -top-5 bg-gradient-to-t from-red-600 to-red-500 w-16 h-16 rounded-full border-4 border-[#0f172a] shadow-lg flex items-center justify-center transform active:scale-95 transition-transform">
+                            <div className="w-8 h-8 text-white"><PixelSwords color="#ffffff" /></div>
+                        </button>
+
+                        <button onClick={() => setActiveTab('skills')} className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-all ${activeTab === 'skills' ? 'text-blue-400 bg-blue-900/20' : 'text-slate-400'}`}>
+                            <div className="w-6 h-6"><PixelShield color={activeTab === 'skills' ? '#3b82f6' : '#94a3b8'} /></div>
+                            <span className="text-[10px] font-bold">Yetenek</span>
+                        </button>
+
+                        {/* MORE MENU TRIGGER (Since we have too many tabs) */}
+                        <button onClick={() => setActiveTab('map')} className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-all ${activeTab === 'map' ? 'text-emerald-400 bg-emerald-900/20' : 'text-slate-400'}`}>
+                            <div className="w-6 h-6"><PixelMap color={activeTab === 'map' ? '#34d399' : '#94a3b8'} /></div>
+                            <span className="text-[10px] font-bold">Harita</span>
+                        </button>
+                    </nav>
                 </div >
             </div >
 

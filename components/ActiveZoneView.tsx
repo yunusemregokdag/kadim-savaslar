@@ -3810,8 +3810,8 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     const hpPotCount = playerState.inventory.filter(i => i.name.includes('Can')).length;
     const mpPotCount = playerState.inventory.filter(i => i.name.includes('Mana')).length;
 
-    // --- SKILL BUTTON RENDERER ---
-    const renderSkillButton = (skill: any, i: number, sizeClass: string = "w-12 h-12") => {
+    // --- SKILL BUTTON RENDERER (MMO STYLE) ---
+    const renderSkillButton = (skill: any, i: number, sizeClass: string = "w-14 h-14") => {
         const isOnCd = !!cooldowns[skill.id];
         const hasMana = playerState.mana >= skill.manaCost;
         const skillLevelReq = skill.levelReq || 1;
@@ -3823,32 +3823,55 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 onMouseDown={() => !isLocked && handleSkill(skill.id, skill)}
                 onTouchStart={() => !isLocked && handleSkill(skill.id, skill)}
                 disabled={isOnCd || isLocked}
-                className={`${sizeClass} rounded-full border-2 flex items-center justify-center relative overflow-hidden transition-all active:scale-95 shadow-lg select-none touch-none
-                    ${isLocked ? 'bg-slate-900 border-slate-700 opacity-40 grayscale' :
-                        isOnCd ? 'bg-slate-800 border-slate-600 opacity-50' :
-                            hasMana ? 'bg-slate-900/90 border-slate-500 hover:border-yellow-400' : 'bg-slate-900/50 border-blue-900 opacity-80'}
+                className={`${sizeClass} relative group transition-all select-none touch-none
+                    ${isLocked ? 'grayscale opacity-50 cursor-not-allowed' : 'active:scale-95 cursor-pointer'}
                 `}
             >
-                {/* ICON / EMOJI DISPLAY INSTEAD OF NUMBER */}
-                {skill.icon?.startsWith('/') ? (
-                    <img src={skill.icon} alt="skill" className="w-full h-full object-cover" />
-                ) : (
-                    <div className={`text-xl font-bold relative z-10 ${hasMana ? 'text-white' : 'text-blue-400'} drop-shadow-md`}>{skill.icon || (i + 1)}</div>
-                )}
+                {/* Main Container - Hex/Square Hybrid */}
+                <div className={`w-full h-full rounded-xl border-2 overflow-hidden relative shadow-lg transition-colors
+                    ${isLocked ? 'bg-slate-900 border-slate-800' :
+                        isOnCd ? 'bg-slate-800 border-slate-600' :
+                            hasMana ? 'bg-slate-900 border-slate-500 hover:border-yellow-400 group-hover:shadow-[0_0_10px_rgba(250,204,21,0.5)]' : 'bg-slate-900 border-red-900 opacity-80'}
+                `}>
+                    {/* Background Gradient/Image */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-black/60 pointer-events-none z-10" />
 
-                {/* NUMBER BADGE (Small overlay) */}
-                <div className="absolute bottom-1 right-2 text-[8px] font-mono text-slate-300 opacity-70 border border-white/10 bg-black/50 px-1 rounded-full">{i + 1}</div>
+                    {/* Skill Icon */}
+                    {skill.icon?.startsWith('/') ? (
+                        <img src={skill.icon} alt="skill" className="w-full h-full object-cover relative z-0" />
+                    ) : (
+                        <div className={`w-full h-full flex items-center justify-center text-2xl relative z-0 ${!hasMana ? 'text-blue-900' : 'text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]'}`}>
+                            {skill.icon || (i + 1)}
+                        </div>
+                    )}
 
-                {/* LEVEL LOCK OVERLAY */}
-                {isLocked && (
-                    <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center">
-                        <span className="text-xl">🔒</span>
-                        <span className="text-[8px] text-yellow-400 font-bold">Lv.{skillLevelReq}</span>
+                    {/* Cooldown Overlay (Radial Wipe) */}
+                    {isOnCd && !isLocked && (
+                        <div className="absolute inset-0 bg-black/80 z-20 flex items-center justify-center backdrop-blur-[1px]">
+                            <span className="text-white font-black font-mono text-sm drop-shadow-md">{Math.ceil(cooldowns[skill.id] / 1000)}</span>
+                        </div>
+                    )}
+
+                    {/* Mana Check Overlay (Blue Tint) */}
+                    {!hasMana && !isOnCd && !isLocked && (
+                        <div className="absolute inset-0 bg-blue-900/40 z-20 flex items-center justify-center">
+                            <Droplet size={16} className="text-blue-400 animate-pulse drop-shadow-md" />
+                        </div>
+                    )}
+
+                    {/* Level Lock Overlay */}
+                    {isLocked && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center z-30 bg-black/60">
+                            <Lock size={14} className="text-slate-500" />
+                            <span className="text-[9px] text-red-400 font-bold mt-0.5">Lv.{skillLevelReq}</span>
+                        </div>
+                    )}
+
+                    {/* Hotkey Badge (Keycap Style) */}
+                    <div className="absolute bottom-0 right-0 z-20 bg-[#1a1c23] border-t border-l border-slate-600 rounded-tl px-1.5 py-0.5 text-[10px] font-bold text-slate-300 shadow-sm">
+                        {i + 1}
                     </div>
-                )}
-
-                {!hasMana && !isOnCd && !isLocked && <div className="absolute inset-0 flex items-center justify-center bg-black/30"><Droplet size={12} className="text-blue-500 animate-bounce" /></div>}
-                {isOnCd && !isLocked && <div className="absolute inset-0 bg-black/70 flex items-center justify-center text-xs text-white font-mono font-bold">{Math.ceil(cooldowns[skill.id] / 1000)}</div>}
+                </div>
             </button>
         );
     };
@@ -4045,8 +4068,30 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         }}
                         onTouchEnd={() => !isHudEditing && setJoystick(null)}
                     >
-                        <div className="w-full h-full bg-white/10 rounded-full relative backdrop-blur-sm border border-white/20">
-                            <div className="absolute w-12 h-12 bg-white/80 rounded-full shadow-lg transition-transform duration-75" style={{ left: `calc(50% + ${joystick ? joystick.x * 50 : 0}px)`, top: `calc(50% - ${joystick ? joystick.y * 50 : 0}px)`, transform: 'translate(-50%, -50%)' }} />
+                        {/* MMO STYLE JOYSTICK BASE */}
+                        <div className="w-full h-full rounded-full relative backdrop-blur-[2px] border-2 border-white/10 bg-gradient-to-br from-white/5 to-black/40 shadow-[ inset_0_0_20px_rgba(0,0,0,0.5) ]">
+                            {/* Inner Ring Decoration */}
+                            <div className="absolute inset-2 rounded-full border border-white/5 border-dashed opacity-50" />
+                            <div className="absolute inset-6 rounded-full border border-white/5 opacity-30" />
+
+                            {/* Center Crosshair */}
+                            <div className="absolute top-1/2 left-1/2 w-1 h-1 bg-white/20 -translate-x-1/2 -translate-y-1/2 rounded-full" />
+
+                            {/* JOYSTICK THUMB */}
+                            <div
+                                className="absolute w-14 h-14 rounded-full shadow-2xl transition-transform duration-75 group"
+                                style={{
+                                    left: `calc(50% + ${joystick ? joystick.x * 50 : 0}px)`,
+                                    top: `calc(50% - ${joystick ? joystick.y * 50 : 0}px)`,
+                                    transform: 'translate(-50%, -50%)',
+                                    background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(200,200,200,1))',
+                                    boxShadow: '0 4px 10px rgba(0,0,0,0.5), inset 0 -4px 4px rgba(0,0,0,0.2)'
+                                }}
+                            >
+                                {/* Metallic/Crystal Effect on Knob */}
+                                <div className="absolute inset-1 rounded-full bg-gradient-to-br from-transparent to-black/20" />
+                                <div className="absolute top-2 left-3 w-4 h-2 bg-white/60 blur-[2px] rounded-full rotate-45" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -4076,9 +4121,22 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                     <button
                         onMouseDown={handleAttack}
                         onTouchStart={handleAttack}
-                        className="w-24 h-24 bg-red-600 rounded-full border-4 border-red-800 shadow-xl active:scale-95 flex items-center justify-center hover:bg-red-500 transition-colors pointer-events-auto"
+                        className="w-24 h-24 relative rounded-full shadow-[0_0_20px_rgba(220,38,38,0.6)] active:scale-95 group transition-all pointer-events-auto flex items-center justify-center"
                     >
-                        <Swords size={40} className="text-white" />
+                        {/* Outer Glow Ring */}
+                        <div className="absolute -inset-2 rounded-full border-2 border-red-500/30 animate-pulse" />
+
+                        {/* Main Button Body - Gradient Red */}
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-500 to-red-900 border-4 border-red-950 shadow-inner flex items-center justify-center overflow-hidden">
+                            {/* Shine Effect */}
+                            <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/20 to-transparent" />
+
+                            {/* Icon */}
+                            <Swords size={48} className="text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] z-10 group-active:rotate-12 transition-transform" />
+
+                            {/* 'Z' Hotkey Indicator (PC) */}
+                            <div className="absolute bottom-2 right-1/2 translate-x-1/2 text-[10px] font-bold text-white/60 bg-black/40 px-1.5 rounded border border-white/10 hidden lg:block">Z</div>
+                        </div>
                     </button>
                 </div>
             </DraggableHUDElement>
@@ -4099,9 +4157,12 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             {/* HP POT - Separately Draggable */}
             <DraggableHUDElement id="hp_pot" element={hudLayout.elements.hp_pot} isEditing={isHudEditing} isSelected={selectedElementId === 'hp_pot'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
                 <div>
-                    <button onClick={() => props.onQuickPotion('hp')} className="w-10 h-10 bg-red-900/90 border-2 border-red-500 rounded-full flex flex-col items-center justify-center hover:bg-red-800 transition-colors relative shadow-lg active:scale-95 pointer-events-auto">
-                        <Droplet size={14} className="text-red-300" />
-                        <span className="text-[9px] text-white font-bold absolute bottom-0.5">{hpPotCount}</span>
+                    <button onClick={() => props.onQuickPotion('hp')} className="w-12 h-12 bg-gradient-to-br from-red-800 to-red-950 border-2 border-red-700/50 hover:border-red-500 rounded-xl flex flex-col items-center justify-center relative shadow-lg active:scale-95 pointer-events-auto group">
+                        <div className="absolute inset-0 bg-black/20 rounded-xl pointer-events-none" />
+                        <Droplet size={20} className="text-red-400 drop-shadow-md z-10 group-hover:scale-110 transition-transform" />
+                        <div className="absolute bottom-0 right-0 bg-[#1a1c23] border-t border-l border-red-900/50 rounded-tl px-1 text-[9px] text-red-200 font-bold z-20">
+                            {hpPotCount}
+                        </div>
                     </button>
                 </div>
             </DraggableHUDElement>
@@ -4109,9 +4170,12 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             {/* MP POT - Separately Draggable */}
             <DraggableHUDElement id="mp_pot" element={hudLayout.elements.mp_pot} isEditing={isHudEditing} isSelected={selectedElementId === 'mp_pot'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
                 <div>
-                    <button onClick={() => props.onQuickPotion('mp')} className="w-10 h-10 bg-blue-900/90 border-2 border-blue-500 rounded-full flex flex-col items-center justify-center hover:bg-blue-800 transition-colors relative shadow-lg active:scale-95 pointer-events-auto">
-                        <Zap size={14} className="text-blue-300" />
-                        <span className="text-[9px] text-white font-bold absolute bottom-0.5">{mpPotCount}</span>
+                    <button onClick={() => props.onQuickPotion('mp')} className="w-12 h-12 bg-gradient-to-br from-blue-800 to-blue-950 border-2 border-blue-700/50 hover:border-blue-500 rounded-xl flex flex-col items-center justify-center relative shadow-lg active:scale-95 pointer-events-auto group">
+                        <div className="absolute inset-0 bg-black/20 rounded-xl pointer-events-none" />
+                        <Zap size={20} className="text-blue-400 drop-shadow-md z-10 group-hover:scale-110 transition-transform" />
+                        <div className="absolute bottom-0 right-0 bg-[#1a1c23] border-t border-l border-blue-900/50 rounded-tl px-1 text-[9px] text-blue-200 font-bold z-20">
+                            {mpPotCount}
+                        </div>
                     </button>
                 </div>
             </DraggableHUDElement>

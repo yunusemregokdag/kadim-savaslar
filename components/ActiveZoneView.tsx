@@ -1966,6 +1966,96 @@ const GlobalMapModal: React.FC<{ onClose: () => void, currentZone: number, onSwi
     );
 }
 
+// EXIT CONFIRMATION MODAL WITH 10 SECOND COUNTDOWN
+const ExitConfirmModal: React.FC<{ onConfirm: () => void, onCancel: () => void }> = ({ onConfirm, onCancel }) => {
+    const [countdown, setCountdown] = useState(10);
+    const [autoExit, setAutoExit] = useState(true);
+
+    useEffect(() => {
+        if (countdown <= 0 && autoExit) {
+            onConfirm();
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            setCountdown(prev => prev - 1);
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, [countdown, autoExit, onConfirm]);
+
+    return (
+        <div className="fixed inset-0 z-[200] bg-black/80 flex items-center justify-center p-4 animate-[fadeIn_0.2s]">
+            <div className="bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-red-800/50 rounded-2xl p-8 w-96 shadow-[0_0_50px_rgba(220,38,38,0.3)] animate-[bounceIn_0.3s]">
+                {/* Icon */}
+                <div className="flex justify-center mb-6">
+                    <div className="w-20 h-20 bg-gradient-to-b from-red-900 to-red-950 rounded-full border-4 border-red-600/50 flex items-center justify-center shadow-lg">
+                        <span className="text-4xl">🚪</span>
+                    </div>
+                </div>
+
+                {/* Title */}
+                <h2 className="text-2xl font-bold text-center text-red-400 mb-2">Oyundan Çıkmak İstiyor musun?</h2>
+                <p className="text-center text-slate-400 text-sm mb-6">Emin misin? İlerleme kaydedilecek.</p>
+
+                {/* Countdown Circle */}
+                <div className="flex justify-center mb-6">
+                    <div className="relative w-24 h-24">
+                        <svg className="w-24 h-24 transform -rotate-90">
+                            <circle
+                                cx="48"
+                                cy="48"
+                                r="40"
+                                stroke="rgba(220, 38, 38, 0.2)"
+                                strokeWidth="8"
+                                fill="none"
+                            />
+                            <circle
+                                cx="48"
+                                cy="48"
+                                r="40"
+                                stroke="#dc2626"
+                                strokeWidth="8"
+                                fill="none"
+                                strokeLinecap="round"
+                                strokeDasharray={251.2}
+                                strokeDashoffset={251.2 - (countdown / 10) * 251.2}
+                                className="transition-all duration-1000"
+                            />
+                        </svg>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-3xl font-bold text-red-400">{countdown}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p className="text-center text-xs text-slate-500 mb-6">
+                    {autoExit ? `${countdown} saniye içinde otomatik çıkış...` : 'Geri sayım durduruldu'}
+                </p>
+
+                {/* Buttons */}
+                <div className="flex gap-3">
+                    <button
+                        onClick={() => {
+                            setAutoExit(false);
+                            onCancel();
+                        }}
+                        className="flex-1 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-lg border border-slate-600 transition-all"
+                    >
+                        İptal
+                    </button>
+                    <button
+                        onClick={onConfirm}
+                        className="flex-1 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg border border-red-500 transition-all shadow-lg shadow-red-900/50"
+                    >
+                        Çıkış Yap
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     const { playerState, zoneId, onLoot, onQuestProgress, onUpdatePlayer, onExit, onOpenCrafting, onOpenMarket, socketRef, onReceiveChat } = props;
 
@@ -2096,6 +2186,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     const [showFullSettings, setShowFullSettings] = useState(false);
     const [showAchievements, setShowAchievements] = useState(false);
     const [showDailyReward, setShowDailyReward] = useState(false);
+    const [showExitConfirm, setShowExitConfirm] = useState(false);
 
     const [nearbyNPC, setNearbyNPC] = useState<GameEntity | null>(null);
     const [interactingNPC, setInteractingNPC] = useState<NPCData | null>(null);
@@ -4830,78 +4921,124 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             />
 
             {/* ═══════════════════════════════════════════════════════════════ */}
-            {/* NOWA STYLE BOTTOM NAVIGATION BAR */}
+            {/* NOWA STYLE BOTTOM NAVIGATION BAR - FULL MENU */}
             {/* ═══════════════════════════════════════════════════════════════ */}
             <nav className="fixed bottom-0 left-0 w-full z-[60] pointer-events-auto">
                 {/* Background with glass effect */}
-                <div className="bg-gradient-to-t from-black/95 via-slate-900/90 to-transparent h-20 flex items-end justify-center pb-2 px-2 gap-1 md:gap-2 border-t border-yellow-900/30 shadow-[0_-5px_30px_rgba(0,0,0,0.6)]">
+                <div className="bg-gradient-to-t from-black/95 via-slate-900/90 to-transparent h-16 md:h-20 flex items-end justify-center pb-1.5 md:pb-2 px-1 md:px-2 gap-0.5 md:gap-1 border-t border-yellow-900/30 shadow-[0_-5px_30px_rgba(0,0,0,0.6)] overflow-x-auto">
 
-                    {/* Left Section - Info Buttons */}
-                    <div className="flex items-center gap-1 md:gap-2">
-                        {/* Character Button */}
+                    {/* All Navigation Buttons - Scrollable on mobile */}
+                    <div className="flex items-center gap-0.5 md:gap-1">
+                        {/* Character/Karakter */}
                         <button
                             onClick={() => setShowInventory(true)}
-                            className="flex flex-col items-center gap-0.5 px-2 py-1.5 md:px-3 md:py-2 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-blue-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
                         >
-                            <Users size={20} className="text-blue-400 group-hover:text-yellow-400 transition-colors" />
-                            <span className="text-[9px] md:text-[10px] text-slate-400 group-hover:text-white font-bold uppercase tracking-wide">Karakter</span>
+                            <Users size={18} className="text-blue-400 group-hover:text-blue-300 transition-colors" />
+                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Karakter</span>
                         </button>
 
-                        {/* Map Button */}
+                        {/* Inventory/Envanter */}
                         <button
-                            onClick={() => setShowGlobalMap(true)}
-                            className="flex flex-col items-center gap-0.5 px-2 py-1.5 md:px-3 md:py-2 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-green-500/50 transition-all group"
+                            onClick={() => setShowInventory(true)}
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-amber-900/40 border border-amber-600/50 hover:bg-amber-800/60 hover:border-amber-400 transition-all group min-w-[48px] md:min-w-[60px]"
                         >
-                            <Compass size={20} className="text-green-400 group-hover:text-green-300 transition-colors" />
-                            <span className="text-[9px] md:text-[10px] text-slate-400 group-hover:text-white font-bold uppercase tracking-wide">Harita</span>
+                            <Backpack size={18} className="text-amber-400 group-hover:text-amber-300 transition-colors" />
+                            <span className="text-[8px] md:text-[9px] text-amber-300 group-hover:text-white font-bold uppercase">Envanter</span>
                         </button>
 
-                        {/* Skills Button */}
+                        {/* Skills/Yetenekler */}
                         <button
                             onClick={() => setShowGameGuide(true)}
-                            className="flex flex-col items-center gap-0.5 px-2 py-1.5 md:px-3 md:py-2 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-purple-500/50 transition-all group"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-purple-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
                         >
-                            <Book size={20} className="text-purple-400 group-hover:text-purple-300 transition-colors" />
-                            <span className="text-[9px] md:text-[10px] text-slate-400 group-hover:text-white font-bold uppercase tracking-wide">Rehber</span>
+                            <Zap size={18} className="text-purple-400 group-hover:text-purple-300 transition-colors" />
+                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Yetenek</span>
                         </button>
-                    </div>
 
-                    {/* Center Divider - Site/Server Info */}
-                    <div className="hidden md:flex items-center px-4">
-                        <span className="text-[10px] text-slate-600 font-mono tracking-wider">kadim-savaslar.vercel.app</span>
-                    </div>
-
-                    {/* Right Section - Action Buttons */}
-                    <div className="flex items-center gap-1 md:gap-2">
-                        {/* Inventory Button */}
+                        {/* Quests/Görevler */}
                         <button
-                            onClick={() => setShowInventory(true)}
-                            className="flex flex-col items-center gap-0.5 px-2 py-1.5 md:px-3 md:py-2 rounded-lg bg-amber-900/40 border border-amber-600/50 hover:bg-amber-800/60 hover:border-amber-400 transition-all group"
+                            onClick={() => setShowGameGuide(true)}
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
                         >
-                            <Backpack size={20} className="text-amber-400 group-hover:text-amber-300 transition-colors" />
-                            <span className="text-[9px] md:text-[10px] text-amber-300 group-hover:text-white font-bold uppercase tracking-wide">Envanter</span>
+                            <Scroll size={18} className="text-yellow-400 group-hover:text-yellow-300 transition-colors" />
+                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Görev</span>
                         </button>
 
-                        {/* Trade/Market Button */}
+                        {/* Party/Parti - Hidden on very small screens */}
+                        <button
+                            className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-cyan-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                        >
+                            <Users size={18} className="text-cyan-400 group-hover:text-cyan-300 transition-colors" />
+                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Parti</span>
+                        </button>
+
+                        {/* Guild/Lonca - Hidden on very small screens */}
+                        <button
+                            className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-violet-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                        >
+                            <Shield size={18} className="text-violet-400 group-hover:text-violet-300 transition-colors" />
+                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Lonca</span>
+                        </button>
+
+                        {/* Market/Pazar */}
                         <button
                             onClick={() => setBlacksmithState({ isOpen: true, tab: 'market' })}
-                            className="flex flex-col items-center gap-0.5 px-2 py-1.5 md:px-3 md:py-2 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-emerald-500/50 transition-all group"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-emerald-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
                         >
-                            <ShoppingBag size={20} className="text-emerald-400 group-hover:text-emerald-300 transition-colors" />
-                            <span className="text-[9px] md:text-[10px] text-slate-400 group-hover:text-white font-bold uppercase tracking-wide">Pazar</span>
+                            <ShoppingBag size={18} className="text-emerald-400 group-hover:text-emerald-300 transition-colors" />
+                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Pazar</span>
                         </button>
 
-                        {/* Exit Button */}
+                        {/* Blacksmith/Demirci */}
                         <button
-                            onClick={props.onExit}
-                            className="flex flex-col items-center gap-0.5 px-2 py-1.5 md:px-3 md:py-2 rounded-lg bg-red-900/30 border border-red-700/50 hover:bg-red-800/60 hover:border-red-400 transition-all group"
+                            onClick={() => setBlacksmithState({ isOpen: true, tab: 'craft' })}
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-orange-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
                         >
-                            <X size={20} className="text-red-400 group-hover:text-red-300 transition-colors" />
-                            <span className="text-[9px] md:text-[10px] text-red-400 group-hover:text-white font-bold uppercase tracking-wide">Çıkış</span>
+                            <Hammer size={18} className="text-orange-400 group-hover:text-orange-300 transition-colors" />
+                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Demirci</span>
+                        </button>
+
+                        {/* Map/Harita */}
+                        <button
+                            onClick={() => setShowGlobalMap(true)}
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-green-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                        >
+                            <Compass size={18} className="text-green-400 group-hover:text-green-300 transition-colors" />
+                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Harita</span>
+                        </button>
+
+                        {/* Leaderboard/Sıralama - Hidden on very small screens */}
+                        <button
+                            onClick={() => setShowAchievements(true)}
+                            className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                        >
+                            <Trophy size={18} className="text-yellow-500 group-hover:text-yellow-400 transition-colors" />
+                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Sıralama</span>
+                        </button>
+
+                        {/* Exit/Çıkış - Opens confirmation modal */}
+                        <button
+                            onClick={() => setShowExitConfirm(true)}
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-red-900/30 border border-red-700/50 hover:bg-red-800/60 hover:border-red-400 transition-all group min-w-[48px] md:min-w-[60px]"
+                        >
+                            <X size={18} className="text-red-400 group-hover:text-red-300 transition-colors" />
+                            <span className="text-[8px] md:text-[9px] text-red-400 group-hover:text-white font-bold uppercase">Çıkış</span>
                         </button>
                     </div>
                 </div>
             </nav>
+
+            {/* EXIT CONFIRMATION MODAL WITH COUNTDOWN */}
+            {showExitConfirm && (
+                <ExitConfirmModal
+                    onConfirm={() => {
+                        setShowExitConfirm(false);
+                        props.onExit();
+                    }}
+                    onCancel={() => setShowExitConfirm(false)}
+                />
+            )}
 
             {/* LOADING OVERLAY - OYUN AÇILIŞINDA */}
             {isLoading && (

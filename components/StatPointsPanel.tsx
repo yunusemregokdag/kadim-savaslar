@@ -58,10 +58,60 @@ const StatPointsPanel: React.FC<StatPointsPanelProps> = ({ playerState, onAddSta
     const int = playerState.intelligence || 0;
     const vit = playerState.vitality || 0;
 
-    const baseDamage = str * 2 + int;
-    const baseDefense = vit * 2 + Math.floor(str / 2);
-    const critChance = Math.min(dex, 50); // Max 50%
-    const attackSpeed = 1 + (dex * 0.5); // Base 1.0 + dex bonus
+    // Calculate equipment stats (from all equipped items)
+    const equipmentStats = {
+        damage: 0,
+        defense: 0,
+        critChance: 0,
+        attackSpeed: 0,
+        blockChance: 0,
+        strength: 0,
+        dexterity: 0,
+        intelligence: 0,
+        vitality: 0
+    };
+
+    // Sum stats from all equipment slots
+    Object.values(playerState.equipment || {}).forEach(item => {
+        if (item?.stats) {
+            equipmentStats.damage += item.stats.damage || 0;
+            equipmentStats.defense += item.stats.defense || 0;
+            equipmentStats.critChance += item.stats.critChance || 0;
+            equipmentStats.attackSpeed += item.stats.attackSpeed || 0;
+            equipmentStats.blockChance += item.stats.blockChance || 0;
+            equipmentStats.strength += item.stats.strength || 0;
+            equipmentStats.dexterity += item.stats.dexterity || 0;
+            equipmentStats.intelligence += item.stats.intelligence || 0;
+            equipmentStats.vitality += item.stats.vitality || 0;
+        }
+    });
+
+    // Total stats (base + equipment)
+    const totalStr = str + equipmentStats.strength;
+    const totalDex = dex + equipmentStats.dexterity;
+    const totalInt = int + equipmentStats.intelligence;
+    const totalVit = vit + equipmentStats.vitality;
+
+    // Calculated stats
+    const baseDamage = totalStr * 2 + totalInt;
+    const totalDamage = baseDamage + equipmentStats.damage;
+
+    const baseDefense = totalVit * 2 + Math.floor(totalStr / 2);
+    const totalDefense = baseDefense + equipmentStats.defense;
+
+    const totalCritChance = Math.min(totalDex + equipmentStats.critChance, 75); // Max 75%
+    const totalAttackSpeed = 1 + (totalDex * 0.5) + equipmentStats.attackSpeed;
+    const totalBlockChance = Math.min(equipmentStats.blockChance, 50); // Max 50%
+
+    // Combat Power (SG - Savaş Gücü)
+    const combatPower = Math.floor(
+        totalDamage * 1.5 +
+        totalDefense * 1.2 +
+        totalCritChance * 10 +
+        totalAttackSpeed * 50 +
+        totalBlockChance * 15 +
+        (playerState.level || 1) * 100
+    );
 
     if (compact) {
         return (
@@ -170,40 +220,61 @@ const StatPointsPanel: React.FC<StatPointsPanelProps> = ({ playerState, onAddSta
                     <div className="px-4 py-2 bg-[#1a2332] border-b border-[#2a3a4a]">
                         <h4 className="text-xs font-bold text-cyan-400 uppercase tracking-wide">Hesaplanan Statlar</h4>
                     </div>
-                    <div className="p-3 grid grid-cols-2 gap-2">
-                        {/* Total Damage */}
-                        <div className="flex items-center gap-2 p-2 rounded-lg bg-red-900/20 border border-red-800/40">
-                            <Flame size={14} className="text-red-400" />
+                    <div className="p-3 space-y-2">
+                        {/* Combat Power (SG) - FULL WIDTH */}
+                        <div className="flex items-center gap-2 p-3 rounded-lg bg-gradient-to-r from-purple-900/30 to-pink-900/30 border border-purple-600/50">
+                            <Sparkles size={18} className="text-purple-400" />
                             <div className="flex-1">
-                                <div className="text-[10px] text-slate-500">Hasar</div>
-                                <div className="text-sm font-bold text-red-400">{baseDamage + (playerState.damage || 0)}</div>
+                                <div className="text-[10px] text-slate-400 uppercase">Savaş Gücü (SG)</div>
+                                <div className="text-lg font-bold text-purple-300">{combatPower.toLocaleString()}</div>
                             </div>
                         </div>
 
-                        {/* Defense */}
-                        <div className="flex items-center gap-2 p-2 rounded-lg bg-blue-900/20 border border-blue-800/40">
-                            <Shield size={14} className="text-blue-400" />
-                            <div className="flex-1">
-                                <div className="text-[10px] text-slate-500">Defans</div>
-                                <div className="text-sm font-bold text-blue-400">{baseDefense + (playerState.defense || 0)}</div>
+                        {/* Stats Grid */}
+                        <div className="grid grid-cols-2 gap-2">
+                            {/* Total Damage */}
+                            <div className="flex items-center gap-2 p-2 rounded-lg bg-red-900/20 border border-red-800/40">
+                                <Flame size={14} className="text-red-400" />
+                                <div className="flex-1">
+                                    <div className="text-[10px] text-slate-500">Hasar</div>
+                                    <div className="text-sm font-bold text-red-400">{totalDamage}</div>
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Crit Chance */}
-                        <div className="flex items-center gap-2 p-2 rounded-lg bg-yellow-900/20 border border-yellow-800/40">
-                            <Target size={14} className="text-yellow-400" />
-                            <div className="flex-1">
-                                <div className="text-[10px] text-slate-500">Kritik Şansı</div>
-                                <div className="text-sm font-bold text-yellow-400">{critChance}%</div>
+                            {/* Defense */}
+                            <div className="flex items-center gap-2 p-2 rounded-lg bg-blue-900/20 border border-blue-800/40">
+                                <Shield size={14} className="text-blue-400" />
+                                <div className="flex-1">
+                                    <div className="text-[10px] text-slate-500">Defans</div>
+                                    <div className="text-sm font-bold text-blue-400">{totalDefense}</div>
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Attack Speed */}
-                        <div className="flex items-center gap-2 p-2 rounded-lg bg-green-900/20 border border-green-800/40">
-                            <Activity size={14} className="text-green-400" />
-                            <div className="flex-1">
-                                <div className="text-[10px] text-slate-500">Saldırı Hızı</div>
-                                <div className="text-sm font-bold text-green-400">{attackSpeed.toFixed(1)}</div>
+                            {/* Crit Chance */}
+                            <div className="flex items-center gap-2 p-2 rounded-lg bg-yellow-900/20 border border-yellow-800/40">
+                                <Target size={14} className="text-yellow-400" />
+                                <div className="flex-1">
+                                    <div className="text-[10px] text-slate-500">Kritik Şansı</div>
+                                    <div className="text-sm font-bold text-yellow-400">{totalCritChance}%</div>
+                                </div>
+                            </div>
+
+                            {/* Attack Speed */}
+                            <div className="flex items-center gap-2 p-2 rounded-lg bg-green-900/20 border border-green-800/40">
+                                <Activity size={14} className="text-green-400" />
+                                <div className="flex-1">
+                                    <div className="text-[10px] text-slate-500">Saldırı Hızı</div>
+                                    <div className="text-sm font-bold text-green-400">{totalAttackSpeed.toFixed(1)}</div>
+                                </div>
+                            </div>
+
+                            {/* Block Chance - NEW */}
+                            <div className="flex items-center gap-2 p-2 rounded-lg bg-cyan-900/20 border border-cyan-800/40 col-span-2">
+                                <Shield size={14} className="text-cyan-400" />
+                                <div className="flex-1">
+                                    <div className="text-[10px] text-slate-500">Blok Şansı</div>
+                                    <div className="text-sm font-bold text-cyan-400">{totalBlockChance}%</div>
+                                </div>
                             </div>
                         </div>
                     </div>

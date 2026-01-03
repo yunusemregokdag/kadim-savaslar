@@ -39,6 +39,10 @@ import SchematicMap from './SchematicMap';
 import { GameGuideModal } from './GameGuideModal';
 import { NPCInteractionModal, NPC_REGISTRY } from './NPCInteractionModal';
 import AchievementsModal from './AchievementsModal';
+import PartyView from './PartyView';
+import GuildView from './GuildView';
+import LeaderboardView from './LeaderboardView';
+import PlayerStatsView from './PlayerStatsView';
 import DailyLoginModal from './DailyLoginModal';
 import { useBossAI } from './useBossAI';
 import EventBanner from './EventBanner';
@@ -2187,6 +2191,10 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     const [showAchievements, setShowAchievements] = useState(false);
     const [showDailyReward, setShowDailyReward] = useState(false);
     const [showExitConfirm, setShowExitConfirm] = useState(false);
+    const [showParty, setShowParty] = useState(false);
+    const [showGuild, setShowGuild] = useState(false);
+    const [showLeaderboard, setShowLeaderboard] = useState(false);
+    const [showPlayerStats, setShowPlayerStats] = useState(false);
 
     const [nearbyNPC, setNearbyNPC] = useState<GameEntity | null>(null);
     const [interactingNPC, setInteractingNPC] = useState<NPCData | null>(null);
@@ -4929,11 +4937,11 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
                     {/* All Navigation Buttons - Scrollable on mobile */}
                     <div className="flex items-center gap-0.5 md:gap-1">
-                        {/* Character/Karakter - Opens Inventory with character preview */}
+                        {/* Character/Karakter - Opens Player Stats */}
                         <button
-                            onClick={() => setShowInventory(true)}
+                            onClick={() => setShowPlayerStats(true)}
                             className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-blue-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
-                            title="Karakter ve Ekipman"
+                            title="Karakter İstatistikleri"
                         >
                             <Users size={18} className="text-blue-400 group-hover:text-blue-300 transition-colors" />
                             <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Karakter</span>
@@ -4969,21 +4977,21 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                             <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Görev</span>
                         </button>
 
-                        {/* Party/Parti - Opens Chat */}
+                        {/* Party/Parti - Opens Party Modal */}
                         <button
-                            onClick={() => setShowChat(true)}
+                            onClick={() => setShowParty(true)}
                             className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-cyan-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
-                            title="Parti ve Sohbet"
+                            title="Parti Sistemi"
                         >
                             <Users size={18} className="text-cyan-400 group-hover:text-cyan-300 transition-colors" />
                             <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Parti</span>
                         </button>
 
-                        {/* Guild/Lonca - Opens Chat for guild channel */}
+                        {/* Guild/Lonca - Opens Guild Modal */}
                         <button
-                            onClick={() => setShowChat(true)}
+                            onClick={() => setShowGuild(true)}
                             className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-violet-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
-                            title="Lonca ve Sohbet"
+                            title="Lonca Sistemi"
                         >
                             <Shield size={18} className="text-violet-400 group-hover:text-violet-300 transition-colors" />
                             <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Lonca</span>
@@ -5019,11 +5027,11 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                             <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Harita</span>
                         </button>
 
-                        {/* Leaderboard/Sıralama - Opens Achievements (includes leaderboard) */}
+                        {/* Leaderboard/Sıralama - Opens Leaderboard */}
                         <button
-                            onClick={() => setShowAchievements(true)}
+                            onClick={() => setShowLeaderboard(true)}
                             className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
-                            title="Başarımlar ve Sıralama"
+                            title="Sıralama Tablosu"
                         >
                             <Trophy size={18} className="text-yellow-500 group-hover:text-yellow-400 transition-colors" />
                             <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Sıralama</span>
@@ -5042,7 +5050,73 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 </div>
             </nav>
 
+            {/* PARTY VIEW MODAL */}
+            {showParty && (
+                <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4">
+                    <div className="w-full max-w-2xl">
+                        <PartyView
+                            playerState={playerState}
+                            party={null}
+                            onCreateParty={(name, isPublic) => console.log('Create party:', name, isPublic)}
+                            onLeaveParty={() => console.log('Leave party')}
+                            onKickMember={(id) => console.log('Kick:', id)}
+                            onInvitePlayer={(name) => console.log('Invite:', name)}
+                            onChangeLootRule={(rule) => console.log('Loot rule:', rule)}
+                            onClose={() => setShowParty(false)}
+                        />
+                    </div>
+                </div>
+            )}
 
+            {/* GUILD VIEW MODAL */}
+            {showGuild && (
+                <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4">
+                    <div className="w-full max-w-4xl max-h-[90vh] overflow-auto">
+                        <GuildView
+                            playerState={playerState}
+                            guild={null}
+                            onCreateGuild={(name, tag) => console.log('Create guild:', name, tag)}
+                            onLeaveGuild={() => console.log('Leave guild')}
+                            onKickMember={(id) => console.log('Kick member:', id)}
+                            onPromoteMember={(id) => console.log('Promote:', id)}
+                            onDemoteMember={(id) => console.log('Demote:', id)}
+                            onDonate={(amount) => console.log('Donate:', amount)}
+                            onJoinGuild={(id) => console.log('Join guild:', id)}
+                            onClose={() => setShowGuild(false)}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* LEADERBOARD VIEW MODAL */}
+            {showLeaderboard && (
+                <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4">
+                    <div className="relative w-full max-w-4xl max-h-[90vh] overflow-auto bg-slate-900 rounded-2xl border border-slate-700">
+                        <button
+                            onClick={() => setShowLeaderboard(false)}
+                            className="absolute top-4 right-4 z-10 p-2 bg-red-900/50 hover:bg-red-800 rounded-full text-white"
+                        >
+                            <X size={20} />
+                        </button>
+                        <LeaderboardView
+                            onJoinGuild={(id) => console.log('Join guild from leaderboard:', id)}
+                            onClose={() => setShowLeaderboard(false)}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* PLAYER STATS VIEW MODAL */}
+            {showPlayerStats && (
+                <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4">
+                    <div className="w-full max-w-3xl max-h-[90vh] overflow-auto">
+                        <PlayerStatsView
+                            playerState={playerState}
+                            onClose={() => setShowPlayerStats(false)}
+                        />
+                    </div>
+                </div>
+            )}
 
             {/* EXIT CONFIRMATION MODAL WITH COUNTDOWN */}
             {showExitConfirm && (

@@ -1187,29 +1187,29 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                         </div>
 
                         {/* Profile Info & Bars */}
-                        <div className="flex flex-col gap-0.5 w-32 md:w-72 transition-all">
+                        <div className="flex flex-col gap-0.5 w-28 md:w-72 transition-all">
                             {/* Name & Rank */}
-                            <div className="flex items-center justify-between px-1">
-                                <div className="flex items-center gap-1.5 min-w-0">
-                                    {isAdmin && <span className="text-white font-bold text-[9px]">[GM]</span>}
-                                    <span className={`text-xs font-bold tracking-wide truncate ${(playerStats.vipUntil || 0) > Date.now() ? 'text-yellow-400 font-extrabold drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]' : 'text-slate-200'}`}>
+                            <div className="flex items-center justify-between gap-1">
+                                <div className="flex items-center gap-1 min-w-0 flex-1 overflow-hidden">
+                                    {isAdmin && <span className="text-white font-bold text-[8px] shrink-0">[GM]</span>}
+                                    <span className={`text-[10px] md:text-xs font-bold tracking-wide truncate ${(playerStats.vipUntil || 0) > Date.now() ? 'text-yellow-400 font-extrabold drop-shadow-[0_0_5px_rgba(234,179,8,0.5)]' : 'text-slate-200'}`}>
                                         {playerStats.nickname}
                                     </span>
-                                    {(playerStats.vipUntil || 0) > Date.now() && <div className="text-red-500 drop-shadow-md flex-shrink-0"><Crown size={12} fill="currentColor" /></div>}
+                                    {(playerStats.vipUntil || 0) > Date.now() && <div className="text-red-500 drop-shadow-md shrink-0"><Crown size={10} fill="currentColor" /></div>}
                                 </div>
-                                <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-                                    <RankIcon rank={playerStats.rank} size="sm" />
-                                    <span className="text-[9px] text-slate-300 font-bold uppercase tracking-wider">{RANKS[playerStats.rank]?.title}</span>
+                                <div className="flex items-center gap-1 shrink-0">
+                                    <RankIcon rank={playerStats.rank || 1} size="sm" />
+                                    <span className="text-[8px] md:text-[9px] text-amber-400 font-bold uppercase tracking-wide truncate max-w-[60px] md:max-w-none">{RANKS.find(r => r.id === (playerStats.rank || 1))?.title || 'Acemi'}</span>
                                 </div>
                             </div>
 
                             {/* HP BAR */}
-                            <div className="relative h-3 w-full bg-black/60 rounded-sm border border-slate-600/50 overflow-hidden">
+                            <div className="relative h-2.5 md:h-3 w-full bg-black/60 rounded-sm border border-slate-600/50 overflow-hidden">
                                 <div className="h-full bg-gradient-to-r from-red-800 via-red-600 to-red-500 relative" style={{ width: `${(playerStats.hp / playerStats.maxHp) * 100}%` }}>
                                     <div className="absolute top-0 left-0 w-full h-[1px] bg-red-400/50" />
                                     <div className="absolute bottom-0 left-0 w-full h-[1px] bg-red-900/50" />
                                 </div>
-                                <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,1)] tracking-wider z-10">
+                                <span className="absolute inset-0 flex items-center justify-center text-[7px] md:text-[8px] font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,1)] tracking-wider z-10">
                                     {playerStats.hp} / {playerStats.maxHp}
                                 </span>
                             </div>

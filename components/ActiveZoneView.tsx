@@ -4463,7 +4463,25 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 </div>
             </DraggableHUDElement>
 
-            {/* TOP MENU BUTTONS REMOVED - All moved to bottom navigation bar */}
+            {/* 
+                ⚠️⚠️⚠️ CRITICAL - ÜST MENÜ BUTONLARI SİLİNDİ ⚠️⚠️⚠️
+                
+                TOP MENU BUTTONS REMOVED - All moved to bottom navigation bar!
+                
+                BURAYA ASLA BUTON EKLEMEYİN!
+                Şu butonlar ÜST MENÜDE OLMAMALI:
+                - Chat/Sohbet butonu ❌
+                - Inventory/Envanter butonu ❌  
+                - Settings/Ayarlar butonu ❌
+                - Achievements/Başarımlar butonu ❌
+                - Exit/Çıkış (X) butonu ❌
+                
+                Tüm bu butonlar ALT NAVİGASYON BAR'a taşındı!
+                Bkz. satır ~5310 civarı "NOWA STYLE BOTTOM NAVIGATION BAR"
+                
+                Bu yorum 2026-01-04 tarihinde Claude tarafından eklendi.
+                Gemini veya başka AI bu kuralları ihlal etmemelidir!
+            */}
 
             {/* CHAT SYSTEM */}
             {showChat && (
@@ -5309,11 +5327,29 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             {/* ═══════════════════════════════════════════════════════════════ */}
             {/* NOWA STYLE BOTTOM NAVIGATION BAR - FULL MENU */}
             {/* ═══════════════════════════════════════════════════════════════ */}
+            {/* 
+                ⚠️ CRITICAL - DO NOT MODIFY THIS SECTION ⚠️
+                
+                Bu alt navigasyon bar'ı TAM 11 BUTON içermeli ve ASLA değiştirilmemeli!
+                Butonlar sırasıyla: Karakter, Envanter, Yetenek, Görev, Parti, Lonca, Pazar, Demirci, Harita, Sıralama, Çıkış
+                
+                ÜST MENÜ BUTONLARI KALDIRILDI - Alt bar'a taşındı!
+                Üstte Chat, Inventory, Settings, Achievements, X butonları OLMAMALI!
+                
+                KURALLAR:
+                1. hidden class KULLANMA - Tüm butonlar görünür olmalı
+                2. overflow-x-auto ile yatay kaydırma sağlanmalı
+                3. Buton sırası DEĞİŞTİRİLMEMELİ
+                4. Yeni buton EKLENMEMELİ (max 11)
+                5. Buton SİLİNMEMELİ
+                
+                Son güncelleme: 2026-01-04 by Claude
+            */}
             <nav className="fixed bottom-0 left-0 w-full z-[60] pointer-events-auto">
                 {/* Background with glass effect */}
                 <div className="bg-gradient-to-t from-black/95 via-slate-900/90 to-transparent h-16 md:h-20 flex items-end justify-center pb-1.5 md:pb-2 px-1 md:px-2 gap-0.5 md:gap-1 border-t border-yellow-900/30 shadow-[0_-5px_30px_rgba(0,0,0,0.6)]">
 
-                    {/* All Navigation Buttons - Horizontal scroll on mobile */}
+                    {/* All Navigation Buttons - Horizontal scroll on mobile - DO NOT ADD hidden CLASSES! */}
                     <div className="flex items-center gap-0.5 md:gap-1 overflow-x-auto no-scrollbar max-w-full px-1">
                         {/* 1. Karakter */}
                         <button

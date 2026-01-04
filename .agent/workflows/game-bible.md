@@ -253,4 +253,29 @@ Oyun F2P (Free to Play) ancak P2W (Pay to Win) öğeleri barındırır.
 ---
 
 **Son Güncelleme:** 2026-01-04  
-**Versiyon:** 2.0
+**Versiyon:** 2.1
+
+---
+
+## 🎨 UI/HUD KURALLARI (KRİTİK)
+
+Bu bölüm oyunun **kullanıcı arayüzü** için değişmez kuralları içerir.
+
+### Alt Navigasyon Bar (Bottom Navigation)
+- **TAM 11 BUTON** olmalı, ne eksik ne fazla
+- Buton sırası: **Karakter, Envanter, Yetenek, Görev, Parti, Lonca, Pazar, Demirci, Harita, Sıralama, Çıkış**
+- `hidden` class KULLANILMAMALI - tüm butonlar her zaman görünür
+- `overflow-x-auto` ile mobilde yatay kaydırma sağlanmalı
+
+### Üst Menü Butonları
+- **ÜST MENÜDE BUTON YOK!** Hepsi alt bar'a taşındı.
+- Chat, Inventory, Settings, Achievements, Exit butonları ÜSTTE OLMAMALI
+
+### HUD Elemanları (DraggableHUDElement)
+- Joystick, Attack butonu, Skill bar'lar sürüklenebilir kalmalı
+- HUD pozisyonları `DEFAULT_HUD_LAYOUT` içinde tanımlı
+
+### Referans Dosya
+- `components/ActiveZoneView.tsx` satır ~5330 civarı (Bottom Nav Bar)
+- `components/ActiveZoneView.tsx` satır ~4466 civarı (Top Menu - REMOVED)
+

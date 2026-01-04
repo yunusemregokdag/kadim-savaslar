@@ -5,13 +5,13 @@ import { v4 as uuidv4 } from 'uuid';
 
 // 7-Day Login Reward Cycle (Repeats)
 const DAILY_REWARDS: DailyLoginReward[] = [
-    { day: 1, gold: 500, exp: 100 },
-    { day: 2, gold: 1000, gems: 5 },
-    { day: 3, gold: 1500, exp: 250, honor: 50 },
-    { day: 4, gold: 2000, gems: 10 },
-    { day: 5, gold: 3000, exp: 500, item: { id: uuidv4(), name: 'Büyük Can İksiri x5', type: 'consumable', tier: 2, rarity: 'uncommon', value: 100 } },
-    { day: 6, gold: 5000, gems: 25, honor: 100 },
-    { day: 7, gold: 10000, gems: 50, exp: 1000, item: { id: uuidv4(), name: 'Haftalık Ödül Sandığı', type: 'material', tier: 3, rarity: 'rare', value: 500 } },
+    { day: 1, gold: 500, exp: 100, icon: 'Coins' },
+    { day: 2, gold: 1000, gems: 5, icon: 'Gem' },
+    { day: 3, gold: 1500, exp: 250, honor: 50, icon: 'Star' },
+    { day: 4, gold: 2000, gems: 10, icon: 'Gem' },
+    { day: 5, gold: 3000, exp: 500, item: { id: uuidv4(), name: 'Büyük Can İksiri x5', type: 'consumable', tier: 2, rarity: 'uncommon', value: 100 }, icon: 'Gift' },
+    { day: 6, gold: 5000, gems: 25, honor: 100, icon: 'Star' },
+    { day: 7, gold: 10000, gems: 50, exp: 1000, item: { id: uuidv4(), name: 'Haftalık Ödül Sandığı', type: 'material', tier: 3, rarity: 'rare', value: 500 }, icon: 'Trophy' },
 ];
 
 interface DailyLoginModalProps {
@@ -47,8 +47,9 @@ export const DailyLoginModal: React.FC<DailyLoginModalProps> = ({ dailyLogin, on
                 </div>
 
                 {/* Reward Grid */}
-                <div className="p-6">
-                    <div className="grid grid-cols-7 gap-3">
+                <div className="p-4 md:p-6">
+                    {/* Mobile: Horizontal scroll, Desktop: Grid */}
+                    <div className="flex md:grid md:grid-cols-7 gap-3 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0 snap-x snap-mandatory md:snap-none">
                         {DAILY_REWARDS.map((reward, idx) => {
                             const dayNum = idx + 1;
                             const isCurrent = dayNum === currentDay;
@@ -60,7 +61,7 @@ export const DailyLoginModal: React.FC<DailyLoginModalProps> = ({ dailyLogin, on
                             return (
                                 <div
                                     key={dayNum}
-                                    className={`relative p-3 rounded-xl border-2 flex flex-col items-center transition-all ${isCurrent && !dailyLogin.claimedToday
+                                    className={`relative p-3 md:p-3 rounded-xl border-2 flex flex-col items-center transition-all snap-center shrink-0 w-[100px] md:w-auto ${isCurrent && !dailyLogin.claimedToday
                                         ? 'bg-yellow-900/30 border-yellow-500 animate-pulse shadow-[0_0_20px_rgba(234,179,8,0.3)]'
                                         : isClaimed
                                             ? 'bg-green-900/20 border-green-700/50'
@@ -83,11 +84,11 @@ export const DailyLoginModal: React.FC<DailyLoginModalProps> = ({ dailyLogin, on
                                         )}
                                     </div>
 
-                                    <div className="text-center text-[10px] space-y-0.5">
-                                        {reward.gold && <div className="text-yellow-400">{reward.gold} Altın</div>}
-                                        {reward.gems && <div className="text-purple-400">{reward.gems} Elmas</div>}
+                                    <div className="text-center text-[11px] md:text-[10px] space-y-0.5">
+                                        {reward.gold && <div className="text-yellow-400">{(reward.gold / 1000).toFixed(reward.gold >= 1000 ? 0 : 1)}K</div>}
+                                        {reward.gems && <div className="text-purple-400">{reward.gems} 💎</div>}
                                         {reward.exp && <div className="text-blue-400">{reward.exp} XP</div>}
-                                        {reward.item && <div className="text-orange-400 truncate">{reward.item.name.split(' ')[0]}</div>}
+                                        {reward.item && <div className="text-orange-400 truncate max-w-[80px]">🎁</div>}
                                     </div>
 
                                     {dayNum === 7 && (

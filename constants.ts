@@ -12,9 +12,20 @@
 
 
 
+// ═══════════════════════════════════════════════════════════════════════════
+// 🛑 KRİTİK UYARI: BU DOSYADAKİ TEMEL DEĞERLER "GAME BIBLE" İLE KORUNMAKTADIR.
+// OYUN EKONOMİSİ VE DENGESİ BU DEĞERLERE BAĞLIDIR. İZİNSİZ DEĞİŞTİRMEYİN!
+// Referans: .agent/workflows/game-bible.md
+// ═══════════════════════════════════════════════════════════════════════════
+
 import { ClassData, CharacterClass, Item, GameEntity, Faction, Portal, Quest, Rank, WingItem, PetItem, HUDLayout } from './types';
 import { ALL_CLASS_ITEMS } from './components/ItemGenerator';
 export { ALL_CLASS_ITEMS };
+
+// 🔥 DEĞİŞMEZ OYUN SABİTLERİ
+export const MAX_LEVEL = 30; // ⚠️ MAX LEVEL ASLA DEĞİŞTİRİLEMEZ (Game Bible Md. 1)
+export const MAX_BOSS_LEVEL = 35; // ⚠️ BOSS MAX LEVEL SINIRI (Game Bible Md. 2)
+export const MARKET_PRICE_MULTIPLIER = 15; // ⚠️ İKSİR FİYAT ÇARPANI (Ekonomi Dengesi)
 
 // --- FACTION DATA ---
 export const FACTIONS: Record<Faction, { name: string, color: string, description: string }> = {
@@ -464,7 +475,8 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
         name: 'Yanık Topraklar (1-2)', bg: '#7f1d1d', factionOwner: 'marsu', minLevel: 3,
         enemies: [
             { name: 'Vahşi Ateş Köpeği', level: 4, hp: 600, damage: 30, defense: 20, exp: 90, gold: 25, diamond: 0 },
-            { name: 'Bozkurt', level: 5, hp: 400, damage: 25, defense: 10, exp: 60, gold: 20, diamond: 0 }
+            { name: 'Bozkurt', level: 5, hp: 400, damage: 25, defense: 10, exp: 60, gold: 20, diamond: 0 },
+            { name: 'Goblin Gözcü', level: 4, hp: 350, damage: 20, defense: 8, exp: 50, gold: 18, diamond: 0 }
         ],
         npcs: [],
         portals: [
@@ -476,7 +488,8 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
         name: 'Magma Geçidi (1-3)', bg: '#991b1b', factionOwner: 'marsu', minLevel: 6,
         enemies: [
             { name: 'Zırhlı Akrep', level: 8, hp: 2500, damage: 120, defense: 80, exp: 600, gold: 200, diamond: 0 },
-            { name: 'Goblin Gözcü', level: 8, hp: 800, damage: 45, defense: 30, exp: 120, gold: 40, diamond: 0 }
+            { name: 'Goblin Savaşçı', level: 8, hp: 1200, damage: 65, defense: 40, exp: 180, gold: 60, diamond: 0 },
+            { name: 'Yarasa Sürüsü', level: 7, hp: 500, damage: 35, defense: 15, exp: 100, gold: 35, diamond: 0 }
         ],
         npcs: [],
         portals: [
@@ -486,19 +499,25 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
     },
     14: {
         name: 'Ejderha Sırtı (1-4)', bg: '#b91c1c', factionOwner: 'marsu', minLevel: 9,
-        enemies: [{ name: 'Genç Ejder', level: 12, hp: 6000, damage: 250, defense: 150, exp: 1200, gold: 400, diamond: 0 }],
+        enemies: [
+            { name: 'Genç Ejder', level: 12, hp: 6000, damage: 250, defense: 150, exp: 1200, gold: 400, diamond: 0 },
+            { name: 'İskelet Okçu', level: 10, hp: 1500, damage: 100, defense: 35, exp: 300, gold: 100, diamond: 0 },
+            { name: 'Zehirli Yarasa', level: 11, hp: 800, damage: 80, defense: 25, exp: 200, gold: 70, diamond: 0 }
+        ],
         npcs: [],
         portals: [
             { id: 'p_14_13', x: -40, z: 20, targetZone: 13, target: 13, levelReq: 6, name: 'Geri: 1-3' },
-            { id: 'p_14_41', x: 20, z: -20, targetZone: 41, target: 41, levelReq: 12, name: 'ARENA (PvP)' },
-            { id: 'p_14_15', x: 0, z: -40, targetZone: 15, target: 15, levelReq: 15, name: 'İleri: 1-5' }
+            { id: 'p_14_41', x: 20, z: -20, targetZone: 41, target: 41, levelReq: 12, name: 'ARENA (PvP)' }
+            // 1-5 PORTAL KALDIRILDI - 4-4 ÜZERİNDEN GEÇİLECEK
         ]
     },
     15: {
         name: 'Karanlık Mahzen (1-5)', bg: '#2f0505', factionOwner: 'marsu', minLevel: 15,
         enemies: [
             { name: 'Lav Golemi', level: 17, hp: 15000, damage: 500, defense: 400, exp: 4000, gold: 1000, diamond: 1 },
-            { name: 'İskelet Büyücü', level: 16, hp: 1800, damage: 150, defense: 50, exp: 400, gold: 120, diamond: 0 }
+            { name: 'İskelet Büyücü', level: 16, hp: 1800, damage: 150, defense: 50, exp: 400, gold: 120, diamond: 0 },
+            { name: 'Gölge Kurdu', level: 15, hp: 2500, damage: 180, defense: 80, exp: 600, gold: 200, diamond: 0 },
+            { name: 'İskelet Şövalye', level: 17, hp: 4000, damage: 250, defense: 200, exp: 900, gold: 300, diamond: 1 }
         ],
         npcs: [],
         portals: [
@@ -508,7 +527,10 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
     },
     16: {
         name: 'Cehennem Kapısı (1-6)', bg: '#450a0a', factionOwner: 'marsu', minLevel: 18,
-        enemies: [{ name: 'Karanlık Şövalye', level: 22, hp: 35000, damage: 900, defense: 900, exp: 12000, gold: 2500, diamond: 3 }],
+        enemies: [
+            { name: 'Karanlık Şövalye', level: 22, hp: 35000, damage: 900, defense: 900, exp: 12000, gold: 2500, diamond: 3 },
+            { name: 'Taş Golem', level: 20, hp: 20000, damage: 600, defense: 600, exp: 8000, gold: 1500, diamond: 2 }
+        ],
         npcs: [],
         portals: [
             { id: 'p_16_15', x: -40, z: 0, targetZone: 15, target: 15, levelReq: 15, name: 'Geri: 1-5' },
@@ -528,7 +550,7 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
     },
     18: {
         name: 'Yanardağ Çekirdeği (1-8)', bg: '#000000', factionOwner: 'marsu', isSafeZone: false, minLevel: 25,
-        enemies: [{ name: '[BOSS] Ateş Ejderi', level: 50, hp: 100000, damage: 800, defense: 300, exp: 50000, gold: 10000, diamond: 50 }],
+        enemies: [{ name: '[BOSS] Ateş Ejderi', level: 35, hp: 150000, damage: 1200, defense: 500, exp: 80000, gold: 15000, diamond: 75 }],
         npcs: [],
         portals: [
             { id: 'p_18_17', x: 0, z: 40, targetZone: 17, target: 17, levelReq: 21, name: 'Geri: 1-7' }
@@ -548,7 +570,11 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
     },
     22: {
         name: 'Buzul Mağarası (2-2)', bg: '#1e3a8a', factionOwner: 'terya', minLevel: 3,
-        enemies: [{ name: 'Buz Kedisi', level: 6, hp: 600, damage: 30, defense: 20, exp: 90, gold: 25, diamond: 0 }],
+        enemies: [
+            { name: 'Buz Kedisi', level: 6, hp: 600, damage: 30, defense: 20, exp: 90, gold: 25, diamond: 0 },
+            { name: 'Buzul Pengueni', level: 5, hp: 400, damage: 22, defense: 15, exp: 70, gold: 20, diamond: 0 },
+            { name: 'Kızıl Aksolotl', level: 4, hp: 350, damage: 18, defense: 12, exp: 55, gold: 18, diamond: 0 }
+        ],
         npcs: [],
         portals: [
             { id: 'p_22_21', x: -40, z: 40, targetZone: 21, target: 21, levelReq: 1, name: 'Geri: 2-1' },
@@ -557,7 +583,11 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
     },
     23: {
         name: 'Derin Okyanus (2-3)', bg: '#1e40af', factionOwner: 'terya', minLevel: 6,
-        enemies: [{ name: 'Mızraklı Naga', level: 8, hp: 2500, damage: 120, defense: 80, exp: 600, gold: 200, diamond: 0 }],
+        enemies: [
+            { name: 'Mızraklı Naga', level: 8, hp: 2500, damage: 120, defense: 80, exp: 600, gold: 200, diamond: 0 },
+            { name: 'Dev Yengeç', level: 7, hp: 1500, damage: 70, defense: 50, exp: 200, gold: 80, diamond: 0 },
+            { name: 'Derin Aksolotl', level: 8, hp: 800, damage: 50, defense: 35, exp: 150, gold: 50, diamond: 0 }
+        ],
         npcs: [],
         portals: [
             { id: 'p_23_22', x: -40, z: 20, targetZone: 22, target: 22, levelReq: 3, name: 'Geri: 2-2' },
@@ -566,17 +596,25 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
     },
     24: {
         name: 'Atlantis (2-4)', bg: '#1d4ed8', factionOwner: 'terya', minLevel: 9,
-        enemies: [{ name: 'Derin Muhafız', level: 12, hp: 6000, damage: 250, defense: 150, exp: 1200, gold: 400, diamond: 0 }],
+        enemies: [
+            { name: 'Derin Muhafız', level: 12, hp: 6000, damage: 250, defense: 150, exp: 1200, gold: 400, diamond: 0 },
+            { name: 'İmparator Pengueni', level: 11, hp: 3000, damage: 150, defense: 100, exp: 500, gold: 180, diamond: 0 },
+            { name: 'Zırhlı Yengeç', level: 10, hp: 2000, damage: 100, defense: 120, exp: 350, gold: 120, diamond: 0 }
+        ],
         npcs: [],
         portals: [
             { id: 'p_24_23', x: -40, z: 20, targetZone: 23, target: 23, levelReq: 6, name: 'Geri: 2-3' },
-            { id: 'p_24_42', x: 20, z: -20, targetZone: 42, target: 42, levelReq: 12, name: 'ARENA (PvP)' },
-            { id: 'p_24_25', x: 0, z: -40, targetZone: 25, target: 25, levelReq: 15, name: 'İleri: 2-5' }
+            { id: 'p_24_42', x: 20, z: -20, targetZone: 42, target: 42, levelReq: 12, name: 'ARENA (PvP)' }
+            // 2-5 PORTAL KALDIRILDI - 4-4 ÜZERİNDEN GEÇİLECEK
         ]
     },
     25: {
         name: 'Abyss (2-5)', bg: '#020617', factionOwner: 'terya', minLevel: 15,
-        enemies: [{ name: 'Abyss Yaratığı', level: 17, hp: 15000, damage: 500, defense: 400, exp: 4000, gold: 1000, diamond: 1 }],
+        enemies: [
+            { name: 'Abyss Yaratığı', level: 17, hp: 15000, damage: 500, defense: 400, exp: 4000, gold: 1000, diamond: 1 },
+            { name: 'Buz Golemi', level: 16, hp: 10000, damage: 350, defense: 300, exp: 2500, gold: 700, diamond: 1 },
+            { name: 'İskelet Denizci', level: 15, hp: 2500, damage: 200, defense: 100, exp: 700, gold: 250, diamond: 0 }
+        ],
         npcs: [],
         portals: [
             { id: 'p_25_24', x: 0, z: 40, targetZone: 24, target: 24, levelReq: 9, name: 'Geri: 2-4' },
@@ -585,7 +623,10 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
     },
     26: {
         name: 'Mercan Resifi (2-6)', bg: '#172554', factionOwner: 'terya', minLevel: 18,
-        enemies: [{ name: 'Kraken Yavrusu', level: 22, hp: 35000, damage: 900, defense: 900, exp: 12000, gold: 2500, diamond: 3 }],
+        enemies: [
+            { name: 'Kraken Yavrusu', level: 22, hp: 35000, damage: 900, defense: 900, exp: 12000, gold: 2500, diamond: 3 },
+            { name: 'Buz Devi (Genç)', level: 20, hp: 18000, damage: 550, defense: 500, exp: 6000, gold: 1500, diamond: 2 }
+        ],
         npcs: [],
         portals: [
             { id: 'p_26_25', x: -40, z: 0, targetZone: 25, target: 25, levelReq: 15, name: 'Geri: 2-5' },
@@ -605,7 +646,7 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
     },
     28: {
         name: 'Poseidon Tahtı (2-8)', bg: '#000000', factionOwner: 'terya', isSafeZone: false, minLevel: 25,
-        enemies: [{ name: '[BOSS] Buz Devi', level: 40, hp: 80000, damage: 600, defense: 250, exp: 40000, gold: 8000, diamond: 40 }],
+        enemies: [{ name: '[BOSS] Buz Devi', level: 35, hp: 150000, damage: 1200, defense: 500, exp: 80000, gold: 15000, diamond: 75 }],
         npcs: [],
         portals: [
             { id: 'p_28_27', x: 0, z: 40, targetZone: 27, target: 27, levelReq: 21, name: 'Geri: 2-7' }
@@ -623,24 +664,53 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
         ],
         portals: [{ id: 'p_31_32', x: 40, z: -40, targetZone: 32, target: 32, levelReq: 1, name: 'İleri: 3-2' }]
     },
-    32: { name: 'Bataklık (3-2)', bg: '#166534', factionOwner: 'venu', minLevel: 3, enemies: [{ name: 'Bataklık Papağanı', level: 4, hp: 600, damage: 30, defense: 20, exp: 90, gold: 25, diamond: 0 }, { name: 'Dev Yarasa', level: 12, hp: 1200, damage: 80, defense: 40, exp: 250, gold: 80, diamond: 0 }], npcs: [], portals: [{ id: 'p_32_31', x: -40, z: 40, targetZone: 31, target: 31, levelReq: 1, name: 'Geri: 3-1' }, { id: 'p_32_33', x: 40, z: -40, targetZone: 33, target: 33, levelReq: 5, name: 'İleri: 3-3' }] },
-    33: { name: 'Unutulmuş Vadi (3-3)', bg: '#15803d', factionOwner: 'venu', minLevel: 6, enemies: [{ name: 'Yabani Aksolotl', level: 8, hp: 2500, damage: 120, defense: 80, exp: 600, gold: 200, diamond: 0 }], npcs: [], portals: [{ id: 'p_33_32', x: -40, z: 20, targetZone: 32, target: 32, levelReq: 3, name: 'Geri: 3-2' }, { id: 'p_33_34', x: 20, z: -20, targetZone: 34, target: 34, levelReq: 9, name: 'İleri: 3-4' }] },
+    32: {
+        name: 'Bataklık (3-2)', bg: '#166534', factionOwner: 'venu', minLevel: 3,
+        enemies: [
+            { name: 'Bataklık Papağanı', level: 4, hp: 600, damage: 30, defense: 20, exp: 90, gold: 25, diamond: 0 },
+            { name: 'Orman Kurdu', level: 5, hp: 500, damage: 28, defense: 15, exp: 75, gold: 22, diamond: 0 },
+            { name: 'Zehirli Slime', level: 4, hp: 300, damage: 18, defense: 8, exp: 50, gold: 15, diamond: 0 }
+        ],
+        npcs: [],
+        portals: [{ id: 'p_32_31', x: -40, z: 40, targetZone: 31, target: 31, levelReq: 1, name: 'Geri: 3-1' }, { id: 'p_32_33', x: 40, z: -40, targetZone: 33, target: 33, levelReq: 5, name: 'İleri: 3-3' }]
+    },
+    33: {
+        name: 'Unutulmuş Vadi (3-3)', bg: '#15803d', factionOwner: 'venu', minLevel: 6,
+        enemies: [
+            { name: 'Yabani Aksolotl', level: 8, hp: 2500, damage: 120, defense: 80, exp: 600, gold: 200, diamond: 0 },
+            { name: 'Dev Yarasa', level: 7, hp: 1000, damage: 60, defense: 30, exp: 180, gold: 60, diamond: 0 },
+            { name: 'Alfa Kurt', level: 9, hp: 1800, damage: 90, defense: 50, exp: 300, gold: 100, diamond: 0 }
+        ],
+        npcs: [],
+        portals: [{ id: 'p_33_32', x: -40, z: 20, targetZone: 32, target: 32, levelReq: 3, name: 'Geri: 3-2' }, { id: 'p_33_34', x: 20, z: -20, targetZone: 34, target: 34, levelReq: 9, name: 'İleri: 3-4' }]
+    },
     34: {
         name: 'Kristal Mağara (3-4)', bg: '#16a34a', factionOwner: 'venu', minLevel: 9, enemies: [{ name: 'Kristal İskelet', level: 12, hp: 6000, damage: 250, defense: 150, exp: 1200, gold: 400, diamond: 0 }, { name: 'Antik Golem', level: 20, hp: 5000, damage: 200, defense: 300, exp: 800, gold: 250, diamond: 0 }], npcs: [], portals: [
             { id: 'p_34_33', x: -40, z: 20, targetZone: 33, target: 33, levelReq: 6, name: 'Geri: 3-3' },
-            { id: 'p_34_43', x: 0, z: 40, targetZone: 43, target: 43, levelReq: 12, name: 'ARENA (PvP)' },
-            { id: 'p_34_35', x: 40, z: -20, targetZone: 35, target: 35, levelReq: 15, name: 'İleri: 3-5' }
+            { id: 'p_34_43', x: 0, z: 40, targetZone: 43, target: 43, levelReq: 12, name: 'ARENA (PvP)' }
+            // 3-5 PORTAL KALDIRILDI - 4-4 ÜZERİNDEN GEÇİLECEK
         ]
     },
     35: {
-        name: 'Yasak Bölge (3-5)', bg: '#052e16', factionOwner: 'venu', minLevel: 15, enemies: [{ name: 'Yasak Bölge Bekçisi', level: 17, hp: 15000, damage: 500, defense: 400, exp: 4000, gold: 1000, diamond: 1 }], npcs: [],
+        name: 'Yasak Bölge (3-5)', bg: '#052e16', factionOwner: 'venu', minLevel: 15,
+        enemies: [
+            { name: 'Yasak Bölge Bekçisi', level: 17, hp: 15000, damage: 500, defense: 400, exp: 4000, gold: 1000, diamond: 1 },
+            { name: 'Kadim İskelet', level: 16, hp: 3500, damage: 220, defense: 150, exp: 1000, gold: 350, diamond: 1 },
+            { name: 'Gölge Kurdu', level: 15, hp: 2500, damage: 180, defense: 100, exp: 600, gold: 200, diamond: 0 }
+        ],
+        npcs: [],
         portals: [
             { id: 'p_35_34', x: 0, z: 40, targetZone: 34, target: 34, levelReq: 9, name: 'Geri: 3-4' },
             { id: 'p_35_36', x: 40, z: -40, targetZone: 36, target: 36, levelReq: 18, name: 'İleri: 3-6' }
         ]
     },
     36: {
-        name: 'Ruhlar Ormanı (3-6)', bg: '#14532d', factionOwner: 'venu', minLevel: 18, enemies: [{ name: 'Orman Ruhu', level: 22, hp: 35000, damage: 900, defense: 900, exp: 12000, gold: 2500, diamond: 3 }], npcs: [],
+        name: 'Ruhlar Ormanı (3-6)', bg: '#14532d', factionOwner: 'venu', minLevel: 18,
+        enemies: [
+            { name: 'Orman Ruhu', level: 22, hp: 35000, damage: 900, defense: 900, exp: 12000, gold: 2500, diamond: 3 },
+            { name: 'Doğa Golemi', level: 20, hp: 18000, damage: 600, defense: 550, exp: 7000, gold: 1600, diamond: 2 }
+        ],
+        npcs: [],
         portals: [
             { id: 'p_36_35', x: -40, z: 0, targetZone: 35, target: 35, levelReq: 15, name: 'Geri: 3-5' },
             { id: 'p_36_37', x: 40, z: 0, targetZone: 37, target: 37, levelReq: 21, name: 'İleri: 3-7' }
@@ -659,7 +729,7 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
     },
     38: {
         name: 'Gaia Tapınağı (3-8)', bg: '#000000', factionOwner: 'venu', isSafeZone: false, minLevel: 25,
-        enemies: [{ name: '[BOSS] Taş Golem', level: 30, hp: 60000, damage: 500, defense: 400, exp: 30000, gold: 6000, diamond: 30 }],
+        enemies: [{ name: '[BOSS] Taş Golem', level: 35, hp: 150000, damage: 1200, defense: 600, exp: 80000, gold: 15000, diamond: 75 }],
         npcs: [],
         portals: [
             { id: 'p_38_37', x: 0, z: 40, targetZone: 37, target: 37, levelReq: 21, name: 'Geri: 3-7' }
@@ -709,7 +779,7 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
     // 4-4: SAVAŞ MEYDANI (ARENA)
     44: {
         name: 'Savaş Meydanı (4-4)', bg: '#713f12', minLevel: 12,
-        enemies: [{ name: '[BOSS] Yengeç Lordu', level: 20, hp: 100000, damage: 3000, defense: 10000, exp: 150000, gold: 20000, diamond: 50 }],
+        enemies: [{ name: '[BOSS] Yengeç Lordu', level: 25, hp: 80000, damage: 800, defense: 400, exp: 50000, gold: 10000, diamond: 40 }],
         npcs: [
             { type: 'npc', npcType: 'arena_master', name: 'Arena Ustası Kılıç', level: 0, hp: 999, maxHp: 999, isHostile: false, x: 0, y: 0, color: '#ef4444', modelPath: '/models/npcs/plugins/ModelEngine/blueprints/lr_assassin.gltf' }
         ],
@@ -726,7 +796,7 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
     // 4-5: SOLUCAN DELİĞİ (GİZLİ BOSS)
     45: {
         name: 'Solucan Deliği (4-5)', bg: '#000000', minLevel: 30,
-        enemies: [{ name: '[BOSS] Gölge Lordu', level: 60, hp: 150000, damage: 1000, defense: 500, exp: 100000, gold: 25000, diamond: 100 }],
+        enemies: [{ name: '[BOSS] Gölge İmparatoru', level: 40, hp: 200000, damage: 1500, defense: 700, exp: 120000, gold: 30000, diamond: 100 }],
         npcs: [],
         portals: [
             { id: 'p_45_44', x: 0, z: 0, targetZone: 44, target: 44, levelReq: 12, name: 'Geri: Arena' }
@@ -735,6 +805,8 @@ export const ZONE_CONFIG: Record<number, { name: string, bg: string, factionOwne
 };
 
 export const LEVEL_XP_REQUIREMENTS: number[] = [
+    // ⚠️ DİKKAT: EXP DEĞERLERİ DEĞİŞTİRİLEMEZ! (2x Scaling Kuralı)
+    // Seviye 1-30 arası her seviye bir öncekinin 2 katı EXP ister.
     0,                          // Index 0 (unused)
     0,                          // Level 1
     10000,                      // Level 2
@@ -775,60 +847,49 @@ export const LEVEL_XP_REQUIREMENTS: number[] = [
 export const DEFAULT_HUD_LAYOUT: HUDLayout = {
     elements: {
         // ═══════════════════════════════════════════════════════════════════
-        // ALBION ONLINE STYLE LAYOUT - Mobile Optimized
+        // KULLANICININ FİNAL LAYOUT'U - KİLİTLİ (04.01.2026)
         // ═══════════════════════════════════════════════════════════════════
 
-        // ═══════════ SOL ÜST - KARAKTER BİLGİSİ ═══════════
-        // Profile - HP/MP barları, seviye, isim
-        profile: { x: 1, y: 1, scale: 1, enabled: true, opacity: 1, locked: false },
+        // Sol üst - Profil
+        profile: { x: 1, y: 2, scale: 1, enabled: true, opacity: 1, locked: true },
 
-        // Quest Tracker - Profilin altında, kompakt
-        quest: { x: 1, y: 12, scale: 0.9, enabled: true, opacity: 0.9, locked: false },
+        // Sol üst - Görev Takip
+        quest: { x: 0, y: 17, scale: 0.9, enabled: true, opacity: 0.9, locked: true },
 
-        // ═══════════ SAĞ ÜST - MİNİMAP & MENÜ ═══════════
-        // Minimap - Sağ üst köşede (Albion tarzı yuvarlak)
-        map: { x: 82, y: 1, scale: 1, enabled: true, opacity: 1, locked: false },
+        // Sağ üst - Mini Harita (hava durumunun altında)
+        map: { x: 100, y: 10, scale: 1, enabled: true, opacity: 1, locked: true },
 
-        // Top Menu Buttons - Minimap altında yatay sıralı
-        top_chat: { x: 40, y: 1, scale: 0.85, enabled: true, opacity: 0.8, locked: false },
-        top_inventory: { x: 46, y: 1, scale: 0.85, enabled: true, opacity: 0.8, locked: false },
-        top_market: { x: 52, y: 1, scale: 0.85, enabled: true, opacity: 0.8, locked: false },
-        top_settings: { x: 58, y: 1, scale: 0.85, enabled: true, opacity: 0.8, locked: false },
-        top_achievements: { x: 64, y: 1, scale: 0.85, enabled: true, opacity: 0.8, locked: false },
-        top_exit: { x: 70, y: 1, scale: 0.85, enabled: true, opacity: 0.8, locked: false },
+        // Top Menu - devre dışı (artık bottom bar'da)
+        top_chat: { x: 40, y: 1, scale: 0.85, enabled: false, opacity: 0.8, locked: true },
+        top_inventory: { x: 46, y: 1, scale: 0.85, enabled: false, opacity: 0.8, locked: true },
+        top_market: { x: 52, y: 1, scale: 0.85, enabled: false, opacity: 0.8, locked: true },
+        top_settings: { x: 58, y: 1, scale: 0.85, enabled: false, opacity: 0.8, locked: true },
+        top_achievements: { x: 64, y: 1, scale: 0.85, enabled: false, opacity: 0.8, locked: true },
+        top_exit: { x: 70, y: 1, scale: 0.85, enabled: false, opacity: 0.8, locked: true },
 
-        // ═══════════ SOL ALT - HAREKET ═══════════
-        // Joystick - Sol alt köşe (sabit, ergonomik)
-        joystick: { x: 5, y: 70, scale: 1, enabled: true, opacity: 1, locked: false },
+        // Sol alt - Joystick
+        joystick: { x: 3, y: 89, scale: 1, enabled: true, opacity: 1, locked: true },
 
-        // ═══════════ ALT ORTA - CHAT ═══════════
-        // Chat - Altta ortalanmış, minimal (Albion tarzı)
-        chat: { x: 25, y: 88, scale: 0.85, enabled: true, opacity: 0.7, locked: false },
+        // Sol alt - Chat
+        chat: { x: 11, y: 89, scale: 0.9, enabled: true, opacity: 0.85, locked: true },
 
-        // ═══════════ SAĞ TARAF - ALBION STYLE SKİLL ARC ═══════════
-        // Skills yay şeklinde sağ tarafa dizilmiş (başparmak ergonomisi)
-        // Daire formunda yukarıdan aşağı doğru
+        // Sağ taraf - Skill Arc
+        skill1: { x: 86, y: 60, scale: 1.1, enabled: true, opacity: 1, locked: true },
+        skill2: { x: 91, y: 59, scale: 1.1, enabled: true, opacity: 1, locked: true },
+        skill3: { x: 96, y: 65, scale: 1.1, enabled: true, opacity: 1, locked: true },
+        skill4: { x: 97, y: 81, scale: 1.1, enabled: true, opacity: 1, locked: true },
+        skill5: { x: 93, y: 90, scale: 1.1, enabled: true, opacity: 1, locked: true },
+        skill6: { x: 88, y: 90, scale: 1.1, enabled: true, opacity: 1, locked: true },
 
-        // Üst skill'ler (Q, W, E eşdeğeri)
-        skill1: { x: 78, y: 25, scale: 1.1, enabled: true, opacity: 1, locked: false }, // Sol üst
-        skill2: { x: 85, y: 32, scale: 1.1, enabled: true, opacity: 1, locked: false }, // Orta üst
-        skill3: { x: 90, y: 42, scale: 1.1, enabled: true, opacity: 1, locked: false }, // Sağ orta
+        // Sağ üst - Eye Button
+        eye: { x: 89, y: 1, scale: 0.9, enabled: true, opacity: 0.9, locked: true },
 
-        // Alt skill'ler (R, F, S eşdeğeri)
-        skill4: { x: 90, y: 55, scale: 1.1, enabled: true, opacity: 1, locked: false }, // Sağ alt
-        skill5: { x: 85, y: 65, scale: 1.1, enabled: true, opacity: 1, locked: false }, // Orta alt
-        skill6: { x: 78, y: 72, scale: 1.1, enabled: true, opacity: 1, locked: false }, // Sol alt
+        // Sağ orta - HP/MP Potları
+        hp_pot: { x: 82, y: 68, scale: 0.9, enabled: true, opacity: 1, locked: true },
+        mp_pot: { x: 83, y: 83, scale: 0.9, enabled: true, opacity: 1, locked: true },
 
-        // Eye Button (Free Look) - Arc'ın içinde ortada
-        eye: { x: 72, y: 48, scale: 0.9, enabled: true, opacity: 0.9, locked: false },
-
-        // HP/MP Potları - Skill arc'ın içinde
-        hp_pot: { x: 72, y: 35, scale: 0.9, enabled: true, opacity: 1, locked: false },
-        mp_pot: { x: 72, y: 60, scale: 0.9, enabled: true, opacity: 1, locked: false },
-
-        // ═══════════ SAĞ ALT - ANA SALDIRI ═══════════
-        // Attack Button - Büyük, belirgin, Albion sarı/turuncu tarzı
-        attack: { x: 82, y: 80, scale: 1.4, enabled: true, opacity: 1, locked: false },
+        // Sağ alt - Attack Butonu
+        attack: { x: 91, y: 76, scale: 1.4, enabled: true, opacity: 1, locked: true },
     }
 };
 
@@ -1043,6 +1104,11 @@ export const ACHIEVEMENTS_LIST = [
 ];
 
 // --- POTIONS (HP/Mana Consumables for Shop) ---
+// ═══════════════════════════════════════════════════════════════════════════
+// POTIONS DATA
+// ⚠️ NOT: Market satış fiyatları NpcShopView.tsx içinde x15 olarak hesaplanır.
+// Buradaki 'value' değerleri "Drop/Satış" değeridir, "Market Alış" değeri değildir.
+// ═══════════════════════════════════════════════════════════════════════════
 export const POTIONS: Item[] = [
     // HP Potions (Tier 1-5)
     {

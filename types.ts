@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-export type CharacterClass = 'warrior' | 'arctic_knight' | 'archer' | 'archmage' | 'bard' | 'cleric' | 'martial_artist' | 'reaper';
+export type CharacterClass = 'warrior' | 'arctic_knight' | 'gale_glaive' | 'archer' | 'archmage' | 'bard' | 'cleric' | 'martial_artist' | 'reaper' | 'monk';
 export type Faction = 'marsu' | 'terya' | 'venu';
 
 export enum SkillPathType {
@@ -155,6 +155,8 @@ export interface Item {
   };
   durability?: number;
   maxDurability?: number;
+  quantity?: number; // Added
+  stackable?: boolean; // Added
 }
 
 export interface ItemStats {
@@ -263,6 +265,15 @@ export interface Settings {
   autoLoot: boolean; // Auto collect loot boxes
 }
 
+export interface DailyQuest {
+  id: string;
+  description: string;
+  current: number;
+  target: number;
+  rewardGold: number;
+  rewardExp: number;
+}
+
 export interface PlayerState {
   nickname: string;
   userId?: string; // Stable Database ID
@@ -275,6 +286,7 @@ export interface PlayerState {
   maxExp: number;
   credits: number;
   gems: number;       // Farmable premium currency
+  diamonds: number;   // Elmas - secondary premium currency
   donateCoins: number; // Real-money currency (non-tradable)
 
   honor: number;
@@ -339,6 +351,7 @@ export interface PlayerState {
 
   // Daily Login & Achievements
   dailyLogin?: DailyLoginState;
+  dailyQuests?: DailyQuest[]; // Added missing field
   achievements?: Achievement[];
 }
 

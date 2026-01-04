@@ -38,8 +38,8 @@ const WING_PRICES: Record<number, number> = {
 // Basic Shops Stock - ONLY T1-T2 ITEMS (Higher tiers from drops/crafting)
 // Prices are HIGH to encourage player economy
 const SHOP_ITEMS: Item[] = [
-    // Consumables (pahalı!)
-    ...POTIONS.map(p => ({ ...p, value: (p.value || 50) * 5 })), // 5x pahalı
+    // Consumables (Çok Pahalı - Ekonomi Dengesi İçin)
+    ...POTIONS.map(p => ({ ...p, value: (p.value || 50) * 15 })), // 15x Enflasyon! (50 -> 750 Gold)
     // Basic Gear (ONLY T1-T2)
     { id: 'shop_w1', name: 'Acemi Kılıcı', tier: 1, type: 'weapon', rarity: 'common', value: 500 },
     { id: 'shop_w2', name: 'Çelik Kılıcı', tier: 2, type: 'weapon', rarity: 'uncommon', value: 2500 },

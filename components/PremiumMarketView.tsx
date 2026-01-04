@@ -26,6 +26,9 @@ export const PremiumMarketView: React.FC<PremiumMarketViewProps> = ({ playerStat
     ];
 
     const PREMIUM_ITEMS = [
+        // STARTER PACK (Acemi Paketi - Çok Ucuz!)
+        { id: 'starter_pack', name: 'Acemi Savaşçı Paketi', desc: 'Maceraya hızlı başla! +5 T2 Silah ve Potlar.', cost: 25, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-amber-300', border: 'border-amber-400', bg: 'bg-amber-950/40' },
+
         { id: 'pragmatic_bundle', name: 'Pragmatik Set', desc: 'Sadelik ve gücün mükemmel uyumu.', cost: 400, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-amber-400', border: 'border-amber-500/50', bg: 'bg-amber-900/20' },
         { id: 'ninja_bundle', name: 'Gölge Ninja Seti', desc: 'Karanlıkta görünmez ol, düşmanlarını şaşırt.', cost: 600, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-slate-400', border: 'border-slate-500/50', bg: 'bg-slate-900/20' },
         { id: 'santa_bundle', name: 'Noel Baba Kostümü', desc: 'Savaş alanına neşe (ve hediye) getir!', cost: 500, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-red-400', border: 'border-red-500/50', bg: 'bg-red-900/20' },

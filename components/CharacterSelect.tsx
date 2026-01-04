@@ -401,13 +401,13 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
                     </button>
                 )}
 
-                <div className="relative z-10 flex flex-col items-center max-w-6xl w-full">
-                    <h2 className="text-5xl md:text-7xl font-black text-white mb-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] text-center" style={{ fontFamily: 'Cinzel, serif' }}>
+                <div className="relative z-10 flex flex-col items-center max-w-6xl w-full pt-8 md:pt-0">
+                    <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-white mb-4 md:mb-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] text-center px-4" style={{ fontFamily: 'Cinzel, serif' }}>
                         {t.CHOOSE_SIDE}
                     </h2>
-                    <p className="text-slate-300 text-xl mb-12 font-medium tracking-wide text-center">{t.SIDE_DESC}</p>
+                    <p className="text-slate-300 text-base md:text-xl mb-8 md:mb-12 font-medium tracking-wide text-center px-4">{t.SIDE_DESC}</p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 w-full">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mb-8 md:mb-12 w-full px-4">
                         {(Object.keys(FACTIONS) as Faction[]).map((key) => {
                             const fac = FACTIONS[key];
                             const isSelected = selectedFaction === key;
@@ -416,7 +416,7 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
                                     key={key}
                                     onClick={() => handleFactionSelect(key)}
                                     className={`
-                                        group relative p-8 rounded-2xl border-2 transition-all duration-300 cursor-pointer overflow-hidden
+                                        group relative p-6 md:p-8 rounded-2xl border-2 transition-all duration-300 cursor-pointer overflow-hidden
                                         flex flex-col items-center text-center hover:-translate-y-2
                                         ${isSelected
                                             ? `border-${fac.color} bg-${fac.color}/10 shadow-[0_0_30px_rgba(var(--color-${fac.color}),0.3)]`
@@ -424,14 +424,15 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
                                     `}
                                     style={{ borderColor: isSelected ? fac.color : undefined }}
                                 >
-                                    <div className={`w-24 h-24 rounded-full mb-6 flex items-center justify-center transition-transform group-hover:scale-110`} style={{ backgroundColor: fac.color }}>
-                                        <Users size={48} className="text-white" />
+                                    <div className={`w-16 h-16 md:w-24 md:h-24 rounded-full mb-4 md:mb-6 flex items-center justify-center transition-transform group-hover:scale-110`} style={{ backgroundColor: fac.color }}>
+                                        <Users size={36} className="text-white md:hidden" />
+                                        <Users size={48} className="text-white hidden md:block" />
                                     </div>
 
-                                    <h3 className="text-3xl font-bold mb-3 uppercase tracking-widest text-white" style={{ fontFamily: 'Cinzel, serif' }}>
+                                    <h3 className="text-xl md:text-3xl font-bold mb-2 md:mb-3 uppercase tracking-widest text-white" style={{ fontFamily: 'Cinzel, serif' }}>
                                         {cleanText(fac.name)}
                                     </h3>
-                                    <p className="text-slate-400 text-sm leading-relaxed font-medium">
+                                    <p className="text-slate-400 text-xs md:text-sm leading-relaxed font-medium">
                                         {cleanText(fac.description)}
                                     </p>
                                 </div>
@@ -481,7 +482,7 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
             <div className="relative z-10 w-full h-full flex">
 
                 {/* LEFT SIDEBAR: Circular Class Icons */}
-                <div className="w-32 h-full flex flex-col items-center justify-center gap-5 pl-10 pt-20 z-20">
+                <div className={`${isMobile ? 'w-16 pl-2 pt-4 justify-start overflow-y-auto no-scrollbar pb-20' : 'w-32 pl-10 justify-center'} h-full flex flex-col items-center gap-4 z-20`}>
                     {(Object.keys(CLASSES) as CharacterClass[]).map(cls => {
                         const isSelected = selectedClass === cls;
                         return (
@@ -489,7 +490,8 @@ const CharacterSelect: React.FC<CharacterSelectProps> = ({ onComplete, isAdmin =
                                 key={cls}
                                 onClick={() => setSelectedClass(cls)}
                                 className={`
-                                    w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 relative group
+                                    ${isMobile ? 'w-10 h-10 min-h-[2.5rem]' : 'w-14 h-14'}
+                                    rounded-full flex items-center justify-center transition-all duration-300 relative group shrink-0
                                     ${isSelected
                                         ? 'bg-gradient-to-br from-yellow-500 to-amber-700 text-white scale-110 shadow-[0_0_20px_rgba(234,179,8,0.5)] ring-2 ring-yellow-400/50'
                                         : 'bg-slate-900/80 text-slate-500 hover:text-slate-200 hover:bg-slate-800 border border-slate-700'}

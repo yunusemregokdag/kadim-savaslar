@@ -18,12 +18,47 @@ interface WorldBoss {
 }
 
 const WORLD_BOSSES: WorldBoss[] = [
+    // ============ 3 SAATLİK ELİT WORLD BOSSLAR ============
+    {
+        id: 'boss_ancient_dragon',
+        name: 'Kadim Ejderha',
+        zoneId: 18,
+        zoneName: 'Yanardağ Çekirdeği (1-8)',
+        level: 50,
+        respawnMinutes: 180, // 3 SAAT
+        element: 'fire',
+        rewards: ['T5 Efsanevi Silah', '100K Altın', '500 Gem', 'Ejderha Özü'],
+        difficulty: 5,
+    },
+    {
+        id: 'boss_frost_colossus',
+        name: 'Buzul Kolosu',
+        zoneId: 28,
+        zoneName: 'Poseidon Tahtı (2-8)',
+        level: 45,
+        respawnMinutes: 180, // 3 SAAT
+        element: 'ice',
+        rewards: ['T5 Efsanevi Zırh', '80K Altın', '400 Gem', 'Buz Kalbi'],
+        difficulty: 5,
+    },
+    {
+        id: 'boss_shadow_emperor',
+        name: 'Gölge İmparatoru',
+        zoneId: 38,
+        zoneName: 'Gaia Tapınağı (3-8)',
+        level: 45,
+        respawnMinutes: 180, // 3 SAAT
+        element: 'dark',
+        rewards: ['T5 Efsanevi Set', '80K Altın', '400 Gem', 'Karanlık Ruh'],
+        difficulty: 5,
+    },
+    // ============ NORMAL BOSSLAR ============
     {
         id: 'boss_fire_dragon',
         name: 'Ateş Ejderhası',
-        zoneId: 3,
-        zoneName: 'Yanardağ Vadisi',
-        level: 15,
+        zoneId: 17,
+        zoneName: 'Ejderha Yuvası (1-7)',
+        level: 30,
         respawnMinutes: 30,
         element: 'fire',
         rewards: ['T3 Silah', '5000 Altın', '50 Gem'],
@@ -32,9 +67,9 @@ const WORLD_BOSSES: WorldBoss[] = [
     {
         id: 'boss_ice_titan',
         name: 'Buz Titanı',
-        zoneId: 5,
-        zoneName: 'Donmuş Göller',
-        level: 20,
+        zoneId: 27,
+        zoneName: 'Batık Şehir (2-7)',
+        level: 30,
         respawnMinutes: 45,
         element: 'ice',
         rewards: ['T4 Zırh', '10000 Altın', '100 Gem'],
@@ -43,9 +78,9 @@ const WORLD_BOSSES: WorldBoss[] = [
     {
         id: 'boss_storm_lord',
         name: 'Fırtına Lordu',
-        zoneId: 7,
-        zoneName: 'Gök Kulesi',
-        level: 25,
+        zoneId: 37,
+        zoneName: 'Fısıldayan Vadi (3-7)',
+        level: 30,
         respawnMinutes: 60,
         element: 'lightning',
         rewards: ['T4 Silah', '15000 Altın', '150 Gem'],
@@ -53,25 +88,25 @@ const WORLD_BOSSES: WorldBoss[] = [
     },
     {
         id: 'boss_shadow_king',
-        name: 'Karanlık Kral',
-        zoneId: 8,
-        zoneName: 'Uçurum Mağarası',
-        level: 28,
+        name: 'Gölge Lordu',
+        zoneId: 45,
+        zoneName: 'Solucan Deliği (4-5)',
+        level: 60,
         respawnMinutes: 90,
         element: 'dark',
         rewards: ['T5 Set Parçası', '25000 Altın', '250 Gem'],
         difficulty: 5,
     },
     {
-        id: 'boss_ancient_guardian',
-        name: 'Kadim Koruyucu',
-        zoneId: 10,
-        zoneName: 'Antik Tapınak',
-        level: 30,
-        respawnMinutes: 120,
+        id: 'boss_crab_lord',
+        name: 'Yengeç Lordu',
+        zoneId: 44,
+        zoneName: 'Savaş Meydanı (4-4)',
+        level: 20,
+        respawnMinutes: 30,
         element: 'holy',
-        rewards: ['Efsanevi Kutu', '50000 Altın', '500 Gem'],
-        difficulty: 5,
+        rewards: ['T3 Zırh', '5000 Altın', '50 Gem'],
+        difficulty: 3,
     },
 ];
 
@@ -234,7 +269,7 @@ export const BossTimerView: React.FC<BossTimerViewProps> = ({ onClose, playerLev
                                     <div className="flex items-center gap-4">
                                         {/* Status */}
                                         <div className={`text-right ${status === 'spawned' ? 'text-green-400' :
-                                                status === 'soon' ? 'text-yellow-400' : 'text-slate-400'
+                                            status === 'soon' ? 'text-yellow-400' : 'text-slate-400'
                                             }`}>
                                             <div className="text-xs uppercase">
                                                 {status === 'spawned' ? 'AKTİF' :

@@ -628,41 +628,35 @@ export const LEVEL_XP_REQUIREMENTS: number[] = [
     2684354560000       // Level 30 (Max XP needed to reach here)
 ];
 
-// --- DEFAULT HUD LAYOUT (ALBION ONLINE STYLE) ---
+// --- DEFAULT HUD LAYOUT (KULLANICI FİNAL - 04.01.2026) ---
 export const DEFAULT_HUD_LAYOUT: HUDLayout = {
     elements: {
-        // ═══════════════════════════════════════════════════════════════════
-        // ALBION ONLINE STYLE LAYOUT - Mobile Optimized
-        // ═══════════════════════════════════════════════════════════════════
+        // Sol üst - Profil
+        profile: { x: 1, y: 2, scale: 1, opacity: 1, enabled: true, locked: true },
+        quest: { x: 0, y: 17, scale: 0.9, opacity: 0.9, enabled: true, locked: true },
 
-        // ═══════════ SOL ÜST - KARAKTER BİLGİSİ ═══════════
-        profile: { x: 1, y: 1, scale: 1, opacity: 1, enabled: true, locked: false },
-        quest: { x: 1, y: 12, scale: 0.9, opacity: 0.9, enabled: true, locked: false },
+        // Sağ üst - Mini Harita
+        map: { x: 100, y: 10, scale: 1, opacity: 1, enabled: true, locked: true },
 
-        // ═══════════ SAĞ ÜST - MİNİMAP ═══════════
-        map: { x: 82, y: 1, scale: 1, opacity: 1, enabled: true, locked: false },
+        // Sol alt
+        joystick: { x: 3, y: 89, scale: 1, opacity: 1, enabled: true, locked: true },
+        chat: { x: 11, y: 89, scale: 0.9, opacity: 0.85, enabled: true, locked: true },
 
-        // ═══════════ SOL ALT - HAREKET ═══════════
-        joystick: { x: 5, y: 70, scale: 1, opacity: 1, enabled: true, locked: false },
+        // Sağ taraf - Skill Arc
+        skill1: { x: 86, y: 60, scale: 1.1, opacity: 1, enabled: true, locked: true },
+        skill2: { x: 91, y: 59, scale: 1.1, opacity: 1, enabled: true, locked: true },
+        skill3: { x: 96, y: 65, scale: 1.1, opacity: 1, enabled: true, locked: true },
+        skill4: { x: 97, y: 81, scale: 1.1, opacity: 1, enabled: true, locked: true },
+        skill5: { x: 93, y: 90, scale: 1.1, opacity: 1, enabled: true, locked: true },
+        skill6: { x: 88, y: 90, scale: 1.1, opacity: 1, enabled: true, locked: true },
 
-        // ═══════════ ALT ORTA - CHAT ═══════════
-        chat: { x: 25, y: 88, scale: 0.85, opacity: 0.7, enabled: true, locked: false },
+        // Sağ üst - Eye
+        eye: { x: 89, y: 1, scale: 0.9, opacity: 0.9, enabled: true, locked: true },
+        hp_pot: { x: 82, y: 68, scale: 0.9, opacity: 1, enabled: true, locked: true },
+        mp_pot: { x: 83, y: 83, scale: 0.9, opacity: 1, enabled: true, locked: true },
 
-        // ═══════════ SAĞ TARAF - ALBION STYLE SKİLL ARC ═══════════
-        skill1: { x: 78, y: 25, scale: 1.1, opacity: 1, enabled: true, locked: false },
-        skill2: { x: 85, y: 32, scale: 1.1, opacity: 1, enabled: true, locked: false },
-        skill3: { x: 90, y: 42, scale: 1.1, opacity: 1, enabled: true, locked: false },
-        skill4: { x: 90, y: 55, scale: 1.1, opacity: 1, enabled: true, locked: false },
-        skill5: { x: 85, y: 65, scale: 1.1, opacity: 1, enabled: true, locked: false },
-        skill6: { x: 78, y: 72, scale: 1.1, opacity: 1, enabled: true, locked: false },
-
-        // Eye, Pot buttons - Arc içinde
-        eye: { x: 72, y: 48, scale: 0.9, opacity: 0.9, enabled: true, locked: false },
-        hp_pot: { x: 72, y: 35, scale: 0.9, opacity: 1, enabled: true, locked: false },
-        mp_pot: { x: 72, y: 60, scale: 0.9, opacity: 1, enabled: true, locked: false },
-
-        // ═══════════ SAĞ ALT - ANA SALDIRI ═══════════
-        attack: { x: 82, y: 80, scale: 1.4, opacity: 1, enabled: true, locked: false },
+        // Sağ alt - Attack
+        attack: { x: 91, y: 76, scale: 1.4, opacity: 1, enabled: true, locked: true },
     }
 };
 

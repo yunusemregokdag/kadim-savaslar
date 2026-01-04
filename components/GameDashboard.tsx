@@ -1113,7 +1113,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                         chatHistory={messages || []}
                         onSendChat={(msg) => handleSendMessage(msg, 'global')}
                         onReceiveChat={(msg) => setMessages(prev => [...prev, msg])}
-                        onExit={() => { setActiveZone(null); setActiveTab('skills'); }}
+                        onExit={() => { onLogout(); }}
                         onSwitchZone={(newZoneId) => setActiveZone(newZoneId)}
                         onLoot={handleLoot}
                         onUpdatePlayer={(updates) => setPlayerStats(prev => ({ ...prev, ...updates }))}
@@ -1251,18 +1251,18 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                     <aside className="hidden md:flex w-20 md:w-64 bg-slate-900 border-r border-slate-800 flex-col py-6 gap-2 px-2 md:px-4 overflow-hidden">
                         <nav className="flex flex-col gap-2 h-full overflow-y-auto pr-1 custom-scrollbar">
                             <button onClick={() => setActiveZone(startingMap || 11)} className="w-full p-3 rounded-lg flex flex-col md:flex-row items-center gap-3 transition-all text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent">
-                                <div className="w-5 h-5"><PixelSwords color="#ef4444" /></div><span className="text-xs md:text-sm font-bold hidden md:block">OYUNA GİR</span>
+                                <Swords size={20} className="text-red-500" /><span className="text-xs md:text-sm font-bold hidden md:block">OYUNA GİR</span>
                             </button>
-                            <TabButton id="character" pixelIcon={<PixelUser color="#60a5fa" />} label="Karakter" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="inventory" pixelIcon={<PixelBackpack color="#f59e0b" />} label="Envanter" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="skills" pixelIcon={<PixelShield color="#3b82f6" />} label="Yetenekler" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="quests" pixelIcon={<PixelQuest color="#fbbf24" />} label="Görevler" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="party" pixelIcon={<PixelUsers color="#8b5cf6" />} label="Parti" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="guild" pixelIcon={<PixelUsers color="#a855f7" />} label="Lonca" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="market" pixelIcon={<PixelCart color="#f59e0b" />} label="Pazar" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="blacksmith" pixelIcon={<PixelHammer color="#94a3b8" />} label="Demirci" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="map" pixelIcon={<PixelMap color="#22c55e" />} label="Harita" activeTab={activeTab} onClick={setActiveTab} />
-                            <TabButton id="leaderboard" pixelIcon={<PixelTrophy color="#fbbf24" />} label="Sıralama" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="character" icon={User} label="Karakter" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="inventory" icon={Backpack} label="Envanter" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="skills" icon={Zap} label="Yetenekler" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="quests" icon={Scroll} label="Görevler" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="party" icon={Users} label="Parti" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="guild" icon={Shield} label="Lonca" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="market" icon={ShoppingBag} label="Pazar" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="blacksmith" icon={Hammer} label="Demirci" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="map" icon={MapIcon} label="Harita" activeTab={activeTab} onClick={setActiveTab} />
+                            <TabButton id="leaderboard" icon={Trophy} label="Sıralama" activeTab={activeTab} onClick={setActiveTab} />
                         </nav>
                     </aside>
 

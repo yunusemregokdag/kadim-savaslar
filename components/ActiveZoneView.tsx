@@ -9,7 +9,7 @@ import { io, Socket } from 'socket.io-client';
 import { PlayerState, GameEntity, LootLog, FloatingText, LootBox, Item, Equipment, Portal, ChatMessage, HUDElement, HUDLayout, EntityType, Skill, NPCData } from '../types';
 import { soundManager } from './SoundManager';
 import { ZONE_CONFIG, RANKS, CLASSES, LEVEL_XP_REQUIREMENTS, DEFAULT_HUD_LAYOUT, ZONE_REWARDS, ALL_CLASS_ITEMS, DEFAULT_ZONE_REWARD, ACHIEVEMENTS_LIST } from '../constants';
-import { Swords, Shield, Zap, ShoppingBag, Backpack, X, Wind, Skull, Target, Droplet, Flame, Send, Clock, Hammer, MessageSquare, Minus, Crosshair, Map as MapIcon, Settings as SettingsIcon, Crown, Star, ArrowRight, ZoomIn, Globe, AlertTriangle, Navigation, Info, Compass, Plus, Smartphone, Monitor, ChevronDown, ChevronUp, Move, RotateCw, Eye, Book, Users, Trophy, Scroll, Lock, Unlock, Heart, Sword, Settings } from 'lucide-react';
+import { Swords, Shield, Zap, ShoppingBag, Backpack, X, Wind, Skull, Target, Droplet, Flame, Send, Clock, Hammer, MessageSquare, Minus, Crosshair, Map as MapIcon, Settings as SettingsIcon, Crown, Star, ArrowRight, ZoomIn, Globe, AlertTriangle, Navigation, Info, Compass, Plus, Smartphone, Monitor, ChevronDown, ChevronUp, Move, RotateCw, Eye, Book, Users, Trophy, Scroll, Lock, Unlock, Heart, Sword, Settings, Coins, Gem } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { GameVFXOverlay, vfxManager } from './VFXSystem';
 import { VoxelSpartan } from './VoxelSpartan';
@@ -43,6 +43,10 @@ import PartyView from './PartyView';
 import GuildView from './GuildView';
 import LeaderboardView from './LeaderboardView';
 import PlayerStatsView from './PlayerStatsView';
+import SkillTree from './SkillTree';
+import NpcShopView from './NpcShopView';
+import { MarketView } from './MarketView';
+import { PremiumMarketView } from './PremiumMarketView';
 import DailyLoginModal from './DailyLoginModal';
 import { useBossAI } from './useBossAI';
 import EventBanner from './EventBanner';
@@ -145,9 +149,9 @@ const DraggableHUDElement: React.FC<DraggableHUDElementProps> = ({ id, element, 
     // If not enabled and not editing, hide it. If editing, show it even if disabled (to allow enabling/moving) - or keep logic simple:
     if (!element.enabled && !isEditing) return null;
 
-    // Clamp positions to prevent overflow - max 95% to keep elements visible
-    const clampedX = Math.min(Math.max(element.x, 0), 95);
-    const clampedY = Math.min(Math.max(element.y, 0), 95);
+    // Clamp positions - TAM KENARA YANAŞABİLİR (0-100)
+    const clampedX = Math.min(Math.max(element.x, 0), 100);
+    const clampedY = Math.min(Math.max(element.y, 0), 100);
 
     // For right-side elements (x > 50%), anchor from right instead of left
     // For bottom elements (y > 50%), anchor from bottom instead of top  
@@ -201,8 +205,13 @@ const DraggableHUDElement: React.FC<DraggableHUDElementProps> = ({ id, element, 
             {isEditing && (
                 <div className={`absolute inset-0 border-2 rounded-lg flex items-center justify-center pointer-events-none ${isSelected ? 'border-green-500 bg-green-500/30 shadow-[0_0_15px_green]' : 'border-yellow-500 bg-yellow-500/20'} ${element.locked ? 'border-red-500' : ''}`}>
                     {element.locked ? <div className="text-red-500"><Lock size={24} /></div> : <Move size={24} className={`text-white drop-shadow-md opacity-80 ${isSelected ? 'animate-bounce' : 'animate-pulse'}`} />}
+                    {/* Element Name */}
                     <div className={`absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] text-white px-1.5 py-0.5 rounded font-bold uppercase shadow whitespace-nowrap ${isSelected ? 'bg-green-600' : 'bg-yellow-600'}`}>
-                        {id} {element.locked && '(KİLİTLİ)'}
+                        {id}
+                    </div>
+                    {/* X Y Coordinates - DEBUG */}
+                    <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] bg-black/80 text-cyan-400 px-1.5 py-0.5 rounded font-mono whitespace-nowrap border border-cyan-500/50">
+                        X:{Math.round(element.x)} Y:{Math.round(element.y)}
                     </div>
                 </div>
             )}
@@ -843,15 +852,29 @@ const VoxelMob: React.FC<{ position: [number, number, number], color: string, le
 
     return (
         <group ref={groupRef} position={[position[0], 0, position[2]]} scale={[bodyScale, bodyScale, bodyScale]}>
-            {/* Health Bar / Name Label */}
-            <Html position={[0, isNPC ? 2.0 : 2.0, 0]} center style={{ pointerEvents: 'none' }}>
+            {/* Health Bar / Name Label - MINIMAL for mobs, HUD indicator for bosses */}
+            <Html position={[0, isNPC ? 2.0 : 1.8, 0]} center style={{ pointerEvents: 'none' }}>
                 <div className="flex flex-col items-center">
-                    <div className={`text-[8px] font-bold ${isNPC ? 'text-yellow-400 text-xs' : isBoss ? 'text-red-500 text-sm mb-1 uppercase tracking-widest' : isElite ? 'text-purple-400 text-xs' : 'text-white'} drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] whitespace-nowrap`}>
-                        {isHostile ? `[Lv.${level}]` : ''} {name}
-                    </div>
+                    {/* Mob/NPC Name - small and minimal */}
+                    {!isBoss && (
+                        <div className={`text-[8px] font-bold ${isNPC ? 'text-yellow-400 text-xs' : isElite ? 'text-purple-400 text-[10px]' : 'text-white'} drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] whitespace-nowrap`}>
+                            {isHostile ? `[${level}]` : ''} {name}
+                        </div>
+                    )}
+                    {/* Boss Name - compact badge style */}
+                    {isBoss && (
+                        <div className="flex items-center gap-1 px-1.5 py-0.5 bg-black/60 rounded border border-red-500/50 backdrop-blur-sm" style={{ transform: `scale(${1 / bodyScale})` }}>
+                            <span className="text-[8px]">💀</span>
+                            <span className="text-[8px] font-bold text-white whitespace-nowrap">Lv.{level}</span>
+                        </div>
+                    )}
+                    {/* HP Bar - Scaled inversely to bodyScale to look consistent */}
                     {isHostile && (isSelected || visualHp < maxHp) && (
-                        <div className={`bg-gray-900 rounded-full overflow-hidden border border-gray-600 ${isBoss ? 'w-32 h-4' : 'w-12 h-1.5'}`}>
-                            <div className={`h-full transition-all duration-200 ${isBoss ? 'bg-gradient-to-r from-red-600 to-orange-600' : 'bg-red-500'}`} style={{ width: `${hpPct}%` }} />
+                        <div
+                            className={`bg-gray-900/90 rounded border border-gray-600 mt-1 overflow-hidden ${isBoss ? 'w-24 h-2' : 'w-8 h-1'}`}
+                            style={{ transform: `scale(${1 / bodyScale})`, transformOrigin: 'top center' }}
+                        >
+                            <div className={`h-full transition-all duration-200 ${isBoss ? 'bg-red-600' : 'bg-red-500'}`} style={{ width: `${Math.min(100, (visualHp / (maxHp || 1)) * 100)}%` }} />
                         </div>
                     )}
                 </div>
@@ -2191,10 +2214,25 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     const [showAchievements, setShowAchievements] = useState(false);
     const [showDailyReward, setShowDailyReward] = useState(false);
     const [showExitConfirm, setShowExitConfirm] = useState(false);
+    const [exitCountdown, setExitCountdown] = useState<number | null>(null);
     const [showParty, setShowParty] = useState(false);
     const [showGuild, setShowGuild] = useState(false);
     const [showLeaderboard, setShowLeaderboard] = useState(false);
     const [showPlayerStats, setShowPlayerStats] = useState(false);
+    const [showSkills, setShowSkills] = useState(false);
+    const [showQuests, setShowQuests] = useState(false);
+    const [showMarketOverlay, setShowMarketOverlay] = useState(false);
+    const [debugPanelLeft, setDebugPanelLeft] = useState(true); // Debug panel sol mu sağ mı
+    const [marketTab, setMarketTab] = useState<'koy_pazari' | 'oyuncu_pazari' | 'magaza'>('koy_pazari');
+
+    // --- RESPONSIVE MOBILE CHECK ---
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const [nearbyNPC, setNearbyNPC] = useState<GameEntity | null>(null);
     const [interactingNPC, setInteractingNPC] = useState<NPCData | null>(null);
@@ -2338,6 +2376,24 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             } catch (e) { }
         };
     }, []);
+
+    // --- EXIT COUNTDOWN TIMER ---
+    useEffect(() => {
+        if (exitCountdown === null) return;
+
+        if (exitCountdown <= 0) {
+            // Time's up, exit the game
+            setExitCountdown(null);
+            props.onExit();
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            setExitCountdown(prev => prev !== null ? prev - 1 : null);
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, [exitCountdown, props.onExit]);
 
     // Periyodik Pozisyon Kaydetme (Her 1 saniyede bir) - Kaldığı yerden devam etmesi için
     useEffect(() => {
@@ -3435,7 +3491,11 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     const handleSkill = (skillId: string, skill: any) => {
         if (isHudEditing) return; // Disable while editing
         if (cooldowns[skillId]) return;
-        if (playerState.mana < skill.manaCost) {
+
+        // MANA SCALING: Level başına +%10 Cost (Base + Level * Base * 0.1)
+        const scaledManaCost = Math.floor(skill.manaCost * (1 + (playerState.level * 0.1)));
+
+        if (playerState.mana < scaledManaCost) {
             addFloatingText("Mana Yetersiz!", playerPosUI.x, 2, playerPosUI.y, "text-blue-300");
             return;
         }
@@ -3459,7 +3519,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         // ---------------------------------------
 
         setCooldowns(prev => ({ ...prev, [skillId]: skill.cd * 1000 }));
-        handleUpdatePlayerSafe({ mana: playerState.mana - skill.manaCost });
+        handleUpdatePlayerSafe({ mana: playerState.mana - scaledManaCost });
 
         // === SKILL ANIMASYONU TETİKLE ===
         const skillNumMatch = skillId.match(/(\d+)/);
@@ -4183,6 +4243,17 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
             {/* --- HUD RENDER LAYER --- */}
 
+            {/* BOSS ZONE INDICATOR - Küçük modal, ekranı kaplamaz */}
+            {zoneData?.enemies?.some(e => e.name?.includes('[BOSS]')) && (
+                <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[80] pointer-events-none animate-pulse">
+                    <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-900/90 to-orange-900/90 rounded-lg border border-red-500/60 shadow-lg shadow-red-900/50 backdrop-blur-sm">
+                        <span className="text-lg">💀</span>
+                        <span className="text-sm font-bold text-white uppercase tracking-wider">Boss Bölgesi</span>
+                        <span className="text-lg">💀</span>
+                    </div>
+                </div>
+            )}
+
             {/* Hava Durumu Göstergesi */}
             <WeatherIndicator />
             <WeatherChangeNotification />
@@ -4358,7 +4429,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         </div>
 
                         {/* MP BAR - Crystal Style */}
-                        <div className="relative h-2.5 w-3/4 bg-black/60 rounded-sm border border-slate-600/50 overflow-hidden">
+                        <div className="relative h-2.5 w-full bg-black/60 rounded-sm border border-slate-600/50 overflow-hidden">
                             <div
                                 className="h-full bg-gradient-to-r from-blue-800 via-blue-600 to-blue-500 transition-all duration-300 relative"
                                 style={{ width: `${(playerState.mana / playerState.maxMana) * 100}%` }}
@@ -4380,7 +4451,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
             {/* MAP ONLY (Buttons moved out) */}
             <DraggableHUDElement id="map" element={hudLayout.elements.map} isEditing={isHudEditing} isSelected={selectedElementId === 'map'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
-                <div style={{ opacity: settings.hudOpacity / 100, transformOrigin: 'top right' }}>
+                <div style={{ opacity: settings.hudOpacity / 100, transformOrigin: 'top right', transform: isMobile ? 'scale(0.75)' : 'none' }}>
                     <div className="flex flex-col items-end gap-2 pointer-events-auto">
                         {settings.showMinimap && (
                             <div className="flex gap-4 items-end" style={{ opacity: settings.minimapOpacity / 100 }}>
@@ -4392,54 +4463,12 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 </div>
             </DraggableHUDElement>
 
-            {/* TOP MENU - CHAT */}
-            <DraggableHUDElement id="top_chat" element={hudLayout.elements.top_chat || { x: 50, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_chat'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
-                <button title="Sohbet" onClick={() => setShowChat(!showChat)} className={`w-12 h-12 flex items-center justify-center rounded-xl pointer-events-auto backdrop-blur-md border shadow-lg transition-transform active:scale-95 group
-                    ${showChat ? 'bg-amber-600/60 border-amber-400 text-white' : 'bg-black/40 border-white/10 text-slate-300 hover:bg-black/60 hover:border-yellow-400 hover:text-yellow-400'}
-                `}>
-                    <MessageSquare size={22} className="drop-shadow-md" />
-                </button>
-            </DraggableHUDElement>
-
-            {/* TOP MENU - INVENTORY */}
-            <DraggableHUDElement id="top_inventory" element={hudLayout.elements.top_inventory || { x: 55, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_inventory'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
-                <button title="Envanter" onClick={() => setShowInventory(true)} className="w-12 h-12 flex items-center justify-center rounded-xl pointer-events-auto backdrop-blur-md border border-white/10 bg-black/40 text-slate-300 shadow-lg transition-transform active:scale-95 group hover:bg-black/60 hover:border-blue-400 hover:text-blue-400">
-                    <Backpack size={22} className="drop-shadow-md" />
-                </button>
-            </DraggableHUDElement>
-
-            {/* TOP MENU - MARKET */}
-            <DraggableHUDElement id="top_market" element={hudLayout.elements.top_market || { x: 60, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_market'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
-                <button title="Demirci & Pazar" onClick={() => setBlacksmithState({ isOpen: true, tab: 'market' })} className="w-12 h-12 flex items-center justify-center rounded-xl pointer-events-auto backdrop-blur-md border border-white/10 bg-black/40 text-slate-300 shadow-lg transition-transform active:scale-95 group hover:bg-black/60 hover:border-green-400 hover:text-green-400">
-                    <ShoppingBag size={22} className="drop-shadow-md" />
-                </button>
-            </DraggableHUDElement>
-
-            {/* TOP MENU - SETTINGS */}
-            <DraggableHUDElement id="top_settings" element={hudLayout.elements.top_settings || { x: 65, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_settings'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
-                <button title="Ayarlar" onClick={() => setShowSettings(!showSettings)} className="w-12 h-12 flex items-center justify-center rounded-xl pointer-events-auto backdrop-blur-md border border-white/10 bg-black/40 text-slate-300 shadow-lg transition-transform active:scale-95 group hover:bg-black/60 hover:border-white hover:text-white">
-                    <SettingsIcon size={22} className="drop-shadow-md group-hover:rotate-45 transition-transform" />
-                </button>
-            </DraggableHUDElement>
-
-            {/* TOP MENU - ACHIEVEMENTS */}
-            <DraggableHUDElement id="top_achievements" element={hudLayout.elements.top_achievements || { x: 70, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_achievements'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
-                <button title="Başarımlar" onClick={() => setShowAchievements(true)} className="w-12 h-12 flex items-center justify-center rounded-xl pointer-events-auto backdrop-blur-md border border-white/10 bg-black/40 text-slate-300 shadow-lg transition-transform active:scale-95 group hover:bg-black/60 hover:border-purple-400 hover:text-purple-400">
-                    <Trophy size={22} className="drop-shadow-md" />
-                </button>
-            </DraggableHUDElement>
-
-            {/* TOP MENU - EXIT */}
-            <DraggableHUDElement id="top_exit" element={hudLayout.elements.top_exit || { x: 80, y: 2, scale: 1, enabled: true, opacity: 1, locked: false }} isEditing={isHudEditing} isSelected={selectedElementId === 'top_exit'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
-                <button title="Çıkış" onClick={props.onExit} className="w-12 h-12 flex items-center justify-center rounded-xl pointer-events-auto backdrop-blur-md border border-red-900/40 bg-red-900/20 text-red-400 shadow-lg transition-transform active:scale-95 group hover:bg-red-900/60 hover:border-red-500 hover:text-red-200">
-                    <X size={22} className="drop-shadow-md" />
-                </button>
-            </DraggableHUDElement>
+            {/* TOP MENU BUTTONS REMOVED - All moved to bottom navigation bar */}
 
             {/* CHAT SYSTEM */}
             {showChat && (
                 <DraggableHUDElement id="chat" element={hudLayout.elements.chat} isEditing={isHudEditing} isSelected={selectedElementId === 'chat'} onSelect={setSelectedElementId} onDragStart={handleDragStart}>
-                    <div className="w-80 h-64 pointer-events-auto" style={{ opacity: settings.chatOpacity / 100 }}>
+                    <div className={`pointer-events-auto transition-all ${isMobile ? 'w-60 h-32 text-[10px]' : 'w-80 h-64'}`} style={{ opacity: settings.chatOpacity / 100 }}>
                         <ChatSystem
                             playerState={playerState}
                             messages={props.chatHistory}
@@ -4476,7 +4505,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
                         {/* İçerik - showQuestTracker true ise */}
                         {showQuestTracker && (
-                            <div className="p-2">
+                            <div className="p-2 space-y-2">
                                 {playerState.activeQuest ? (
                                     <div>
                                         <div className="text-white font-bold text-xs mb-1">{playerState.activeQuest.title}</div>
@@ -4489,8 +4518,33 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="text-slate-400 text-xs text-center py-2">
-                                        Aktif görev yok. NPC ile konuş!
+                                    <div className="text-slate-500 text-[10px] text-center italic">
+                                        Aktif ana görev yok.
+                                    </div>
+                                )}
+
+                                {/* DAILY QUESTS SECTION */}
+                                {playerState.dailyQuests && playerState.dailyQuests.length > 0 && (
+                                    <div className="pt-2 border-t border-slate-700/50">
+                                        <div className="text-yellow-500 font-bold text-[10px] mb-1 flex items-center gap-1">
+                                            <Zap size={10} /> GÜNLÜK GÖREVLER
+                                        </div>
+                                        {playerState.dailyQuests.map((dq) => (
+                                            <div key={dq.id} className="mb-1.5 last:mb-0">
+                                                <div className="flex justify-between text-[10px] text-slate-300 mb-0.5">
+                                                    <span>{dq.description}</span>
+                                                    <span className={dq.current >= dq.target ? 'text-green-400' : 'text-slate-400'}>
+                                                        {dq.current}/{dq.target}
+                                                    </span>
+                                                </div>
+                                                <div className="h-1.5 bg-black rounded-full overflow-hidden">
+                                                    <div
+                                                        className={`h-full ${dq.current >= dq.target ? 'bg-green-500' : 'bg-blue-500'}`}
+                                                        style={{ width: `${Math.min(100, (dq.current / dq.target) * 100)}%` }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 )}
                             </div>
@@ -4607,7 +4661,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             )}
 
             {isHudEditing && (
-                <div className="absolute top-16 right-4 w-72 bg-black/95 border-2 border-yellow-600/50 p-4 rounded-xl flex flex-col gap-4 z-[61] pointer-events-auto backdrop-blur-md shadow-2xl animate-[fadeIn_0.2s]">
+                <div className={`absolute top-16 ${debugPanelLeft ? 'right-4' : 'left-4'} w-72 bg-black/95 border-2 border-yellow-600/50 p-4 rounded-xl flex flex-col gap-4 z-[61] pointer-events-auto backdrop-blur-md shadow-2xl animate-[fadeIn_0.2s] transition-all duration-300`}>
                     <h3 className="text-yellow-500 font-bold text-center flex items-center justify-center gap-2 border-b border-yellow-600/30 pb-2">
                         <Move size={18} /> ARAYÜZ DÜZENLEYİCİ
                     </h3>
@@ -4740,6 +4794,44 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 </div>
             )}
 
+            {/* DEBUG PANEL - TÜM KOORDİNATLAR - TIKLA YER DEĞİŞTİR */}
+            {isHudEditing && (
+                <div
+                    className={`fixed top-4 ${debugPanelLeft ? 'left-4' : 'right-4'} z-[150] bg-black/95 border-2 border-cyan-500 rounded-xl p-3 w-72 max-h-[60vh] overflow-y-auto shadow-[0_0_30px_rgba(6,182,212,0.5)] transition-all duration-300`}
+                >
+                    <h2
+                        className="text-center text-sm font-bold text-cyan-400 mb-2 border-b border-cyan-700 pb-2 cursor-pointer hover:bg-cyan-900/30 rounded"
+                        onClick={() => setDebugPanelLeft(!debugPanelLeft)}
+                        title="Tıkla - Panel tarafını değiştir"
+                    >
+                        🔧 DEBUG - KOORDİNATLAR
+                        <span className="text-[10px] block text-cyan-600">(tıkla → taraf değiştir)</span>
+                    </h2>
+                    <div className="space-y-0.5 text-[10px] font-mono">
+                        {/* Header */}
+                        <div className="flex justify-between text-slate-400 border-b border-slate-700 pb-1 mb-1">
+                            <span className="w-20">ELEMENT</span>
+                            <span className="w-12 text-center">X</span>
+                            <span className="w-12 text-center">Y</span>
+                        </div>
+                        {/* Elements */}
+                        {Object.entries(hudLayout.elements)
+                            .filter(([key]) => !key.startsWith('top_'))
+                            .map(([key, el]) => (
+                                <div
+                                    key={key}
+                                    className={`flex justify-between py-0.5 px-1 rounded cursor-pointer ${selectedElementId === key ? 'bg-green-900/50 text-green-300' : 'text-slate-300 hover:bg-slate-800'}`}
+                                    onClick={() => setSelectedElementId(key)}
+                                >
+                                    <span className="w-20 truncate font-bold">{key}</span>
+                                    <span className="w-12 text-center text-cyan-400">{Math.round(el.x)}</span>
+                                    <span className="w-12 text-center text-yellow-400">{Math.round(el.y)}</span>
+                                </div>
+                            ))}
+                    </div>
+                </div>
+            )}
+
             {/* INTERACTION BUTTON */}
             {nearbyNPC && !isHudEditing && !interactingNPC && (
                 <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-50 animate-bounce">
@@ -4784,6 +4876,9 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             {/* FULL SETTINGS VIEW */}
             {showFullSettings && <SettingsView onClose={() => setShowFullSettings(false)} />}
 
+            {/* GAME GUIDE MODAL */}
+            {showGameGuide && <GameGuideModal onClose={() => setShowGameGuide(false)} />}
+
             {/* TARGET UI */}
             {(() => {
                 if (!target) return null;
@@ -4811,6 +4906,289 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             {/* INTERACTION MODALS */}
             {showInventory && <InventoryModal playerState={playerState} isOverlay={true} onClose={() => setShowInventory(false)} onEquip={props.onEquip} onUnequip={props.onUnequip} onUse={props.onUseItem} />}
 
+            {/* SKILLS OVERLAY - GameGuideModal Style */}
+            {showSkills && (
+                <div className="fixed inset-0 z-[80] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm animate-[fadeIn_0.2s]">
+                    <div className="bg-[#1a120b] border-2 border-[#5e4b35] rounded-xl w-full max-w-5xl max-h-[90vh] shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden">
+
+                        {/* Header */}
+                        <div className="p-4 border-b border-[#5e4b35] bg-[#2a1d12] flex justify-between items-center shadow-md z-10">
+                            <div className="flex items-center gap-4">
+                                <h2 className="text-2xl font-bold text-[#e6cba5] flex items-center gap-3">
+                                    <Zap className="text-purple-400" /> YETENEKLER
+                                </h2>
+                                <span className="px-3 py-1 bg-purple-900/40 text-purple-300 rounded-lg text-sm border border-purple-700/50">
+                                    {CLASSES[playerState.class || 'warrior']?.name || 'Savaşçı'}
+                                </span>
+                            </div>
+                            <button onClick={() => setShowSkills(false)} className="bg-red-900/50 hover:bg-red-700 text-red-200 p-2 rounded-lg transition-colors border border-red-800">
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        {/* Scrollable Content */}
+                        <div className="flex-1 overflow-y-auto p-6 text-slate-300 custom-scrollbar bg-[#1a120b]/90">
+                            <SkillTree playerClass={CLASSES[playerState.class || 'warrior']} playerLevel={playerState.level} />
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* QUESTS OVERLAY - GameGuideModal Style */}
+            {showQuests && (
+                <div className="fixed inset-0 z-[80] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm animate-[fadeIn_0.2s]">
+                    <div className="bg-[#1a120b] border-2 border-[#5e4b35] rounded-xl w-full max-w-3xl max-h-[90vh] shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden">
+
+                        {/* Header */}
+                        <div className="p-4 border-b border-[#5e4b35] bg-[#2a1d12] flex justify-between items-center shadow-md z-10">
+                            <div className="flex items-center gap-4">
+                                <h2 className="text-2xl font-bold text-[#e6cba5] flex items-center gap-3">
+                                    <Scroll className="text-yellow-500" /> GÖREVLER
+                                </h2>
+                                {playerState.activeQuest && (
+                                    <span className="px-3 py-1 bg-yellow-900/40 text-yellow-300 rounded-lg text-sm border border-yellow-700/50">
+                                        Aktif Görev
+                                    </span>
+                                )}
+                            </div>
+                            <button onClick={() => setShowQuests(false)} className="bg-red-900/50 hover:bg-red-700 text-red-200 p-2 rounded-lg transition-colors border border-red-800">
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        {/* Scrollable Content */}
+                        <div className="flex-1 overflow-y-auto p-6 text-slate-300 custom-scrollbar bg-[#1a120b]/90">
+                            {playerState.activeQuest ? (
+                                <div className="space-y-4">
+                                    {/* Active Quest Card */}
+                                    <div className="bg-gradient-to-br from-[#291d18] to-[#1a120b] p-6 rounded-xl border-2 border-yellow-700/50 shadow-lg">
+                                        <div className="flex items-start gap-4">
+                                            <div className="w-16 h-16 rounded-lg bg-yellow-900/40 border border-yellow-600 flex items-center justify-center shrink-0">
+                                                <Scroll size={32} className="text-yellow-400" />
+                                            </div>
+                                            <div className="flex-1">
+                                                <h3 className="text-xl font-bold text-amber-400 mb-2">{playerState.activeQuest.title}</h3>
+                                                <p className="text-slate-400 text-sm mb-4">{playerState.activeQuest.description}</p>
+
+                                                {/* Progress Bar */}
+                                                <div className="mb-2">
+                                                    <div className="flex justify-between text-xs mb-1">
+                                                        <span className="text-slate-500">İlerleme</span>
+                                                        <span className="text-yellow-400 font-bold">{playerState.activeQuest.currentCount} / {playerState.activeQuest.requiredCount}</span>
+                                                    </div>
+                                                    <div className="w-full h-3 bg-black/60 rounded-full overflow-hidden border border-slate-700">
+                                                        <div
+                                                            className="h-full bg-gradient-to-r from-yellow-600 to-amber-500 transition-all duration-500"
+                                                            style={{ width: `${Math.min(100, (playerState.activeQuest.currentCount / playerState.activeQuest.requiredCount) * 100)}%` }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Quest Tips */}
+                                    <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-700/50">
+                                        <h4 className="text-sm font-bold text-slate-400 mb-2">💡 İpucu</h4>
+                                        <p className="text-xs text-slate-500">Görevleri tamamlayarak XP, Altın ve özel ödüller kazanabilirsin!</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="text-center py-12">
+                                    <div className="w-20 h-20 rounded-full bg-slate-800/50 border border-slate-700 flex items-center justify-center mx-auto mb-4">
+                                        <Scroll size={40} className="text-slate-600" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-slate-400 mb-2">Aktif Görev Yok</h3>
+                                    <p className="text-sm text-slate-500">Köydeki NPC'lerden görev alabilirsin.</p>
+                                    <p className="text-xs text-slate-600 mt-4">Ana merkezde (X-1) bulunan NPC'ler ile konuşmayı dene!</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* MARKET OVERLAY - GameGuideModal Style with 3 Tabs */}
+            {showMarketOverlay && (
+                <div className="fixed inset-0 z-[80] bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm animate-[fadeIn_0.2s]">
+                    <div className="bg-[#1a120b] border-2 border-[#5e4b35] rounded-xl w-full max-w-6xl h-[90vh] shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden">
+
+                        {/* Header */}
+                        <div className="p-4 border-b border-[#5e4b35] bg-[#2a1d12] flex justify-between items-center shadow-md z-10 shrink-0">
+                            <div className="flex items-center gap-4">
+                                <h2 className="text-2xl font-bold text-[#e6cba5] flex items-center gap-3">
+                                    <ShoppingBag className="text-emerald-400" /> PAZAR
+                                </h2>
+                                <span className="px-3 py-1 bg-emerald-900/40 text-emerald-300 rounded-lg text-sm border border-emerald-700/50 flex items-center gap-2">
+                                    <Coins size={14} /> {playerState.credits?.toLocaleString() || 0} Altın
+                                </span>
+                                <span className="px-3 py-1 bg-purple-900/40 text-purple-300 rounded-lg text-sm border border-purple-700/50 flex items-center gap-2">
+                                    <Gem size={14} /> {playerState.diamonds?.toLocaleString() || 0} Elmas
+                                </span>
+                            </div>
+                            <button onClick={() => setShowMarketOverlay(false)} className="bg-red-900/50 hover:bg-red-700 text-red-200 p-2 rounded-lg transition-colors border border-red-800">
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        {/* TAB NAVIGATION */}
+                        <div className="flex bg-[#0f0a06] border-b border-[#3f2e18] shrink-0">
+                            <button
+                                onClick={() => setMarketTab('koy_pazari')}
+                                className={`flex-1 py-3 text-sm font-bold transition-all flex items-center justify-center gap-2 ${marketTab === 'koy_pazari' ? 'bg-[#3f2e18] text-amber-400 border-b-2 border-amber-500' : 'text-slate-400 hover:bg-[#2a1f15] hover:text-slate-200'}`}
+                            >
+                                <ShoppingBag size={18} /> Köy Pazarı
+                            </button>
+                            <button
+                                onClick={() => setMarketTab('oyuncu_pazari')}
+                                className={`flex-1 py-3 text-sm font-bold transition-all flex items-center justify-center gap-2 ${marketTab === 'oyuncu_pazari' ? 'bg-[#3f2e18] text-blue-400 border-b-2 border-blue-500' : 'text-slate-400 hover:bg-[#2a1f15] hover:text-slate-200'}`}
+                            >
+                                <Users size={18} /> Oyuncu Pazarı
+                            </button>
+                            <button
+                                onClick={() => setMarketTab('magaza')}
+                                className={`flex-1 py-3 text-sm font-bold transition-all flex items-center justify-center gap-2 ${marketTab === 'magaza' ? 'bg-[#3f2e18] text-purple-400 border-b-2 border-purple-500' : 'text-slate-400 hover:bg-[#2a1f15] hover:text-slate-200'}`}
+                            >
+                                <Crown size={18} /> Mağaza
+                            </button>
+                        </div>
+
+                        {/* TAB CONTENT */}
+                        <div className="flex-1 overflow-hidden">
+                            {/* KÖY PAZARI - NpcShopView */}
+                            {marketTab === 'koy_pazari' && (
+                                <NpcShopView
+                                    playerState={playerState}
+                                    onClose={() => setShowMarketOverlay(false)}
+                                    onBuy={(item, cost) => {
+                                        if (playerState.credits >= cost) {
+                                            onUpdatePlayer({
+                                                credits: playerState.credits - cost,
+                                                inventory: [...playerState.inventory, item]
+                                            });
+                                            addFloatingText(`-${cost} G`, playerPosRef.current.x, 3, playerPosRef.current.y, "text-red-400");
+                                            soundManager.playSFX('buy');
+                                        } else {
+                                            addFloatingText("Yetersiz Altın!", playerPosRef.current.x, 3, playerPosRef.current.y, "text-red-500");
+                                            soundManager.playSFX('error');
+                                        }
+                                    }}
+                                    onBuyPet={(pet, cost) => {
+                                        if (playerState.credits >= cost) {
+                                            const newPets = playerState.ownedPets ? [...playerState.ownedPets, pet] : [pet];
+                                            onUpdatePlayer({ credits: playerState.credits - cost, ownedPets: newPets });
+                                            addFloatingText(`Yoldaş Alındı: ${pet.name}`, playerPosRef.current.x, 3, playerPosRef.current.y, "text-green-400");
+                                            soundManager.playSFX('level_up');
+                                        }
+                                    }}
+                                    onBuyWing={(wing, cost) => {
+                                        if (playerState.credits >= cost) {
+                                            const newWings = playerState.ownedWings ? [...playerState.ownedWings, wing] : [wing];
+                                            onUpdatePlayer({ credits: playerState.credits - cost, ownedWings: newWings });
+                                            addFloatingText(`Kanat Alındı: ${wing.name}`, playerPosRef.current.x, 3, playerPosRef.current.y, "text-purple-400");
+                                            soundManager.playSFX('level_up');
+                                        }
+                                    }}
+                                />
+                            )}
+
+                            {/* OYUNCU PAZARI - MarketView (P2P Trading) */}
+                            {marketTab === 'oyuncu_pazari' && (
+                                <MarketView
+                                    playerState={playerState}
+                                    onClose={() => setShowMarketOverlay(false)}
+                                    onUpdatePlayer={onUpdatePlayer}
+                                    isEmbedded={true}
+                                />
+                            )}
+
+                            {/* MAĞAZA - PremiumMarketView */}
+                            {marketTab === 'magaza' && (
+                                <PremiumMarketView
+                                    playerState={playerState}
+                                    onBuyData={(category, id, cost, currency, amount) => {
+                                        // Handle premium purchases
+                                        if (currency === 'gems') {
+                                            if (playerState.gems >= cost) {
+                                                // Deduct gems and add item/costume
+                                                const newGems = playerState.gems - cost;
+                                                const updates: Partial<PlayerState> = { gems: newGems };
+
+                                                // If it's a costume set OR Starter Pack
+                                                if (category === 'item') {
+                                                    if (id === 'starter_pack') {
+                                                        // --- STARTER PACK LOGIC ---
+                                                        const newInventory = [...(playerState.inventory || [])];
+
+                                                        // 1. Give T2 Weapon (+5 Grade?) - Let's just give standard T2 for now
+                                                        // Need to safely access ALL_CLASS_ITEMS
+                                                        const classItems = ((ALL_CLASS_ITEMS as any)[playerState.class] || []) as Item[];
+                                                        const t2Weapon = classItems.find(i => i.tier === 2 && i.type === 'weapon');
+
+                                                        if (t2Weapon) {
+                                                            newInventory.push({ ...t2Weapon, id: uuidv4(), name: `+5 ${t2Weapon.name}`, stats: { ...t2Weapon.stats, damage: (t2Weapon.stats?.damage || 10) + 5 } }); // Custom +5 effect simulation
+                                                        } else {
+                                                            // Fallback if no T2 found
+                                                            addFloatingText("Silah Hediyesi Hata!", playerPosRef.current.x, 3, playerPosRef.current.y, "text-red-500");
+                                                        }
+
+                                                        // 2. Give Potions (50x HP, 50x MP) - Assuming stackable logic handles 'quantity' or we add separate if needed.
+                                                        // Simplification: Add single item with quantity 50.
+                                                        newInventory.push({
+                                                            id: uuidv4(), name: 'Can İksiri', type: 'consumable', tier: 1, rarity: 'common',
+                                                            value: 50, effect: { type: 'heal', amount: 50 }, quantity: 50, stackable: true
+                                                        });
+
+                                                        newInventory.push({
+                                                            id: uuidv4(), name: 'Mana İksiri', type: 'consumable', tier: 1, rarity: 'common',
+                                                            value: 50, effect: { type: 'mana', amount: 50 }, quantity: 50, stackable: true
+                                                        });
+
+                                                        updates.inventory = newInventory;
+                                                        addFloatingText("Acemi Paketi Alındı! 🎁", playerPosRef.current.x, 3.5, playerPosRef.current.y, "text-yellow-300 font-bold text-lg");
+
+                                                    } else {
+                                                        // --- STANDARD COSTUME BUNDLE ---
+                                                        const currentCostumes = playerState.ownedCostumes || [];
+                                                        if (!currentCostumes.includes(id)) {
+                                                            updates.ownedCostumes = [...currentCostumes, id];
+                                                        }
+                                                    }
+                                                }
+
+                                                onUpdatePlayer(updates);
+                                                addFloatingText(`-${cost} 💎`, playerPosRef.current.x, 3, playerPosRef.current.y, "text-cyan-400");
+                                                soundManager.playSFX('level_up');
+                                            } else {
+                                                addFloatingText("Yetersiz Elmas!", playerPosRef.current.x, 3, playerPosRef.current.y, "text-red-500");
+                                                soundManager.playSFX('error');
+                                            }
+                                        } else if (currency === 'gold') {
+                                            if (playerState.credits >= cost) {
+                                                onUpdatePlayer({ credits: playerState.credits - cost });
+                                                addFloatingText(`-${cost} G`, playerPosRef.current.x, 3, playerPosRef.current.y, "text-yellow-400");
+                                                soundManager.playSFX('buy');
+                                            }
+                                        }
+                                    }}
+                                    onEquipCostume={(costumeId) => {
+                                        onUpdatePlayer({ equippedCostume: costumeId });
+                                        if (costumeId) {
+                                            addFloatingText("Kostüm Kuşanıldı!", playerPosRef.current.x, 3, playerPosRef.current.y, "text-emerald-400");
+                                        } else {
+                                            addFloatingText("Kostüm Çıkarıldı", playerPosRef.current.x, 3, playerPosRef.current.y, "text-slate-400");
+                                        }
+                                        soundManager.playSFX('equip');
+                                    }}
+                                    onClose={() => setShowMarketOverlay(false)}
+                                    isEmbedded={true}
+                                />
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {showAchievements && (
                 <AchievementsModal
                     playerAchievements={playerState.achievements || []}
@@ -4836,7 +5214,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             )}
 
             {showGlobalMap && <GlobalMapModal onClose={() => setShowGlobalMap(false)} currentZone={zoneId} onSwitchZone={props.onSwitchZone} />}
-            {showGameGuide && <GameGuideModal onClose={() => setShowGameGuide(false)} />}
+            {/* {showGameGuide && <GameGuideModal onClose={() => setShowGameGuide(false)} />} */}
 
             {/* DUEL CONFIRMATION MODAL */}
             {duelChallenge && (
@@ -4933,126 +5311,187 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             {/* ═══════════════════════════════════════════════════════════════ */}
             <nav className="fixed bottom-0 left-0 w-full z-[60] pointer-events-auto">
                 {/* Background with glass effect */}
-                <div className="bg-gradient-to-t from-black/95 via-slate-900/90 to-transparent h-16 md:h-20 flex items-end justify-center pb-1.5 md:pb-2 px-1 md:px-2 gap-0.5 md:gap-1 border-t border-yellow-900/30 shadow-[0_-5px_30px_rgba(0,0,0,0.6)] overflow-x-auto">
+                <div className="bg-gradient-to-t from-black/95 via-slate-900/90 to-transparent h-16 md:h-20 flex items-end justify-center pb-1.5 md:pb-2 px-1 md:px-2 gap-0.5 md:gap-1 border-t border-yellow-900/30 shadow-[0_-5px_30px_rgba(0,0,0,0.6)]">
 
                     {/* All Navigation Buttons - Scrollable on mobile */}
-                    <div className="flex items-center gap-0.5 md:gap-1">
-                        {/* Character/Karakter - Opens Player Stats */}
+                    <div className="flex items-center gap-0.5 md:gap-1 overflow-x-auto no-scrollbar max-w-full px-1">
+                        {/* Chat/Sohbet */}
                         <button
-                            onClick={() => setShowPlayerStats(true)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-blue-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
-                            title="Karakter İstatistikleri"
+                            onClick={() => setShowChat(!showChat)}
+                            className={`flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg border transition-all group min-w-[44px] md:min-w-[60px] shrink-0
+                                ${showChat ? 'bg-amber-700/60 border-amber-500' : 'bg-slate-800/60 border-slate-600/50 hover:bg-slate-700/80 hover:border-amber-500/50'}`}
+                            title="Sohbet"
                         >
-                            <Users size={18} className="text-blue-400 group-hover:text-blue-300 transition-colors" />
-                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Karakter</span>
+                            <MessageSquare size={16} className={`${showChat ? 'text-amber-300' : 'text-amber-400 group-hover:text-amber-300'} transition-colors md:w-[18px] md:h-[18px]`} />
+                            <span className={`text-[7px] md:text-[9px] font-bold uppercase ${showChat ? 'text-amber-200' : 'text-slate-400 group-hover:text-white'}`}>Sohbet</span>
                         </button>
 
                         {/* Inventory/Envanter */}
                         <button
                             onClick={() => setShowInventory(true)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-amber-900/40 border border-amber-600/50 hover:bg-amber-800/60 hover:border-amber-400 transition-all group min-w-[48px] md:min-w-[60px]"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-amber-900/40 border border-amber-600/50 hover:bg-amber-800/60 hover:border-amber-400 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
                             title="Envanter ve Eşyalar"
                         >
-                            <Backpack size={18} className="text-amber-400 group-hover:text-amber-300 transition-colors" />
-                            <span className="text-[8px] md:text-[9px] text-amber-300 group-hover:text-white font-bold uppercase">Envanter</span>
+                            <Backpack size={16} className="text-amber-400 group-hover:text-amber-300 transition-colors md:w-[18px] md:h-[18px]" />
+                            <span className="text-[7px] md:text-[9px] text-amber-300 group-hover:text-white font-bold uppercase">Envanter</span>
                         </button>
 
-                        {/* Skills/Yetenekler - Opens Game Guide */}
+                        {/* Skills/Yetenekler - Opens Skills Modal */}
                         <button
-                            onClick={() => setShowGameGuide(true)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-purple-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
-                            title="Yetenekler ve Rehber"
+                            onClick={() => setShowSkills(true)}
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-purple-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            title="Yetenek Ağacı"
                         >
-                            <Zap size={18} className="text-purple-400 group-hover:text-purple-300 transition-colors" />
-                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Yetenek</span>
+                            <Zap size={16} className="text-purple-400 group-hover:text-purple-300 transition-colors md:w-[18px] md:h-[18px]" />
+                            <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Yetenek</span>
                         </button>
 
-                        {/* Quests/Görevler - Opens Game Guide */}
+                        {/* Quests/Görevler - Opens Quests Modal */}
                         <button
-                            onClick={() => setShowGameGuide(true)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
-                            title="Görevler ve Rehber"
+                            onClick={() => setShowQuests(true)}
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            title="Aktif Görevler"
                         >
-                            <Scroll size={18} className="text-yellow-400 group-hover:text-yellow-300 transition-colors" />
-                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Görev</span>
+                            <Scroll size={16} className="text-yellow-400 group-hover:text-yellow-300 transition-colors md:w-[18px] md:h-[18px]" />
+                            <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Görev</span>
                         </button>
 
-                        {/* Party/Parti - Opens Party Modal */}
+                        {/* Party/Parti - Hidden on very small mobile */}
                         <button
                             onClick={() => setShowParty(true)}
-                            className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-cyan-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                            className="hidden xs:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-cyan-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
                             title="Parti Sistemi"
                         >
-                            <Users size={18} className="text-cyan-400 group-hover:text-cyan-300 transition-colors" />
-                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Parti</span>
+                            <Users size={16} className="text-cyan-400 group-hover:text-cyan-300 transition-colors md:w-[18px] md:h-[18px]" />
+                            <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Parti</span>
                         </button>
 
-                        {/* Guild/Lonca - Opens Guild Modal */}
+                        {/* Guild/Lonca - Hidden on mobile */}
                         <button
                             onClick={() => setShowGuild(true)}
-                            className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-violet-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                            className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-violet-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
                             title="Lonca Sistemi"
                         >
-                            <Shield size={18} className="text-violet-400 group-hover:text-violet-300 transition-colors" />
-                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Lonca</span>
+                            <Shield size={16} className="text-violet-400 group-hover:text-violet-300 transition-colors md:w-[18px] md:h-[18px]" />
+                            <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Lonca</span>
                         </button>
 
                         {/* Market/Pazar */}
                         <button
-                            onClick={() => setBlacksmithState({ isOpen: true, tab: 'market' })}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-emerald-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                            onClick={() => setShowMarketOverlay(true)}
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-emerald-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
                             title="Pazar - Satış ve Alış"
                         >
-                            <ShoppingBag size={18} className="text-emerald-400 group-hover:text-emerald-300 transition-colors" />
-                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Pazar</span>
+                            <ShoppingBag size={16} className="text-emerald-400 group-hover:text-emerald-300 transition-colors md:w-[18px] md:h-[18px]" />
+                            <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Pazar</span>
                         </button>
 
-                        {/* Blacksmith/Demirci */}
+                        {/* Blacksmith/Demirci - Hidden on mobile */}
                         <button
                             onClick={() => setBlacksmithState({ isOpen: true, tab: 'craft' })}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-orange-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                            className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-orange-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
                             title="Demirci - Geliştirme ve Üretim"
                         >
-                            <Hammer size={18} className="text-orange-400 group-hover:text-orange-300 transition-colors" />
-                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Demirci</span>
+                            <Hammer size={16} className="text-orange-400 group-hover:text-orange-300 transition-colors md:w-[18px] md:h-[18px]" />
+                            <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Demirci</span>
                         </button>
 
                         {/* Map/Harita */}
                         <button
                             onClick={() => setShowGlobalMap(true)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-green-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-green-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
                             title="Dünya Haritası"
                         >
-                            <Compass size={18} className="text-green-400 group-hover:text-green-300 transition-colors" />
-                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Harita</span>
+                            <Compass size={16} className="text-green-400 group-hover:text-green-300 transition-colors md:w-[18px] md:h-[18px]" />
+                            <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Harita</span>
                         </button>
 
-                        {/* Leaderboard/Sıralama - Opens Leaderboard */}
+                        {/* Leaderboard/Sıralama - Hidden on mobile */}
                         <button
                             onClick={() => setShowLeaderboard(true)}
-                            className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group min-w-[48px] md:min-w-[60px]"
+                            className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
                             title="Sıralama Tablosu"
                         >
-                            <Trophy size={18} className="text-yellow-500 group-hover:text-yellow-400 transition-colors" />
-                            <span className="text-[8px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Sıralama</span>
+                            <Trophy size={16} className="text-yellow-500 group-hover:text-yellow-400 transition-colors md:w-[18px] md:h-[18px]" />
+                            <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Sıralama</span>
                         </button>
 
-                        {/* Exit/Çıkış - Opens confirmation modal */}
+                        {/* Achievements/Başarımlar - Hidden on mobile */}
                         <button
-                            onClick={() => setShowExitConfirm(true)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-red-900/30 border border-red-700/50 hover:bg-red-800/60 hover:border-red-400 transition-all group min-w-[48px] md:min-w-[60px]"
-                            title="Oyundan Çık"
+                            onClick={() => setShowAchievements(true)}
+                            className="hidden md:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-pink-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            title="Başarımlar"
                         >
-                            <X size={18} className="text-red-400 group-hover:text-red-300 transition-colors" />
-                            <span className="text-[8px] md:text-[9px] text-red-400 group-hover:text-white font-bold uppercase">Çıkış</span>
+                            <Star size={16} className="text-pink-400 group-hover:text-pink-300 transition-colors md:w-[18px] md:h-[18px]" />
+                            <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Başarım</span>
+                        </button>
+
+                        {/* Settings/Ayarlar */}
+                        <button
+                            onClick={() => setShowSettings(true)}
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-slate-400/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            title="Ayarlar"
+                        >
+                            <SettingsIcon size={16} className="text-slate-400 group-hover:text-slate-200 group-hover:rotate-45 transition-all md:w-[18px] md:h-[18px]" />
+                            <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Ayarlar</span>
                         </button>
                     </div>
                 </div>
             </nav>
 
+            {/* EXIT COUNTDOWN OVERLAY */}
+            {exitCountdown !== null && (
+                <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-center justify-center animate-[fadeIn_0.2s]">
+                    <div className="bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-red-700 rounded-2xl p-8 w-80 shadow-[0_0_50px_rgba(220,38,38,0.4)] animate-[bounceIn_0.3s] text-center">
+                        {/* Timer Circle */}
+                        <div className="relative w-32 h-32 mx-auto mb-6">
+                            {/* Background Circle */}
+                            <svg className="w-full h-full -rotate-90">
+                                <circle
+                                    cx="64"
+                                    cy="64"
+                                    r="56"
+                                    fill="none"
+                                    stroke="#1e293b"
+                                    strokeWidth="8"
+                                />
+                                <circle
+                                    cx="64"
+                                    cy="64"
+                                    r="56"
+                                    fill="none"
+                                    stroke="#ef4444"
+                                    strokeWidth="8"
+                                    strokeLinecap="round"
+                                    strokeDasharray={`${(exitCountdown / 10) * 352} 352`}
+                                    className="transition-all duration-1000"
+                                />
+                            </svg>
+                            {/* Number in center */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <span className="text-5xl font-black text-red-500 animate-pulse">{exitCountdown}</span>
+                            </div>
+                        </div>
+
+                        <h2 className="text-xl font-bold text-white mb-2">Oyundan Çıkılıyor...</h2>
+                        <p className="text-slate-400 text-sm mb-6">
+                            {exitCountdown} saniye içinde çıkış yapılacak
+                        </p>
+
+                        {/* Cancel Button */}
+                        <button
+                            onClick={() => setExitCountdown(null)}
+                            className="w-full py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl border border-slate-500 transition-all hover:scale-105"
+                        >
+                            İPTAL ET
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/* PARTY VIEW MODAL */}
             {showParty && (
-                <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
                     <div className="w-full max-w-2xl">
                         <PartyView
                             playerState={playerState}
@@ -5070,7 +5509,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
             {/* GUILD VIEW MODAL */}
             {showGuild && (
-                <div className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
                     <div className="w-full max-w-4xl max-h-[90vh] overflow-auto">
                         <GuildView
                             playerState={playerState}
@@ -5130,7 +5569,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                             <div className="w-full md:w-[320px] bg-gradient-to-b from-[#1a1520] to-[#0a0d14] p-4 border-b md:border-b-0 md:border-r border-slate-700/30">
                                 {/* Player Name & Title */}
                                 <div className="text-center mb-2">
-                                    <h2 className="text-lg font-bold text-white">{playerState.name}</h2>
+                                    <h2 className="text-lg font-bold text-white">{playerState.nickname}</h2>
                                     <p className="text-xs text-purple-400">Kadim General</p>
                                 </div>
 
@@ -5217,7 +5656,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                                             <div className="text-red-400 font-bold text-sm">Güç (STR)</div>
                                             <div className="text-[10px] text-slate-500">+1 Fiziksel Hasar</div>
                                         </div>
-                                        <span className="text-white font-bold text-lg mr-3">{playerState.stats?.strength || 100}</span>
+                                        <span className="text-white font-bold text-lg mr-3">{playerState.strength || 100}</span>
                                         <button className="w-7 h-7 bg-green-600 hover:bg-green-500 rounded flex items-center justify-center text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed" disabled={!playerState.statPoints}>
                                             <Plus size={14} />
                                         </button>
@@ -5232,7 +5671,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                                             <div className="text-yellow-400 font-bold text-sm">Çeviklik (DEX)</div>
                                             <div className="text-[10px] text-slate-500">+1% Kritik, +0.5% Hız</div>
                                         </div>
-                                        <span className="text-white font-bold text-lg mr-3">{playerState.stats?.dexterity || 100}</span>
+                                        <span className="text-white font-bold text-lg mr-3">{playerState.dexterity || 100}</span>
                                         <button className="w-7 h-7 bg-green-600 hover:bg-green-500 rounded flex items-center justify-center text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed" disabled={!playerState.statPoints}>
                                             <Plus size={14} />
                                         </button>
@@ -5247,7 +5686,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                                             <div className="text-blue-400 font-bold text-sm">Zeka (INT)</div>
                                             <div className="text-[10px] text-slate-500">+5 Mana, +1 Büyü Hasarı</div>
                                         </div>
-                                        <span className="text-white font-bold text-lg mr-3">{playerState.stats?.intelligence || 100}</span>
+                                        <span className="text-white font-bold text-lg mr-3">{playerState.intelligence || 100}</span>
                                         <button className="w-7 h-7 bg-green-600 hover:bg-green-500 rounded flex items-center justify-center text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed" disabled={!playerState.statPoints}>
                                             <Plus size={14} />
                                         </button>
@@ -5262,7 +5701,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                                             <div className="text-pink-400 font-bold text-sm">Dayanıklılık (VIT)</div>
                                             <div className="text-[10px] text-slate-500">+10 Can</div>
                                         </div>
-                                        <span className="text-white font-bold text-lg mr-3">{playerState.stats?.vitality || 100}</span>
+                                        <span className="text-white font-bold text-lg mr-3">{playerState.vitality || 100}</span>
                                         <button className="w-7 h-7 bg-green-600 hover:bg-green-500 rounded flex items-center justify-center text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed" disabled={!playerState.statPoints}>
                                             <Plus size={14} />
                                         </button>
@@ -5281,27 +5720,27 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                                         {/* Combat Power */}
                                         <div className="bg-slate-800/30 rounded-lg p-3">
                                             <div className="text-[10px] text-slate-500 mb-1">SAVAŞ GÜCÜ (GS)</div>
-                                            <div className="text-xl font-bold text-yellow-400">{((playerState.stats?.strength || 100) * 50 + (playerState.stats?.dexterity || 100) * 30 + (playerState.stats?.intelligence || 100) * 20 + (playerState.stats?.vitality || 100) * 40).toLocaleString()}</div>
+                                            <div className="text-xl font-bold text-yellow-400">{((playerState.strength || 100) * 50 + (playerState.dexterity || 100) * 30 + (playerState.intelligence || 100) * 20 + (playerState.vitality || 100) * 40).toLocaleString()}</div>
                                         </div>
                                         {/* Damage */}
                                         <div className="bg-slate-800/30 rounded-lg p-3">
                                             <div className="text-[10px] text-slate-500 mb-1">Hasar</div>
-                                            <div className="text-lg font-bold text-red-400">{(playerState.stats?.strength || 100) * 10 + playerState.damage}</div>
+                                            <div className="text-lg font-bold text-red-400">{(playerState.strength || 100) * 10 + playerState.damage}</div>
                                         </div>
                                         {/* Defense */}
                                         <div className="bg-slate-800/30 rounded-lg p-3">
                                             <div className="text-[10px] text-slate-500 mb-1">Defans</div>
-                                            <div className="text-lg font-bold text-blue-400">{(playerState.stats?.vitality || 100) * 5 + playerState.defense}</div>
+                                            <div className="text-lg font-bold text-blue-400">{(playerState.vitality || 100) * 5 + playerState.defense}</div>
                                         </div>
                                         {/* Crit Chance */}
                                         <div className="bg-slate-800/30 rounded-lg p-3">
                                             <div className="text-[10px] text-slate-500 mb-1">Kritik Şans</div>
-                                            <div className="text-lg font-bold text-orange-400">{Math.min(75, 5 + (playerState.stats?.dexterity || 100) * 0.1).toFixed(1)}%</div>
+                                            <div className="text-lg font-bold text-orange-400">{Math.min(75, 5 + (playerState.dexterity || 100) * 0.1).toFixed(1)}%</div>
                                         </div>
                                         {/* Attack Speed */}
                                         <div className="bg-slate-800/30 rounded-lg p-3 col-span-2">
                                             <div className="text-[10px] text-slate-500 mb-1">Saldırı Hızı</div>
-                                            <div className="text-lg font-bold text-cyan-400">{(1 + (playerState.stats?.dexterity || 100) * 0.005).toFixed(2)}x</div>
+                                            <div className="text-lg font-bold text-cyan-400">{(1 + (playerState.dexterity || 100) * 0.005).toFixed(2)}x</div>
                                         </div>
                                     </div>
                                 </div>
@@ -5311,16 +5750,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 </div>
             )}
 
-            {/* EXIT CONFIRMATION MODAL WITH COUNTDOWN */}
-            {showExitConfirm && (
-                <ExitConfirmModal
-                    onConfirm={() => {
-                        setShowExitConfirm(false);
-                        props.onExit();
-                    }}
-                    onCancel={() => setShowExitConfirm(false)}
-                />
-            )}
+            {/* EXIT CONFIRMATION MODAL REMOVED - Direct exit now via props.onExit() */}
 
             {/* LOADING OVERLAY - OYUN AÇILIŞINDA */}
             {isLoading && (

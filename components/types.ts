@@ -228,6 +228,7 @@ export interface PlayerState {
   maxExp: number;
   credits: number;
   gems: number;
+  diamonds: number;   // Elmas
   donateCoins: number;
   honor: number;
   vipUntil?: number;

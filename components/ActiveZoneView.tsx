@@ -5417,12 +5417,23 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 
                 Son güncelleme: 2026-01-04 by Claude
             */}
-            <nav className="fixed bottom-0 left-0 w-full z-[60] pointer-events-auto">
-                {/* Background with glass effect */}
-                <div className="bg-gradient-to-t from-black/95 via-slate-900/90 to-transparent h-14 md:h-20 flex items-end justify-start pb-1 md:pb-2 px-0 md:px-2 border-t border-yellow-900/30 shadow-[0_-5px_30px_rgba(0,0,0,0.6)] overflow-x-auto">
+            {/* NAV WRAPPER - Centered on screen */}
+            <nav className="fixed bottom-0 left-0 right-0 z-[60] pointer-events-auto flex justify-center">
+                {/* Background with glass effect - CENTERED CONTAINER */}
+                {/* Mobile: Compact, scrollable | Desktop: Larger, centered */}
+                <div className="
+                    bg-gradient-to-t from-black/95 via-slate-900/90 to-transparent 
+                    border-t border-yellow-900/30 shadow-[0_-5px_30px_rgba(0,0,0,0.6)]
+                    h-14 md:h-16 lg:h-18
+                    flex items-end justify-center 
+                    pb-1 md:pb-2 px-2 md:px-4
+                    overflow-x-auto
+                    max-w-full md:max-w-[90%] lg:max-w-[800px]
+                    md:rounded-t-xl md:border-l md:border-r
+                ">
 
                     {/* All Navigation Buttons - Horizontal scroll on mobile - DO NOT ADD hidden CLASSES! */}
-                    <div className="flex flex-nowrap items-center gap-0.5 md:gap-1 no-scrollbar px-1">
+                    <div className="flex flex-nowrap items-center justify-center gap-0.5 md:gap-1 lg:gap-2 no-scrollbar">
                         {/* 1. Karakter */}
                         <button
                             onClick={() => setShowPlayerStats(true)}

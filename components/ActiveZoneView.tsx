@@ -4410,7 +4410,8 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                             />
                             <div className="flex items-center gap-1">
                                 <RankIcon rank={playerState.rank} size="sm" />
-                                <span className="text-[10px] text-yellow-400 font-bold uppercase">{RANKS[playerState.rank]?.title || 'Warrior'}</span>
+                                {/* RANKS dizisinden rütbe başlığını bul - rank 1'den başlıyor */}
+                                <span className="text-[10px] text-yellow-400 font-bold uppercase">{RANKS.find(r => r.id === playerState.rank)?.title || RANKS[0]?.title || 'Acemi'}</span>
                             </div>
                         </div>
 

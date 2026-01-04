@@ -5347,14 +5347,14 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             */}
             <nav className="fixed bottom-0 left-0 w-full z-[60] pointer-events-auto">
                 {/* Background with glass effect */}
-                <div className="bg-gradient-to-t from-black/95 via-slate-900/90 to-transparent h-16 md:h-20 flex items-end justify-center pb-1.5 md:pb-2 px-1 md:px-2 gap-0.5 md:gap-1 border-t border-yellow-900/30 shadow-[0_-5px_30px_rgba(0,0,0,0.6)]">
+                <div className="bg-gradient-to-t from-black/95 via-slate-900/90 to-transparent h-14 md:h-20 flex items-end justify-start pb-1 md:pb-2 px-0 md:px-2 border-t border-yellow-900/30 shadow-[0_-5px_30px_rgba(0,0,0,0.6)] overflow-x-auto">
 
                     {/* All Navigation Buttons - Horizontal scroll on mobile - DO NOT ADD hidden CLASSES! */}
-                    <div className="flex items-center gap-0.5 md:gap-1 overflow-x-auto no-scrollbar max-w-full px-1">
+                    <div className="flex flex-nowrap items-center gap-0.5 md:gap-1 no-scrollbar px-1">
                         {/* 1. Karakter */}
                         <button
                             onClick={() => setShowPlayerStats(true)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-blue-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-blue-500/50 transition-all group min-w-[38px] md:min-w-[60px] shrink-0"
                             title="Karakter İstatistikleri"
                         >
                             <Users size={16} className="text-blue-400 group-hover:text-blue-300 transition-colors md:w-[18px] md:h-[18px]" />
@@ -5364,7 +5364,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         {/* 2. Envanter */}
                         <button
                             onClick={() => setShowInventory(true)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-amber-900/40 border border-amber-600/50 hover:bg-amber-800/60 hover:border-amber-400 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-amber-900/40 border border-amber-600/50 hover:bg-amber-800/60 hover:border-amber-400 transition-all group min-w-[38px] md:min-w-[60px] shrink-0"
                             title="Envanter ve Eşyalar"
                         >
                             <Backpack size={16} className="text-amber-400 group-hover:text-amber-300 transition-colors md:w-[18px] md:h-[18px]" />
@@ -5374,7 +5374,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         {/* 3. Yetenek */}
                         <button
                             onClick={() => setShowSkills(true)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-purple-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-purple-500/50 transition-all group min-w-[38px] md:min-w-[60px] shrink-0"
                             title="Yetenek Ağacı"
                         >
                             <Zap size={16} className="text-purple-400 group-hover:text-purple-300 transition-colors md:w-[18px] md:h-[18px]" />
@@ -5384,7 +5384,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         {/* 4. Görev */}
                         <button
                             onClick={() => setShowQuests(true)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group min-w-[38px] md:min-w-[60px] shrink-0"
                             title="Aktif Görevler"
                         >
                             <Scroll size={16} className="text-yellow-400 group-hover:text-yellow-300 transition-colors md:w-[18px] md:h-[18px]" />
@@ -5394,7 +5394,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         {/* 5. Parti */}
                         <button
                             onClick={() => setShowParty(true)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-cyan-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-cyan-500/50 transition-all group min-w-[38px] md:min-w-[60px] shrink-0"
                             title="Parti Sistemi"
                         >
                             <Users size={16} className="text-cyan-400 group-hover:text-cyan-300 transition-colors md:w-[18px] md:h-[18px]" />
@@ -5404,7 +5404,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         {/* 6. Lonca */}
                         <button
                             onClick={() => setShowGuild(true)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-violet-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-violet-500/50 transition-all group min-w-[38px] md:min-w-[60px] shrink-0"
                             title="Lonca Sistemi"
                         >
                             <Shield size={16} className="text-violet-400 group-hover:text-violet-300 transition-colors md:w-[18px] md:h-[18px]" />
@@ -5414,7 +5414,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         {/* 7. Pazar */}
                         <button
                             onClick={() => setShowMarketOverlay(true)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-emerald-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-emerald-500/50 transition-all group min-w-[38px] md:min-w-[60px] shrink-0"
                             title="Pazar - Satış ve Alış"
                         >
                             <ShoppingBag size={16} className="text-emerald-400 group-hover:text-emerald-300 transition-colors md:w-[18px] md:h-[18px]" />
@@ -5424,7 +5424,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         {/* 8. Demirci */}
                         <button
                             onClick={() => setBlacksmithState({ isOpen: true, tab: 'craft' })}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-orange-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-orange-500/50 transition-all group min-w-[38px] md:min-w-[60px] shrink-0"
                             title="Demirci - Geliştirme ve Üretim"
                         >
                             <Hammer size={16} className="text-orange-400 group-hover:text-orange-300 transition-colors md:w-[18px] md:h-[18px]" />
@@ -5434,7 +5434,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         {/* 9. Harita */}
                         <button
                             onClick={() => setShowGlobalMap(true)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-green-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-green-500/50 transition-all group min-w-[38px] md:min-w-[60px] shrink-0"
                             title="Dünya Haritası"
                         >
                             <Compass size={16} className="text-green-400 group-hover:text-green-300 transition-colors md:w-[18px] md:h-[18px]" />
@@ -5444,7 +5444,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         {/* 10. Sıralama */}
                         <button
                             onClick={() => setShowLeaderboard(true)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group min-w-[38px] md:min-w-[60px] shrink-0"
                             title="Sıralama Tablosu"
                         >
                             <Trophy size={16} className="text-yellow-500 group-hover:text-yellow-400 transition-colors md:w-[18px] md:h-[18px]" />
@@ -5454,7 +5454,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                         {/* 11. Çıkış */}
                         <button
                             onClick={() => setExitCountdown(10)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-red-900/30 border border-red-700/50 hover:bg-red-800/60 hover:border-red-400 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-red-900/30 border border-red-700/50 hover:bg-red-800/60 hover:border-red-400 transition-all group min-w-[38px] md:min-w-[60px] shrink-0"
                             title="Oyundan Çık"
                         >
                             <X size={16} className="text-red-400 group-hover:text-red-300 transition-colors md:w-[18px] md:h-[18px]" />

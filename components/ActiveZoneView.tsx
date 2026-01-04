@@ -5313,20 +5313,19 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 {/* Background with glass effect */}
                 <div className="bg-gradient-to-t from-black/95 via-slate-900/90 to-transparent h-16 md:h-20 flex items-end justify-center pb-1.5 md:pb-2 px-1 md:px-2 gap-0.5 md:gap-1 border-t border-yellow-900/30 shadow-[0_-5px_30px_rgba(0,0,0,0.6)]">
 
-                    {/* All Navigation Buttons - Scrollable on mobile */}
+                    {/* All Navigation Buttons - Horizontal scroll on mobile */}
                     <div className="flex items-center gap-0.5 md:gap-1 overflow-x-auto no-scrollbar max-w-full px-1">
-                        {/* Chat/Sohbet */}
+                        {/* 1. Karakter */}
                         <button
-                            onClick={() => setShowChat(!showChat)}
-                            className={`flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg border transition-all group min-w-[44px] md:min-w-[60px] shrink-0
-                                ${showChat ? 'bg-amber-700/60 border-amber-500' : 'bg-slate-800/60 border-slate-600/50 hover:bg-slate-700/80 hover:border-amber-500/50'}`}
-                            title="Sohbet"
+                            onClick={() => setShowPlayerStats(true)}
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-blue-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            title="Karakter İstatistikleri"
                         >
-                            <MessageSquare size={16} className={`${showChat ? 'text-amber-300' : 'text-amber-400 group-hover:text-amber-300'} transition-colors md:w-[18px] md:h-[18px]`} />
-                            <span className={`text-[7px] md:text-[9px] font-bold uppercase ${showChat ? 'text-amber-200' : 'text-slate-400 group-hover:text-white'}`}>Sohbet</span>
+                            <Users size={16} className="text-blue-400 group-hover:text-blue-300 transition-colors md:w-[18px] md:h-[18px]" />
+                            <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Karakter</span>
                         </button>
 
-                        {/* Inventory/Envanter */}
+                        {/* 2. Envanter */}
                         <button
                             onClick={() => setShowInventory(true)}
                             className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-amber-900/40 border border-amber-600/50 hover:bg-amber-800/60 hover:border-amber-400 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
@@ -5336,7 +5335,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                             <span className="text-[7px] md:text-[9px] text-amber-300 group-hover:text-white font-bold uppercase">Envanter</span>
                         </button>
 
-                        {/* Skills/Yetenekler - Opens Skills Modal */}
+                        {/* 3. Yetenek */}
                         <button
                             onClick={() => setShowSkills(true)}
                             className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-purple-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
@@ -5346,7 +5345,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                             <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Yetenek</span>
                         </button>
 
-                        {/* Quests/Görevler - Opens Quests Modal */}
+                        {/* 4. Görev */}
                         <button
                             onClick={() => setShowQuests(true)}
                             className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
@@ -5356,27 +5355,27 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                             <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Görev</span>
                         </button>
 
-                        {/* Party/Parti - Hidden on very small mobile */}
+                        {/* 5. Parti */}
                         <button
                             onClick={() => setShowParty(true)}
-                            className="hidden xs:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-cyan-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-cyan-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
                             title="Parti Sistemi"
                         >
                             <Users size={16} className="text-cyan-400 group-hover:text-cyan-300 transition-colors md:w-[18px] md:h-[18px]" />
                             <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Parti</span>
                         </button>
 
-                        {/* Guild/Lonca - Hidden on mobile */}
+                        {/* 6. Lonca */}
                         <button
                             onClick={() => setShowGuild(true)}
-                            className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-violet-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-violet-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
                             title="Lonca Sistemi"
                         >
                             <Shield size={16} className="text-violet-400 group-hover:text-violet-300 transition-colors md:w-[18px] md:h-[18px]" />
                             <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Lonca</span>
                         </button>
 
-                        {/* Market/Pazar */}
+                        {/* 7. Pazar */}
                         <button
                             onClick={() => setShowMarketOverlay(true)}
                             className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-emerald-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
@@ -5386,17 +5385,17 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                             <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Pazar</span>
                         </button>
 
-                        {/* Blacksmith/Demirci - Hidden on mobile */}
+                        {/* 8. Demirci */}
                         <button
                             onClick={() => setBlacksmithState({ isOpen: true, tab: 'craft' })}
-                            className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-orange-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-orange-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
                             title="Demirci - Geliştirme ve Üretim"
                         >
                             <Hammer size={16} className="text-orange-400 group-hover:text-orange-300 transition-colors md:w-[18px] md:h-[18px]" />
                             <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Demirci</span>
                         </button>
 
-                        {/* Map/Harita */}
+                        {/* 9. Harita */}
                         <button
                             onClick={() => setShowGlobalMap(true)}
                             className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-green-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
@@ -5406,34 +5405,24 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                             <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Harita</span>
                         </button>
 
-                        {/* Leaderboard/Sıralama - Hidden on mobile */}
+                        {/* 10. Sıralama */}
                         <button
                             onClick={() => setShowLeaderboard(true)}
-                            className="hidden sm:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-yellow-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
                             title="Sıralama Tablosu"
                         >
                             <Trophy size={16} className="text-yellow-500 group-hover:text-yellow-400 transition-colors md:w-[18px] md:h-[18px]" />
                             <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Sıralama</span>
                         </button>
 
-                        {/* Achievements/Başarımlar - Hidden on mobile */}
+                        {/* 11. Çıkış */}
                         <button
-                            onClick={() => setShowAchievements(true)}
-                            className="hidden md:flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-pink-500/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
-                            title="Başarımlar"
+                            onClick={() => setExitCountdown(10)}
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-red-900/30 border border-red-700/50 hover:bg-red-800/60 hover:border-red-400 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
+                            title="Oyundan Çık"
                         >
-                            <Star size={16} className="text-pink-400 group-hover:text-pink-300 transition-colors md:w-[18px] md:h-[18px]" />
-                            <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Başarım</span>
-                        </button>
-
-                        {/* Settings/Ayarlar */}
-                        <button
-                            onClick={() => setShowSettings(true)}
-                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-slate-400/50 transition-all group min-w-[44px] md:min-w-[60px] shrink-0"
-                            title="Ayarlar"
-                        >
-                            <SettingsIcon size={16} className="text-slate-400 group-hover:text-slate-200 group-hover:rotate-45 transition-all md:w-[18px] md:h-[18px]" />
-                            <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Ayarlar</span>
+                            <X size={16} className="text-red-400 group-hover:text-red-300 transition-colors md:w-[18px] md:h-[18px]" />
+                            <span className="text-[7px] md:text-[9px] text-red-400 group-hover:text-white font-bold uppercase">Çıkış</span>
                         </button>
                     </div>
                 </div>

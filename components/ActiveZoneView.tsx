@@ -561,10 +561,38 @@ const ProjectileMesh: React.FC<{ p: any }> = ({ p }) => {
     )
 };
 
+/**
+ * ═══════════════════════════════════════════════════════════════════════════
+ * LOOT BOX COMPONENT - Gelişmiş Loot Kutusu Sistemi
+ * 
+ * KURALLAR:
+ * - İlk 60 saniye: Sadece kutuyu düşüren oyuncu alabilir (KORUMALI)
+ * - 60-120 saniye arası: Herkes alabilir (AÇIK)
+ * - 120 saniye sonra: Kutu kaybolur (TIMEOUT)
+ * - Otomatik toplama YOK - "AL" butonuna basılmalı
+ * 
+ * ⚠️ BU SİSTEM DEĞİŞTİRİLMEMELİ - Oyun ekonomisi için kritik!
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
 const VoxelLootBox: React.FC<{ box: LootBox, onClick: (box: LootBox) => void, playerNickname: string }> = ({ box, onClick, playerNickname }) => {
-    const [timeLeft, setTimeLeft] = useState(120);
-    const isProtected = (Date.now() - box.createdAt) < 60000;
+    const OWNER_LOCK_TIME = 60000; // 60 saniye sadece owner alabilir
+    const TOTAL_LIFETIME = 120000; // 120 saniye sonra kaybolur
+
+    const [currentTime, setCurrentTime] = useState(Date.now());
+
+    // Timer for real-time updates
+    useEffect(() => {
+        const interval = setInterval(() => setCurrentTime(Date.now()), 1000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const timeSinceCreation = currentTime - box.createdAt;
+    const timeUntilPublic = Math.max(0, OWNER_LOCK_TIME - timeSinceCreation);
+    const timeUntilDespawn = Math.max(0, TOTAL_LIFETIME - timeSinceCreation);
+
+    const isProtected = timeSinceCreation < OWNER_LOCK_TIME;
     const isOwner = box.ownerId === playerNickname;
+    const canCollect = isOwner || !isProtected;
 
     // Determine Chest Model based on Tier
     const chestPath = useMemo(() => {
@@ -585,13 +613,11 @@ const VoxelLootBox: React.FC<{ box: LootBox, onClick: (box: LootBox) => void, pl
         return s;
     }, [scene]);
 
-    useEffect(() => {
-        const interval = setInterval(() => setTimeLeft(prev => Math.max(0, prev - 1)), 1000);
-        return () => clearInterval(interval);
-    }, []);
-
     const colors = { white: '#e2e8f0', blue: '#3b82f6', yellow: '#eab308', orange: '#f97316', red: '#ef4444', purple: '#a855f7' };
     const tierColor = colors[box.color as keyof typeof colors] || colors.white;
+
+    // Format time display
+    const formatTime = (ms: number) => Math.ceil(ms / 1000);
 
     return (
         <group position={[box.x, 0, box.z]}>
@@ -601,22 +627,53 @@ const VoxelLootBox: React.FC<{ box: LootBox, onClick: (box: LootBox) => void, pl
             {/* RARITY GLOW */}
             <pointLight position={[0, 0.5, 0]} color={tierColor} intensity={2} distance={3} />
 
-            <Html position={[0, 1.5, 0]} center style={{ pointerEvents: 'none' }}>
-                <div className="pointer-events-auto">
+            {/* UI OVERLAY */}
+            <Html position={[0, 1.8, 0]} center style={{ pointerEvents: 'none' }}>
+                <div className="pointer-events-auto flex flex-col items-center gap-1">
+                    {/* Item Name (if exists) */}
+                    {box.item && (
+                        <div className="text-[10px] text-white bg-black/70 px-2 py-0.5 rounded border border-slate-600 whitespace-nowrap">
+                            {box.item.name}
+                        </div>
+                    )}
+
+                    {/* Main Button */}
                     <button
-                        onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); onClick(box); }}
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); onClick(box); }}
-                        onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); onClick(box); }}
-                        className={`px-4 py-2 rounded font-bold text-xs border shadow-xl z-50 pointer-events-auto touch-manipulation ${isProtected && !isOwner ? 'bg-gray-700 text-gray-400' : 'bg-green-600 text-white'}`}
+                        onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); if (canCollect) onClick(box); }}
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (canCollect) onClick(box); }}
+                        onTouchEnd={(e) => { e.preventDefault(); e.stopPropagation(); if (canCollect) onClick(box); }}
+                        disabled={!canCollect}
+                        className={`px-4 py-2 rounded-lg font-bold text-sm border-2 shadow-xl z-50 pointer-events-auto touch-manipulation transition-all
+                            ${!canCollect
+                                ? 'bg-slate-800 text-slate-400 border-slate-600 cursor-not-allowed opacity-80'
+                                : 'bg-gradient-to-b from-green-500 to-green-700 text-white border-green-400 hover:from-green-400 hover:to-green-600 active:scale-95'
+                            }`}
                     >
-                        {isProtected && !isOwner ? "KORUMALI" : "AL"}
+                        {canCollect ? '📦 AL' : `🔒 ${formatTime(timeUntilPublic)}sn`}
                     </button>
-                    {/* <div className="text-[8px] text-white bg-black/50 px-1 rounded mt-1 text-center">{timeLeft}s</div> */}
+
+                    {/* Time Remaining Bar */}
+                    <div className="w-16 h-1.5 bg-black/60 rounded-full overflow-hidden border border-slate-600">
+                        <div
+                            className={`h-full transition-all ${isProtected ? 'bg-yellow-500' : 'bg-green-500'}`}
+                            style={{ width: `${(timeUntilDespawn / TOTAL_LIFETIME) * 100}%` }}
+                        />
+                    </div>
+
+                    {/* Time Label */}
+                    <div className="text-[9px] text-slate-300 bg-black/50 px-1.5 py-0.5 rounded">
+                        {isProtected ? (
+                            isOwner ? `Senin: ${formatTime(timeUntilDespawn)}sn` : `Kilitli: ${formatTime(timeUntilPublic)}sn`
+                        ) : (
+                            `Açık: ${formatTime(timeUntilDespawn)}sn`
+                        )}
+                    </div>
                 </div>
             </Html>
         </group>
     );
 };
+
 
 const FloatingTextComponent: React.FC<{ data: FloatingText }> = ({ data }) => (
     <Html position={[data.x, data.y, data.z]} center><div className={`text-xl font-bold animate-bounce select-none ${data.color}`}>{data.text}</div></Html>
@@ -2180,6 +2237,20 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
     const [lootBoxes, setLootBoxes] = useState<LootBox[]>([]);
     const [projectiles, setProjectiles] = useState<any[]>([]);
     const [floatingTexts, setFloatingTexts] = useState<FloatingText[]>([]);
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // LOOT BOX TIMEOUT CLEANUP - 120 saniye sonra kutular kaybolur
+    // Bu sistem oyun ekonomisi için kritik! DEĞİŞTİRMEYİN!
+    // ═══════════════════════════════════════════════════════════════════════════
+    useEffect(() => {
+        const LOOT_BOX_LIFETIME = 120000; // 120 saniye
+        const cleanupInterval = setInterval(() => {
+            const now = Date.now();
+            setLootBoxes(prev => prev.filter(box => (now - box.createdAt) < LOOT_BOX_LIFETIME));
+        }, 5000); // Her 5 saniyede kontrol et
+
+        return () => clearInterval(cleanupInterval);
+    }, []);
 
     // ANTI-BOT SYSTEM
     const antiBotRef = useRef<AntiBotState>(createAntiBotState());

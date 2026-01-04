@@ -38,12 +38,13 @@
 ---
 
 ## 5. 📦 LOOT KUTUSU SİSTEMİ
-- [ ] Otomatik toplanmayacak
-- [ ] "AL" butonu ile alınacak
-- [ ] 60 saniye timeout
-- [ ] Timeout sonrası başka oyuncu alabilir
-- [ ] Kutu düşüren oyuncunun ID'si saklanmalı
-- **Dosya:** `components/ActiveZoneView.tsx` - lootBox logic
+- [x] ~~Otomatik toplanmayacak~~ ✅ TAMAMLANDI
+- [x] ~~"AL" butonu ile alınacak~~ ✅ TAMAMLANDI
+- [x] ~~60 saniye owner lock~~ ✅ TAMAMLANDI
+- [x] ~~60-120 arası herkese açık~~ ✅ TAMAMLANDI
+- [x] ~~120 saniye sonra despawn~~ ✅ TAMAMLANDI
+- [x] ~~Kalan süre gösterimi~~ ✅ TAMAMLANDI
+- **Dosya:** `components/ActiveZoneView.tsx` - VoxelLootBox component
 
 ---
 

@@ -40,21 +40,7 @@ export const PremiumMarketView: React.FC<PremiumMarketViewProps> = ({ playerStat
             featured: true,
             badge: '🔥 EN POPÜLER'
         },
-
-        // STARTER PACK (Acemi Paketi - Elmas ile)
-        { id: 'starter_pack', name: 'Acemi Savaşçı Paketi', desc: 'Maceraya hızlı başla! +5 T2 Silah ve Potlar.', cost: 25, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-amber-300', border: 'border-amber-400', bg: 'bg-amber-950/40' },
-
-        { id: 'pragmatic_bundle', name: 'Pragmatik Set', desc: 'Sadelik ve gücün mükemmel uyumu.', cost: 400, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-amber-400', border: 'border-amber-500/50', bg: 'bg-amber-900/20' },
-        { id: 'ninja_bundle', name: 'Gölge Ninja Seti', desc: 'Karanlıkta görünmez ol, düşmanlarını şaşırt.', cost: 600, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-slate-400', border: 'border-slate-500/50', bg: 'bg-slate-900/20' },
-        { id: 'santa_bundle', name: 'Noel Baba Kostümü', desc: 'Savaş alanına neşe (ve hediye) getir!', cost: 500, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-red-400', border: 'border-red-500/50', bg: 'bg-red-900/20' },
-        { id: 'void_bundle', name: 'Hiçlik Gezgini', desc: 'Evrenin derinliklerinden gelen gizemli güç.', cost: 800, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-purple-400', border: 'border-purple-500/50', bg: 'bg-purple-900/20' },
-        { id: 'cyber_bundle', name: 'Siber Savaşçı', desc: 'Geleceğin teknolojisi ile donatılmış zırh.', cost: 750, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-cyan-400', border: 'border-cyan-500/50', bg: 'bg-cyan-900/20' },
-        { id: 'vampire_bundle', name: 'Kan Kontu', desc: 'Aristokratik görünüm ve ölümcül zarafet.', cost: 650, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-red-600', border: 'border-red-700/50', bg: 'bg-red-950/20' },
-        { id: 'paladin_bundle', name: 'Işık Şövalyesi', desc: 'Kutsal ışığın koruyucusu ol.', cost: 700, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-yellow-200', border: 'border-yellow-300/50', bg: 'bg-yellow-900/20' },
-        { id: 'samurai_bundle', name: 'Samuray Onuru', desc: 'Keskin kılıç, sarsılmaz irade.', cost: 600, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-rose-400', border: 'border-rose-500/50', bg: 'bg-rose-900/20' },
-        { id: 'pirate_bundle', name: 'Denizlerin Hakimi', desc: 'Macera peşinde koşanlar için.', cost: 550, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-orange-400', border: 'border-orange-500/50', bg: 'bg-orange-900/20' },
-        { id: 'angel_bundle', name: 'Semavi Muhafız', desc: 'Gökyüzünden gelen ilahi güç.', cost: 900, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-sky-200', border: 'border-sky-300/50', bg: 'bg-sky-900/20' },
-        { id: 'demon_bundle', name: 'Cehennem Lordu', desc: 'Ateş ve yıkımın vücut bulmuş hali.', cost: 900, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-red-500', border: 'border-red-600/50', bg: 'bg-red-950/30' },
+        // Diğer kostüm paketleri kaldırıldı - Yakında eklenecek
     ];
 
     const SUBSCRIPTION_BENEFITS = [
@@ -266,92 +252,83 @@ export const PremiumMarketView: React.FC<PremiumMarketViewProps> = ({ playerStat
                     </div>
                 )}
 
-                {/* PREMIUM ITEMS / SKINS */}
+                {/* PREMIUM ITEMS / SKINS - YAKINDA */}
                 {activeTab === 'items' && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {PREMIUM_ITEMS.map(item => {
-                            const isOwned = playerState.ownedSkins && playerState.ownedSkins.includes(item.id);
-
-                            return (
-                                <div key={item.id} className={`${item.bg} ${item.border} border rounded-xl p-6 flex flex-col hover:border-opacity-100 border-opacity-50 transition-all group relative overflow-hidden shadow-lg hover:shadow-2xl`}>
-                                    <div className="flex justify-between items-start mb-4">
-                                        <div className={`p-3 bg-black/30 rounded-lg ${item.color}`}>
-                                            <Package size={24} />
-                                        </div>
-                                        <div className={`px-2 py-1 bg-black/30 rounded text-xs ${item.color} uppercase tracking-wider font-bold`}>
-                                            Kostüm Seti
-                                        </div>
-                                    </div>
-                                    <h3 className="text-lg font-bold text-white mb-2">{item.name}</h3>
-                                    <p className={`text-sm opacity-70 mb-6 flex-1 ${item.color}`}>{item.desc}</p>
-
-                                    <div className="mt-auto">
-                                        <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
-                                            <div className="flex items-center gap-2">
-                                                <Diamond size={16} className="text-cyan-400" />
-                                                <span className="font-bold text-lg text-white">{item.cost}</span>
-                                            </div>
-                                            {isOwned ? (
-                                                <button disabled className="px-4 py-2 bg-slate-700 text-slate-400 rounded-lg font-bold flex items-center gap-2 cursor-not-allowed">
-                                                    <Check size={16} />
-                                                    Satın Alındı
-                                                </button>
-                                            ) : (
-                                                <button
-                                                    onClick={() => onBuyData('item', item.id, item.cost, 'gems')}
-                                                    className={`px-4 py-2 rounded-lg font-bold transition-all flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white`}
-                                                >
-                                                    <ShoppingCart size={16} />
-                                                    Satın Al
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
+                    <div className="flex flex-col items-center justify-center h-64 text-center">
+                        <Package size={64} className="text-slate-600 mb-4" />
+                        <h3 className="text-2xl font-bold text-slate-400 mb-2">Yakında!</h3>
+                        <p className="text-slate-500">Yeni kostüm paketleri çok yakında eklenecek...</p>
                     </div>
                 )}
 
                 {/* SUBSCRIPTION */}
                 {activeTab === 'subscription' && (
-                    <div className="max-w-2xl mx-auto">
-                        <div className="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-2xl p-1 border border-indigo-500/50 shadow-2xl relative overflow-hidden">
-                            {/* Glow Effect */}
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 blur-3xl rounded-full -mr-20 -mt-20"></div>
-
-                            <div className="bg-[#0f0a15]/90 rounded-xl p-8 backdrop-blur-sm h-full flex flex-col items-center text-center">
-                                <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-amber-600 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-amber-900/50">
-                                    <Crown size={40} className="text-white fill-white/20" />
+                    <div className="space-y-8">
+                        {/* Kadim Silah Paketi - TL */}
+                        <div className="bg-gradient-to-br from-yellow-900/40 to-amber-900/40 border-2 border-yellow-500 rounded-2xl p-6 relative overflow-hidden">
+                            <div className="absolute top-3 right-3 px-3 py-1 bg-red-600 text-white text-xs font-black uppercase rounded-full animate-pulse">
+                                🔥 EN POPÜLER
+                            </div>
+                            <div className="flex items-start gap-4 mb-4">
+                                <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <Sword size={32} className="text-white" />
                                 </div>
+                                <div>
+                                    <h3 className="text-2xl font-black text-yellow-300">⚔️ KADİM SİLAH PAKETİ</h3>
+                                    <p className="text-yellow-200/70 text-sm">+7 Kadim Silah (99 Hasar!) + %10 Bonus EXP + Kritik Şansı. Sınıfına özel efsanevi silah!</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-between mt-4 pt-4 border-t border-yellow-600/30">
+                                <div className="text-3xl font-black text-white">49.99 TL</div>
+                                <button
+                                    onClick={() => onBuyData('item', 'kadim_weapon_pack', 49.99, 'real')}
+                                    className="px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-white font-bold rounded-xl shadow-lg flex items-center gap-2"
+                                >
+                                    <CreditCard size={20} />
+                                    SATIN AL
+                                </button>
+                            </div>
+                        </div>
 
-                                <h2 className="text-3xl font-black text-white mb-2">KADİM VIP ÜYELİK</h2>
-                                <p className="text-indigo-300 mb-8 max-w-md">Gerçek bir efsane gibi oyna. Sınırsız potansiyelini açığa çıkar ve rakiplerinin önüne geç.</p>
+                        {/* VIP Üyelik */}
+                        <div className="max-w-2xl mx-auto">
+                            <div className="bg-gradient-to-br from-indigo-900 to-purple-900 rounded-2xl p-1 border border-indigo-500/50 shadow-2xl relative overflow-hidden">
+                                {/* Glow Effect */}
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 blur-3xl rounded-full -mr-20 -mt-20"></div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mb-8 text-left">
-                                    {SUBSCRIPTION_BENEFITS.map((benefit, i) => (
-                                        <div key={i} className="flex items-center gap-3 p-3 bg-indigo-950/50 rounded-lg border border-indigo-800/50">
-                                            <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
-                                                <Check size={14} className="text-green-400" />
+                                <div className="bg-[#0f0a15]/90 rounded-xl p-8 backdrop-blur-sm h-full flex flex-col items-center text-center">
+                                    <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-amber-600 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-amber-900/50">
+                                        <Crown size={40} className="text-white fill-white/20" />
+                                    </div>
+
+                                    <h2 className="text-3xl font-black text-white mb-2">KADİM VIP ÜYELİK</h2>
+                                    <p className="text-indigo-300 mb-8 max-w-md">Gerçek bir efsane gibi oyna. Sınırsız potansiyelini açığa çıkar ve rakiplerinin önüne geç.</p>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mb-8 text-left">
+                                        {SUBSCRIPTION_BENEFITS.map((benefit, i) => (
+                                            <div key={i} className="flex items-center gap-3 p-3 bg-indigo-950/50 rounded-lg border border-indigo-800/50">
+                                                <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
+                                                    <Check size={14} className="text-green-400" />
+                                                </div>
+                                                <span className="text-sm font-medium text-indigo-100">{benefit}</span>
                                             </div>
-                                            <span className="text-sm font-medium text-indigo-100">{benefit}</span>
-                                        </div>
-                                    ))}
-                                </div>
+                                        ))}
+                                    </div>
 
-                                <div className="mt-auto w-full">
-                                    <div className="flex flex-col gap-3">
-                                        <div className="text-3xl font-bold text-white">
-                                            149.99 TL <span className="text-lg text-slate-400 font-normal">/ Ay</span>
+                                    <div className="mt-auto w-full">
+                                        <div className="flex flex-col gap-3">
+                                            <div className="text-3xl font-bold text-white">
+                                                149.99 TL <span className="text-lg text-slate-400 font-normal">/ Ay</span>
+                                            </div>
+                                            <button
+                                                onClick={() => onBuyData('subscription', 'vip_1_month', 149.99, 'real')}
+                                                className="w-full py-4 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-white font-bold rounded-xl shadow-lg shadow-amber-900/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-lg"
+                                            >
+                                                <Star fill="currentColor" size={20} />
+                                                HEMEN KATIL
+                                            </button>
+                                            <p className="text-xs text-slate-500 mt-2">İstediğin zaman iptal edebilirsin.</p>
                                         </div>
-                                        <button
-                                            onClick={() => onBuyData('subscription', 'vip_1_month', 149.99, 'real')}
-                                            className="w-full py-4 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-white font-bold rounded-xl shadow-lg shadow-amber-900/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-lg"
-                                        >
-                                            <Star fill="currentColor" size={20} />
-                                            HEMEN KATIL
-                                        </button>
-                                        <p className="text-xs text-slate-500 mt-2">İstediğin zaman iptal edebilirsin.</p>
                                     </div>
                                 </div>
                             </div>

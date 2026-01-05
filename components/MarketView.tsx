@@ -100,14 +100,6 @@ export const MarketView: React.FC<MarketViewProps> = ({ playerState, onClose, on
                 <div className="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800">
                     <div className="flex items-center gap-4">
                         <h2 className="text-2xl font-bold text-yellow-500 font-cinzel">PAZAR YERİ</h2>
-                        <div className="flex gap-2">
-                            <span className="text-yellow-400 font-mono text-sm bg-black/40 px-2 py-1 rounded">
-                                💰 {playerState.credits.toLocaleString()}
-                            </span>
-                            <span className="text-blue-400 font-mono text-sm bg-black/40 px-2 py-1 rounded">
-                                💎 {playerState.gems.toLocaleString()}
-                            </span>
-                        </div>
                     </div>
                     {!isEmbedded && <button onClick={onClose} className="text-red-500 hover:text-red-400 font-bold text-xl">X</button>}
                 </div>

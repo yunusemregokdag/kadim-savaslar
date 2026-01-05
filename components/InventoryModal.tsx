@@ -343,7 +343,7 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
                             />
                         </div>
 
-                        <div className="flex items-center gap-3 w-full md:w-auto">
+                        <div className="flex items-center gap-3 w-full md:w-auto pr-12">
                             <div className="flex gap-1 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 hide-scrollbar">
                                 {(['all', 'gear', 'consumable', 'material'] as InventoryFilter[]).map(f => (
                                     <button

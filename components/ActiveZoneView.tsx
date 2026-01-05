@@ -5872,8 +5872,50 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                                     <div className="grid grid-cols-2 gap-3">
                                         {/* Combat Power */}
                                         <div className="bg-slate-800/30 rounded-lg p-3">
-                                            <div className="text-[10px] text-slate-500 mb-1">SAVAŞ GÜCÜ (GS)</div>
-                                            <div className="text-xl font-bold text-yellow-400">{((playerState.strength || 100) * 50 + (playerState.dexterity || 100) * 30 + (playerState.intelligence || 100) * 20 + (playerState.vitality || 100) * 40).toLocaleString()}</div>
+                                            <div className="text-[10px] text-slate-500 mb-1">SAVAŞ GÜCÜ (SG)</div>
+                                            <div className="text-xl font-bold text-yellow-400">
+                                                {(() => {
+                                                    // Base stats contribution
+                                                    const statPower = (playerState.strength || 0) * 50 +
+                                                        (playerState.dexterity || 0) * 30 +
+                                                        (playerState.intelligence || 0) * 20 +
+                                                        (playerState.vitality || 0) * 40;
+
+                                                    // Combat stats contribution
+                                                    const combatPower = (playerState.damage || 0) * 10 +
+                                                        (playerState.defense || 0) * 8 +
+                                                        (playerState.maxHp || 0) * 0.5 +
+                                                        (playerState.maxMana || 0) * 0.3;
+
+                                                    // Level contribution
+                                                    const levelPower = (playerState.level || 1) * 500;
+
+                                                    // Equipment contribution
+                                                    let equipPower = 0;
+                                                    if (playerState.equipment) {
+                                                        Object.values(playerState.equipment).forEach(item => {
+                                                            if (item && item.stats) {
+                                                                equipPower += (item.stats.damage || 0) * 15;
+                                                                equipPower += (item.stats.defense || 0) * 12;
+                                                                equipPower += (item.stats.str || 0) * 50;
+                                                                equipPower += (item.stats.dex || 0) * 30;
+                                                                equipPower += (item.stats.int || 0) * 20;
+                                                                equipPower += (item.stats.vit || 0) * 40;
+                                                                equipPower += (item.stats.hp || 0) * 0.5;
+                                                            }
+                                                            if (item && item.plus) {
+                                                                equipPower += item.plus * 200;
+                                                            }
+                                                        });
+                                                    }
+
+                                                    // Wing/Pet contribution
+                                                    if (playerState.equippedWing) equipPower += 500;
+                                                    if (playerState.equippedPet) equipPower += 300;
+
+                                                    return Math.floor(statPower + combatPower + levelPower + equipPower).toLocaleString();
+                                                })()}
+                                            </div>
                                         </div>
                                         {/* Damage */}
                                         <div className="bg-slate-800/30 rounded-lg p-3">

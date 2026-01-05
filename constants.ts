@@ -38,13 +38,11 @@ export const FACTIONS: Record<Faction, { name: string, color: string, descriptio
 export const CLASS_BASE_STATS: Record<CharacterClass, { str: number, dex: number, int: number, vit: number }> = {
     warrior: { str: 12, dex: 4, int: 2, vit: 15 },     // Tank: High HP (VIT), Good Dmg (STR)
     arctic_knight: { str: 10, dex: 5, int: 4, vit: 14 },
-    gale_glaive: { str: 8, dex: 14, int: 4, vit: 10 }, // Agile DPS
     archer: { str: 4, dex: 15, int: 3, vit: 8 },
     archmage: { str: 2, dex: 4, int: 16, vit: 5 },
     bard: { str: 4, dex: 12, int: 12, vit: 6 },
     cleric: { str: 6, dex: 4, int: 12, vit: 12 },
     martial_artist: { str: 14, dex: 12, int: 2, vit: 8 },
-    monk: { str: 8, dex: 8, int: 10, vit: 12 }, // Balanced healer
     reaper: { str: 14, dex: 8, int: 6, vit: 6 },
 };
 
@@ -86,19 +84,6 @@ export const WINGS_DATA: WingItem[] = [
         color: '#FFD700'
     },
 
-    // NEW: BUTTERFLY WINGS (T2-T4)
-    { id: 'wing_butterfly_1', name: 'Kelebek Kanadı (Pembe)', type: 'fairy', tier: 2, bonusDamage: 20, bonusHp: 200, color: '#ec4899', modelPath: '/models/wings/butterfly_wings_cosmetic/butterfly_wings_cosmetic1.gltf' },
-    { id: 'wing_butterfly_2', name: 'Kelebek Kanadı (Mavi)', type: 'fairy', tier: 2, bonusDamage: 22, bonusHp: 220, color: '#3b82f6', modelPath: '/models/wings/butterfly_wings_cosmetic/butterfly_wings_cosmetic2.gltf' },
-    { id: 'wing_butterfly_3', name: 'Kelebek Kanadı (Yeşil)', type: 'fairy', tier: 2, bonusDamage: 24, bonusHp: 240, color: '#22c55e', modelPath: '/models/wings/butterfly_wings_cosmetic/butterfly_wings_cosmetic3.gltf' },
-    { id: 'wing_butterfly_4', name: 'Kelebek Kanadı (Mor)', type: 'fairy', tier: 3, bonusDamage: 45, bonusHp: 400, color: '#a855f7', modelPath: '/models/wings/butterfly_wings_cosmetic/butterfly_wings_cosmetic4.gltf' },
-    { id: 'wing_butterfly_5', name: 'Kelebek Kanadı (Turuncu)', type: 'fairy', tier: 3, bonusDamage: 50, bonusHp: 450, color: '#f97316', modelPath: '/models/wings/butterfly_wings_cosmetic/butterfly_wings_cosmetic5.gltf' },
-    { id: 'wing_butterfly_6', name: 'Kelebek Kanadı (Altın)', type: 'fairy', tier: 3, bonusDamage: 55, bonusHp: 500, color: '#fbbf24', modelPath: '/models/wings/butterfly_wings_cosmetic/butterfly_wings_cosmetic6.gltf' },
-    { id: 'wing_butterfly_7', name: 'Kelebek Kanadı (Kırmızı)', type: 'fairy', tier: 4, bonusDamage: 100, bonusHp: 800, bonusDefense: 30, color: '#ef4444', modelPath: '/models/wings/butterfly_wings_cosmetic/butterfly_wings_cosmetic7.gltf' },
-    { id: 'wing_butterfly_8', name: 'Kelebek Kanadı (Gök)', type: 'fairy', tier: 4, bonusDamage: 110, bonusHp: 900, bonusDefense: 40, color: '#06b6d4', modelPath: '/models/wings/butterfly_wings_cosmetic/butterfly_wings_cosmetic8.gltf' },
-    { id: 'wing_butterfly_9', name: 'Kelebek Kanadı (Karanlık)', type: 'fairy', tier: 4, bonusDamage: 120, bonusHp: 1000, bonusDefense: 50, color: '#1e1b4b', modelPath: '/models/wings/butterfly_wings_cosmetic/butterfly_wings_cosmetic9.gltf' },
-    { id: 'wing_butterfly_10', name: 'Kelebek Kanadı (Gökkuşağı)', type: 'fairy', tier: 5, bonusDamage: 200, bonusHp: 2000, bonusDefense: 100, color: '#f472b6', modelPath: '/models/wings/butterfly_wings_cosmetic/butterfly_wings_cosmetic10.gltf' },
-
-    // NEW: VOLT WINGS (T5 PREMIUM)
     { id: 'wing_volt', name: 'Volt Kanatları', type: 'dragon', tier: 5, bonusDamage: 300, bonusHp: 3000, bonusDefense: 200, bonusGoldRate: 30, color: '#facc15', modelPath: '/models/wings/volt_wings/volt_wings.gltf' },
 
     // ANGEL/DEMON HYBRID WINGS (T5 PREMIUM) - Yarısı Melek (Beyaz/Altın), Yarısı Şeytan (Siyah/Kırmızı)
@@ -202,6 +187,33 @@ export const PETS_DATA: PetItem[] = [
     // TIER 5 - Mythical Mounts (+11% Hasar, +55-60% Hız)
     { id: 'mount_dragon', name: 'Ejderha Bineği', type: 'mount', tier: 5, bonusExpRate: 0, bonusDefense: 0, bonusSpeed: 60, bonusDamage: 11, color: '#8b0000', modelPath: '/models/pets/cubee-tnt.gltf' },
     { id: 'mount_unicorn', name: 'Tek Boynuzlu At', type: 'mount', tier: 5, bonusExpRate: 0, bonusDefense: 0, bonusSpeed: 55, bonusDamage: 11, color: '#f8f8ff', modelPath: '/models/pets/cubee-good.gltf' },
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SPEED PETS - Hız Petleri (Ayrı slotta takılır, hareket hızı verir)
+// Normal petlerle aynı anda kullanılabilir!
+// ═══════════════════════════════════════════════════════════════════════════
+export const SPEED_PETS_DATA: PetItem[] = [
+    // TIER 1 - Temel Hız Petleri (+10-15% Hız)
+    { id: 'speed_bunny', name: 'Hızlı Tavşan', type: 'speed', tier: 1, bonusSpeed: 10, bonusExpRate: 2, bonusDefense: 0, color: '#f5f5f5', modelPath: '/models/pets/cubee-plains.gltf' },
+    { id: 'speed_squirrel', name: 'Sincap', type: 'speed', tier: 1, bonusSpeed: 12, bonusExpRate: 3, bonusDefense: 0, color: '#d4a574', modelPath: '/models/pets/cubee-grass.gltf' },
+    { id: 'speed_fox', name: 'Tilki', type: 'speed', tier: 1, bonusSpeed: 15, bonusExpRate: 4, bonusDefense: 0, color: '#ff6b35', modelPath: '/models/pets/cubee-fire.gltf' },
+
+    // TIER 2 - Orta Hız Petleri (+20-25% Hız)
+    { id: 'speed_cheetah', name: 'Çita', type: 'speed', tier: 2, bonusSpeed: 25, bonusExpRate: 5, bonusDefense: 0, color: '#ffd93d', modelPath: '/models/pets/cubee-savanna.gltf' },
+    { id: 'speed_hawk', name: 'Şahin', type: 'speed', tier: 2, bonusSpeed: 22, bonusExpRate: 6, bonusDamage: 10, bonusDefense: 0, color: '#6d4c41', modelPath: '/models/pets/cubee-stone.gltf' },
+
+    // TIER 3 - Yüksek Hız Petleri (+30-35% Hız)
+    { id: 'speed_wind_spirit', name: 'Rüzgar Ruhu', type: 'speed', tier: 3, bonusSpeed: 35, bonusExpRate: 8, bonusDamage: 15, bonusDefense: 0, color: '#87ceeb', modelPath: '/models/pets/cubee-water.gltf' },
+    { id: 'speed_lightning', name: 'Şimşek Peterisi', type: 'speed', tier: 3, bonusSpeed: 33, bonusExpRate: 10, bonusDamage: 20, bonusDefense: 0, color: '#ffd700', modelPath: '/models/pets/cubee-good.gltf' },
+
+    // TIER 4 - Nadir Hız Petleri (+40-45% Hız)
+    { id: 'speed_phantom', name: 'Hayalet Koşucu', type: 'speed', tier: 4, bonusSpeed: 45, bonusExpRate: 12, bonusDamage: 30, bonusDefense: 20, color: '#9370db', modelPath: '/models/pets/cubee-evil.gltf' },
+    { id: 'speed_comet', name: 'Kuyruklu Yıldız', type: 'speed', tier: 4, bonusSpeed: 42, bonusExpRate: 15, bonusDamage: 25, bonusDefense: 0, bonusHp: 200, color: '#00bfff', modelPath: '/models/pets/cubee-snow.gltf' },
+
+    // TIER 5 - Efsanevi Hız Petleri (+50-60% Hız)
+    { id: 'speed_sonic', name: 'Ses Hızı', type: 'speed', tier: 5, bonusSpeed: 60, bonusExpRate: 20, bonusDamage: 50, bonusDefense: 30, bonusHp: 500, color: '#1e90ff', modelPath: '/models/pets/cubee-skeleton.gltf' },
+    { id: 'speed_void_runner', name: 'Boşluk Koşucusu', type: 'speed', tier: 5, bonusSpeed: 55, bonusExpRate: 25, bonusDamage: 40, bonusDefense: 40, bonusHp: 400, color: '#4b0082', modelPath: '/models/pets/Cubee Black Magic pet/cubee-soul_weaver.gltf' },
 ];
 
 // --- CLASSES WITH 7 SKILLS (UPDATED CDS) ---
@@ -358,40 +370,6 @@ export const CLASSES: Record<CharacterClass, ClassData> = {
             { id: 'rp5', name: 'Korku', name_en: 'Fear', description: 'Düşmanları kaçırır.', description_en: 'Scares enemies away.', cd: 20, manaCost: 40, levelReq: 12, type: 'utility', icon: '/assets/skills/reaper_texture/icon_soul_collector.png', visual: 'reaper_cross', modelPath: '/models/skills/reaper/soul_cross_1.json' },
             { id: 'rp7', name: 'Kıyamet Çağrısı (Ulti)', name_en: 'Call of Apocalypse (Ulti)', description: 'Tüm ruhları serbest bırakır.', description_en: 'Releases all souls.', cd: 60, manaCost: 100, levelReq: 25, type: 'ultimate', icon: '/assets/skills/reaper_texture/icon_death_spin.png', visual: 'reaper_spin', modelPath: '/models/skills/reaper/soul_spin.json' },
         ]
-    },
-    gale_glaive: {
-        id: 'gale_glaive',
-        name: 'Fırtına Mızrakcısı',
-        name_en: 'Gale Glaive',
-        role: 'DPS / Agile',
-        role_en: 'DPS / Agile',
-        description: 'Hızlı ve çevik mızrak ustası.',
-        description_en: 'Fast and agile spear master.',
-        mechanic: 'Özellik: Hız arttıkça hasar artar.',
-        mechanic_en: 'Mechanic: Damage increases with speed.',
-        skills: [
-            { id: 'gg1', name: 'Rüzgar Darbesi', name_en: 'Wind Strike', description: 'Hızlı mızrak saldırısı.', description_en: 'Quick spear attack.', cd: 1.0, manaCost: 8, levelReq: 1, type: 'damage', icon: '/assets/skills/warrior_texture/icon_brutal_strike.png', visual: 'gale_strike', modelPath: '/models/skills/warrior/warrior_slash_1.json', isAoE: false },
-            { id: 'gg2', name: 'Kasırga', name_en: 'Whirlwind', description: 'Etrafında dönerek saldırır.', description_en: 'Spinning attack around.', cd: 8, manaCost: 20, levelReq: 5, type: 'damage', icon: '/assets/skills/warrior_texture/icon_whirlwind.png', visual: 'gale_spin', isAoE: true },
-            { id: 'gg3', name: 'Atılış', name_en: 'Lunge', description: 'İleri doğru hızlı saldırı.', description_en: 'Quick forward attack.', cd: 6, manaCost: 15, levelReq: 8, type: 'damage', icon: '/assets/skills/warrior_texture/icon_charge.png', visual: 'gale_dash' },
-            { id: 'gg7', name: 'Fırtına Çağrısı (Ulti)', name_en: 'Storm Call (Ulti)', description: 'Devasa fırtına oluşturur.', description_en: 'Creates massive storm.', cd: 50, manaCost: 80, type: 'ultimate', icon: '/assets/skills/warrior_texture/icon_earthquake.png', visual: 'gale_storm', isAoE: true },
-        ]
-    },
-    monk: {
-        id: 'monk',
-        name: 'Keşiş',
-        name_en: 'Monk',
-        role: 'Support / Healer',
-        role_en: 'Support / Healer',
-        description: 'Kutsal güçlerle iyileştiren bilge.',
-        description_en: 'Wise healer with holy powers.',
-        mechanic: 'Özellik: İyileştirme yaparken savunma kazanır.',
-        mechanic_en: 'Mechanic: Gains defense while healing.',
-        skills: [
-            { id: 'mn1', name: 'Kutsal Dokunuş', name_en: 'Holy Touch', description: 'Hafif iyileştirme.', description_en: 'Light healing.', cd: 2, manaCost: 15, levelReq: 1, type: 'heal', icon: '/assets/skills/cleric_texture/icon_healing_touch.png', visual: 'monk_heal' },
-            { id: 'mn2', name: 'Koruma Kalkanı', name_en: 'Protection Shield', description: 'Savunma arttırır.', description_en: 'Increases defense.', cd: 15, manaCost: 25, levelReq: 5, type: 'buff', icon: '/assets/skills/cleric_texture/icon_shield.png', visual: 'monk_shield' },
-            { id: 'mn3', name: 'Arındırma', name_en: 'Purify', description: 'Olumsuz etkileri temizler.', description_en: 'Cleanses negative effects.', cd: 10, manaCost: 20, levelReq: 8, type: 'heal', icon: '/assets/skills/cleric_texture/icon_cleanse.png', visual: 'monk_purify' },
-            { id: 'mn7', name: 'İlahi Bereket (Ulti)', name_en: 'Divine Blessing (Ulti)', description: 'Grup iyileştirmesi.', description_en: 'Group healing.', cd: 60, manaCost: 100, type: 'ultimate', icon: '/assets/skills/cleric_texture/icon_hope.png', visual: 'monk_ultimate', isAoE: true },
-        ]
     }
 };
 
@@ -436,14 +414,6 @@ export const CLASS_STARTER_ITEMS: Record<CharacterClass, Item[]> = {
     reaper: [
         { id: 'start_rp_1', name: 'Kadim Ölüm Tırpanı', tier: 1, type: 'weapon', rarity: 'rare', classReq: 'reaper', plus: 7, value: 15000, stats: { damage: 99, str: 10, critChance: 10, lifesteal: 3, bonusExp: 10 }, visuals: { model: '/models/items/weapons/reaper/scythe_reaper_shiny.gltf', primaryColor: '#1e293b', glowColor: '#a855f7', glowIntensity: 3 } },
         { id: 'start_rp_2', name: 'Karanlık Zırh', tier: 1, type: 'armor', rarity: 'common', classReq: 'reaper' }
-    ],
-    gale_glaive: [
-        { id: 'start_gg_1', name: 'Kadim Fırtına Mızrağı', tier: 1, type: 'weapon', rarity: 'rare', classReq: 'gale_glaive', plus: 7, value: 15000, stats: { damage: 99, dex: 12, attackSpeed: 8, critChance: 8, bonusExp: 10 }, visuals: { model: '/models/items/weapons/warrior/warrior_sword_shiny.gltf', primaryColor: '#22d3ee', glowColor: '#22d3ee', glowIntensity: 3 } },
-        { id: 'start_gg_2', name: 'Rüzgar Zırhı', tier: 1, type: 'armor', rarity: 'common', classReq: 'gale_glaive' }
-    ],
-    monk: [
-        { id: 'start_mn_1', name: 'Kadim Keşiş Asası', tier: 1, type: 'weapon', rarity: 'rare', classReq: 'monk', plus: 7, value: 15000, stats: { damage: 99, int: 10, vit: 10, hp: 150, mana: 50, bonusExp: 10 }, visuals: { model: '/models/items/weapons/cleric/cleric_mace_shiny.gltf', primaryColor: '#fef08a', glowColor: '#fef08a', glowIntensity: 3 } },
-        { id: 'start_mn_2', name: 'Keşiş Cübbesi', tier: 1, type: 'armor', rarity: 'common', classReq: 'monk' }
     ]
 };
 

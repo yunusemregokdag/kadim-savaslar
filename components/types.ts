@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type CharacterClass = 'warrior' | 'arctic_knight' | 'gale_glaive' | 'archer' | 'archmage' | 'bard' | 'cleric' | 'martial_artist' | 'monk' | 'reaper';
+export type CharacterClass = 'warrior' | 'arctic_knight' | 'archer' | 'archmage' | 'bard' | 'cleric' | 'martial_artist' | 'reaper';
 export type Faction = 'marsu' | 'terya' | 'venu';
 
 export enum SkillPathType {
@@ -126,7 +126,7 @@ export interface WingItem {
 export interface PetItem {
   id: string;
   name: string;
-  type: 'dragon_baby' | 'floating_crystal' | 'spirit_wolf' | 'owl' | 'phoenix' | 'mount';
+  type: 'dragon_baby' | 'floating_crystal' | 'spirit_wolf' | 'owl' | 'phoenix' | 'mount' | 'speed';
   tier: number;
   bonusExpRate: number;
   bonusDefense: number;
@@ -272,6 +272,8 @@ export interface PlayerState {
   equippedWing: WingItem | null;
   ownedPets: PetItem[];
   equippedPet: PetItem | null;
+  ownedSpeedPets: PetItem[];
+  equippedSpeedPet: PetItem | null;
   ownedMounts: MountItem[];
   equippedMount: MountItem | null;
   ownedSkins: string[];

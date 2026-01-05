@@ -411,7 +411,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                 strength: baseStats.str + 500, dexterity: baseStats.dex + 500, intelligence: baseStats.int + 500, vitality: baseStats.vit + 500, statPoints: 100,
                 inventory: adminInventory,
                 equipment: { weapon: godWeapon, armor: null, helmet: null, pants: null, boots: null, necklace: null, earring: null },
-                ownedWings: WINGS_DATA, equippedWing: WINGS_DATA[4], ownedPets: PETS_DATA, equippedPet: PETS_DATA[4],
+                ownedWings: WINGS_DATA, equippedWing: WINGS_DATA[4], ownedPets: PETS_DATA, equippedPet: PETS_DATA[4], ownedSpeedPets: [], equippedSpeedPet: null,
                 ownedSkins: [], equippedSkin: null, ownedCostumes: ['costume_carnivoret'], equippedCostume: 'costume_carnivoret', activeQuest: null, settings: defaultSettings,
                 dailyLogin: { lastLoginDate: '', consecutiveDays: 0, claimedToday: false, totalLogins: 0 },
                 achievements: DEFAULT_ACHIEVEMENTS
@@ -439,7 +439,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
             damage: baseStats.str * 2, defense: baseStats.vit,
             strength: baseStats.str, dexterity: baseStats.dex, intelligence: baseStats.int, vitality: baseStats.vit, statPoints: 0,
             inventory: getClassStarterItems(charClass), equipment: { weapon: null, armor: null, helmet: null, pants: null, boots: null, necklace: null, earring: null },
-            ownedWings: [], equippedWing: null, ownedPets: [], equippedPet: null,
+            ownedWings: [], equippedWing: null, ownedPets: [], equippedPet: null, ownedSpeedPets: [], equippedSpeedPet: null,
             ownedSkins: [], equippedSkin: null, ownedCostumes: [], equippedCostume: null,
             activeQuest: initialQuest, // Start with first quest
             settings: defaultSettings,

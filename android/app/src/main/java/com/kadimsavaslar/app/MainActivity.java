@@ -15,12 +15,17 @@ public class MainActivity extends BridgeActivity {
         // WebView hardware acceleration for WebGL
         WebView webView = getBridge().getWebView();
         if (webView != null) {
+            // Clear cache on every launch to ensure fresh content
+            webView.clearCache(true);
+            webView.clearHistory();
+
             webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             WebSettings settings = webView.getSettings();
             settings.setDomStorageEnabled(true);
             settings.setDatabaseEnabled(true);
             settings.setAllowFileAccess(true);
             settings.setMediaPlaybackRequiresUserGesture(false);
+            settings.setCacheMode(WebSettings.LOAD_NO_CACHE); // Force no cache
         }
     }
 

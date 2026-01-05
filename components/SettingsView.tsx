@@ -185,7 +185,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 };
 
 // Settings categories
-type SettingsCategory = 'audio' | 'graphics' | 'interface' | 'gameplay' | 'notifications' | 'privacy';
+type SettingsCategory = 'audio' | 'graphics' | 'interface' | 'gameplay' | 'notifications' | 'privacy' | 'guide' | 'rank';
 
 interface SettingsViewProps {
     onClose: () => void;
@@ -202,7 +202,9 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
         { id: 'interface', label: 'Arayüz', icon: <Palette size={18} /> },
         { id: 'gameplay', label: 'Oynanış', icon: <Gamepad size={18} /> },
         { id: 'notifications', label: 'Bildirimler', icon: <Bell size={18} /> },
-        { id: 'privacy', label: 'Gizlilik', icon: <Shield size={18} /> }
+        { id: 'privacy', label: 'Gizlilik', icon: <Shield size={18} /> },
+        { id: 'guide', label: 'Oyun Rehberi', icon: <Zap size={18} /> },
+        { id: 'rank', label: 'Rütbe', icon: <Shield size={18} /> }
     ];
 
     // Slider component
@@ -575,6 +577,99 @@ export const SettingsView: React.FC<SettingsViewProps> = ({ onClose }) => {
                             value={settings.showOnlineStatus}
                             onChange={(v) => updateSetting('showOnlineStatus', v)}
                         />
+                    </div>
+                );
+
+            case 'guide':
+                return (
+                    <div>
+                        <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                            <Zap size={20} className="text-cyan-400" />
+                            Oyun Rehberi
+                        </h3>
+                        <div className="space-y-4">
+                            <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
+                                <h4 className="text-sm font-bold text-yellow-400 mb-2">🎮 Temel Kontroller</h4>
+                                <ul className="text-sm text-slate-300 space-y-1">
+                                    <li>• <strong>Tıklama:</strong> Saldırı / Etkileşim</li>
+                                    <li>• <strong>Joystick/WASD:</strong> Hareket</li>
+                                    <li>• <strong>Z tuşu:</strong> Hızlı Saldırı</li>
+                                    <li>• <strong>1-4 tuşları:</strong> Yetenekler</li>
+                                </ul>
+                            </div>
+                            <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
+                                <h4 className="text-sm font-bold text-green-400 mb-2">⚔️ Savaş Sistemi</h4>
+                                <ul className="text-sm text-slate-300 space-y-1">
+                                    <li>• Düşmana tıklayarak hedef al</li>
+                                    <li>• Yetenekleri kullanarak hasar ver</li>
+                                    <li>• Kritik vuruşlar ekstra hasar verir</li>
+                                    <li>• Boss öldürme grup olarak daha kolay</li>
+                                </ul>
+                            </div>
+                            <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
+                                <h4 className="text-sm font-bold text-purple-400 mb-2">📦 Eşya Sistemi</h4>
+                                <ul className="text-sm text-slate-300 space-y-1">
+                                    <li>• Tier 1-5 eşyalar (5 en güçlü)</li>
+                                    <li>• +0 ile +12 arası geliştirme</li>
+                                    <li>• Nadir eşyalar daha güçlü statlar verir</li>
+                                    <li>• Set eşyaları bonus stat sağlar</li>
+                                </ul>
+                            </div>
+                            <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
+                                <h4 className="text-sm font-bold text-blue-400 mb-2">💎 Para Birimleri</h4>
+                                <ul className="text-sm text-slate-300 space-y-1">
+                                    <li>• <span className="text-yellow-400">Altın:</span> Temel para birimi</li>
+                                    <li>• <span className="text-cyan-400">Elmas:</span> Premium para birimi</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                );
+
+            case 'rank':
+                return (
+                    <div>
+                        <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                            <Shield size={20} className="text-cyan-400" />
+                            Rütbe Sistemi
+                        </h3>
+                        <div className="space-y-3">
+                            <div className="bg-gradient-to-r from-slate-800 to-slate-700 p-4 rounded-lg border border-slate-600">
+                                <p className="text-sm text-slate-300 mb-3">
+                                    Düşman öldürerek <strong className="text-yellow-400">Şeref Puanı (Honor)</strong> kazan ve rütbeni yükselt!
+                                </p>
+                                <p className="text-xs text-slate-400">
+                                    Yüksek rütbeler ekstra hasar ve savunma bonusu verir.
+                                </p>
+                            </div>
+                            <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto pr-2">
+                                {[
+                                    { name: 'Acemi Savaşçı', honor: 0, icon: '🌱', bonus: '+0%' },
+                                    { name: 'Gezgin', honor: 500, icon: '👟', bonus: '+0%' },
+                                    { name: 'Kadim Gezgin', honor: 1000, icon: '🌿', bonus: '+1%' },
+                                    { name: 'Kıdemli Gezgin', honor: 2500, icon: '✈️', bonus: '+2%' },
+                                    { name: 'Acemi Milis', honor: 5000, icon: '⚔️', bonus: '+3%' },
+                                    { name: 'Kıdemli Nefer', honor: 7500, icon: '🛡️', bonus: '+4%' },
+                                    { name: 'Uzman Milis', honor: 10000, icon: '🎖️', bonus: '+5%' },
+                                    { name: 'Aday Muhafız', honor: 25000, icon: '🥉', bonus: '+6%' },
+                                    { name: 'Gezgin Savaşçı', honor: 50000, icon: '🥈', bonus: '+7%' },
+                                    { name: 'Karakol Teğmeni', honor: 100000, icon: '🥇', bonus: '+8%' },
+                                    { name: 'Savaş Lordu', honor: 10000000, icon: '👹', bonus: '+30%' },
+                                    { name: 'Yüce Hükümdar', honor: 100000000, icon: '👑🔥', bonus: '+50%' },
+                                ].map((rank, i) => (
+                                    <div key={i} className="flex items-center justify-between p-2 bg-slate-800/50 rounded border border-slate-700">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-lg">{rank.icon}</span>
+                                            <span className="text-sm text-white font-medium">{rank.name}</span>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-xs text-slate-400">{rank.honor.toLocaleString()} Honor</span>
+                                            <span className="text-xs text-green-400 font-bold">{rank.bonus}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 );
         }

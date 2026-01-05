@@ -62,11 +62,8 @@ export const BlacksmithView: React.FC<BlacksmithViewProps> = ({
                             <span className="text-yellow-400 font-mono font-bold">{playerState.credits.toLocaleString()}</span>
                         </div>
                         <div className="flex flex-col text-right">
-                            <span className="text-[10px] text-slate-500">ELMAS/DC</span>
-                            <div className="flex gap-2">
-                                <span className="text-blue-400 font-mono font-bold" title="Gems">{playerState.gems.toLocaleString()}💎</span>
-                                <span className="text-emerald-400 font-mono font-bold" title="Donate Coin">{playerState.donateCoins?.toLocaleString() || 0}DC</span>
-                            </div>
+                            <span className="text-[10px] text-slate-500">ELMAS</span>
+                            <span className="text-blue-400 font-mono font-bold">{playerState.gems.toLocaleString()} 💎</span>
                         </div>
                     </div>
 

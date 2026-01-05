@@ -405,7 +405,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
             return {
                 nickname: `[GM] ${nickname}`, class: charClass, faction: faction, guildName: 'YÖNETİM',
                 level: 30, exp: LEVEL_XP_REQUIREMENTS[29], maxExp: LEVEL_XP_REQUIREMENTS[29],
-                credits: 99000000, gems: 99000000, donateCoins: 999999, honor: 500000000, dailyHonor: 0, dailyAdsWatched: 0, rankPoints: 500000000, rank: 19,
+                credits: 99000000, gems: 99000000, diamonds: 999999, donateCoins: 999999, honor: 500000000, dailyHonor: 0, dailyAdsWatched: 0, rankPoints: 500000000, rank: 19,
                 vipUntil: Date.now() + (365 * 24 * 60 * 60 * 1000), // 1 Year VIP
                 questStage: 10, hp: 99999, maxHp: 99999, mana: 99999, maxMana: 99999, damage: 9999, defense: 9999,
                 strength: baseStats.str + 500, dexterity: baseStats.dex + 500, intelligence: baseStats.int + 500, vitality: baseStats.vit + 500, statPoints: 100,
@@ -418,15 +418,31 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
             };
         }
 
+        // Create initial quest from QUEST_DATA
+        const initialQuest: Quest = {
+            id: 1,
+            title: QUEST_DATA[1]?.title || 'Acemi Eğitimi',
+            description: QUEST_DATA[1]?.description || '2 Düşman yok et.',
+            requiredCount: QUEST_DATA[1]?.requiredCount || 2,
+            currentCount: 0,
+            rewardGold: QUEST_DATA[1]?.rewardGold || 100,
+            rewardXp: QUEST_DATA[1]?.rewardXp || 500,
+            rewardHonor: QUEST_DATA[1]?.rewardHonor || 50,
+            rewardGems: (QUEST_DATA[1] as any)?.rewardGems || 0,
+            isCompleted: false
+        };
+
         return {
             nickname, class: charClass, faction: faction, guildName: null,
-            level: 1, exp: 0, maxExp: LEVEL_XP_REQUIREMENTS[2], credits: 500, gems: 10, donateCoins: 0, honor: 0, dailyHonor: 0, dailyAdsWatched: 0, rankPoints: 0, rank: 0,
+            level: 1, exp: 0, maxExp: LEVEL_XP_REQUIREMENTS[2], credits: 500, gems: 10, diamonds: 0, donateCoins: 0, honor: 0, dailyHonor: 0, dailyAdsWatched: 0, rankPoints: 0, rank: 0,
             questStage: 1, hp: baseStats.vit * 10, maxHp: baseStats.vit * 10, mana: baseStats.int * 20, maxMana: baseStats.int * 20,
             damage: baseStats.str * 2, defense: baseStats.vit,
             strength: baseStats.str, dexterity: baseStats.dex, intelligence: baseStats.int, vitality: baseStats.vit, statPoints: 0,
             inventory: getClassStarterItems(charClass), equipment: { weapon: null, armor: null, helmet: null, pants: null, boots: null, necklace: null, earring: null },
-            ownedWings: [], equippedWing: null, ownedPets: [], equippedPet: null, // Yeni oyuncu pet/wing yok
-            ownedSkins: [], equippedSkin: null, ownedCostumes: [], equippedCostume: null, activeQuest: null, settings: defaultSettings,
+            ownedWings: [], equippedWing: null, ownedPets: [], equippedPet: null,
+            ownedSkins: [], equippedSkin: null, ownedCostumes: [], equippedCostume: null,
+            activeQuest: initialQuest, // Start with first quest
+            settings: defaultSettings,
             dailyLogin: { lastLoginDate: '', consecutiveDays: 0, claimedToday: false, totalLogins: 0 },
             achievements: DEFAULT_ACHIEVEMENTS.map(a => ({ ...a }))
         };

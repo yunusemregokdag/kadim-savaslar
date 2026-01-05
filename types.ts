@@ -164,10 +164,16 @@ export interface ItemStats {
   defense?: number;
   hp?: number;
   mana?: number;
+  // Full names
   strength?: number;     // STR - Güç
   dexterity?: number;    // DEX - Çeviklik
   intelligence?: number; // INT - Zeka
   vitality?: number;     // VIT - Dayanıklılık
+  // Short aliases
+  str?: number;          // Alias for strength
+  dex?: number;          // Alias for dexterity
+  int?: number;          // Alias for intelligence
+  vit?: number;          // Alias for vitality
   luck?: number;         // LCK - Şans
   critChance?: number;   // % - Kritik Şansı
   critDamage?: number;   // % - Kritik Hasarı
@@ -207,15 +213,16 @@ export interface WingItem {
 }
 
 export interface Quest {
-  id: string;
+  id: string | number;
   title: string;
   description: string;
-  targetEnemyName: string;
+  targetEnemyName?: string;
   requiredCount: number;
   currentCount: number;
   rewardGold: number;
   rewardXp: number;
-  rewardHonor: number; // Added Honor Reward
+  rewardHonor: number;
+  rewardGems?: number; // Elmas ödülü
   rewardItem?: Item;
   isCompleted: boolean;
 }
@@ -390,6 +397,7 @@ export interface GameEntity {
     currentSkill: string | null;
     skillTarget?: { x: number, y: number, radius: number, warnTime: number };
   };
+  damageMap?: Record<string, number>; // Track damage by player ID for boss rewards
 }
 
 export interface LootLog {

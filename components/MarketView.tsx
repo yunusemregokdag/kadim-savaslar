@@ -104,8 +104,8 @@ export const MarketView: React.FC<MarketViewProps> = ({ playerState, onClose, on
                             <span className="text-yellow-400 font-mono text-sm bg-black/40 px-2 py-1 rounded">
                                 💰 {playerState.credits.toLocaleString()}
                             </span>
-                            <span className="text-emerald-400 font-mono text-sm bg-black/40 px-2 py-1 rounded">
-                                💎 {playerState.donateCoins?.toLocaleString() || 0}
+                            <span className="text-blue-400 font-mono text-sm bg-black/40 px-2 py-1 rounded">
+                                💎 {playerState.gems.toLocaleString()}
                             </span>
                         </div>
                     </div>
@@ -162,8 +162,8 @@ export const MarketView: React.FC<MarketViewProps> = ({ playerState, onClose, on
                                             </div>
                                         </div>
                                         <div className="mt-3 flex justify-between items-center">
-                                            <div className={`font-bold font-mono ${listing.currency === 'gold' ? 'text-yellow-400' : 'text-emerald-400'}`}>
-                                                {listing.price.toLocaleString()} {listing.currency === 'gold' ? 'Altın' : 'DC'}
+                                            <div className={`font-bold font-mono ${listing.currency === 'gold' ? 'text-yellow-400' : 'text-blue-400'}`}>
+                                                {listing.price.toLocaleString()} {listing.currency === 'gold' ? 'Altın' : '💎'}
                                             </div>
                                             <button
                                                 onClick={() => handleBuy(listing.id)}
@@ -232,7 +232,7 @@ export const MarketView: React.FC<MarketViewProps> = ({ playerState, onClose, on
                                                 className="bg-slate-900 border border-slate-600 p-2 rounded text-white"
                                             >
                                                 <option value="gold">Altın (Gold)</option>
-                                                <option value="gems">Donate Coin (DC)</option>
+                                                <option value="gems">Elmas (💎)</option>
                                             </select>
                                         </div>
 

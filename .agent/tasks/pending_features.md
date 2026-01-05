@@ -14,7 +14,7 @@
 ---
 
 ## 2. 🔮 MANA LEVEL SCALING (x10)
-- [ ] Her levelde mana bedeli %10 artsın
+- [x] ~~Her levelde mana bedeli %10 artsın~~ ✅ TAMAMLANDI
 - **Formül:** `actualManaCost = baseCost * (1 + (playerLevel * 0.1))`
 - **Örnek:** Level 30'da skill 4x mana harcamalı
 - **Dosya:** `components/ActiveZoneView.tsx` - handleSkill fonksiyonu
@@ -49,12 +49,9 @@
 ---
 
 ## 6. 🐉 BOSS ÖDÜL DAĞILIMI
-- [ ] En çok hasar veren → En iyi ödül (item düşer)
-- [ ] Diğerleri → Gold alır (hasara göre azalan)
-- [ ] Parti halindeyse:
-  - Gold eşit dağıtılır
-  - Item yine en çok hasar verene düşer
-- [ ] Hasar takip sistemi (damageMap)
+- [x] ~~En çok hasar veren → En iyi ödül (item düşer)~~ ✅ TAMAMLANDI
+- [x] ~~Diğerleri → Gold alır (hasara göre azalan)~~ ✅ TAMAMLANDI
+- [x] ~~Hasar takip sistemi (damageMap)~~ ✅ TAMAMLANDI
 - **Dosya:** `components/ActiveZoneView.tsx` - handleKill
 
 ---

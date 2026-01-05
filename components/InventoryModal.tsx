@@ -119,80 +119,58 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
         const rarityClass = RARITY_COLORS[item.rarity] || 'border-slate-700';
         const isSelected = clickedItem?.id === item.id;
         const isLocked = lockedItems.has(item.id);
-        const actionLabel = item.type === 'consumable' ? 'KULLAN' : 'KUŞAN';
-
-        // Stats parsing local
-        const stats: { label: string, value: string | number, color: string }[] = [];
-        const i = item as any;
-        if (i.damage) stats.push({ label: 'Hasar', value: `+${i.damage}`, color: 'text-red-400' });
-        if (i.defense) stats.push({ label: 'Zırh', value: `+${i.defense}`, color: 'text-blue-400' });
-        if (i.hp) stats.push({ label: 'Can', value: `+${i.hp}`, color: 'text-green-400' });
-        if (i.mana) stats.push({ label: 'Mana', value: `+${i.mana}`, color: 'text-blue-300' });
-        if (i.critChance) stats.push({ label: 'Kritik', value: `+${i.critChance}%`, color: 'text-orange-400' });
-        if (i.attackSpeed) stats.push({ label: 'Hız', value: `+${i.attackSpeed}%`, color: 'text-yellow-400' });
-        if (i.str) stats.push({ label: 'GÜÇ', value: `+${i.str}`, color: 'text-red-500' });
-        if (i.dex) stats.push({ label: 'ÇEV', value: `+${i.dex}`, color: 'text-green-500' });
-        if (i.int) stats.push({ label: 'ZEK', value: `+${i.int}`, color: 'text-blue-500' });
-        if (i.vit) stats.push({ label: 'DAY', value: `+${i.vit}`, color: 'text-pink-500' });
 
         return (
             <div
                 key={item.id}
                 className={`
-                    w-full min-h-[80px] bg-[#1a1410] rounded-lg border-2 
-                    ${isSelected ? 'border-yellow-500 bg-[#251b14] shadow-[0_0_15px_rgba(234,179,8,0.2)]' : 'border-[#3f2e24]'} 
-                    hover:border-yellow-600/50 transition-all cursor-pointer flex items-center p-3 gap-4 relative group
+                    relative w-14 h-14 md:w-16 md:h-16 bg-[#1a1410] rounded-lg border-2 
+                    flex items-center justify-center cursor-pointer transition-all group
+                    ${isSelected ? 'border-yellow-500 scale-110 z-20 shadow-[0_0_20px_rgba(234,179,8,0.4)]' : rarityClass}
+                    hover:scale-105 hover:z-10 hover:border-yellow-600/70
                 `}
+                onMouseEnter={() => setHoveredItem(item)}
+                onMouseLeave={() => setHoveredItem(null)}
                 onClick={() => {
                     if (clickedItem?.id === item.id) setClickedItem(null);
                     else setClickedItem(item);
                 }}
+                onDoubleClick={(e) => {
+                    e.stopPropagation();
+                    handleItemAction(item);
+                    setClickedItem(null);
+                }}
             >
-                {/* Sol: İkon */}
-                <div className={`w-16 h-16 shrink-0 bg-[#0c0906] rounded-md border-2 relative flex items-center justify-center p-1 ${rarityClass}`}>
+                {/* Item Icon */}
+                <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center">
                     {renderItemIcon(item)}
-                    {item.plus > 0 && (
-                        <div className="absolute -top-1 -right-1 bg-black/90 px-1.5 rounded text-[10px] font-bold text-yellow-400 border border-yellow-900 shadow-sm z-10">
-                            +{item.plus}
-                        </div>
-                    )}
-                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-[#1a1410] px-1.5 rounded border border-[#3f2e24] text-[8px] font-bold text-slate-400 whitespace-nowrap z-10">
-                        T{item.tier}
-                    </div>
                 </div>
 
-                {/* Orta: Bilgiler */}
-                <div className="flex-1 flex flex-col justify-center gap-1.5 min-w-0">
-                    <div className="flex items-center gap-2">
-                        <span className={`font-bold text-base ${RARITY_TEXT_COLORS[item.rarity] || 'text-slate-200'}`}>{item.name}</span>
-                        {item.type === 'consumable' && <span className="text-xs text-slate-500 font-mono">(x1)</span>}
-                        {isLocked && <Lock size={14} className="text-red-500" />}
+                {/* Plus Badge */}
+                {item.plus > 0 && (
+                    <div className="absolute -top-1 -right-1 bg-black/90 px-1 rounded text-[9px] font-bold text-yellow-400 border border-yellow-900 shadow-sm z-10">
+                        +{item.plus}
                     </div>
+                )}
 
-                    {/* Statlar */}
-                    <div className="flex flex-wrap gap-x-3 gap-y-1">
-                        {stats.length > 0 ? stats.slice(0, 6).map((s, i) => (
-                            <div key={i} className="flex items-center gap-1 bg-black/20 px-1.5 py-0.5 rounded">
-                                <span className={`text-[10px] font-bold ${s.color}`}>{s.value}</span>
-                                <span className="text-[9px] text-slate-500 uppercase">{s.label}</span>
-                            </div>
-                        )) : (
-                            <span className="text-[11px] text-slate-500 italic">{item.description || 'Özellik yok'}</span>
-                        )}
-                        {stats.length > 6 && <span className="text-[10px] text-slate-500 self-center">...</span>}
-                    </div>
+                {/* Tier Badge */}
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-[#1a1410] px-1 rounded text-[8px] font-bold text-slate-500 border border-[#3f2e24] z-10">
+                    T{item.tier}
                 </div>
 
-                {/* Sağ: Buton */}
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleItemAction(item);
-                    }}
-                    className="shrink-0 bg-[#3f2e18] hover:bg-[#5e4b35] text-[#e6cba5] border border-[#5e4b35] px-5 py-2.5 rounded font-bold text-xs shadow-lg active:scale-95 transition-all self-center hover:text-white hover:border-yellow-600/50"
-                >
-                    {actionLabel}
-                </button>
+                {/* Lock indicator */}
+                {isLocked && (
+                    <div className="absolute top-0 left-0 p-0.5">
+                        <Lock size={10} className="text-red-500" />
+                    </div>
+                )}
+
+                {/* Quantity for consumables */}
+                {item.type === 'consumable' && (item as any).quantity > 1 && (
+                    <div className="absolute bottom-0 right-0 bg-black/80 px-1 rounded-tl text-[9px] font-bold text-white">
+                        x{(item as any).quantity}
+                    </div>
+                )}
             </div>
         );
     };
@@ -383,21 +361,13 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
                                     </button>
                                 ))}
                             </div>
-
-                            <button
-                                onClick={() => setSortBy(prev => prev === 'newest' ? 'rarity' : 'newest')}
-                                className="p-2 hover:bg-slate-800 rounded text-slate-400 flex items-center justify-center border border-transparent hover:border-slate-700 transition-all shrink-0"
-                                title={sortBy === 'newest' ? "Yeniden Eskiye" : "Nadirlik Sırası"}
-                            >
-                                <ArrowUpDown size={16} />
-                            </button>
                         </div>
                     </div>
 
                     {/* Inventory Grid */}
                     <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
-                        {/* Inventory Grid converted to List */}
-                        <div className="flex flex-col gap-2">
+                        {/* Grid Layout - MMO Style */}
+                        <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8 gap-2 justify-items-center">
                             {filteredInventory.map((item, idx) => renderInventorySlot(item, idx))}
 
                             {filteredInventory.length === 0 && (
@@ -411,9 +381,17 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
                     {/* Bottom Info Bar */}
                     <div className="p-3 border-t border-[#3f2e24] bg-[#100c08] flex justify-between items-center text-xs text-[#8a725f]">
                         <span>Kapasite: <span className="text-white">{playerState.inventory.length}</span> / 50</span>
-                        <div className="flex items-center gap-1.5 bg-[#1a1410] px-3 py-1 rounded-full border border-[#3f2e24]">
-                            <div className="w-3 h-3 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 border border-yellow-700 shadow-sm"></div>
-                            <span className="text-white font-bold tracking-wide">{playerState.credits.toLocaleString()}</span>
+                        <div className="flex items-center gap-3">
+                            {/* Gold */}
+                            <div className="flex items-center gap-1.5 bg-[#1a1410] px-3 py-1 rounded-full border border-[#3f2e24]">
+                                <div className="w-3 h-3 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 border border-yellow-700 shadow-sm"></div>
+                                <span className="text-yellow-400 font-bold tracking-wide">{playerState.credits.toLocaleString()}</span>
+                            </div>
+                            {/* Gems */}
+                            <div className="flex items-center gap-1.5 bg-[#1a1410] px-3 py-1 rounded-full border border-[#3f2e24]">
+                                <span className="text-lg">💎</span>
+                                <span className="text-blue-400 font-bold tracking-wide">{playerState.gems.toLocaleString()}</span>
+                            </div>
                         </div>
                     </div>
 

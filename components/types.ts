@@ -161,15 +161,16 @@ export interface Equipment {
 }
 
 export interface Quest {
-  id: string;
+  id: string | number;
   title: string;
   description: string;
-  targetEnemyName: string;
+  targetEnemyName?: string;
   requiredCount: number;
   currentCount: number;
   rewardGold: number;
   rewardXp: number;
   rewardHonor: number;
+  rewardGems?: number;
   rewardItem?: Item;
   isCompleted: boolean;
 }

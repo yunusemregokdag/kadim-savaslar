@@ -26,7 +26,22 @@ export const PremiumMarketView: React.FC<PremiumMarketViewProps> = ({ playerStat
     ];
 
     const PREMIUM_ITEMS = [
-        // STARTER PACK (Acemi Paketi - Çok Ucuz!)
+        // 🔥 KADIM SILAH PAKETİ - GERÇEK PARA İLE (49.99 TL)
+        {
+            id: 'kadim_weapon_pack',
+            name: '⚔️ KADİM SİLAH PAKETİ',
+            desc: '+7 Kadim Silah (99 Hasar!) + %10 Bonus EXP + Kritik Şansı. Sınıfına özel efsanevi silah!',
+            cost: 49.99,
+            currency: 'real',
+            items: ['kadim_weapon'],
+            color: 'text-yellow-300',
+            border: 'border-yellow-500',
+            bg: 'bg-gradient-to-br from-yellow-900/40 to-amber-900/40',
+            featured: true,
+            badge: '🔥 EN POPÜLER'
+        },
+
+        // STARTER PACK (Acemi Paketi - Elmas ile)
         { id: 'starter_pack', name: 'Acemi Savaşçı Paketi', desc: 'Maceraya hızlı başla! +5 T2 Silah ve Potlar.', cost: 25, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-amber-300', border: 'border-amber-400', bg: 'bg-amber-950/40' },
 
         { id: 'pragmatic_bundle', name: 'Pragmatik Set', desc: 'Sadelik ve gücün mükemmel uyumu.', cost: 400, currency: 'gems', items: ['helmet', 'armor', 'pants', 'weapon'], color: 'text-amber-400', border: 'border-amber-500/50', bg: 'bg-amber-900/20' },

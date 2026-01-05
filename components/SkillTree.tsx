@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ClassData } from '../types';
 import { Swords, Shield, Zap, Flame, Droplet, Wind, Gift, Crosshair, Ghost, Skull, Target, CloudRain, Activity, RotateCw, Mic, MoveDown, ArrowUp, ArrowRight, Diff, EyeOff, Trees, Feather, Heart, Sun, Orbit, Snowflake, Cloud, Users } from 'lucide-react';
@@ -50,8 +49,17 @@ const SkillTree: React.FC<SkillTreeProps> = ({ playerClass, playerLevel }) => {
 
               <div className="p-4 relative h-full flex flex-col">
                 <div className="flex justify-between items-start mb-3">
-                  <div className={`w-14 h-14 rounded-lg flex items-center justify-center shrink-0 border-2 shadow-[0_0_15px_rgba(0,0,0,0.5)] ${isUnlocked ? (isUltimate ? 'bg-purple-950 border-purple-400 text-purple-200' : 'bg-gradient-to-br from-slate-900 to-slate-800 border-yellow-600 text-yellow-500') : 'bg-slate-950 border-slate-700 text-slate-600'}`}>
-                    <Icon size={32} strokeWidth={1.5} className={isUnlocked ? 'drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]' : ''} />
+                  <div className={`w-14 h-14 rounded-lg flex items-center justify-center shrink-0 border-2 shadow-[0_0_15px_rgba(0,0,0,0.5)] overflow-hidden ${isUnlocked ? (isUltimate ? 'bg-purple-950 border-purple-400' : 'bg-gradient-to-br from-slate-900 to-slate-800 border-yellow-600') : 'bg-slate-950 border-slate-700'}`}>
+                    {skill.icon && skill.icon.startsWith('/') ? (
+                      <img
+                        src={skill.icon}
+                        alt={skill.name}
+                        className={`w-full h-full object-cover ${!isUnlocked ? 'grayscale opacity-50' : ''}`}
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      />
+                    ) : (
+                      <Zap size={32} strokeWidth={1.5} className={`${isUnlocked ? 'text-yellow-500 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]' : 'text-slate-600'}`} />
+                    )}
                   </div>
                   <div className="flex flex-col items-end">
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded border mb-1 whitespace-nowrap ${isUnlocked ? 'bg-green-900/40 text-green-400 border-green-800' : 'bg-red-900/40 text-red-400 border-red-800'}`}>

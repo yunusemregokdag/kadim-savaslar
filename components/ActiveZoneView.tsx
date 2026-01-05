@@ -9,7 +9,7 @@ import { io, Socket } from 'socket.io-client';
 import { PlayerState, GameEntity, LootLog, FloatingText, LootBox, Item, Equipment, Portal, ChatMessage, HUDElement, HUDLayout, EntityType, Skill, NPCData } from '../types';
 import { soundManager } from './SoundManager';
 import { ZONE_CONFIG, RANKS, CLASSES, LEVEL_XP_REQUIREMENTS, DEFAULT_HUD_LAYOUT, ZONE_REWARDS, ALL_CLASS_ITEMS, DEFAULT_ZONE_REWARD, ACHIEVEMENTS_LIST } from '../constants';
-import { Swords, Shield, Zap, ShoppingBag, Backpack, X, Wind, Skull, Target, Droplet, Flame, Send, Clock, Hammer, MessageSquare, Minus, Crosshair, Map as MapIcon, Settings as SettingsIcon, Crown, Star, ArrowRight, ZoomIn, Globe, AlertTriangle, Navigation, Info, Compass, Plus, Smartphone, Monitor, ChevronDown, ChevronUp, Move, RotateCw, Eye, Book, Users, Trophy, Scroll, Lock, Unlock, Heart, Sword, Settings, Coins, Gem } from 'lucide-react';
+import { Swords, Shield, Zap, ShoppingBag, Backpack, X, Wind, Skull, Target, Droplet, Flame, Send, Clock, Hammer, MessageSquare, Minus, Crosshair, Map as MapIcon, Settings as SettingsIcon, Crown, Star, ArrowRight, ZoomIn, Globe, AlertTriangle, Navigation, Info, Compass, Plus, Smartphone, Monitor, ChevronDown, ChevronUp, Move, RotateCw, Eye, Book, Users, Trophy, Scroll, Lock, Unlock, Heart, Sword, Settings, Settings2, Coins, Gem } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { GameVFXOverlay, vfxManager } from './VFXSystem';
 import { VoxelSpartan } from './VoxelSpartan';
@@ -3256,6 +3256,11 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                     // Directly mutate the entity in the REF. Do NOT trigger setEntities.
                     // The VoxelMob component listens to 'entity.hp' diff via useFrame.
                     ent.hp -= finalDamage;
+
+                    // Update Damage Map for Boss Rewards
+                    if (!ent.damageMap) ent.damageMap = {};
+                    ent.damageMap[playerState.nickname] = (ent.damageMap[playerState.nickname] || 0) + finalDamage;
+
                     ent.hitFlash = Date.now();
 
                     // Show damage text
@@ -3460,11 +3465,44 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         // ANTI-BOT CHECK
         const { newState, stageChanged } = updateAntiBotOnKill(antiBotRef.current, x, z);
         antiBotRef.current = newState;
-        const { dropMultiplier, expMultiplier, warningMessage } = getRewardMultipliers(antiBotRef.current);
+        let { dropMultiplier, expMultiplier, warningMessage } = getRewardMultipliers(antiBotRef.current);
 
         // Show warning on stage change
         if (stageChanged && warningMessage) {
             addFloatingText(warningMessage, x, 5, z, 'text-yellow-400 font-bold text-lg');
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // BOSS REWARD DISTRIBUTION (Damage Based)
+        // ═══════════════════════════════════════════════════════════════
+        if (isBoss && ent.damageMap) {
+            const myDamage = ent.damageMap[playerState.nickname] || 0;
+            const totalDamage = Object.values(ent.damageMap).reduce((a, b) => a + b, 0);
+
+            if (totalDamage > 0) {
+                const myContribution = myDamage / totalDamage;
+
+                // Find MVP
+                let maxDmg = 0;
+                let mvpId = '';
+                Object.entries(ent.damageMap).forEach(([id, dmg]) => {
+                    if (dmg > maxDmg) { maxDmg = dmg; mvpId = id; }
+                });
+
+                const isMvp = mvpId === playerState.nickname;
+
+                // 1. Gold Distribution: Fair share based on damage
+                gold = Math.floor(gold * myContribution);
+
+                // 2. Item Drop: Only MVP gets the drop (for now)
+                if (isMvp) {
+                    addFloatingText(`👑 MVP! (Hasar: %${Math.floor(myContribution * 100)})`, x, 6, z, 'text-yellow-300 font-bold animate-bounce');
+                } else {
+                    // Non-MVP gets NO item
+                    dropMultiplier = 0;
+                    addFloatingText(`Hasar: %${Math.floor(myContribution * 100)}`, x, 6, z, 'text-slate-300');
+                }
+            }
         }
 
         // Apply anti-bot multipliers
@@ -5419,21 +5457,18 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             */}
             {/* NAV WRAPPER - Centered on screen */}
             <nav className="fixed bottom-0 left-0 right-0 z-[60] pointer-events-auto flex justify-center">
-                {/* Background with glass effect - CENTERED CONTAINER */}
-                {/* Mobile: Compact, scrollable | Desktop: Larger, centered */}
+                {/* Background with glass effect - FULL WIDTH, NO SCROLL */}
                 <div className="
                     bg-gradient-to-t from-black/95 via-slate-900/90 to-transparent 
                     border-t border-yellow-900/30 shadow-[0_-5px_30px_rgba(0,0,0,0.6)]
-                    h-14 md:h-16 lg:h-18
+                    h-14 md:h-16
                     flex items-end justify-center 
-                    pb-1 md:pb-2 px-2 md:px-4
-                    overflow-x-auto
-                    max-w-full md:max-w-[90%] lg:max-w-[800px]
-                    md:rounded-t-xl md:border-l md:border-r
+                    pb-1 md:pb-2 px-1 md:px-2
+                    w-full
                 ">
 
-                    {/* All Navigation Buttons - Horizontal scroll on mobile - DO NOT ADD hidden CLASSES! */}
-                    <div className="flex flex-nowrap items-center justify-center gap-0.5 md:gap-1 lg:gap-2 no-scrollbar">
+                    {/* All Navigation Buttons - NO SCROLL, SHRINK TO FIT */}
+                    <div className="flex flex-nowrap items-center justify-center gap-0.5 md:gap-1">
                         {/* 1. Karakter */}
                         <button
                             onClick={() => setShowPlayerStats(true)}
@@ -5534,7 +5569,17 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                             <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Sıralama</span>
                         </button>
 
-                        {/* 11. Çıkış */}
+                        {/* 11. Ayarlar */}
+                        <button
+                            onClick={() => setShowSettings(true)}
+                            className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-slate-800/60 border border-slate-600/50 hover:bg-slate-700/80 hover:border-slate-400/50 transition-all group min-w-[38px] md:min-w-[60px] shrink-0"
+                            title="Oyun Ayarları"
+                        >
+                            <Settings2 size={16} className="text-slate-400 group-hover:text-slate-300 transition-colors md:w-[18px] md:h-[18px]" />
+                            <span className="text-[7px] md:text-[9px] text-slate-400 group-hover:text-white font-bold uppercase">Ayarlar</span>
+                        </button>
+
+                        {/* 12. Çıkış */}
                         <button
                             onClick={() => setExitCountdown(10)}
                             className="flex flex-col items-center gap-0.5 px-1.5 py-1 md:px-2.5 md:py-1.5 rounded-lg bg-red-900/30 border border-red-700/50 hover:bg-red-800/60 hover:border-red-400 transition-all group min-w-[38px] md:min-w-[60px] shrink-0"

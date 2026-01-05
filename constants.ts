@@ -38,11 +38,13 @@ export const FACTIONS: Record<Faction, { name: string, color: string, descriptio
 export const CLASS_BASE_STATS: Record<CharacterClass, { str: number, dex: number, int: number, vit: number }> = {
     warrior: { str: 12, dex: 4, int: 2, vit: 15 },     // Tank: High HP (VIT), Good Dmg (STR)
     arctic_knight: { str: 10, dex: 5, int: 4, vit: 14 },
+    gale_glaive: { str: 8, dex: 14, int: 4, vit: 10 }, // Agile DPS
     archer: { str: 4, dex: 15, int: 3, vit: 8 },
     archmage: { str: 2, dex: 4, int: 16, vit: 5 },
     bard: { str: 4, dex: 12, int: 12, vit: 6 },
     cleric: { str: 6, dex: 4, int: 12, vit: 12 },
     martial_artist: { str: 14, dex: 12, int: 2, vit: 8 },
+    monk: { str: 8, dex: 8, int: 10, vit: 12 }, // Balanced healer
     reaper: { str: 14, dex: 8, int: 6, vit: 6 },
 };
 
@@ -356,6 +358,40 @@ export const CLASSES: Record<CharacterClass, ClassData> = {
             { id: 'rp5', name: 'Korku', name_en: 'Fear', description: 'Düşmanları kaçırır.', description_en: 'Scares enemies away.', cd: 20, manaCost: 40, levelReq: 12, type: 'utility', icon: '/assets/skills/reaper_texture/icon_soul_collector.png', visual: 'reaper_cross', modelPath: '/models/skills/reaper/soul_cross_1.json' },
             { id: 'rp7', name: 'Kıyamet Çağrısı (Ulti)', name_en: 'Call of Apocalypse (Ulti)', description: 'Tüm ruhları serbest bırakır.', description_en: 'Releases all souls.', cd: 60, manaCost: 100, levelReq: 25, type: 'ultimate', icon: '/assets/skills/reaper_texture/icon_death_spin.png', visual: 'reaper_spin', modelPath: '/models/skills/reaper/soul_spin.json' },
         ]
+    },
+    gale_glaive: {
+        id: 'gale_glaive',
+        name: 'Fırtına Mızrakcısı',
+        name_en: 'Gale Glaive',
+        role: 'DPS / Agile',
+        role_en: 'DPS / Agile',
+        description: 'Hızlı ve çevik mızrak ustası.',
+        description_en: 'Fast and agile spear master.',
+        mechanic: 'Özellik: Hız arttıkça hasar artar.',
+        mechanic_en: 'Mechanic: Damage increases with speed.',
+        skills: [
+            { id: 'gg1', name: 'Rüzgar Darbesi', name_en: 'Wind Strike', description: 'Hızlı mızrak saldırısı.', description_en: 'Quick spear attack.', cd: 1.0, manaCost: 8, levelReq: 1, type: 'damage', icon: '/assets/skills/warrior_texture/icon_brutal_strike.png', visual: 'gale_strike', modelPath: '/models/skills/warrior/warrior_slash_1.json', isAoE: false },
+            { id: 'gg2', name: 'Kasırga', name_en: 'Whirlwind', description: 'Etrafında dönerek saldırır.', description_en: 'Spinning attack around.', cd: 8, manaCost: 20, levelReq: 5, type: 'damage', icon: '/assets/skills/warrior_texture/icon_whirlwind.png', visual: 'gale_spin', isAoE: true },
+            { id: 'gg3', name: 'Atılış', name_en: 'Lunge', description: 'İleri doğru hızlı saldırı.', description_en: 'Quick forward attack.', cd: 6, manaCost: 15, levelReq: 8, type: 'damage', icon: '/assets/skills/warrior_texture/icon_charge.png', visual: 'gale_dash' },
+            { id: 'gg7', name: 'Fırtına Çağrısı (Ulti)', name_en: 'Storm Call (Ulti)', description: 'Devasa fırtına oluşturur.', description_en: 'Creates massive storm.', cd: 50, manaCost: 80, type: 'ultimate', icon: '/assets/skills/warrior_texture/icon_earthquake.png', visual: 'gale_storm', isAoE: true },
+        ]
+    },
+    monk: {
+        id: 'monk',
+        name: 'Keşiş',
+        name_en: 'Monk',
+        role: 'Support / Healer',
+        role_en: 'Support / Healer',
+        description: 'Kutsal güçlerle iyileştiren bilge.',
+        description_en: 'Wise healer with holy powers.',
+        mechanic: 'Özellik: İyileştirme yaparken savunma kazanır.',
+        mechanic_en: 'Mechanic: Gains defense while healing.',
+        skills: [
+            { id: 'mn1', name: 'Kutsal Dokunuş', name_en: 'Holy Touch', description: 'Hafif iyileştirme.', description_en: 'Light healing.', cd: 2, manaCost: 15, levelReq: 1, type: 'heal', icon: '/assets/skills/cleric_texture/icon_healing_touch.png', visual: 'monk_heal' },
+            { id: 'mn2', name: 'Koruma Kalkanı', name_en: 'Protection Shield', description: 'Savunma arttırır.', description_en: 'Increases defense.', cd: 15, manaCost: 25, levelReq: 5, type: 'buff', icon: '/assets/skills/cleric_texture/icon_shield.png', visual: 'monk_shield' },
+            { id: 'mn3', name: 'Arındırma', name_en: 'Purify', description: 'Olumsuz etkileri temizler.', description_en: 'Cleanses negative effects.', cd: 10, manaCost: 20, levelReq: 8, type: 'heal', icon: '/assets/skills/cleric_texture/icon_cleanse.png', visual: 'monk_purify' },
+            { id: 'mn7', name: 'İlahi Bereket (Ulti)', name_en: 'Divine Blessing (Ulti)', description: 'Grup iyileştirmesi.', description_en: 'Group healing.', cd: 60, manaCost: 100, type: 'ultimate', icon: '/assets/skills/cleric_texture/icon_hope.png', visual: 'monk_ultimate', isAoE: true },
+        ]
     }
 };
 
@@ -369,37 +405,45 @@ const visuals = (model: any, color: string, glow?: string) => ({
 
 export const CLASS_STARTER_ITEMS: Record<CharacterClass, Item[]> = {
     warrior: [
-        { id: 'start_w_1', name: 'Eski Kılıç', tier: 1, type: 'weapon', rarity: 'common', classReq: 'warrior', visuals: { model: '/models/items/weapons/warrior/warrior_sword_shiny.gltf', primaryColor: '#94a3b8' } },
+        { id: 'start_w_1', name: 'Kadim Kılıç', tier: 1, type: 'weapon', rarity: 'rare', classReq: 'warrior', plus: 7, value: 15000, stats: { damage: 99, str: 8, vit: 5, critChance: 5, bonusExp: 10 }, visuals: { model: '/models/items/weapons/warrior/warrior_sword_shiny.gltf', primaryColor: '#94a3b8', glowColor: '#22c55e', glowIntensity: 3 } },
         { id: 'start_w_2', name: 'Eski Pantolon', tier: 1, type: 'pants', rarity: 'common', classReq: 'warrior' },
         { id: 'start_w_3', name: 'Paslı Zırh', tier: 1, type: 'armor', rarity: 'common', classReq: 'warrior' }
     ],
     arctic_knight: [
-        { id: 'start_ak_1', name: 'Buz Mızrağı', tier: 1, type: 'weapon', rarity: 'common', classReq: 'arctic_knight', visuals: { model: '/models/items/weapons/arctic_knight/frigid_lance_arctic_knight.gltf', primaryColor: '#38bdf8' } },
+        { id: 'start_ak_1', name: 'Kadim Buz Mızrağı', tier: 1, type: 'weapon', rarity: 'rare', classReq: 'arctic_knight', plus: 7, value: 15000, stats: { damage: 99, int: 10, vit: 5, critChance: 5, bonusExp: 10 }, visuals: { model: '/models/items/weapons/arctic_knight/frigid_lance_arctic_knight.gltf', primaryColor: '#38bdf8', glowColor: '#38bdf8', glowIntensity: 3 } },
         { id: 'start_ak_2', name: 'Buz Zırhı', tier: 1, type: 'armor', rarity: 'common', classReq: 'arctic_knight' }
     ],
     archer: [
-        { id: 'start_ar_1', name: 'Avcı Yayı', tier: 1, type: 'weapon', rarity: 'common', classReq: 'archer', visuals: { model: '/models/items/weapons/archer/archer_bow_shiny.gltf', primaryColor: '#a3e635' } },
+        { id: 'start_ar_1', name: 'Kadim Avcı Yayı', tier: 1, type: 'weapon', rarity: 'rare', classReq: 'archer', plus: 7, value: 15000, stats: { damage: 99, dex: 12, critChance: 8, bonusExp: 10 }, visuals: { model: '/models/items/weapons/archer/archer_bow_shiny.gltf', primaryColor: '#a3e635', glowColor: '#a3e635', glowIntensity: 3 } },
         { id: 'start_ar_2', name: 'Deri Zırh', tier: 1, type: 'armor', rarity: 'common', classReq: 'archer' }
     ],
     archmage: [
-        { id: 'start_am_1', name: 'Büyücü Asası', tier: 1, type: 'weapon', rarity: 'common', classReq: 'archmage', visuals: { model: '/models/items/weapons/archmage/archmage_staff_shiny.gltf', primaryColor: '#8b5cf6' } },
+        { id: 'start_am_1', name: 'Kadim Büyücü Asası', tier: 1, type: 'weapon', rarity: 'rare', classReq: 'archmage', plus: 7, value: 15000, stats: { damage: 99, int: 15, mana: 50, critChance: 5, bonusExp: 10 }, visuals: { model: '/models/items/weapons/archmage/archmage_staff_shiny.gltf', primaryColor: '#8b5cf6', glowColor: '#8b5cf6', glowIntensity: 3 } },
         { id: 'start_am_2', name: 'Cübbe', tier: 1, type: 'armor', rarity: 'common', classReq: 'archmage' }
     ],
     bard: [
-        { id: 'start_bd_1', name: 'Lir', tier: 1, type: 'weapon', rarity: 'common', classReq: 'bard', visuals: { model: '/models/items/weapons/bard/bard_harp_shiny.gltf', primaryColor: '#fde047' } },
+        { id: 'start_bd_1', name: 'Kadim Lir', tier: 1, type: 'weapon', rarity: 'rare', classReq: 'bard', plus: 7, value: 15000, stats: { damage: 99, int: 8, dex: 8, critChance: 5, bonusExp: 10 }, visuals: { model: '/models/items/weapons/bard/bard_harp_shiny.gltf', primaryColor: '#fde047', glowColor: '#fde047', glowIntensity: 3 } },
         { id: 'start_bd_2', name: 'Ozan Kıyafeti', tier: 1, type: 'armor', rarity: 'common', classReq: 'bard' }
     ],
     cleric: [
-        { id: 'start_cl_1', name: 'Kutsal Topuz', tier: 1, type: 'weapon', rarity: 'common', classReq: 'cleric', visuals: { model: '/models/items/weapons/cleric/cleric_mace_shiny.gltf', primaryColor: '#facc15' } },
+        { id: 'start_cl_1', name: 'Kadim Kutsal Topuz', tier: 1, type: 'weapon', rarity: 'rare', classReq: 'cleric', plus: 7, value: 15000, stats: { damage: 99, int: 10, vit: 8, hp: 100, critChance: 5, bonusExp: 10 }, visuals: { model: '/models/items/weapons/cleric/cleric_mace_shiny.gltf', primaryColor: '#facc15', glowColor: '#facc15', glowIntensity: 3 } },
         { id: 'start_cl_2', name: 'Rahip Cübbesi', tier: 1, type: 'armor', rarity: 'common', classReq: 'cleric' }
     ],
     martial_artist: [
-        { id: 'start_ma_1', name: 'Dövüş Eldiveni', tier: 1, type: 'weapon', rarity: 'common', classReq: 'martial_artist', visuals: { model: '/models/items/weapons/martial_artist/martial_artist_gauntlet.gltf', primaryColor: '#fca5a5' } },
+        { id: 'start_ma_1', name: 'Kadim Dövüş Eldiveni', tier: 1, type: 'weapon', rarity: 'rare', classReq: 'martial_artist', plus: 7, value: 15000, stats: { damage: 99, str: 8, dex: 8, attackSpeed: 10, critChance: 8, bonusExp: 10 }, visuals: { model: '/models/items/weapons/martial_artist/martial_artist_gauntlet.gltf', primaryColor: '#fca5a5', glowColor: '#ef4444', glowIntensity: 3 } },
         { id: 'start_ma_2', name: 'Dövüşçü Giysisi', tier: 1, type: 'armor', rarity: 'common', classReq: 'martial_artist' }
     ],
     reaper: [
-        { id: 'start_rp_1', name: 'Ölüm Tırpanı', tier: 1, type: 'weapon', rarity: 'common', classReq: 'reaper', visuals: { model: '/models/items/weapons/reaper/scythe_reaper_shiny.gltf', primaryColor: '#1e293b' } },
+        { id: 'start_rp_1', name: 'Kadim Ölüm Tırpanı', tier: 1, type: 'weapon', rarity: 'rare', classReq: 'reaper', plus: 7, value: 15000, stats: { damage: 99, str: 10, critChance: 10, lifesteal: 3, bonusExp: 10 }, visuals: { model: '/models/items/weapons/reaper/scythe_reaper_shiny.gltf', primaryColor: '#1e293b', glowColor: '#a855f7', glowIntensity: 3 } },
         { id: 'start_rp_2', name: 'Karanlık Zırh', tier: 1, type: 'armor', rarity: 'common', classReq: 'reaper' }
+    ],
+    gale_glaive: [
+        { id: 'start_gg_1', name: 'Kadim Fırtına Mızrağı', tier: 1, type: 'weapon', rarity: 'rare', classReq: 'gale_glaive', plus: 7, value: 15000, stats: { damage: 99, dex: 12, attackSpeed: 8, critChance: 8, bonusExp: 10 }, visuals: { model: '/models/items/weapons/warrior/warrior_sword_shiny.gltf', primaryColor: '#22d3ee', glowColor: '#22d3ee', glowIntensity: 3 } },
+        { id: 'start_gg_2', name: 'Rüzgar Zırhı', tier: 1, type: 'armor', rarity: 'common', classReq: 'gale_glaive' }
+    ],
+    monk: [
+        { id: 'start_mn_1', name: 'Kadim Keşiş Asası', tier: 1, type: 'weapon', rarity: 'rare', classReq: 'monk', plus: 7, value: 15000, stats: { damage: 99, int: 10, vit: 10, hp: 150, mana: 50, bonusExp: 10 }, visuals: { model: '/models/items/weapons/cleric/cleric_mace_shiny.gltf', primaryColor: '#fef08a', glowColor: '#fef08a', glowIntensity: 3 } },
+        { id: 'start_mn_2', name: 'Keşiş Cübbesi', tier: 1, type: 'armor', rarity: 'common', classReq: 'monk' }
     ]
 };
 
@@ -414,17 +458,71 @@ export const INITIAL_INVENTORY: Item[] = [
 // POTIONS moved to end of file with full tier system
 
 // --- QUEST DATA (CHAIN) ---
+// Her seviye için 1 görev, %35 EXP verir
+// Elmas sadece Level 15+ görevlerde (zor görevler)
+// requiredCount: O level için makul düşman sayısı
 export const QUEST_DATA: Record<number, Partial<Quest>> = {
-    1: { title: 'Acemi Eğitimi', description: 'Savaş sanatını öğren. 2 Düşman yok et.', requiredCount: 2, rewardGold: 100, rewardXp: 500, rewardHonor: 50 },
-    2: { title: 'İlk Kan', description: 'Vahşi doğaya çık. 5 Düşman yok et.', requiredCount: 5, rewardGold: 200, rewardXp: 1000, rewardHonor: 100 },
-    3: { title: 'Köyün Güvenliği', description: 'Köy çevresini temizle. 10 Düşman yok et.', requiredCount: 10, rewardGold: 500, rewardXp: 2000, rewardHonor: 150 },
-    4: { title: 'Casus Avı', description: 'Düşman gözcülerini avla. 15 Düşman yok et.', requiredCount: 15, rewardGold: 1000, rewardXp: 4000, rewardHonor: 200 },
-    5: { title: 'Generalin Emri', description: 'Savaş kızışıyor. 25 Düşman yok et.', requiredCount: 25, rewardGold: 2000, rewardXp: 8000, rewardHonor: 300 },
-    6: { title: 'Sınır İhlali', description: 'Karşı ırkın bölgesine sız (4-x). 30 Düşman yok et.', requiredCount: 30, rewardGold: 3000, rewardXp: 12000, rewardHonor: 500 },
-    7: { title: 'Onur Savaşı', description: 'Kendini kanıtla. 40 Düşman yok et.', requiredCount: 40, rewardGold: 5000, rewardXp: 20000, rewardHonor: 750 },
-    8: { title: 'Elit Avcı', description: 'Güçlü düşmanlarla yüzleş. 50 Düşman yok et.', requiredCount: 50, rewardGold: 7500, rewardXp: 30000, rewardHonor: 1000 },
-    9: { title: 'Efsanevi Yükseliş', description: 'Adını tarihe yaz. 100 Düşman yok et.', requiredCount: 100, rewardGold: 15000, rewardXp: 50000, rewardHonor: 2000 },
-    10: { title: 'Savaş Lordu', description: 'Sen artık bir efsanesin. 200 Düşman yok et.', requiredCount: 200, rewardGold: 50000, rewardXp: 100000, rewardHonor: 5000 },
+    // ===================== SEVİYE 1-5: BAŞLANGIÇ =====================
+    // Level 2 için: 10,000 EXP gerek → %35 = 3,500 EXP
+    1: { title: 'Acemi Eğitimi', description: 'İlk adımını at! 3 Düşman yok et.', requiredCount: 3, rewardGold: 50, rewardXp: 3500, rewardHonor: 10, rewardGems: 0 },
+    // Level 3 için: 20,000 EXP gerek → %35 = 7,000 EXP
+    2: { title: 'İlk Zafer', description: 'Savaş ruhunu göster. 5 Düşman yok et.', requiredCount: 5, rewardGold: 100, rewardXp: 7000, rewardHonor: 20, rewardGems: 0 },
+    // Level 4 için: 40,000 EXP gerek → %35 = 14,000 EXP
+    3: { title: 'Köy Devriyesi', description: 'Köyü koru. 8 Düşman yok et.', requiredCount: 8, rewardGold: 200, rewardXp: 14000, rewardHonor: 30, rewardGems: 0 },
+    // Level 5 için: 80,000 EXP gerek → %35 = 28,000 EXP
+    4: { title: 'Tehlike Uyarısı', description: 'Düşmanlar güçleniyor. 12 Düşman yok et.', requiredCount: 12, rewardGold: 400, rewardXp: 28000, rewardHonor: 50, rewardGems: 0 },
+    // Level 6 için: 160,000 EXP gerek → %35 = 56,000 EXP
+    5: { title: 'Orman Temizliği', description: 'Ormanı arıt. 15 Düşman yok et.', requiredCount: 15, rewardGold: 800, rewardXp: 56000, rewardHonor: 75, rewardGems: 0 },
+
+    // ===================== SEVİYE 6-10: ORTA =====================
+    // Level 7 için: 320,000 EXP gerek → %35 = 112,000 EXP
+    6: { title: 'Sınır Karakolu', description: 'Sınırı bekle. 20 Düşman yok et.', requiredCount: 20, rewardGold: 1500, rewardXp: 112000, rewardHonor: 100, rewardGems: 0 },
+    // Level 8 için: 640,000 EXP gerek → %35 = 224,000 EXP
+    7: { title: 'Casus Avı', description: 'Casusları yakala. 25 Düşman yok et.', requiredCount: 25, rewardGold: 3000, rewardXp: 224000, rewardHonor: 150, rewardGems: 0 },
+    // Level 9 için: 1,280,000 EXP gerek → %35 = 448,000 EXP
+    8: { title: 'Kale Baskını', description: 'Kaleye saldır. 35 Düşman yok et.', requiredCount: 35, rewardGold: 6000, rewardXp: 448000, rewardHonor: 200, rewardGems: 0 },
+    // Level 10 için: 2,560,000 EXP gerek → %35 = 896,000 EXP
+    9: { title: 'Generalin Emri', description: 'Büyük savaş başlıyor. 50 Düşman yok et.', requiredCount: 50, rewardGold: 12000, rewardXp: 896000, rewardHonor: 300, rewardGems: 0 },
+    // Level 11 için: 5,120,000 EXP gerek → %35 = 1,792,000 EXP
+    10: { title: 'Elit Avcı', description: 'Elit birliklere katıl. 75 Düşman yok et.', requiredCount: 75, rewardGold: 25000, rewardXp: 1792000, rewardHonor: 500, rewardGems: 0 },
+
+    // ===================== SEVİYE 11-15: İLERİ =====================
+    // Level 12 için: 10,240,000 EXP gerek → %35 = 3,584,000 EXP
+    11: { title: 'Karanlık Orman', description: 'Lanetli ormana gir. 100 Düşman yok et.', requiredCount: 100, rewardGold: 50000, rewardXp: 3584000, rewardHonor: 750, rewardGems: 0 },
+    // Level 13 için: 20,480,000 EXP gerek → %35 = 7,168,000 EXP
+    12: { title: 'Ejderha Yuvası', description: 'Ejderhaların mekânına git. 125 Düşman yok et.', requiredCount: 125, rewardGold: 100000, rewardXp: 7168000, rewardHonor: 1000, rewardGems: 0 },
+    // Level 14 için: 40,960,000 EXP gerek → %35 = 14,336,000 EXP
+    13: { title: 'Kanlı Arena', description: 'Arenanın efendisi ol. 150 Düşman yok et.', requiredCount: 150, rewardGold: 200000, rewardXp: 14336000, rewardHonor: 1500, rewardGems: 0 },
+    // Level 15 için: 81,920,000 EXP gerek → %35 = 28,672,000 EXP
+    14: { title: 'Demon Lordu', description: 'Şeytani güçlerle savaş. 200 Düşman yok et.', requiredCount: 200, rewardGold: 400000, rewardXp: 28672000, rewardHonor: 2000, rewardGems: 0 },
+    // Level 16 için: 163,840,000 EXP gerek → %35 = 57,344,000 EXP
+    15: { title: 'Savaş Lordu', description: 'Artık bir efsanesin! 250 Düşman yok et.', requiredCount: 250, rewardGold: 800000, rewardXp: 57344000, rewardHonor: 3000, rewardGems: 100 },
+
+    // ===================== SEVİYE 16-20: ELMAS ÖDÜLLÜ (ZOR) =====================
+    // Level 17 için: 327,680,000 EXP gerek → %35 = 114,688,000 EXP
+    16: { title: 'Kadim Savaşçı', description: 'Kadim güce eriş. 300 Düşman yok et.', requiredCount: 300, rewardGold: 1500000, rewardXp: 114688000, rewardHonor: 5000, rewardGems: 150 },
+    // Level 18 için: 655,360,000 EXP gerek → %35 = 229,376,000 EXP
+    17: { title: 'Ölümsüz Şövalye', description: 'Ölümsüzlüğe yürü. 400 Düşman yok et.', requiredCount: 400, rewardGold: 3000000, rewardXp: 229376000, rewardHonor: 7500, rewardGems: 200 },
+    // Level 19 için: 1,310,720,000 EXP gerek → %35 = 458,752,000 EXP
+    18: { title: 'Tanrı Katili', description: 'Tanrılara meydan oku. 500 Düşman yok et.', requiredCount: 500, rewardGold: 6000000, rewardXp: 458752000, rewardHonor: 10000, rewardGems: 300 },
+    // Level 20 için: 2,621,440,000 EXP gerek → %35 = 917,504,000 EXP
+    19: { title: 'Evrenin Koruyucusu', description: 'Evreni koru. 750 Düşman yok et.', requiredCount: 750, rewardGold: 12000000, rewardXp: 917504000, rewardHonor: 15000, rewardGems: 400 },
+    // Level 21 için: 5,242,880,000 EXP gerek → %35 = 1,835,008,000 EXP
+    20: { title: 'Yüce Hükümdar', description: 'Tahtını al. 1000 Düşman yok et.', requiredCount: 1000, rewardGold: 25000000, rewardXp: 1835008000, rewardHonor: 25000, rewardGems: 500 },
+
+    // ===================== SEVİYE 21-25: SON GÖREVLER (ZOR ELMAS) =====================
+    21: { title: 'Sonsuzluk Kapısı', description: 'Sınırları aş. 1500 Düşman yok et.', requiredCount: 1500, rewardGold: 50000000, rewardXp: 3670016000, rewardHonor: 50000, rewardGems: 750 },
+    22: { title: 'Kozmik Savaşçı', description: 'Galaksiyi fethet. 2000 Düşman yok et.', requiredCount: 2000, rewardGold: 100000000, rewardXp: 7340032000, rewardHonor: 75000, rewardGems: 1000 },
+    23: { title: 'Mitolojik Kahraman', description: 'Efsane ol. 3000 Düşman yok et.', requiredCount: 3000, rewardGold: 200000000, rewardXp: 14680064000, rewardHonor: 100000, rewardGems: 1500 },
+    24: { title: 'Efsanelerin Efendisi', description: 'Tüm efsaneleri geç. 5000 Düşman yok et.', requiredCount: 5000, rewardGold: 500000000, rewardXp: 29360128000, rewardHonor: 200000, rewardGems: 2000 },
+    25: { title: 'Kadim Savaşların Tanrısı', description: 'Oyunun mutlak zirvesi! 10000 Düşman yok et.', requiredCount: 10000, rewardGold: 1000000000, rewardXp: 58720256000, rewardHonor: 500000, rewardGems: 3000 },
+
+    // ===================== SEVİYE 26-30: END-GAME (EN ZOR - MAX 10K ELMAS) =====================
+    26: { title: 'Galaktik İmparator', description: 'Galaksiyi yönet. 15000 Düşman yok et.', requiredCount: 15000, rewardGold: 2000000000, rewardXp: 117440512000, rewardHonor: 750000, rewardGems: 4000 },
+    27: { title: 'Evren Hakimi', description: 'Evrene hükmet. 25000 Düşman yok et.', requiredCount: 25000, rewardGold: 5000000000, rewardXp: 234881024000, rewardHonor: 1000000, rewardGems: 5000 },
+    28: { title: 'Boyutlar Arası Savaşçı', description: 'Tüm boyutları fethet. 50000 Düşman yok et.', requiredCount: 50000, rewardGold: 10000000000, rewardXp: 469762048000, rewardHonor: 2500000, rewardGems: 6000 },
+    29: { title: 'Zamanın Efendisi', description: 'Zamanı kontrol et. 100000 Düşman yok et.', requiredCount: 100000, rewardGold: 25000000000, rewardXp: 939524096000, rewardHonor: 5000000, rewardGems: 8000 },
+    30: { title: 'KADIM SAVAŞLARIN YARATICISI', description: '🏆 OYUN BİTTİ! EFSANE OLDUN! 250000 Düşman yok et.', requiredCount: 250000, rewardGold: 100000000000, rewardXp: 1879048192000, rewardHonor: 10000000, rewardGems: 10000 },
 };
 
 // --- MOCK LEADERBOARD DATA ---

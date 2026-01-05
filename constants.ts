@@ -194,26 +194,26 @@ export const PETS_DATA: PetItem[] = [
 // Normal petlerle aynı anda kullanılabilir!
 // ═══════════════════════════════════════════════════════════════════════════
 export const SPEED_PETS_DATA: PetItem[] = [
-    // TIER 1 - Temel Hız Petleri (+10-15% Hız)
-    { id: 'speed_bunny', name: 'Hızlı Tavşan', type: 'speed', tier: 1, bonusSpeed: 10, bonusExpRate: 2, bonusDefense: 0, color: '#f5f5f5', modelPath: '/models/pets/cubee-plains.gltf' },
-    { id: 'speed_squirrel', name: 'Sincap', type: 'speed', tier: 1, bonusSpeed: 12, bonusExpRate: 3, bonusDefense: 0, color: '#d4a574', modelPath: '/models/pets/cubee-grass.gltf' },
-    { id: 'speed_fox', name: 'Tilki', type: 'speed', tier: 1, bonusSpeed: 15, bonusExpRate: 4, bonusDefense: 0, color: '#ff6b35', modelPath: '/models/pets/cubee-fire.gltf' },
+    // TIER 1 - Temel Hız Petleri (+10-15% Hız, +5% Hasar)
+    { id: 'speed_bunny', name: 'Hızlı Tavşan', type: 'speed', tier: 1, bonusSpeed: 10, bonusExpRate: 2, bonusDamage: 5, bonusDefense: 0, color: '#f5f5f5', modelPath: '/models/pets/cubee-plains.gltf' },
+    { id: 'speed_squirrel', name: 'Sincap', type: 'speed', tier: 1, bonusSpeed: 12, bonusExpRate: 3, bonusDamage: 5, bonusDefense: 0, color: '#d4a574', modelPath: '/models/pets/cubee-grass.gltf' },
+    { id: 'speed_fox', name: 'Tilki', type: 'speed', tier: 1, bonusSpeed: 15, bonusExpRate: 4, bonusDamage: 5, bonusDefense: 0, color: '#ff6b35', modelPath: '/models/pets/cubee-fire.gltf' },
 
-    // TIER 2 - Orta Hız Petleri (+20-25% Hız)
-    { id: 'speed_cheetah', name: 'Çita', type: 'speed', tier: 2, bonusSpeed: 25, bonusExpRate: 5, bonusDefense: 0, color: '#ffd93d', modelPath: '/models/pets/cubee-savanna.gltf' },
+    // TIER 2 - Orta Hız Petleri (+20-25% Hız, +10% Hasar)
+    { id: 'speed_cheetah', name: 'Çita', type: 'speed', tier: 2, bonusSpeed: 25, bonusExpRate: 5, bonusDamage: 10, bonusDefense: 0, color: '#ffd93d', modelPath: '/models/pets/cubee-savanna.gltf' },
     { id: 'speed_hawk', name: 'Şahin', type: 'speed', tier: 2, bonusSpeed: 22, bonusExpRate: 6, bonusDamage: 10, bonusDefense: 0, color: '#6d4c41', modelPath: '/models/pets/cubee-stone.gltf' },
 
-    // TIER 3 - Yüksek Hız Petleri (+30-35% Hız)
+    // TIER 3 - Yüksek Hız Petleri (+30-35% Hız, +15% Hasar)
     { id: 'speed_wind_spirit', name: 'Rüzgar Ruhu', type: 'speed', tier: 3, bonusSpeed: 35, bonusExpRate: 8, bonusDamage: 15, bonusDefense: 0, color: '#87ceeb', modelPath: '/models/pets/cubee-water.gltf' },
-    { id: 'speed_lightning', name: 'Şimşek Peterisi', type: 'speed', tier: 3, bonusSpeed: 33, bonusExpRate: 10, bonusDamage: 20, bonusDefense: 0, color: '#ffd700', modelPath: '/models/pets/cubee-good.gltf' },
+    { id: 'speed_lightning', name: 'Şimşek Peterisi', type: 'speed', tier: 3, bonusSpeed: 33, bonusExpRate: 10, bonusDamage: 15, bonusDefense: 0, color: '#ffd700', modelPath: '/models/pets/cubee-good.gltf' },
 
-    // TIER 4 - Nadir Hız Petleri (+40-45% Hız)
-    { id: 'speed_phantom', name: 'Hayalet Koşucu', type: 'speed', tier: 4, bonusSpeed: 45, bonusExpRate: 12, bonusDamage: 30, bonusDefense: 20, color: '#9370db', modelPath: '/models/pets/cubee-evil.gltf' },
-    { id: 'speed_comet', name: 'Kuyruklu Yıldız', type: 'speed', tier: 4, bonusSpeed: 42, bonusExpRate: 15, bonusDamage: 25, bonusDefense: 0, bonusHp: 200, color: '#00bfff', modelPath: '/models/pets/cubee-snow.gltf' },
+    // TIER 4 - Nadir Hız Petleri (+40-45% Hız, +20-25% Hasar)
+    { id: 'speed_phantom', name: 'Hayalet Koşucu', type: 'speed', tier: 4, bonusSpeed: 45, bonusExpRate: 12, bonusDamage: 25, bonusDefense: 20, color: '#9370db', modelPath: '/models/pets/cubee-evil.gltf' },
+    { id: 'speed_comet', name: 'Kuyruklu Yıldız', type: 'speed', tier: 4, bonusSpeed: 42, bonusExpRate: 15, bonusDamage: 20, bonusDefense: 0, bonusHp: 200, color: '#00bfff', modelPath: '/models/pets/cubee-snow.gltf' },
 
-    // TIER 5 - Efsanevi Hız Petleri (+50-60% Hız)
-    { id: 'speed_sonic', name: 'Ses Hızı', type: 'speed', tier: 5, bonusSpeed: 60, bonusExpRate: 20, bonusDamage: 50, bonusDefense: 30, bonusHp: 500, color: '#1e90ff', modelPath: '/models/pets/cubee-skeleton.gltf' },
-    { id: 'speed_void_runner', name: 'Boşluk Koşucusu', type: 'speed', tier: 5, bonusSpeed: 55, bonusExpRate: 25, bonusDamage: 40, bonusDefense: 40, bonusHp: 400, color: '#4b0082', modelPath: '/models/pets/Cubee Black Magic pet/cubee-soul_weaver.gltf' },
+    // TIER 5 - Efsanevi Hız Petleri (+50-60% Hız, +30% Hasar)
+    { id: 'speed_sonic', name: 'Ses Hızı', type: 'speed', tier: 5, bonusSpeed: 60, bonusExpRate: 20, bonusDamage: 30, bonusDefense: 30, bonusHp: 500, color: '#1e90ff', modelPath: '/models/pets/cubee-skeleton.gltf' },
+    { id: 'speed_void_runner', name: 'Boşluk Koşucusu', type: 'speed', tier: 5, bonusSpeed: 55, bonusExpRate: 25, bonusDamage: 30, bonusDefense: 40, bonusHp: 400, color: '#4b0082', modelPath: '/models/pets/Cubee Black Magic pet/cubee-soul_weaver.gltf' },
 ];
 
 // --- CLASSES WITH 7 SKILLS (UPDATED CDS) ---

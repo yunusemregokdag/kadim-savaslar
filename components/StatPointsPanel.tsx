@@ -44,7 +44,7 @@ const STAT_INFO = {
         color: '#a855f7', // Purple (matching image)
         bgColor: 'bg-purple-900/40',
         borderColor: 'border-purple-600/60',
-        description: '+10 Can'
+        description: '+10 Can, +0.2% Blok'
     }
 };
 
@@ -101,7 +101,7 @@ const StatPointsPanel: React.FC<StatPointsPanelProps> = ({ playerState, onAddSta
 
     const totalCritChance = Math.min(totalDex + equipmentStats.critChance, 75); // Max 75%
     const totalAttackSpeed = 1 + (totalDex * 0.5) + equipmentStats.attackSpeed;
-    const totalBlockChance = Math.min(Math.floor(totalDex * 0.3) + equipmentStats.blockChance, 50); // DEX gives block + equipment
+    const totalBlockChance = Math.min(Math.floor(totalDex * 0.3) + Math.floor(totalVit * 0.2) + equipmentStats.blockChance, 50); // DEX + VIT gives block + equipment
 
     // Combat Power (SG - Savaş Gücü)
     const combatPower = Math.floor(

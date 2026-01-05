@@ -504,6 +504,25 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
                             class: data.character.class,
                             faction: data.character.faction || faction
                         };
+
+                        // Eğer activeQuest null ise, questStage'e göre görev ata
+                        if (!loadedState.activeQuest && QUEST_DATA[loadedState.questStage || 1]) {
+                            const questData = QUEST_DATA[loadedState.questStage || 1];
+                            loadedState.activeQuest = {
+                                id: `quest_${loadedState.questStage || 1}`,
+                                title: questData.title || 'Görev',
+                                description: questData.description || '',
+                                target: 'mob',
+                                requiredCount: questData.requiredCount || 5,
+                                currentCount: 0,
+                                rewardGold: questData.rewardGold || 100,
+                                rewardXp: questData.rewardXp || 1000,
+                                rewardHonor: questData.rewardHonor || 50,
+                                rewardGems: (questData as any).rewardGems || 0,
+                                isCompleted: false
+                            };
+                        }
+
                         setPlayerStats(recalculateStats(loadedState));
                     }
                 } catch (err) { console.error("Load failed:", err); } finally { setLoading(false); }

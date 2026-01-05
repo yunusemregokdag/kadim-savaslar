@@ -5852,7 +5852,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                                         </div>
                                         <div className="flex-1">
                                             <div className="text-pink-400 font-bold text-sm">Dayanıklılık (VIT)</div>
-                                            <div className="text-[10px] text-slate-500">+10 Can</div>
+                                            <div className="text-[10px] text-slate-500">+10 Can, +0.2% Blok</div>
                                         </div>
                                         <span className="text-white font-bold text-lg mr-3">{playerState.vitality || 100}</span>
                                         <button className="w-7 h-7 bg-green-600 hover:bg-green-500 rounded flex items-center justify-center text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed" disabled={!playerState.statPoints}>
@@ -5917,10 +5917,19 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                                                 })()}
                                             </div>
                                         </div>
-                                        {/* Damage */}
+                                        {/* Damage - Silah hasarı dahil */}
                                         <div className="bg-slate-800/30 rounded-lg p-3">
                                             <div className="text-[10px] text-slate-500 mb-1">Hasar</div>
-                                            <div className="text-lg font-bold text-red-400">{(playerState.strength || 100) * 10 + playerState.damage}</div>
+                                            <div className="text-lg font-bold text-red-400">
+                                                {(() => {
+                                                    let totalDmg = (playerState.strength || 0) * 2 + (playerState.damage || 0);
+                                                    // Silah hasarı ekle
+                                                    if (playerState.equipment?.weapon?.stats?.damage) {
+                                                        totalDmg += playerState.equipment.weapon.stats.damage;
+                                                    }
+                                                    return totalDmg;
+                                                })()}
+                                            </div>
                                         </div>
                                         {/* Defense */}
                                         <div className="bg-slate-800/30 rounded-lg p-3">

@@ -5942,9 +5942,16 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                                             <div className="text-lg font-bold text-orange-400">{Math.min(75, 5 + (playerState.dexterity || 100) * 0.1).toFixed(1)}%</div>
                                         </div>
                                         {/* Attack Speed */}
-                                        <div className="bg-slate-800/30 rounded-lg p-3 col-span-2">
+                                        <div className="bg-slate-800/30 rounded-lg p-3">
                                             <div className="text-[10px] text-slate-500 mb-1">Saldırı Hızı</div>
-                                            <div className="text-lg font-bold text-cyan-400">{(1 + (playerState.dexterity || 100) * 0.005).toFixed(2)}x</div>
+                                            <div className="text-lg font-bold text-cyan-400">{(1 + (playerState.dexterity || 0) * 0.005).toFixed(2)}x</div>
+                                        </div>
+                                        {/* Block Chance */}
+                                        <div className="bg-slate-800/30 rounded-lg p-3">
+                                            <div className="text-[10px] text-slate-500 mb-1">Blok Şansı</div>
+                                            <div className="text-lg font-bold text-emerald-400">
+                                                {Math.min(50, Math.floor((playerState.dexterity || 0) * 0.3) + Math.floor((playerState.vitality || 0) * 0.2)).toFixed(1)}%
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

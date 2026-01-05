@@ -4,6 +4,7 @@ import { useGLTF, Billboard, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { SKILL_ASSETS, SkillAssetConfig } from './SkillAssetRegistry';
 import { soundManager } from './SoundManager';
+import { WARRIOR_EFFECTS } from './WarriorEffects';
 
 // --- FALLBACK ASSET (Prevents Crash) ---
 const SAFE_MODEL_PATH = '/models/items/weapons/warrior/warrior_sword_shiny.gltf';
@@ -278,15 +279,33 @@ const SkillTypePool: React.FC<{
 export const SkillEffects: React.FC<SkillEffectsProps> = ({ activeSkills, onEffectComplete }) => {
     return (
         <group>
-            {Object.keys(SKILL_ASSETS).map(key => (
-                <SkillTypePool
-                    key={key}
-                    type={key}
-                    config={SKILL_ASSETS[key]}
-                    activeRequests={activeSkills.filter(s => s.visual === key)}
-                    onComplete={onEffectComplete}
-                />
-            ))}
+            {/* WARRIOR EFFECTS - Kod bazlı (PNG'siz) */}
+            {activeSkills
+                .filter(s => WARRIOR_EFFECTS[s.visual])
+                .map(skill => {
+                    const EffectComponent = WARRIOR_EFFECTS[skill.visual];
+                    return (
+                        <EffectComponent
+                            key={skill.id}
+                            position={skill.position}
+                            targetPosition={skill.targetPosition}
+                            onComplete={() => onEffectComplete(skill.id)}
+                        />
+                    );
+                })}
+
+            {/* OTHER CLASS EFFECTS - Eski sistem (sprite/model bazlı) */}
+            {Object.keys(SKILL_ASSETS)
+                .filter(key => !WARRIOR_EFFECTS[key]) // Warrior effectlerini atla
+                .map(key => (
+                    <SkillTypePool
+                        key={key}
+                        type={key}
+                        config={SKILL_ASSETS[key]}
+                        activeRequests={activeSkills.filter(s => s.visual === key)}
+                        onComplete={onEffectComplete}
+                    />
+                ))}
         </group>
     );
 };

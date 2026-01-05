@@ -537,31 +537,91 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
     // --- RECALCULATE STATS ---
     const recalculateStats = (currentStats: PlayerState): PlayerState => {
         let bonusHp = 0, bonusDef = 0, bonusDmg = 0, bonusMana = 0;
+
+        // Base attribute contributions
         const attrHp = currentStats.vitality * 10;
         const attrDef = currentStats.vitality + (currentStats.dexterity * 0.5);
         const attrMana = currentStats.intelligence * 5;
+
+        // Class-based damage scaling
         let attrDmg = 0;
         if (currentStats.class === 'warrior') attrDmg = currentStats.strength * 2;
         else if (currentStats.class === 'archmage') attrDmg = currentStats.intelligence * 2;
         else if (currentStats.class === 'archer') attrDmg = currentStats.dexterity * 2;
-        else attrDmg = (currentStats.intelligence * 1.5) + (currentStats.vitality * 0.5);
+        else if (currentStats.class === 'martial_artist') attrDmg = (currentStats.strength * 1.5) + (currentStats.dexterity * 0.5);
+        else if (currentStats.class === 'reaper') attrDmg = (currentStats.strength * 1.2) + (currentStats.dexterity * 0.8);
+        else attrDmg = (currentStats.strength + currentStats.intelligence) / 2;
 
         const baseHp = 500 + (currentStats.level * 100) + attrHp;
         const baseDmg = 20 + (currentStats.level * 2) + attrDmg;
         const baseDef = 5 + (currentStats.level * 1) + attrDef;
         const baseMana = 100 + (currentStats.level * 10) + attrMana;
 
+        // Equipment bonuses - including item.stats
         Object.values(currentStats.equipment).forEach(item => {
             if (item) {
                 const tierMult = item.tier * 10;
                 const plusMult = 1 + ((item.plus || 0) * 0.10);
-                if (item.type === 'weapon') bonusDmg += (20 + tierMult) * plusMult;
-                if (item.type === 'armor') { bonusHp += (100 + (tierMult * 5)) * plusMult; bonusDef += (10 + item.tier) * plusMult; }
-                if (item.type === 'helmet') { bonusDef += (5 + item.tier) * plusMult; bonusHp += 50 * plusMult; }
-                if (item.type === 'pants') { bonusDef += (8 + item.tier) * plusMult; bonusHp += 30 * plusMult; }
+
+                // Type-based bonuses
+                if (item.type === 'weapon') {
+                    bonusDmg += (20 + tierMult) * plusMult;
+                    // ADD WEAPON STATS DAMAGE
+                    if (item.stats?.damage) bonusDmg += item.stats.damage;
+                }
+                if (item.type === 'armor') {
+                    bonusHp += (100 + (tierMult * 5)) * plusMult;
+                    bonusDef += (10 + item.tier) * plusMult;
+                    if (item.stats?.defense) bonusDef += item.stats.defense;
+                    if (item.stats?.hp) bonusHp += item.stats.hp;
+                }
+                if (item.type === 'helmet') {
+                    bonusDef += (5 + item.tier) * plusMult;
+                    bonusHp += 50 * plusMult;
+                    if (item.stats?.defense) bonusDef += item.stats.defense;
+                }
+                if (item.type === 'pants') {
+                    bonusDef += (8 + item.tier) * plusMult;
+                    bonusHp += 30 * plusMult;
+                    if (item.stats?.defense) bonusDef += item.stats.defense;
+                }
+                if (item.type === 'boots') {
+                    bonusDef += (3 + item.tier) * plusMult;
+                    if (item.stats?.defense) bonusDef += item.stats.defense;
+                }
+
+                // Stats from any item
+                if (item.stats) {
+                    if (item.stats.str) bonusDmg += item.stats.str * 2;
+                    if (item.stats.vit) bonusHp += item.stats.vit * 10;
+                    if (item.stats.int) bonusMana += item.stats.int * 5;
+                }
             }
         });
 
+        // Wing bonuses
+        if (currentStats.equippedWing) {
+            bonusDmg += currentStats.equippedWing.bonusDamage || 0;
+            bonusHp += currentStats.equippedWing.bonusHp || 0;
+            bonusDef += currentStats.equippedWing.bonusDefense || 0;
+        }
+
+        // Pet bonuses
+        if (currentStats.equippedPet) {
+            bonusDmg += currentStats.equippedPet.bonusDamage || 0;
+            bonusHp += currentStats.equippedPet.bonusHp || 0;
+            bonusDef += currentStats.equippedPet.bonusDefense || 0;
+            bonusMana += currentStats.equippedPet.bonusMana || 0;
+        }
+
+        // Speed Pet bonuses
+        if (currentStats.equippedSpeedPet) {
+            bonusDmg += currentStats.equippedSpeedPet.bonusDamage || 0;
+            bonusHp += currentStats.equippedSpeedPet.bonusHp || 0;
+            bonusDef += currentStats.equippedSpeedPet.bonusDefense || 0;
+        }
+
+        // Rank bonus
         const rankData = RANKS[currentStats.rank] || RANKS[0];
         const rankDmgBonus = Math.floor((baseDmg + bonusDmg) * (rankData.bonusDamage / 100));
 

@@ -388,21 +388,22 @@ export const MAGE_EFFECTS: Record<string, React.FC<any>> = {
     mana_explosion: ManaExplosionEffect,
     apocalypse: ApocalypseEffect,
 
-    // Legacy/Constants keys (Mapping to provided constants.ts archmage skills)
-    // m1 Fireball -> Arcane Orb
+    // Components/constants.ts keys
     fireball: ArcaneOrbEffect,
-    // m2 Iceblock -> Time Warp (Buff style)
     iceblock: TimeWarpEffect,
-    // m3 Teleport -> Polymorph (maybe?) or just let teleport be
-    teleport: TimeWarpEffect, // Reusing time warp effect as a placeholder for teleport buff
-    // m4 Lightning -> Polymorph?
+    teleport: TimeWarpEffect,
     lightning: PolymorphEffect,
-    // m5 Meteor -> Star Rain
     meteor: StarRainEffect,
-    // m6 Drain -> Mana Explosion
     drain: ManaExplosionEffect,
-    // m7 Blackhole -> Apocalypse
     blackhole: ApocalypseEffect,
+
+    // Root constants.ts visual keys (yeni - archmage)
+    archmage_bolt: ArcaneOrbEffect,
+    archmage_impact: TimeWarpEffect,
+    archmage_void: PolymorphEffect,
+    archmage_meteor: StarRainEffect,
+    archmage_blizzard: ManaExplosionEffect,
+    archmage_apocalypse: ApocalypseEffect,
 
     // Extra user keys
     orb: ArcaneOrbEffect,

@@ -403,14 +403,25 @@ export const ARCHER_EFFECTS: Record<string, React.FC<any>> = {
     backstep: BackstepEffect,
     dragon_arrow: DragonArrowEffect,
 
-    // Legacy keys (constants.ts ile eşleşen)
+    // Components/constants.ts keys
     arrow: RapidShotEffect,
-    multishot: WindSlashEffect, // 3x vuruş için wind slash kullan
-    stealth: HunterFocusEffect, // Görünmezlik için focus aurası
-    trap: BackstepEffect, // Tuzak için efekt
+    multishot: WindSlashEffect,
+    stealth: HunterFocusEffect,
+    trap: BackstepEffect,
     dash_back: BackstepEffect,
-    poison_arrow: DeadlyJavelinEffect, // Zehirli ok için javelin
-    arrow_rain: DragonArrowEffect, // Ok yağmuru için dragon arrow
+    poison_arrow: DeadlyJavelinEffect,
+    arrow_rain: DragonArrowEffect,
+
+    // Root constants.ts visual keys (yeni)
+    archer_shot: RapidShotEffect,
+    hunters_focus: HunterFocusEffect,
+    archer_volley: WindSlashEffect,
+
+    // Ek alias'lar
+    rapid_shot: RapidShotEffect,
+    deadly_javelin: DeadlyJavelinEffect,
+    hunter_focus: HunterFocusEffect,
+    wind_razor: WindSlashEffect,
 };
 
 export default ARCHER_EFFECTS;

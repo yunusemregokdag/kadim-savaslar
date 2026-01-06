@@ -364,15 +364,20 @@ export const DivineInterventionEffect: React.FC<{
 // HEALER SKILL MAP
 // ═══════════════════════════════════════════════════════════════════════════
 export const HEALER_EFFECTS: Record<string, React.FC<any>> = {
-    // New keys
-    // Constants.ts Cleric Keys
+    // Components/constants.ts Cleric Keys
     holy_light: HolyLightEffect,
     great_heal: GreatHealEffect,
-    bubble: BlessingEffect, // Kalkan -> Blessing görseli
-    cleanse: LightBurstEffect, // Arındırma -> Işık patlaması
-    sanctuary: GreatHealEffect, // Kutsal Alan -> Büyük şifa efekti
-    resurrect: BlessingEffect, // Diriliş -> Blessing/Halo
+    bubble: BlessingEffect,
+    cleanse: LightBurstEffect,
+    sanctuary: GreatHealEffect,
+    resurrect: BlessingEffect,
     divine_intervention: DivineInterventionEffect,
+
+    // Root constants.ts visual keys (yeni - cleric)
+    cleric_impact: HolyLightEffect,
+    cleric_immolation: GreatHealEffect,
+    cleric_wave: BlessingEffect,
+    cleric_tear: DivineInterventionEffect,
 
     // User provided aliases
     holy_bolt: HolyLightEffect,

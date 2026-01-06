@@ -460,13 +460,27 @@ export const BlizzardEffect: React.FC<{
 // ARCTIC KNIGHT SKILL MAP - constants.ts visual değerleriyle eşleşiyor
 // ═══════════════════════════════════════════════════════════════════════════
 export const ARCTIC_KNIGHT_EFFECTS: Record<string, React.FC<any>> = {
-    // constants.ts'deki visual değerler
+    // Components/constants.ts visual değerler
     ice_slash: IceSlashEffect,
     ice_armor: FrostArmorEffect,
     ice_spear: IceSpearEffect,
     freeze_breath: FreezingGazeEffect,
     ice_floor: AvalancheEffect,
     blizzard: BlizzardEffect,
+
+    // Root constants.ts visual değerler (yeni)
+    arctic_slash: IceSlashEffect,
+    arctic_storm: FrostArmorEffect,
+    arctic_shard: IceSpearEffect,
+    arctic_freeze: FreezingGazeEffect,
+    arctic_charge: AvalancheEffect,
+    arctic_crater: BlizzardEffect,
+
+    // Ek alias'lar
+    winter_fury: FrostArmorEffect,
+    frost_armor: FrostArmorEffect,
+    avalanche: AvalancheEffect,
+    freezing_gaze: FreezingGazeEffect,
 };
 
 export default ARCTIC_KNIGHT_EFFECTS;

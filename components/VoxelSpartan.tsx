@@ -650,11 +650,13 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                         mat.alphaTest = 0.1;
                         mat.side = THREE.DoubleSide;
 
-                        // +7 ve üzeri silahlar için AMPUL GİBİ PARLAMA (Warrior hariç)
+                        // +7 ve üzeri silahlar için AMPUL GİBİ PARLAMA
                         const weaponPlus = props.weaponItem?.plus || 0;
-                        if (weaponPlus >= 7 && charClass !== 'warrior') {
+                        if (weaponPlus >= 7) {
                             mat.emissive = new THREE.Color(classColor);
-                            mat.emissiveIntensity = weaponPlus >= 10 ? 2.5 : weaponPlus >= 9 ? 2.0 : 1.5;
+                            // Warrior için ekstra parlaklık (Kırmızı daha zor görünüyor genelde, boostlayalım)
+                            const intensityMult = charClass === 'warrior' ? 1.5 : 1.0;
+                            mat.emissiveIntensity = (weaponPlus >= 10 ? 3.0 : weaponPlus >= 9 ? 2.5 : 2.0) * intensityMult;
                         }
 
                         mat.needsUpdate = true;
@@ -983,6 +985,8 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                     </mesh>
                 </group>
 
+                {/* =========== HELMET GLOW REMOVED AS REQUESTED =========== */}
+
                 {/* =========== BODY =========== */}
                 <group ref={bodyRef} position={[0, offsets.bodyY, 0]}>
                     {/* Main torso */}
@@ -1036,6 +1040,8 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                     )}
                 </group>
 
+                {/* =========== BODY/ARMOR GLOW PARTICLES REMOVED AS REQUESTED =========== */}
+
                 {/* =========== RIGHT ARM (with weapon) =========== */}
                 <group
                     ref={rightArmRef}
@@ -1072,19 +1078,19 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                                 <group position={[0, 0, 0]}>
                                     {/* Silah etrafında saran parlaklık (Resim 2'deki gibi) */}
                                     <Sparkles
-                                        count={Math.min(weaponGlowLevel * 4, 40)}
-                                        scale={1.2}
-                                        size={weaponGlowLevel >= 10 ? 8 : weaponGlowLevel >= 9 ? 6 : 4}
+                                        count={charClass === 'warrior' ? 60 : Math.min(weaponGlowLevel * 5, 50)}
+                                        scale={charClass === 'warrior' ? 1.5 : 1.2}
+                                        size={weaponGlowLevel >= 10 ? 10 : weaponGlowLevel >= 9 ? 8 : 6}
                                         speed={2}
-                                        opacity={0.9}
-                                        color={classColor} // SINIF RENGİ (Warrior = Kırmızı)
+                                        opacity={1.0}
+                                        color={classColor}
                                     />
 
                                     {/* Silah üzerinde parlayan ışık */}
                                     <pointLight
                                         position={[0, 0.5, 0]}
-                                        distance={2}
-                                        intensity={weaponGlowLevel >= 10 ? 3 : weaponGlowLevel >= 9 ? 2 : 1.5}
+                                        distance={3}
+                                        intensity={charClass === 'warrior' ? (weaponGlowLevel >= 10 ? 5 : 3) : (weaponGlowLevel >= 10 ? 3 : 2)}
                                         color={classColor}
                                     />
 
@@ -1168,6 +1174,8 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                     </mesh>
                 </group>
 
+                {/* =========== RIGHT LEG GLOW REMOVED AS REQUESTED =========== */}
+
                 {/* =========== LEFT LEG =========== */}
                 <group
                     ref={leftLegRef}
@@ -1187,6 +1195,10 @@ export const VoxelSpartan: React.FC<VoxelSpartanProps> = (props) => {
                         <meshStandardMaterial color={appearance.bodyAccent} />
                     </mesh>
                 </group>
+
+                {/* =========== LEFT LEG GLOW REMOVED AS REQUESTED =========== */}
+
+                {/* =========== BOOTS GLOW REMOVED AS REQUESTED =========== */}
 
                 {/* =========== FULL SET +7+ CHARACTER AURA =========== */}
                 {/* Only shows when ALL equipped items are +7 or higher */}

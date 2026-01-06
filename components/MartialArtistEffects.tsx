@@ -431,13 +431,28 @@ export const MARTIAL_ARTIST_EFFECTS: Record<string, React.FC<any>> = {
     crane: CraneWingEffect,
     seven: SevenStarsEffect,
 
-    // Constants.ts mapping
+    // Components/constants.ts mapping
     kick: DragonKickEffect, // Uçan tekme -> Dragon Kick visual
     focus: TigerStanceEffect, // Odak -> Tiger Buff
     sweep: CraneWingEffect, // Süpürme -> Crane AOE
     dragon_punch: DragonKickEffect,
     iron_body: FlowModeEffect, // Demir vücut -> Akış modu visual
     ora_ora: SevenStarsEffect, // 100 yumruk -> Seven stars visual
+
+    // Root constants.ts mapping (yeni visual key'ler)
+    martial_hit: PunchEffect,
+    martial_uppercut: DragonKickEffect,
+    martial_evasion: MeditationEffect,
+    martial_multi: TigerStanceEffect,
+    martial_slash: CraneWingEffect,
+
+    // Extra aliases
+    rapid_punch: PunchEffect,
+    tiger_stance: TigerStanceEffect,
+    crane_wing: CraneWingEffect,
+    seven_stars: SevenStarsEffect,
+    meditation: MeditationEffect,
+    flow_mode: FlowModeEffect,
 };
 
 export default MARTIAL_ARTIST_EFFECTS;

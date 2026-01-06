@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { Item, WingItem, PetItem } from '../../types';
 import { getItemDisplayData } from '../../utils/ItemDisplayAdapter';
 import { Sword, Shield, Heart, Zap, Target, Wind, Star, TrendingUp } from 'lucide-react';
@@ -223,21 +224,44 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, children, disabl
     if (!item) return <>{children}</>;
 
     const getTooltipStyle = () => {
-        const padding = 10;
-        let left = tooltipPos.x + padding;
-        let top = tooltipPos.y + padding;
+        const offsetX = 30; // Horizontal distance from cursor
+        const offsetY = 20; // Vertical distance from cursor
+
+        // Default: Right and slightly down
+        let left = tooltipPos.x + offsetX;
+        let top = tooltipPos.y + offsetY;
 
         if (typeof window !== 'undefined') {
-            if (left + 250 > window.innerWidth) {
-                left = tooltipPos.x - 260;
+            const tooltipWidth = 300; // Assumed max width
+            const tooltipHeight = 400; // Assumed max height
+
+            // Check right edge
+            if (left + tooltipWidth > window.innerWidth) {
+                // If not enough space on right, move to LEFT of cursor
+                left = tooltipPos.x - tooltipWidth - offsetX;
             }
-            if (top + 300 > window.innerHeight) {
-                top = tooltipPos.y - 300;
+
+            // Check bottom edge
+            if (top + tooltipHeight > window.innerHeight) {
+                // If not enough space on bottom, move UP
+                top = window.innerHeight - tooltipHeight - 10;
             }
         }
 
         return { left, top };
     };
+
+    const tooltipContent = showTooltip ? (
+        <div
+            className="fixed z-[99999] pointer-events-none animate-fadeIn"
+            style={getTooltipStyle()}
+        >
+            <ItemTooltipContent item={item} />
+        </div>
+    ) : null;
+
+    // Use createPortal to render outside of parent stacking context
+    const portalElement = typeof document !== 'undefined' ? document.body : null;
 
     return (
         <div
@@ -251,14 +275,7 @@ export const ItemTooltip: React.FC<ItemTooltipProps> = ({ item, children, disabl
             className="relative group"
         >
             {children}
-            {showTooltip && (
-                <div
-                    className="fixed z-[99999] pointer-events-none animate-fadeIn"
-                    style={getTooltipStyle()}
-                >
-                    <ItemTooltipContent item={item} />
-                </div>
-            )}
+            {portalElement && tooltipContent && ReactDOM.createPortal(tooltipContent, portalElement)}
         </div>
     );
 };

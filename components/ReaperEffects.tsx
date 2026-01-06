@@ -365,13 +365,20 @@ export const REAPER_EFFECTS: Record<string, React.FC<any>> = {
     fear: FearEffect,
     apocalypse: ApocalypseCallEffect,
 
-    // Constants.ts mapping
+    // Components/constants.ts mapping
     scythe_slash: ScytheSlashEffect,
     shroud: DarkPassageEffect,
     mark: DeathTouchEffect,
     lifesteal: SoulHarvestEffect,
     grim_fear: FearEffect,
     execution: ApocalypseCallEffect,
+
+    // Root constants.ts mapping (yeni visual key'ler)
+    reaper_slice: ScytheSlashEffect,
+    reaper_soul_slice: DeathTouchEffect,
+    reaper_wave: SoulHarvestEffect,
+    reaper_spin: DarkPassageEffect,
+    reaper_cross: FearEffect,
 
     // Additional mapping
     pull: SoulHarvestEffect, // Pull visual placeholder

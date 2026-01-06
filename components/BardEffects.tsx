@@ -373,14 +373,19 @@ export const BARD_EFFECTS: Record<string, React.FC<any>> = {
     speed_rhapsody: SpeedRhapsodyEffect,
     epic_finale: EpicFinaleEffect,
 
-    // Legacy/Constants keys (Mapping to provided constants.ts bard skills)
+    // Components/constants.ts keys
     note_hit: NoteStrikeEffect,
     anthem: CourageMarchEffect,
-    lullaby_song: LullabyEffect, // assuming constant might be simple lullaby or lullaby_song
+    lullaby_song: LullabyEffect,
     noise: DestructionNoteEffect,
     speed_song: SpeedRhapsodyEffect,
-    heal_song: CourageMarchEffect, // Heal also uses aura style
+    heal_song: CourageMarchEffect,
     symphony: EpicFinaleEffect,
+
+    // Root constants.ts visual keys (yeni)
+    bard_note: NoteStrikeEffect,
+    bard_vibration: CourageMarchEffect,
+    bard_explosion: EpicFinaleEffect,
 
     // User provided short keys
     note: NoteStrikeEffect,

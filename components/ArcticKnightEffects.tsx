@@ -6,6 +6,7 @@
 import React, { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
+import { Instances, Instance } from '@react-three/drei';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // ICE PIXELS - Buz parıltıları
@@ -34,17 +35,23 @@ const IcePixels: React.FC<{
 
     return (
         <group position={position}>
-            {pixels.map((px, i) => (
-                <mesh key={i} position={[px.x, px.y, px.z]}>
-                    <boxGeometry args={[px.size, px.size, px.size]} />
-                    <meshBasicMaterial
+            <Instances range={count}>
+                <boxGeometry args={[1, 1, 1]} />
+                <meshBasicMaterial
+                    color="#ffffff"
+                    transparent
+                    opacity={0.9 * (1 - progress)}
+                    blending={THREE.AdditiveBlending}
+                />
+                {pixels.map((px, i) => (
+                    <Instance
+                        key={i}
+                        position={[px.x, px.y, px.z]}
+                        scale={[px.size, px.size, px.size]}
                         color={px.isWhite ? '#ffffff' : color}
-                        transparent
-                        opacity={0.9 * (1 - progress)}
-                        blending={THREE.AdditiveBlending}
                     />
-                </mesh>
-            ))}
+                ))}
+            </Instances>
             <pointLight color={color} intensity={1.5 * (1 - progress)} distance={2} />
         </group>
     );

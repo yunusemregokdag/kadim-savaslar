@@ -6,6 +6,7 @@
 import React, { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
+import { Instances, Instance } from '@react-three/drei';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // ENERGY PIXELS - Chi enerjisi parçacıkları
@@ -29,17 +30,22 @@ const ChiPixels: React.FC<{
 
     return (
         <group position={position}>
-            {pixels.map((px, i) => (
-                <mesh key={i} position={[px.x * (1 + progress), px.y * (1 + progress), px.z + progress * px.speed]}>
-                    <boxGeometry args={[px.size, px.size, px.size]} />
-                    <meshBasicMaterial
-                        color={color}
-                        transparent
-                        opacity={0.8 * (1 - progress)}
-                        blending={THREE.AdditiveBlending}
+            <Instances range={count}>
+                <boxGeometry args={[1, 1, 1]} />
+                <meshBasicMaterial
+                    color={color}
+                    transparent
+                    opacity={0.8 * (1 - progress)}
+                    blending={THREE.AdditiveBlending}
+                />
+                {pixels.map((px, i) => (
+                    <Instance
+                        key={i}
+                        position={[px.x * (1 + progress), px.y * (1 + progress), px.z + progress * px.speed]}
+                        scale={[px.size, px.size, px.size]}
                     />
-                </mesh>
-            ))}
+                ))}
+            </Instances>
         </group>
     );
 };

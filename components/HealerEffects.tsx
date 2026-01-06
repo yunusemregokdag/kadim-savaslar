@@ -6,6 +6,7 @@
 import React, { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
+import { Instances, Instance } from '@react-three/drei';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // HOLY PIXELS - Kutsal ışık parçacıkları
@@ -30,17 +31,23 @@ const HolyPixels: React.FC<{
 
     return (
         <group position={position}>
-            {pixels.map((px, i) => (
-                <mesh key={i} position={[px.x, px.y + Math.sin(progress * 5 + i) * 0.1, px.z]}>
-                    <boxGeometry args={[px.size, px.size, px.size]} />
-                    <meshBasicMaterial
+            <Instances range={count}>
+                <boxGeometry args={[1, 1, 1]} />
+                <meshBasicMaterial
+                    color="#ffffff"
+                    transparent
+                    opacity={0.8 * (1 - progress)}
+                    blending={THREE.AdditiveBlending}
+                />
+                {pixels.map((px, i) => (
+                    <Instance
+                        key={i}
+                        position={[px.x, px.y + Math.sin(progress * 5 + i) * 0.1, px.z]}
+                        scale={[px.size, px.size, px.size]}
                         color={px.isWhite ? '#ffffff' : color}
-                        transparent
-                        opacity={0.8 * (1 - progress)}
-                        blending={THREE.AdditiveBlending}
                     />
-                </mesh>
-            ))}
+                ))}
+            </Instances>
         </group>
     );
 };
@@ -218,7 +225,7 @@ export const BlessingEffect: React.FC<{
             </mesh>
             {/* Floating Halo above head */}
             <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 2, 0]}>
-                <item size={0.5} />
+
                 <torusGeometry args={[0.4, 0.05, 8, 24]} />
                 <meshBasicMaterial
                     color="#ffff00"

@@ -358,6 +358,134 @@ export const DivineInterventionEffect: React.FC<{
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
+// 🌟 KUTSAL ALAN (Sanctuary) - Koruyucu kutsal bölge
+// ═══════════════════════════════════════════════════════════════════════════
+export const SanctuaryEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+}> = ({ position, onComplete }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const startTime = useRef(Date.now());
+    const duration = 5000;
+    const progressRef = useRef(0);
+    const radius = 4;
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={position}>
+            {/* Floor halo */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
+                <ringGeometry args={[radius - 0.3, radius + 0.3, 40]} />
+                <meshBasicMaterial
+                    color="#ffffaa"
+                    transparent
+                    opacity={0.45 + Math.sin(progressRef.current * 25) * 0.15}
+                    blending={THREE.AdditiveBlending}
+                    side={THREE.DoubleSide}
+                />
+            </mesh>
+
+            {/* Light pillar */}
+            <mesh position={[0, 1.5, 0]}>
+                <cylinderGeometry args={[radius * 0.6, radius * 0.6, 3]} />
+                <meshBasicMaterial
+                    color="#ffffff"
+                    transparent
+                    opacity={0.2 + Math.sin(progressRef.current * 20) * 0.1}
+                    blending={THREE.AdditiveBlending}
+                />
+            </mesh>
+
+            {/* Inner glow circle */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.1, 0]}>
+                <circleGeometry args={[radius * 0.8, 32]} />
+                <meshBasicMaterial
+                    color="#ffffcc"
+                    transparent
+                    opacity={0.25 * (1 - progressRef.current)}
+                    blending={THREE.AdditiveBlending}
+                />
+            </mesh>
+
+            <pointLight color="#ffffaa" intensity={4 * (1 - progressRef.current * 0.5)} distance={radius + 2} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ✝️ DİRİLİŞ (Resurrect) - Yukarıdan inen kutsal ışık
+// ═══════════════════════════════════════════════════════════════════════════
+export const ResurrectEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+}> = ({ position, onComplete }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const startTime = useRef(Date.now());
+    const duration = 3000;
+    const progressRef = useRef(0);
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        // Beam grows
+        groupRef.current.scale.y = 1 + progress * 0.3;
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={position}>
+            {/* Divine beam from sky */}
+            <mesh position={[0, 2, 0]}>
+                <cylinderGeometry args={[0.4, 0.6, 4]} />
+                <meshBasicMaterial
+                    color="#ffffff"
+                    transparent
+                    opacity={0.5 + Math.sin(progressRef.current * 30) * 0.2}
+                    blending={THREE.AdditiveBlending}
+                />
+            </mesh>
+
+            {/* Outer glow */}
+            <mesh position={[0, 2, 0]}>
+                <cylinderGeometry args={[0.8, 1.0, 4]} />
+                <meshBasicMaterial
+                    color="#ffffcc"
+                    transparent
+                    opacity={0.2}
+                    blending={THREE.AdditiveBlending}
+                />
+            </mesh>
+
+            {/* Ground ring */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
+                <ringGeometry args={[0.8, 1.2, 24]} />
+                <meshBasicMaterial
+                    color="#ffff88"
+                    transparent
+                    opacity={0.6 * (1 - progressRef.current)}
+                    blending={THREE.AdditiveBlending}
+                    side={THREE.DoubleSide}
+                />
+            </mesh>
+
+            <pointLight color="#ffffff" intensity={5 * (1 - progressRef.current * 0.5)} distance={5} position={[0, 2, 0]} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
 // HEALER SKILL MAP
 // ═══════════════════════════════════════════════════════════════════════════
 // ═══════════════════════════════════════════════════════════════════════════
@@ -369,8 +497,8 @@ export const HEALER_EFFECTS: Record<string, React.FC<any>> = {
     great_heal: GreatHealEffect,
     bubble: BlessingEffect,
     cleanse: LightBurstEffect,
-    sanctuary: GreatHealEffect,
-    resurrect: BlessingEffect,
+    sanctuary: SanctuaryEffect,
+    resurrect: ResurrectEffect,
     divine_intervention: DivineInterventionEffect,
 
     // Root constants.ts visual keys (yeni - cleric)
@@ -386,7 +514,7 @@ export const HEALER_EFFECTS: Record<string, React.FC<any>> = {
     flashbang: LightBurstEffect,
     blessing: BlessingEffect,
     light_burst: LightBurstEffect,
-    revive: BlessingEffect,
+    revive: ResurrectEffect,
     ultimate_pillar: DivineInterventionEffect,
 
     // Additional aliases

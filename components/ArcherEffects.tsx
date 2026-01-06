@@ -392,6 +392,255 @@ export const DragonArrowEffect: React.FC<{
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
+// 🏹 ÇOKLU ATIŞ (Multishot) - 3 ok açılı atış
+// ═══════════════════════════════════════════════════════════════════════════
+export const MultishotEffect: React.FC<{
+    position: [number, number, number];
+    targetPosition?: [number, number, number];
+    onComplete: () => void;
+}> = ({ position, targetPosition, onComplete }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const startTime = useRef(Date.now());
+    const duration = 600;
+    const progressRef = useRef(0);
+    const angles = [-0.3, 0, 0.3];
+
+    const direction = useMemo(() => {
+        if (targetPosition) {
+            return new THREE.Vector3(
+                targetPosition[0] - position[0],
+                0,
+                targetPosition[2] - position[2]
+            ).normalize();
+        }
+        return new THREE.Vector3(0, 0, 1);
+    }, [position, targetPosition]);
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        const distance = progress * 15;
+        groupRef.current.position.set(
+            position[0] + direction.x * distance,
+            position[1] + 0.8,
+            position[2] + direction.z * distance
+        );
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={position}>
+            {angles.map((angle, i) => (
+                <mesh
+                    key={i}
+                    rotation={[0, angle, Math.PI / 2]}
+                    position={[Math.sin(angle) * (progressRef.current * 2), 0, Math.cos(angle) * 0.5]}
+                >
+                    <cylinderGeometry args={[0.03, 0.03, 1]} />
+                    <meshBasicMaterial
+                        color="#88ff88"
+                        transparent
+                        opacity={0.9 * (1 - progressRef.current * 0.3)}
+                    />
+                </mesh>
+            ))}
+            <ArrowPixels position={[0, 0, 0]} color="#66ff66" count={20} spread={0.8} progress={progressRef.current} />
+            <pointLight color="#66ff66" intensity={2} distance={3} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 👻 GÖRÜNMEZLİK (Stealth) - Hayalet aurası
+// ═══════════════════════════════════════════════════════════════════════════
+export const StealthEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
+    followPlayer?: boolean;
+}> = ({ position, onComplete, playerGroupRef, followPlayer = false }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const startTime = useRef(Date.now());
+    const duration = 4000;
+    const progressRef = useRef(0);
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        if (followPlayer && playerGroupRef?.current) {
+            groupRef.current.position.copy(playerGroupRef.current.position);
+        }
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={position}>
+            {/* Ghost aura */}
+            <mesh>
+                <sphereGeometry args={[1.2, 16, 16]} />
+                <meshBasicMaterial
+                    color="#aaffaa"
+                    transparent
+                    opacity={0.15 + Math.sin(progressRef.current * 20) * 0.1}
+                    blending={THREE.AdditiveBlending}
+                    side={THREE.BackSide}
+                />
+            </mesh>
+            {/* Shimmer particles */}
+            <ArrowPixels position={[0, 0.5, 0]} color="#ccffcc" count={10} spread={1.5} progress={progressRef.current * 0.5} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🪤 KAPAN (Trap) - Yere kurulan tuzak
+// ═══════════════════════════════════════════════════════════════════════════
+export const TrapEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+}> = ({ position, onComplete }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const startTime = useRef(Date.now());
+    const duration = 5000;
+    const progressRef = useRef(0);
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        // Pulse effect
+        groupRef.current.rotation.y += 0.02;
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={[position[0], 0.05, position[2]]}>
+            {/* Trap base */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]}>
+                <circleGeometry args={[0.6, 16]} />
+                <meshBasicMaterial
+                    color="#886644"
+                    transparent
+                    opacity={0.8 * (1 - progressRef.current * 0.3)}
+                />
+            </mesh>
+            {/* Trap spikes */}
+            {[0, 1, 2, 3, 4, 5].map(i => (
+                <mesh
+                    key={i}
+                    position={[
+                        Math.cos((i / 6) * Math.PI * 2) * 0.4,
+                        0.1,
+                        Math.sin((i / 6) * Math.PI * 2) * 0.4
+                    ]}
+                    rotation={[0, 0, 0.3]}
+                >
+                    <coneGeometry args={[0.05, 0.2, 4]} />
+                    <meshBasicMaterial
+                        color="#aa8844"
+                        transparent
+                        opacity={0.9}
+                    />
+                </mesh>
+            ))}
+            {/* Warning ring */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
+                <ringGeometry args={[0.5, 0.7, 16]} />
+                <meshBasicMaterial
+                    color="#ffaa00"
+                    transparent
+                    opacity={0.3 + Math.sin(progressRef.current * 30) * 0.2}
+                    blending={THREE.AdditiveBlending}
+                    side={THREE.DoubleSide}
+                />
+            </mesh>
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🌧️ OK YAĞMURU (Arrow Rain) - Gökten ok yağmuru
+// ═══════════════════════════════════════════════════════════════════════════
+export const ArrowRainEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+}> = ({ position, onComplete }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const startTime = useRef(Date.now());
+    const duration = 3500;
+    const progressRef = useRef(0);
+    const arrowCount = 25;
+
+    const arrows = useMemo(() => {
+        return Array.from({ length: arrowCount }).map(() => ({
+            x: (Math.random() - 0.5) * 5,
+            z: (Math.random() - 0.5) * 5,
+            delay: Math.random() * 0.5,
+            speed: 0.8 + Math.random() * 0.4,
+        }));
+    }, [arrowCount]);
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={position}>
+            {/* Target area indicator */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
+                <circleGeometry args={[3, 32]} />
+                <meshBasicMaterial
+                    color="#ff4444"
+                    transparent
+                    opacity={0.2 * (1 - progressRef.current)}
+                    blending={THREE.AdditiveBlending}
+                />
+            </mesh>
+
+            {/* Falling arrows */}
+            {arrows.map((arrow, i) => {
+                const arrowProgress = Math.max(0, Math.min(1, (progressRef.current - arrow.delay) * 2));
+                const y = 8 - arrowProgress * 8 * arrow.speed;
+                return (
+                    <mesh
+                        key={i}
+                        position={[arrow.x, y, arrow.z]}
+                        rotation={[Math.PI, 0, 0]}
+                    >
+                        <cylinderGeometry args={[0.02, 0.02, 0.8]} />
+                        <meshBasicMaterial
+                            color="#ffffff"
+                            transparent
+                            opacity={arrowProgress > 0 && y > 0 ? 0.9 : 0}
+                        />
+                    </mesh>
+                );
+            })}
+
+            {/* Impact particles */}
+            <ArrowPixels position={[0, 0.5, 0]} color="#ffff88" count={35} spread={3} progress={progressRef.current} />
+            <pointLight color="#ffaa00" intensity={3 * progressRef.current} distance={5} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
 // ARCHER SKILL MAP
 // ═══════════════════════════════════════════════════════════════════════════
 export const ARCHER_EFFECTS: Record<string, React.FC<any>> = {
@@ -403,19 +652,25 @@ export const ARCHER_EFFECTS: Record<string, React.FC<any>> = {
     backstep: BackstepEffect,
     dragon_arrow: DragonArrowEffect,
 
-    // Components/constants.ts keys
+    // Yeni efektler
+    multishot_effect: MultishotEffect,
+    stealth_effect: StealthEffect,
+    trap_effect: TrapEffect,
+    arrow_rain_effect: ArrowRainEffect,
+
+    // Components/constants.ts keys - DOĞRU MAPPING
     arrow: RapidShotEffect,
-    multishot: WindSlashEffect,
-    stealth: HunterFocusEffect,
-    trap: BackstepEffect,
+    multishot: MultishotEffect,
+    stealth: StealthEffect,
+    trap: TrapEffect,
     dash_back: BackstepEffect,
     poison_arrow: DeadlyJavelinEffect,
-    arrow_rain: DragonArrowEffect,
+    arrow_rain: ArrowRainEffect,
 
     // Root constants.ts visual keys (yeni)
     archer_shot: RapidShotEffect,
     hunters_focus: HunterFocusEffect,
-    archer_volley: WindSlashEffect,
+    archer_volley: MultishotEffect,
 
     // Ek alias'lar
     rapid_shot: RapidShotEffect,

@@ -354,6 +354,143 @@ export const ApocalypseCallEffect: React.FC<{
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
+// 🌑 GÖLGE PATLAMASI (Shadow Blast) - Karanlık alan hasarı
+// ═══════════════════════════════════════════════════════════════════════════
+export const ShadowBlastEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+}> = ({ position, onComplete }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const startTime = useRef(Date.now());
+    const duration = 1200;
+    const progressRef = useRef(0);
+    const radius = 3;
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        // Expand
+        groupRef.current.scale.setScalar(1 + progress * 2);
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={position}>
+            {/* Dark core */}
+            <mesh>
+                <sphereGeometry args={[0.6, 16, 16]} />
+                <meshBasicMaterial
+                    color="#220022"
+                    transparent
+                    opacity={0.9 * (1 - progressRef.current)}
+                    blending={THREE.AdditiveBlending}
+                />
+            </mesh>
+
+            {/* Shockwave ring */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.1, 0]}>
+                <ringGeometry args={[0.2, radius, 32]} />
+                <meshBasicMaterial
+                    color="#aa00ff"
+                    transparent
+                    opacity={0.6 * (1 - progressRef.current)}
+                    blending={THREE.AdditiveBlending}
+                    side={THREE.DoubleSide}
+                />
+            </mesh>
+
+            {/* Vertical dark pillar */}
+            <mesh>
+                <cylinderGeometry args={[0.3, 0.5, 2]} />
+                <meshBasicMaterial
+                    color="#550055"
+                    transparent
+                    opacity={0.5 * (1 - progressRef.current)}
+                    blending={THREE.AdditiveBlending}
+                />
+            </mesh>
+
+            <SoulPixels position={[0, 0.5, 0]} color="#aa00ff" count={40} spread={radius} progress={progressRef.current} pixelSize={0.08} />
+            <pointLight color="#aa00ff" intensity={6 * (1 - progressRef.current)} distance={radius + 2} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ☠️ KIYAMET LANETİ (Doom) - DOT + İnfaz hasarı
+// ═══════════════════════════════════════════════════════════════════════════
+export const DoomEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+}> = ({ position, onComplete }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const startTime = useRef(Date.now());
+    const duration = 5000;
+    const progressRef = useRef(0);
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        // Pulse effect
+        groupRef.current.rotation.y += 0.02;
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={position}>
+            {/* Doom skull indicator */}
+            <mesh position={[0, 2, 0]}>
+                <sphereGeometry args={[0.4, 8, 8]} />
+                <meshBasicMaterial
+                    color="#550055"
+                    transparent
+                    opacity={0.7 + Math.sin(progressRef.current * 30) * 0.2}
+                    blending={THREE.AdditiveBlending}
+                />
+            </mesh>
+
+            {/* Curse aura */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.1, 0]}>
+                <ringGeometry args={[1, 1.5, 16]} />
+                <meshBasicMaterial
+                    color="#660066"
+                    transparent
+                    opacity={0.4 + Math.sin(progressRef.current * 20) * 0.2}
+                    blending={THREE.AdditiveBlending}
+                    side={THREE.DoubleSide}
+                />
+            </mesh>
+
+            {/* DOT particles */}
+            <SoulPixels position={[0, 1, 0]} color="#880088" count={15} spread={1.5} progress={progressRef.current * 0.3} pixelSize={0.05} />
+
+            {/* Execution flash at end */}
+            {progressRef.current > 0.9 && (
+                <mesh>
+                    <sphereGeometry args={[2, 16, 16]} />
+                    <meshBasicMaterial
+                        color="#ff00ff"
+                        transparent
+                        opacity={(progressRef.current - 0.9) * 10}
+                        blending={THREE.AdditiveBlending}
+                    />
+                </mesh>
+            )}
+
+            <pointLight color="#880088" intensity={2 + Math.sin(progressRef.current * 25) * 1} distance={4} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
 // REAPER SKILL MAP
 // ═══════════════════════════════════════════════════════════════════════════
 export const REAPER_EFFECTS: Record<string, React.FC<any>> = {
@@ -364,6 +501,10 @@ export const REAPER_EFFECTS: Record<string, React.FC<any>> = {
     harvest: SoulHarvestEffect,
     fear: FearEffect,
     apocalypse: ApocalypseCallEffect,
+
+    // Yeni efektler
+    shadow_blast: ShadowBlastEffect,
+    doom: DoomEffect,
 
     // Components/constants.ts mapping
     scythe_slash: ScytheSlashEffect,
@@ -381,10 +522,12 @@ export const REAPER_EFFECTS: Record<string, React.FC<any>> = {
     reaper_cross: FearEffect,
 
     // Additional mapping
-    pull: SoulHarvestEffect, // Pull visual placeholder
+    pull: SoulHarvestEffect,
     dark_passage: DarkPassageEffect,
     soul_harvest: SoulHarvestEffect,
     apocalypse_call: ApocalypseCallEffect,
+    shadow: ShadowBlastEffect,
+    curse: DoomEffect,
 };
 
 export default REAPER_EFFECTS;

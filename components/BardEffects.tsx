@@ -362,6 +362,98 @@ export const EpicFinaleEffect: React.FC<{
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
+// 🎶 ŞİFA MELODİSİ (Heal Song) - İyileştiren nota aurası
+// ═══════════════════════════════════════════════════════════════════════════
+export const HealSongEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
+    followPlayer?: boolean;
+}> = ({ position, onComplete, playerGroupRef, followPlayer = false }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const startTime = useRef(Date.now());
+    const duration = 6000;
+    const progressRef = useRef(0);
+    const radius = 3.5;
+    const noteCount = 12;
+
+    const notes = useMemo(() => {
+        return Array.from({ length: noteCount }).map((_, i) => ({
+            angle: (i / noteCount) * Math.PI * 2,
+            yOffset: Math.random() * 0.5,
+        }));
+    }, [noteCount]);
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        if (followPlayer && playerGroupRef?.current) {
+            groupRef.current.position.copy(playerGroupRef.current.position);
+        }
+
+        groupRef.current.rotation.y += 0.01;
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={position}>
+            {/* Aura ring */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
+                <ringGeometry args={[radius - 0.2, radius + 0.2, 32]} />
+                <meshBasicMaterial
+                    color="#ff88ff"
+                    transparent
+                    opacity={0.4 + Math.sin(progressRef.current * 20) * 0.15}
+                    blending={THREE.AdditiveBlending}
+                    side={THREE.DoubleSide}
+                />
+            </mesh>
+
+            {/* Musical notes */}
+            {notes.map((note, i) => {
+                const angle = note.angle + progressRef.current * Math.PI * 2;
+                return (
+                    <mesh
+                        key={i}
+                        position={[
+                            Math.cos(angle) * radius,
+                            0.5 + Math.sin(progressRef.current * 10 + i) * 0.3 + note.yOffset,
+                            Math.sin(angle) * radius
+                        ]}
+                        rotation={[progressRef.current * 5, progressRef.current * 5, 0]}
+                    >
+                        <torusGeometry args={[0.15, 0.05, 8, 16]} />
+                        <meshBasicMaterial
+                            color="#ffccff"
+                            transparent
+                            opacity={0.8 * (1 - progressRef.current * 0.3)}
+                            blending={THREE.AdditiveBlending}
+                        />
+                    </mesh>
+                );
+            })}
+
+            {/* Center heal glow */}
+            <mesh>
+                <sphereGeometry args={[0.5, 16, 16]} />
+                <meshBasicMaterial
+                    color="#ff88ff"
+                    transparent
+                    opacity={0.3 + Math.sin(progressRef.current * 15) * 0.1}
+                    blending={THREE.AdditiveBlending}
+                />
+            </mesh>
+
+            <pointLight color="#ff88ff" intensity={3 * (1 - progressRef.current * 0.5)} distance={radius + 1} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
 // BARD SKILL MAP
 // ═══════════════════════════════════════════════════════════════════════════
 export const BARD_EFFECTS: Record<string, React.FC<any>> = {
@@ -379,7 +471,7 @@ export const BARD_EFFECTS: Record<string, React.FC<any>> = {
     lullaby_song: LullabyEffect,
     noise: DestructionNoteEffect,
     speed_song: SpeedRhapsodyEffect,
-    heal_song: CourageMarchEffect,
+    heal_song: HealSongEffect,
     symphony: EpicFinaleEffect,
 
     // Root constants.ts visual keys (yeni)

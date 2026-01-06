@@ -367,6 +367,91 @@ export const AvalancheEffect: React.FC<{
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
+// ❄️ KIŞIN ÖFKESİ (Winter Fury) - Dönen buz fırtınası buff
+// ═══════════════════════════════════════════════════════════════════════════
+export const WinterFuryEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
+    followPlayer?: boolean;
+}> = ({ position, onComplete, playerGroupRef, followPlayer = false }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const startTime = useRef(Date.now());
+    const duration = 6000;
+    const progressRef = useRef(0);
+    const shardCount = 24;
+    const radius = 2.8;
+
+    const shards = useMemo(() => {
+        return Array.from({ length: shardCount }).map((_, i) => ({
+            angle: (i / shardCount) * Math.PI * 2,
+            yOffset: Math.random() * 0.5,
+        }));
+    }, [shardCount]);
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        // Follow player if specified
+        if (followPlayer && playerGroupRef?.current) {
+            groupRef.current.position.copy(playerGroupRef.current.position);
+        }
+
+        // Rotate the storm
+        groupRef.current.rotation.y += 0.03;
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={position}>
+            {/* Spinning ice shards */}
+            {shards.map((shard, i) => {
+                const angle = shard.angle + progressRef.current * Math.PI * 4;
+                const wave = Math.sin(progressRef.current * 10 + i) * 0.3;
+                return (
+                    <mesh
+                        key={i}
+                        position={[
+                            Math.cos(angle) * radius,
+                            wave + shard.yOffset,
+                            Math.sin(angle) * radius
+                        ]}
+                        rotation={[progressRef.current * 5, progressRef.current * 8, 0]}
+                    >
+                        <boxGeometry args={[0.15, 0.4, 0.15]} />
+                        <meshBasicMaterial
+                            color="#88ddff"
+                            transparent
+                            opacity={0.85 * (1 - progressRef.current * 0.3)}
+                            blending={THREE.AdditiveBlending}
+                        />
+                    </mesh>
+                );
+            })}
+
+            {/* Ground aura ring */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
+                <ringGeometry args={[radius - 0.3, radius + 0.3, 32]} />
+                <meshBasicMaterial
+                    color="#66ccff"
+                    transparent
+                    opacity={0.5 * (1 - progressRef.current)}
+                    blending={THREE.AdditiveBlending}
+                    side={THREE.DoubleSide}
+                />
+            </mesh>
+
+            <IcePixels position={[0, 0.5, 0]} color="#88ddff" count={30} spread={radius} progress={progressRef.current} pixelSize={0.05} />
+            <pointLight color="#66ccff" intensity={4 * (1 - progressRef.current)} distance={5} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
 // 6️⃣ KAR FIRTINASI (Blizzard) - ULTIMATE
 // ═══════════════════════════════════════════════════════════════════════════
 export const BlizzardEffect: React.FC<{
@@ -477,7 +562,7 @@ export const ARCTIC_KNIGHT_EFFECTS: Record<string, React.FC<any>> = {
     arctic_crater: BlizzardEffect,
 
     // Ek alias'lar
-    winter_fury: FrostArmorEffect,
+    winter_fury: WinterFuryEffect,
     frost_armor: FrostArmorEffect,
     avalanche: AvalancheEffect,
     freezing_gaze: FreezingGazeEffect,

@@ -4279,6 +4279,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                     <SkillEffects
                         activeSkills={active3DEffects}
                         onEffectComplete={(id) => setActive3DEffects(prev => prev.filter(e => e.id !== id))}
+                        playerGroupRef={playerGroupRef}
                     />
                 </Suspense>
                 {/* Hava Durumu Parçacıkları ve Sis */}

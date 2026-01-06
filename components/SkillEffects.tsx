@@ -5,6 +5,13 @@ import * as THREE from 'three';
 import { SKILL_ASSETS, SkillAssetConfig } from './SkillAssetRegistry';
 import { soundManager } from './SoundManager';
 import { WARRIOR_EFFECTS } from './WarriorEffects';
+import { ARCTIC_KNIGHT_EFFECTS } from './ArcticKnightEffects';
+import { ARCHER_EFFECTS } from './ArcherEffects';
+import { MAGE_EFFECTS } from './MageEffects';
+import { BARD_EFFECTS } from './BardEffects';
+import { HEALER_EFFECTS } from './HealerEffects';
+import { MARTIAL_ARTIST_EFFECTS } from './MartialArtistEffects';
+import { REAPER_EFFECTS } from './ReaperEffects';
 
 // --- FALLBACK ASSET (Prevents Crash) ---
 const SAFE_MODEL_PATH = '/models/items/weapons/warrior/warrior_sword_shiny.gltf';
@@ -42,6 +49,7 @@ const applyVisualEnhancements = (scene: THREE.Object3D, visualType: string, colo
 interface SkillEffectsProps {
     activeSkills: { id: string, visual: string, modelPath?: string, position: [number, number, number], targetPosition?: [number, number, number] }[];
     onEffectComplete: (id: string) => void;
+    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -276,36 +284,179 @@ const SkillTypePool: React.FC<{
 // ═══════════════════════════════════════════════════════════════════════════
 // MAIN SKILL EFFECTS COMPONENT
 // ═══════════════════════════════════════════════════════════════════════════
-export const SkillEffects: React.FC<SkillEffectsProps> = ({ activeSkills, onEffectComplete }) => {
+export const SkillEffects: React.FC<SkillEffectsProps> = ({ activeSkills, onEffectComplete, playerGroupRef }) => {
+    // Oyuncuyu takip eden efektler (hem yeni hem eski key'ler)
+    const PLAYER_ATTACHED_EFFECTS = ['warrior_shield', 'warrior_charge', 'shield', 'rage', 'ice_armor', 'time_warp', 'iceblock', 'teleport', 'time', 'march', 'speed', 'anthem', 'speed_song', 'blessing', 'buff_aura', 'revive', 'flow', 'meditate', 'tiger', 'focus', 'iron_body', 'shroud', 'passage', 'dark_passage'];
+
     return (
         <group>
-            {/* WARRIOR EFFECTS - Kod bazlı (PNG'siz) */}
+            {/* WARRIOR EFFECTS - Pixel bazlı */}
             {activeSkills
                 .filter(s => WARRIOR_EFFECTS[s.visual])
                 .map(skill => {
                     const EffectComponent = WARRIOR_EFFECTS[skill.visual];
+                    if (!EffectComponent) return null;
+
+                    const isPlayerAttached = PLAYER_ATTACHED_EFFECTS.includes(skill.visual);
+
                     return (
                         <EffectComponent
                             key={skill.id}
                             position={skill.position}
                             targetPosition={skill.targetPosition}
                             onComplete={() => onEffectComplete(skill.id)}
+                            playerGroupRef={isPlayerAttached ? playerGroupRef : undefined}
+                            followPlayer={isPlayerAttached}
                         />
                     );
                 })}
 
-            {/* OTHER CLASS EFFECTS - Eski sistem (sprite/model bazlı) */}
-            {Object.keys(SKILL_ASSETS)
-                .filter(key => !WARRIOR_EFFECTS[key]) // Warrior effectlerini atla
-                .map(key => (
-                    <SkillTypePool
-                        key={key}
-                        type={key}
-                        config={SKILL_ASSETS[key]}
-                        activeRequests={activeSkills.filter(s => s.visual === key)}
-                        onComplete={onEffectComplete}
-                    />
-                ))}
+            {/* ARCTIC KNIGHT EFFECTS - Buz bazlı */}
+            {activeSkills
+                .filter(s => ARCTIC_KNIGHT_EFFECTS[s.visual])
+                .map(skill => {
+                    const EffectComponent = ARCTIC_KNIGHT_EFFECTS[skill.visual];
+                    if (!EffectComponent) return null;
+
+                    const isPlayerAttached = PLAYER_ATTACHED_EFFECTS.includes(skill.visual);
+
+                    return (
+                        <EffectComponent
+                            key={skill.id}
+                            position={skill.position}
+                            targetPosition={skill.targetPosition}
+                            onComplete={() => onEffectComplete(skill.id)}
+                            playerGroupRef={isPlayerAttached ? playerGroupRef : undefined}
+                            followPlayer={isPlayerAttached}
+                        />
+                    );
+                })}
+
+            {/* ARCHER EFFECTS - Yeşil/Altın bazlı */}
+            {activeSkills
+                .filter(s => ARCHER_EFFECTS[s.visual])
+                .map(skill => {
+                    const EffectComponent = ARCHER_EFFECTS[skill.visual];
+                    if (!EffectComponent) return null;
+
+                    const isPlayerAttached = PLAYER_ATTACHED_EFFECTS.includes(skill.visual);
+
+                    return (
+                        <EffectComponent
+                            key={skill.id}
+                            position={skill.position}
+                            targetPosition={skill.targetPosition}
+                            onComplete={() => onEffectComplete(skill.id)}
+                            playerGroupRef={isPlayerAttached ? playerGroupRef : undefined}
+                            followPlayer={isPlayerAttached}
+                        />
+                    );
+                })}
+
+            {/* MAGE EFFECTS - Arcane/Purple bazlı */}
+            {activeSkills
+                .filter(s => MAGE_EFFECTS[s.visual])
+                .map(skill => {
+                    const EffectComponent = MAGE_EFFECTS[skill.visual];
+                    if (!EffectComponent) return null;
+
+                    const isPlayerAttached = PLAYER_ATTACHED_EFFECTS.includes(skill.visual);
+
+                    return (
+                        <EffectComponent
+                            key={skill.id}
+                            position={skill.position}
+                            targetPosition={skill.targetPosition}
+                            onComplete={() => onEffectComplete(skill.id)}
+                            playerGroupRef={isPlayerAttached ? playerGroupRef : undefined}
+                            followPlayer={isPlayerAttached}
+                        />
+                    );
+                })}
+
+            {/* BARD EFFECTS - Müzik/Nota bazlı */}
+            {activeSkills
+                .filter(s => BARD_EFFECTS[s.visual])
+                .map(skill => {
+                    const EffectComponent = BARD_EFFECTS[skill.visual];
+                    if (!EffectComponent) return null;
+
+                    const isPlayerAttached = PLAYER_ATTACHED_EFFECTS.includes(skill.visual);
+
+                    return (
+                        <EffectComponent
+                            key={skill.id}
+                            position={skill.position}
+                            targetPosition={skill.targetPosition}
+                            onComplete={() => onEffectComplete(skill.id)}
+                            playerGroupRef={isPlayerAttached ? playerGroupRef : undefined}
+                            followPlayer={isPlayerAttached}
+                        />
+                    );
+                })}
+
+            {/* HEALER EFFECTS - Kutsal/Işık bazlı */}
+            {activeSkills
+                .filter(s => HEALER_EFFECTS[s.visual])
+                .map(skill => {
+                    const EffectComponent = HEALER_EFFECTS[skill.visual];
+                    if (!EffectComponent) return null;
+
+                    const isPlayerAttached = PLAYER_ATTACHED_EFFECTS.includes(skill.visual);
+
+                    return (
+                        <EffectComponent
+                            key={skill.id}
+                            position={skill.position}
+                            targetPosition={skill.targetPosition}
+                            onComplete={() => onEffectComplete(skill.id)}
+                            playerGroupRef={isPlayerAttached ? playerGroupRef : undefined}
+                            followPlayer={isPlayerAttached}
+                        />
+                    );
+                })}
+
+            {/* MARTIAL ARTIST EFFECTS - Uzak Doğu/Combo bazlı */}
+            {activeSkills
+                .filter(s => MARTIAL_ARTIST_EFFECTS[s.visual])
+                .map(skill => {
+                    const EffectComponent = MARTIAL_ARTIST_EFFECTS[skill.visual];
+                    if (!EffectComponent) return null;
+
+                    const isPlayerAttached = PLAYER_ATTACHED_EFFECTS.includes(skill.visual);
+
+                    return (
+                        <EffectComponent
+                            key={skill.id}
+                            position={skill.position}
+                            targetPosition={skill.targetPosition}
+                            onComplete={() => onEffectComplete(skill.id)}
+                            playerGroupRef={isPlayerAttached ? playerGroupRef : undefined}
+                            followPlayer={isPlayerAttached}
+                        />
+                    );
+                })}
+
+            {/* REAPER EFFECTS - Karanlık/Gölge bazlı */}
+            {activeSkills
+                .filter(s => REAPER_EFFECTS[s.visual])
+                .map(skill => {
+                    const EffectComponent = REAPER_EFFECTS[skill.visual];
+                    if (!EffectComponent) return null;
+
+                    const isPlayerAttached = PLAYER_ATTACHED_EFFECTS.includes(skill.visual);
+
+                    return (
+                        <EffectComponent
+                            key={skill.id}
+                            position={skill.position}
+                            targetPosition={skill.targetPosition}
+                            onComplete={() => onEffectComplete(skill.id)}
+                            playerGroupRef={isPlayerAttached ? playerGroupRef : undefined}
+                            followPlayer={isPlayerAttached}
+                        />
+                    );
+                })}
         </group>
     );
 };

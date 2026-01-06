@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type CharacterClass = 'warrior' | 'arctic_knight' | 'archer' | 'archmage' | 'bard' | 'cleric' | 'martial_artist' | 'reaper';
+export type CharacterClass = 'warrior' | 'arctic_knight' | 'gale_glaive' | 'archer' | 'archmage' | 'bard' | 'cleric' | 'martial_artist' | 'monk' | 'reaper';
 export type Faction = 'marsu' | 'terya' | 'venu';
 
 export enum SkillPathType {

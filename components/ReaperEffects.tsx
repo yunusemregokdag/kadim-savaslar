@@ -1,12 +1,37 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// REAPER (AZRAİL/ÖLÜM MELEĞİ) SKILL EFFECTS
-// Karanlık, ruh ve kan temalı pixel efektler (Siyah/Mor/Yeşil)
+// REAPER (ÖLÜM MELEĞİ) SKILL EFFECTS
+// Tırpan, ruh hasadı ve karanlık portal pixel efektleri
+// Box/plane tabanlı - Keskin köşe, canlı düz renk
 // ═══════════════════════════════════════════════════════════════════════════
 
 import React, { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { Instances, Instance } from '@react-three/drei';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🟢 DEATH PIXEL - Yeniden kullanılabilir ölüm enerjisi küpü
+// ═══════════════════════════════════════════════════════════════════════════
+const DeathPixel: React.FC<{
+    position: [number, number, number];
+    rotation?: [number, number, number];
+    scale?: number;
+    color: string;
+    opacity?: number;
+}> = ({ position, rotation = [0, 0, 0], scale = 1, color, opacity = 0.95 }) => {
+    return (
+        <mesh position={position} rotation={rotation} scale={[scale, scale, scale]}>
+            <boxGeometry args={[0.14, 0.14, 0.14]} />
+            <meshBasicMaterial
+                color={color}
+                transparent
+                opacity={opacity}
+                blending={THREE.AdditiveBlending}
+                depthWrite={false}
+            />
+        </mesh>
+    );
+};
 
 // ═══════════════════════════════════════════════════════════════════════════
 // SOUL PIXELS - Ruh parçacıkları
@@ -17,15 +42,13 @@ const SoulPixels: React.FC<{
     count?: number;
     spread?: number;
     progress: number;
-    rise?: boolean;
-}> = ({ position, color = '#5500aa', count = 15, spread = 0.5, progress, rise = true }) => {
+}> = ({ position, color = '#3dffcf', count = 15, spread = 0.5, progress }) => {
     const pixels = useMemo(() => {
         return Array.from({ length: count }).map(() => ({
             x: (Math.random() - 0.5) * spread,
             y: (Math.random() - 0.5) * spread,
             z: (Math.random() - 0.5) * spread * 2,
-            size: 0.05 + Math.random() * 0.05,
-            speed: 0.5 + Math.random(),
+            size: 0.04 + Math.random() * 0.04,
         }));
     }, [count, spread]);
 
@@ -36,13 +59,14 @@ const SoulPixels: React.FC<{
                 <meshBasicMaterial
                     color={color}
                     transparent
-                    opacity={0.8 * (1 - progress)}
+                    opacity={0.9 * (1 - progress)}
                     blending={THREE.AdditiveBlending}
+                    depthWrite={false}
                 />
                 {pixels.map((px, i) => (
                     <Instance
                         key={i}
-                        position={[px.x, px.y + (rise ? progress * px.speed : 0), px.z]}
+                        position={[px.x, px.y + progress * 0.3, px.z]}
                         scale={[px.size, px.size, px.size]}
                     />
                 ))}
@@ -51,17 +75,45 @@ const SoulPixels: React.FC<{
     );
 };
 
+// Easing fonksiyonları
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+const easeInCubic = (t: number) => t * t * t;
+
 // ═══════════════════════════════════════════════════════════════════════════
-// 🪓 SCYTHE SLASH (Tırpan Biçişi) - Geniş Yarım Ay
+// 🗡️ SKILL 1 – TIRPAN (Scythe Sweep) - Geniş biçme hareketi
 // ═══════════════════════════════════════════════════════════════════════════
-export const ScytheSlashEffect: React.FC<{
+export const ScytheSweepEffect: React.FC<{
     position: [number, number, number];
+    targetPosition?: [number, number, number];
     onComplete: () => void;
-}> = ({ position, onComplete }) => {
+}> = ({ position, targetPosition, onComplete }) => {
     const groupRef = useRef<THREE.Group>(null);
     const startTime = useRef(Date.now());
-    const duration = 400; // Fast slash
+    const duration = 500;
     const progressRef = useRef(0);
+    const arcCount = 24;
+    const sparkCount = 16;
+
+    const direction = useMemo(() => {
+        if (targetPosition) {
+            return new THREE.Vector3(
+                targetPosition[0] - position[0],
+                0,
+                targetPosition[2] - position[2]
+            ).normalize();
+        }
+        return new THREE.Vector3(0, 0, 1);
+    }, [position, targetPosition]);
+
+    const baseAngle = Math.atan2(direction.x, direction.z);
+
+    // Spark yönleri
+    const sparkVel = useMemo(() => {
+        return Array.from({ length: sparkCount }).map(() => ({
+            angle: baseAngle + (Math.random() - 0.5) * 1.2,
+            speed: 0.12 + Math.random() * 0.12,
+        }));
+    }, [baseAngle, sparkCount]);
 
     useFrame(() => {
         if (!groupRef.current) return;
@@ -69,103 +121,58 @@ export const ScytheSlashEffect: React.FC<{
         const progress = Math.min(elapsed / duration, 1);
         progressRef.current = progress;
 
-        const scale = 1 + progress * 2;
-        groupRef.current.scale.set(scale, scale, 1);
-        // Swing rotation
-        groupRef.current.rotation.z = -Math.PI / 4 + progress * Math.PI;
-
-        if (progress >= 1) onComplete();
-    });
-
-    return (
-        <group ref={groupRef} position={[position[0], 1, position[2]]} rotation={[-Math.PI / 2, 0, 0]}>
-            {/* Scythe Blade trail */}
-            <mesh position={[1, 0, 0]}>
-                <ringGeometry args={[1.5, 2, 32, 2, 0, Math.PI / 2]} />
-                <meshBasicMaterial
-                    color="#440055"
-                    transparent
-                    opacity={0.8 * (1 - progressRef.current)}
-                    side={THREE.DoubleSide}
-                    blending={THREE.AdditiveBlending}
-                />
-            </mesh>
-            {/* Inner edge */}
-            <mesh position={[1, 0, 0]}>
-                <ringGeometry args={[1.5, 1.6, 32, 2, 0, Math.PI / 2]} />
-                <meshBasicMaterial
-                    color="#ffffff"
-                    transparent
-                    opacity={0.9 * (1 - progressRef.current)}
-                    side={THREE.DoubleSide}
-                />
-            </mesh>
-            <SoulPixels position={[1.5, 1, 0]} color="#8800ff" count={8} spread={1} progress={progressRef.current} rise={false} />
-        </group>
-    );
-};
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 🌑 KARANLIK GEÇİT (Dark Passage) - Z Skill Shadow Form
-// ═══════════════════════════════════════════════════════════════════════════
-export const DarkPassageEffect: React.FC<{
-    position: [number, number, number];
-    onComplete: () => void;
-    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
-    followPlayer?: boolean;
-}> = ({ position, onComplete, playerGroupRef, followPlayer = false }) => {
-    const groupRef = useRef<THREE.Group>(null);
-    const startTime = useRef(Date.now());
-    const duration = 1500;
-    const progressRef = useRef(0);
-
-    useFrame((state) => {
-        if (!groupRef.current) return;
-        const elapsed = Date.now() - startTime.current;
-        const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
-
-        if (followPlayer && playerGroupRef?.current) {
-            const pos = new THREE.Vector3();
-            playerGroupRef.current.getWorldPosition(pos);
-            groupRef.current.position.set(pos.x, pos.y, pos.z);
-        }
-
         if (progress >= 1) onComplete();
     });
 
     return (
         <group ref={groupRef} position={position}>
-            {/* Shadow particles trailing */}
-            {[0, 1, 2, 3, 4].map(i => (
-                <mesh key={i} position={[
-                    Math.sin(i + Date.now() * 0.01) * 0.5,
-                    1 + Math.cos(i + Date.now() * 0.01) * 1,
-                    Math.cos(i * 2) * 0.5
-                ]}>
-                    <boxGeometry args={[0.3, 0.3, 0.3]} />
-                    <meshBasicMaterial
-                        color="#110022"
-                        transparent
-                        opacity={0.6}
+            {/* Arc küpleri - biçme yayı */}
+            {Array.from({ length: arcCount }).map((_, i) => {
+                const p = i / (arcCount - 1);
+                const arcSpan = Math.PI * 0.95;
+                const ang = baseAngle - arcSpan / 2 + p * arcSpan;
+                const r = 1.7 * (0.85 + p * 0.25) * (0.65 + easeOutCubic(progressRef.current) * 0.7);
+
+                return (
+                    <DeathPixel
+                        key={`arc-${i}`}
+                        position={[
+                            Math.sin(ang) * r,
+                            0.35 + (i % 3) * 0.08,
+                            Math.cos(ang) * r
+                        ]}
+                        color="#3dffcf"
+                        opacity={0.9 * (1 - progressRef.current)}
+                        scale={0.9 + (1 - progressRef.current) * 0.5}
                     />
-                </mesh>
-            ))}
-            {/* Fog on ground */}
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.1, 0]}>
-                <ringGeometry args={[0.5, 1.5, 16]} />
-                <meshBasicMaterial
-                    color="#000000"
-                    transparent
-                    opacity={0.4 * (1 - progressRef.current) + 0.1}
-                />
-            </mesh>
+                );
+            })}
+
+            {/* Spark küpleri - uç kıvılcımlar */}
+            {sparkVel.map((spark, i) => {
+                const dist = progressRef.current * 10 * spark.speed;
+                return (
+                    <DeathPixel
+                        key={`spark-${i}`}
+                        position={[
+                            Math.sin(spark.angle) * dist,
+                            0.5 + (1 - progressRef.current) * 0.3,
+                            Math.cos(spark.angle) * dist
+                        ]}
+                        color="#9affff"
+                        opacity={0.9 * (1 - progressRef.current)}
+                        scale={0.8 + (1 - progressRef.current) * 0.6}
+                    />
+                );
+            })}
+
+            <pointLight color="#3dffcf" intensity={3 * (1 - progressRef.current)} distance={4} />
         </group>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 🩸 1️⃣ ÖLÜM DOKUNUŞU (Death Touch) - DOT Mark
+// ☠️ SKILL 2 – ÖLÜM DOKUNUŞU (Death Touch) - DOT
 // ═══════════════════════════════════════════════════════════════════════════
 export const DeathTouchEffect: React.FC<{
     position: [number, number, number];
@@ -174,10 +181,95 @@ export const DeathTouchEffect: React.FC<{
 }> = ({ position, targetPosition, onComplete }) => {
     const groupRef = useRef<THREE.Group>(null);
     const startTime = useRef(Date.now());
-    const duration = 5000; // Duration matches DOT
+    const duration = 2500; // DOT daha uzun
     const progressRef = useRef(0);
+    const tickCount = 18;
 
-    const targetPos = useMemo(() => targetPosition || position, [position, targetPosition]);
+    const spawnPos = targetPosition || position;
+
+    const ticks = useMemo(() => {
+        return Array.from({ length: tickCount }).map(() => ({
+            y: Math.random() * 0.5,
+            drift: 0.02 + Math.random() * 0.03,
+            ang: Math.random() * Math.PI * 2,
+        }));
+    }, [tickCount]);
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        groupRef.current.rotation.y += 0.04;
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={spawnPos}>
+            {/* Zemin rune halkası */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
+                <ringGeometry args={[0.5, 0.7, 16]} />
+                <meshBasicMaterial
+                    color="#33ffd4"
+                    transparent
+                    opacity={0.75 * (1 - easeInCubic(progressRef.current) * 0.35)}
+                    blending={THREE.AdditiveBlending}
+                    side={THREE.DoubleSide}
+                />
+            </mesh>
+
+            {/* Yukarı çıkan ruh parçaları */}
+            {ticks.map((tick, i) => {
+                const currentY = (tick.y + progressRef.current * tick.drift * 30) % 1.2;
+                const r = 0.65 + (i % 3) * 0.12;
+                const ang = tick.ang + progressRef.current * 6;
+
+                return (
+                    <DeathPixel
+                        key={i}
+                        position={[
+                            Math.sin(ang) * r,
+                            0.2 + currentY,
+                            Math.cos(ang) * r
+                        ]}
+                        color="#33ffd4"
+                        opacity={0.95 * (1 - progressRef.current * 0.5)}
+                        scale={0.8 + Math.sin(progressRef.current * 18 + i) * 0.15}
+                    />
+                );
+            })}
+
+            <pointLight color="#33ffd4" intensity={2} distance={3} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🟢 SKILL 3 – RUH HASADI (Soul Reap) - Life Steal
+// ═══════════════════════════════════════════════════════════════════════════
+export const SoulReapEffect: React.FC<{
+    position: [number, number, number];
+    targetPosition?: [number, number, number];
+    onComplete: () => void;
+}> = ({ position, targetPosition, onComplete }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const startTime = useRef(Date.now());
+    const duration = 800;
+    const progressRef = useRef(0);
+    const soulCount = 22;
+
+    const fromPos = targetPosition || [position[0] + 3, position[1], position[2]];
+    const toPos = position;
+
+    const souls = useMemo(() => {
+        return Array.from({ length: soulCount }).map(() => ({
+            phase: Math.random() * Math.PI * 2,
+            amp: 0.08 + Math.random() * 0.12,
+            lift: 0.05 + Math.random() * 0.06,
+        }));
+    }, [soulCount]);
 
     useFrame(() => {
         if (!groupRef.current) return;
@@ -189,32 +281,66 @@ export const DeathTouchEffect: React.FC<{
     });
 
     return (
-        <group ref={groupRef} position={[targetPos[0], 2, targetPos[2]]}>
-            {/* Skull or Mark symbol pulsing */}
-            <mesh scale={[0.5, 0.5, 0.5]} position={[0, Math.sin(Date.now() * 0.005) * 0.2, 0]}>
-                <sphereGeometry args={[0.5, 8, 8]} />
-                <meshBasicMaterial color="#550000" transparent opacity={0.8} wireframe />
-            </mesh>
-            <SoulPixels position={[0, -1, 0]} color="#ff0000" count={5} spread={0.5} progress={progressRef.current % 0.2 * 5} />
+        <group ref={groupRef}>
+            {souls.map((soul, i) => {
+                const p = i / (soulCount - 1);
+                const e = easeOutCubic(progressRef.current);
+                const along = (p * 0.9 + e * 0.35);
+
+                const baseX = fromPos[0] + (toPos[0] - fromPos[0]) * along;
+                const baseZ = fromPos[2] + (toPos[2] - fromPos[2]) * along;
+
+                // Yan sapma
+                const dir = new THREE.Vector3(toPos[0] - fromPos[0], 0, toPos[2] - fromPos[2]).normalize();
+                const sideX = -dir.z * Math.sin(progressRef.current * 18 + soul.phase) * soul.amp;
+                const sideZ = dir.x * Math.sin(progressRef.current * 18 + soul.phase) * soul.amp;
+
+                return (
+                    <DeathPixel
+                        key={i}
+                        position={[
+                            baseX + sideX,
+                            0.9 + Math.sin(progressRef.current * 15 + soul.phase) * soul.lift,
+                            baseZ + sideZ
+                        ]}
+                        color="#54ffe2"
+                        opacity={0.95 * (1 - progressRef.current)}
+                        scale={0.75 + (1 - progressRef.current) * 0.45}
+                    />
+                );
+            })}
+
+            <pointLight position={toPos as [number, number, number]} color="#54ffe2" intensity={3} distance={4} />
         </group>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 🩸 2️⃣ RUH HASADI (Soul Harvest / Lifesteal) - Düşmandan can çalma
+// 🌑 SKILL 4 – KARANLIK GEÇİT (Dark Passage) - Portal
 // ═══════════════════════════════════════════════════════════════════════════
-export const SoulHarvestEffect: React.FC<{
+export const DarkPassageEffect: React.FC<{
     position: [number, number, number];
-    targetPosition?: [number, number, number];
     onComplete: () => void;
-    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
-}> = ({ position, targetPosition, onComplete, playerGroupRef }) => {
+}> = ({ position, onComplete }) => {
     const groupRef = useRef<THREE.Group>(null);
     const startTime = useRef(Date.now());
     const duration = 800;
     const progressRef = useRef(0);
 
-    const targetPos = useMemo(() => targetPosition || position, [position, targetPosition]);
+    // Kapı çerçevesi noktaları
+    const framePts = useMemo(() => {
+        const pts: [number, number, number][] = [];
+        const w = 0.9, h = 1.6;
+        // Sol kenar
+        for (let i = 0; i < 10; i++) pts.push([-w, 0.2 + (h * i) / 9, 0]);
+        // Sağ kenar
+        for (let i = 0; i < 10; i++) pts.push([w, 0.2 + (h * i) / 9, 0]);
+        // Alt
+        for (let i = 0; i < 4; i++) pts.push([-w + (2 * w * i) / 3, 0.2, 0]);
+        // Üst
+        for (let i = 0; i < 4; i++) pts.push([-w + (2 * w * i) / 3, 0.2 + h, 0]);
+        return pts;
+    }, []);
 
     useFrame(() => {
         if (!groupRef.current) return;
@@ -222,43 +348,63 @@ export const SoulHarvestEffect: React.FC<{
         const progress = Math.min(elapsed / duration, 1);
         progressRef.current = progress;
 
-        // Visuals travel from target to player
         if (progress >= 1) onComplete();
     });
 
     return (
-        <group ref={groupRef} position={targetPos}>
-            {/* Drain lines */}
-            {Array.from({ length: 5 }).map((_, i) => (
-                <mesh key={i} position={[
-                    (Math.random() - 0.5) * 2 * (1 - progressRef.current),
-                    1 + Math.random(),
-                    (Math.random() - 0.5) * 2 * (1 - progressRef.current)
-                ]}>
-                    <boxGeometry args={[0.05, 0.5, 0.05]} />
-                    <meshBasicMaterial color="#00ff00" transparent opacity={1 - progressRef.current} />
-                </mesh>
-            ))}
-            {/* Impact on target */}
-            <mesh position={[0, 1, 0]} scale={[1 - progressRef.current, 1 - progressRef.current, 1 - progressRef.current]}>
-                <sphereGeometry args={[0.8, 8, 8]} />
-                <meshBasicMaterial color="#33ff33" transparent opacity={0.4} />
+        <group ref={groupRef} position={position}>
+            {/* Zemin portal */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]} scale={[0.6 + easeOutCubic(progressRef.current), 0.6 + easeOutCubic(progressRef.current), 1]}>
+                <planeGeometry args={[1.7, 1.7]} />
+                <meshBasicMaterial
+                    color="#071b17"
+                    transparent
+                    opacity={0.85 * (1 - progressRef.current * 0.25)}
+                    depthWrite={false}
+                />
             </mesh>
+
+            {/* Kapı çerçevesi */}
+            {framePts.map((pt, i) => (
+                <DeathPixel
+                    key={i}
+                    position={[
+                        pt[0],
+                        pt[1],
+                        pt[2] + Math.sin(progressRef.current * 18 + i) * 0.08
+                    ]}
+                    color="#7bffe9"
+                    opacity={0.95 * (1 - progressRef.current * 0.15)}
+                    scale={0.9 + Math.sin(progressRef.current * 24 + i) * 0.15}
+                />
+            ))}
+
+            <pointLight color="#7bffe9" intensity={4} distance={5} />
         </group>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 🌫️ 3️⃣ KORKU (Fear) - Skull Shockwave
+// 😱 SKILL 5 – KORKU (Fear) - Düşmanları kaçırır
 // ═══════════════════════════════════════════════════════════════════════════
 export const FearEffect: React.FC<{
     position: [number, number, number];
+    targetPosition?: [number, number, number];
     onComplete: () => void;
-}> = ({ position, onComplete }) => {
+}> = ({ position, targetPosition, onComplete }) => {
     const groupRef = useRef<THREE.Group>(null);
     const startTime = useRef(Date.now());
-    const duration = 1000;
+    const duration = 500;
     const progressRef = useRef(0);
+    const ringCount = 26;
+    const spikeCount = 18;
+
+    const spawnPos = targetPosition || position;
+
+    // Kırık halka için bazı boşluklar
+    const aliveRing = useMemo(() => {
+        return Array.from({ length: ringCount }, (_, i) => (i % 5 !== 0));
+    }, [ringCount]);
 
     useFrame(() => {
         if (!groupRef.current) return;
@@ -266,53 +412,81 @@ export const FearEffect: React.FC<{
         const progress = Math.min(elapsed / duration, 1);
         progressRef.current = progress;
 
-        const scale = 0.5 + progress * 8;
-        groupRef.current.scale.set(scale, scale, scale);
-
         if (progress >= 1) onComplete();
     });
 
     return (
-        <group ref={groupRef} position={[position[0], 1.5, position[2]]}>
-            {/* Spooky face/skull representation */}
-            <mesh rotation={[0, 0, 0]}>
-                <sphereGeometry args={[0.5, 8, 8]} />
-                <meshBasicMaterial
-                    color="#440044"
-                    transparent
-                    opacity={0.8 * (1 - progressRef.current)}
-                    wireframe
-                />
-            </mesh>
-            <mesh>
-                <sphereGeometry args={[0.3, 8, 8]} />
-                <meshBasicMaterial color="#000000" />
-            </mesh>
-            {/* Screaming wave */}
-            <mesh rotation={[-Math.PI / 2, 0, 0]}>
-                <ringGeometry args={[0.8, 1.2, 16]} />
-                <meshBasicMaterial
-                    color="#880088"
-                    transparent
-                    opacity={0.5 * (1 - progressRef.current)}
-                    side={THREE.DoubleSide}
-                />
-            </mesh>
+        <group ref={groupRef} position={spawnPos}>
+            {/* Kırık halka */}
+            {Array.from({ length: ringCount }).map((_, i) => {
+                if (!aliveRing[i]) return null;
+                const a = (i / ringCount) * Math.PI * 2;
+                const r = 0.6 + easeOutCubic(progressRef.current) * 1.25;
+
+                return (
+                    <DeathPixel
+                        key={`ring-${i}`}
+                        position={[
+                            Math.sin(a) * r,
+                            0.15 + (i % 2) * 0.07,
+                            Math.cos(a) * r
+                        ]}
+                        color="#2fffd6"
+                        opacity={0.9 * (1 - progressRef.current)}
+                        scale={0.9 + (1 - progressRef.current) * 0.6}
+                    />
+                );
+            })}
+
+            {/* Korku dikenleri */}
+            {Array.from({ length: spikeCount }).map((_, i) => {
+                const a = (i / spikeCount) * Math.PI * 2;
+                const r = 0.35 + easeOutCubic(progressRef.current) * 0.95;
+
+                return (
+                    <DeathPixel
+                        key={`spike-${i}`}
+                        position={[
+                            Math.sin(a) * r,
+                            0.25 + easeOutCubic(progressRef.current) * 0.35,
+                            Math.cos(a) * r
+                        ]}
+                        color="#b2fff3"
+                        opacity={0.95 * (1 - progressRef.current)}
+                        scale={0.7 + (1 - progressRef.current) * 0.9}
+                    />
+                );
+            })}
+
+            <pointLight color="#2fffd6" intensity={5 * (1 - progressRef.current)} distance={4} />
         </group>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 💀 4️⃣ KIYAMET ÇAĞRISI (Apocalypse Call) - ULTI
+// 💜 SKILL 6 – KIYAMET ÇAĞRISI (Apocalypse Call) - ULTİ
 // ═══════════════════════════════════════════════════════════════════════════
 export const ApocalypseCallEffect: React.FC<{
     position: [number, number, number];
     onComplete: () => void;
-}> = ({ position, onComplete }) => {
+    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
+    followPlayer?: boolean;
+}> = ({ position, onComplete, playerGroupRef, followPlayer = false }) => {
     const groupRef = useRef<THREE.Group>(null);
     const startTime = useRef(Date.now());
-    const duration = 3000;
+    const duration = 8000; // Ulti daha uzun
     const progressRef = useRef(0);
+    const soulCount = 90;
+    const columnCount = 36;
+
+    const souls = useMemo(() => {
+        return Array.from({ length: soulCount }).map(() => ({
+            ang: Math.random() * Math.PI * 2,
+            rad: 0.4 + Math.random() * 1.6,
+            rise: 0.02 + Math.random() * 0.05,
+            wob: 0.06 + Math.random() * 0.12,
+        }));
+    }, [soulCount]);
 
     useFrame(() => {
         if (!groupRef.current) return;
@@ -320,214 +494,143 @@ export const ApocalypseCallEffect: React.FC<{
         const progress = Math.min(elapsed / duration, 1);
         progressRef.current = progress;
 
-        if (progress >= 1) onComplete();
-    });
-
-    return (
-        <group ref={groupRef} position={position}>
-            {/* Ground fissures */}
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
-                <ringGeometry args={[0, progressRef.current * 6, 32]} />
-                <meshBasicMaterial
-                    color="#110011"
-                    transparent
-                    opacity={0.8}
-                />
-            </mesh>
-            {/* Rising Souls */}
-            <SoulPixels position={[0, 0, 0]} color="#8800ff" count={40} spread={6} progress={progressRef.current} rise={true} />
-            <SoulPixels position={[0, 0, 0]} color="#00ff00" count={20} spread={4} progress={progressRef.current} rise={true} />
-
-            {/* Main Blast */}
-            <mesh position={[0, 2, 0]} scale={[1 + progressRef.current * 4, 1 + progressRef.current * 4, 1 + progressRef.current * 4]}>
-                <sphereGeometry args={[0.5, 16, 16]} />
-                <meshBasicMaterial
-                    color="#440044"
-                    transparent
-                    opacity={0.5 * (1 - progressRef.current)}
-                    blending={THREE.AdditiveBlending}
-                />
-            </mesh>
-            <pointLight color="#8800ff" intensity={5 * (1 - progressRef.current)} distance={10} position={[0, 3, 0]} />
-        </group>
-    );
-};
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 🌑 GÖLGE PATLAMASI (Shadow Blast) - Karanlık alan hasarı
-// ═══════════════════════════════════════════════════════════════════════════
-export const ShadowBlastEffect: React.FC<{
-    position: [number, number, number];
-    onComplete: () => void;
-}> = ({ position, onComplete }) => {
-    const groupRef = useRef<THREE.Group>(null);
-    const startTime = useRef(Date.now());
-    const duration = 1200;
-    const progressRef = useRef(0);
-    const radius = 3;
-
-    useFrame(() => {
-        if (!groupRef.current) return;
-        const elapsed = Date.now() - startTime.current;
-        const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
-
-        // Expand
-        groupRef.current.scale.setScalar(1 + progress * 2);
+        if (followPlayer && playerGroupRef?.current) {
+            groupRef.current.position.copy(playerGroupRef.current.position);
+        }
 
         if (progress >= 1) onComplete();
     });
 
     return (
         <group ref={groupRef} position={position}>
-            {/* Dark core */}
-            <mesh>
-                <sphereGeometry args={[0.6, 16, 16]} />
+            {/* Zemin koyu alan */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]} scale={[0.6 + easeOutCubic(Math.min(progressRef.current * 1.2, 1)), 0.6 + easeOutCubic(Math.min(progressRef.current * 1.2, 1)), 1]}>
+                <planeGeometry args={[3.2, 3.2]} />
                 <meshBasicMaterial
-                    color="#220022"
+                    color="#05040a"
                     transparent
-                    opacity={0.9 * (1 - progressRef.current)}
-                    blending={THREE.AdditiveBlending}
+                    opacity={0.9 * (1 - progressRef.current * 0.55)}
+                    depthWrite={false}
                 />
             </mesh>
 
-            {/* Shockwave ring */}
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.1, 0]}>
-                <ringGeometry args={[0.2, radius, 32]} />
+            {/* Dönen rune halkası */}
+            <mesh rotation={[-Math.PI / 2, progressRef.current * 3, 0]} position={[0, 0.03, 0]} scale={[0.6 + easeOutCubic(Math.min(progressRef.current * 1.2, 1)) * 0.96, 0.6 + easeOutCubic(Math.min(progressRef.current * 1.2, 1)) * 0.96, 1]}>
+                <ringGeometry args={[1.2, 1.5, 32]} />
                 <meshBasicMaterial
-                    color="#aa00ff"
+                    color="#9b5cff"
                     transparent
-                    opacity={0.6 * (1 - progressRef.current)}
+                    opacity={0.55 * (1 - easeInCubic(progressRef.current) * 0.3)}
                     blending={THREE.AdditiveBlending}
                     side={THREE.DoubleSide}
                 />
             </mesh>
 
-            {/* Vertical dark pillar */}
-            <mesh>
-                <cylinderGeometry args={[0.3, 0.5, 2]} />
-                <meshBasicMaterial
-                    color="#550055"
-                    transparent
-                    opacity={0.5 * (1 - progressRef.current)}
-                    blending={THREE.AdditiveBlending}
-                />
-            </mesh>
+            {/* Dikey sütun - blok spiral */}
+            {Array.from({ length: columnCount }).map((_, i) => {
+                const p = i / (columnCount - 1);
+                const y = 0.2 + p * 2.8 * easeOutCubic(Math.min(progressRef.current * 1.1, 1));
+                const a = progressRef.current * 9 + i * 0.35;
+                const r = 0.18 + Math.sin(i * 0.6 + progressRef.current * 12) * 0.06;
 
-            <SoulPixels position={[0, 0.5, 0]} color="#aa00ff" count={40} spread={radius} progress={progressRef.current} pixelSize={0.08} />
-            <pointLight color="#aa00ff" intensity={6 * (1 - progressRef.current)} distance={radius + 2} />
-        </group>
-    );
-};
-
-// ═══════════════════════════════════════════════════════════════════════════
-// ☠️ KIYAMET LANETİ (Doom) - DOT + İnfaz hasarı
-// ═══════════════════════════════════════════════════════════════════════════
-export const DoomEffect: React.FC<{
-    position: [number, number, number];
-    onComplete: () => void;
-}> = ({ position, onComplete }) => {
-    const groupRef = useRef<THREE.Group>(null);
-    const startTime = useRef(Date.now());
-    const duration = 5000;
-    const progressRef = useRef(0);
-
-    useFrame(() => {
-        if (!groupRef.current) return;
-        const elapsed = Date.now() - startTime.current;
-        const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
-
-        // Pulse effect
-        groupRef.current.rotation.y += 0.02;
-
-        if (progress >= 1) onComplete();
-    });
-
-    return (
-        <group ref={groupRef} position={position}>
-            {/* Doom skull indicator */}
-            <mesh position={[0, 2, 0]}>
-                <sphereGeometry args={[0.4, 8, 8]} />
-                <meshBasicMaterial
-                    color="#550055"
-                    transparent
-                    opacity={0.7 + Math.sin(progressRef.current * 30) * 0.2}
-                    blending={THREE.AdditiveBlending}
-                />
-            </mesh>
-
-            {/* Curse aura */}
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.1, 0]}>
-                <ringGeometry args={[1, 1.5, 16]} />
-                <meshBasicMaterial
-                    color="#660066"
-                    transparent
-                    opacity={0.4 + Math.sin(progressRef.current * 20) * 0.2}
-                    blending={THREE.AdditiveBlending}
-                    side={THREE.DoubleSide}
-                />
-            </mesh>
-
-            {/* DOT particles */}
-            <SoulPixels position={[0, 1, 0]} color="#880088" count={15} spread={1.5} progress={progressRef.current * 0.3} pixelSize={0.05} />
-
-            {/* Execution flash at end */}
-            {progressRef.current > 0.9 && (
-                <mesh>
-                    <sphereGeometry args={[2, 16, 16]} />
-                    <meshBasicMaterial
-                        color="#ff00ff"
-                        transparent
-                        opacity={(progressRef.current - 0.9) * 10}
-                        blending={THREE.AdditiveBlending}
+                return (
+                    <DeathPixel
+                        key={`col-${i}`}
+                        position={[
+                            Math.sin(a) * r,
+                            y,
+                            Math.cos(a) * r
+                        ]}
+                        color="#9b5cff"
+                        opacity={0.9 * (1 - progressRef.current * 0.25)}
+                        scale={1.1}
                     />
-                </mesh>
-            )}
+                );
+            })}
 
-            <pointLight color="#880088" intensity={2 + Math.sin(progressRef.current * 25) * 1} distance={4} />
+            {/* Ruh sürüsü */}
+            {souls.map((soul, i) => {
+                const currentRad = soul.rad + progressRef.current * 0.3;
+                const a = soul.ang + progressRef.current * 6.6;
+                const y = Math.min(progressRef.current * 9.6 * soul.rise * 18, 3.2);
+                const wobX = Math.sin(progressRef.current * 18 + i) * soul.wob;
+                const wobZ = Math.cos(progressRef.current * 18 + i) * soul.wob;
+
+                return (
+                    <DeathPixel
+                        key={`soul-${i}`}
+                        position={[
+                            Math.sin(a) * currentRad + wobX,
+                            0.25 + y,
+                            Math.cos(a) * currentRad + wobZ
+                        ]}
+                        color="#2fffd6"
+                        opacity={0.95 * (1 - progressRef.current * 0.35)}
+                        scale={0.85 + (1 - progressRef.current) * 0.35}
+                    />
+                );
+            })}
+
+            <pointLight color="#9b5cff" intensity={6} distance={10} />
+            <pointLight position={[0, 2, 0]} color="#2fffd6" intensity={4} distance={6} />
         </group>
     );
 };
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ESKI EFEKTLER (backward compatibility aliases)
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ShadowSlashEffect = ScytheSweepEffect
+export const ShadowSlashEffect = ScytheSweepEffect;
+
+// SoulDrainEffect = SoulReapEffect
+export const SoulDrainEffect = SoulReapEffect;
+
+// ShadowBlastEffect = FearEffect
+export const ShadowBlastEffect = FearEffect;
+
+// DoomEffect = DeathTouchEffect
+export const DoomEffect = DeathTouchEffect;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // REAPER SKILL MAP
 // ═══════════════════════════════════════════════════════════════════════════
 export const REAPER_EFFECTS: Record<string, React.FC<any>> = {
-    // New keys
-    scythe: ScytheSlashEffect,
-    passage: DarkPassageEffect,
+    // Yeni pixel death efektleri
+    scythe_sweep: ScytheSweepEffect,
     death_touch: DeathTouchEffect,
-    harvest: SoulHarvestEffect,
+    soul_reap: SoulReapEffect,
+    dark_passage: DarkPassageEffect,
     fear: FearEffect,
-    apocalypse: ApocalypseCallEffect,
+    apocalypse_call: ApocalypseCallEffect,
 
-    // Yeni efektler
+    // Eski key'ler (backward compat)
+    shadow_slash: ShadowSlashEffect,
+    soul_drain: SoulDrainEffect,
     shadow_blast: ShadowBlastEffect,
     doom: DoomEffect,
 
-    // Components/constants.ts mapping
-    scythe_slash: ScytheSlashEffect,
-    shroud: DarkPassageEffect,
-    mark: DeathTouchEffect,
-    lifesteal: SoulHarvestEffect,
-    grim_fear: FearEffect,
-    execution: ApocalypseCallEffect,
+    // Components/constants.ts keys
+    scythe: ScytheSweepEffect,
+    reap: SoulReapEffect,
+    portal: DarkPassageEffect,
+    terror: FearEffect,
+    apocalypse: ApocalypseCallEffect,
 
-    // Root constants.ts mapping (yeni visual key'ler)
-    reaper_slice: ScytheSlashEffect,
-    reaper_soul_slice: DeathTouchEffect,
-    reaper_wave: SoulHarvestEffect,
-    reaper_spin: DarkPassageEffect,
-    reaper_cross: FearEffect,
+    // Root constants.ts visual keys
+    reaper_slash: ScytheSweepEffect,
+    reaper_drain: SoulReapEffect,
+    reaper_shadow: DarkPassageEffect,
+    reaper_ult: ApocalypseCallEffect,
 
-    // Additional mapping
-    pull: SoulHarvestEffect,
-    dark_passage: DarkPassageEffect,
-    soul_harvest: SoulHarvestEffect,
-    apocalypse_call: ApocalypseCallEffect,
-    shadow: ShadowBlastEffect,
-    curse: DoomEffect,
+    // Kısa key'ler
+    slash: ScytheSweepEffect,
+    touch: DeathTouchEffect,
+    harvest: SoulReapEffect,
+    passage: DarkPassageEffect,
+    scare: FearEffect,
+    ulti: ApocalypseCallEffect,
 };
 
 export default REAPER_EFFECTS;

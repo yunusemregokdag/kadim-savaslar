@@ -498,21 +498,22 @@ export const GameVFXOverlay: React.FC<{
                 DUMMY_OBJ.updateMatrix();
                 meshRef.current.setMatrixAt(particleRenderIdx + k, DUMMY_OBJ.matrix);
             }
+        }
 
-            // Count active particles
-            let activeCount = 0;
-            for (let i = 0; i < MAX_PARTICLES; i++) {
-                if (particles[i].active) activeCount++;
-            }
-            activeCount += activeEffects.current.length;
+        // Count active particles
+        let activeCount = 0;
+        for (let i = 0; i < MAX_PARTICLES; i++) {
+            if (particles[i].active) activeCount++;
+        }
+        activeCount += activeEffects.current.length;
 
-            // Only show mesh if there are active particles (prevents black pixel artifacts)
-            meshRef.current.visible = activeCount > 0;
+        // Only show mesh if there are active particles (prevents black pixel artifacts)
+        meshRef.current.visible = activeCount > 0;
 
-            meshRef.current.count = MAX_PARTICLES;
-            meshRef.current.instanceMatrix.needsUpdate = true;
-            if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
-        });
+        meshRef.current.count = MAX_PARTICLES;
+        meshRef.current.instanceMatrix.needsUpdate = true;
+        if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
+    });
 
     return (
         <instancedMesh

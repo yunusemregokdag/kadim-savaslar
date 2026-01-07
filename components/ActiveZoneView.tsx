@@ -35,6 +35,7 @@ import { SKILL_ASSETS } from './SkillAssetRegistry';
 import { CharacterClass } from '../types';
 import ChatSystem from './ChatSystem';
 import { Ground } from './ZoneEnvironment';
+import { VoxelTerrain } from './VoxelTerrain';
 import SchematicMap from './SchematicMap';
 import { GameGuideModal } from './GameGuideModal';
 import { NPCInteractionModal, NPC_REGISTRY } from './NPCInteractionModal';
@@ -66,6 +67,10 @@ import { addDailyHonor, addDailyKill } from '../utils/dailyLeaderboard';
 import { getMaterialIcon, isDevelopmentMode } from '../utils/AssetManager';
 
 import { PixelGoldUser } from './ui/PixelVip';
+
+// Core Game Systems
+import { CombatLog, BossPhaseManager, GameMode } from '../core';
+import { useBossPhaseFX } from '../hooks/useBossPhaseFX';
 
 // --- PRELOAD ASSETS (NO FREEZE ON SPAWN) ---
 const PRELOAD_MODELS = [
@@ -1750,6 +1755,27 @@ const GameScene: React.FC<GameSceneProps> = ({
             ))}
 
             <Ground color={zoneColor} zoneId={zoneId} showGrid={false} />
+
+            {/* 🌲 VOXEL TERRAIN - Minecraft Legends Style */}
+            <VoxelTerrain
+                zoneType={
+                    // Fire zones (Marsu)
+                    (zoneColor === '#450a0a' || zoneColor === '#7f1d1d' || zoneColor === '#991b1b') ? 'lava' :
+                        // Ice zones (Terya)
+                        (zoneColor === '#172554' || zoneColor === '#1e3a8a' || zoneColor === '#1e40af') ? 'snow' :
+                            // Nature zones (Venu)
+                            (zoneColor === '#14532d' || zoneColor === '#166534' || zoneColor === '#15803d') ? 'forest' :
+                                // Void zones
+                                (zoneColor === '#3b0764' || zoneColor === '#581c87') ? 'void' :
+                                    // Default
+                                    'forest'
+                }
+                radius={borderLimit - 10}
+                density="medium"
+                includeWater={zoneColor !== '#450a0a' && zoneColor !== '#7f1d1d'}
+                includeLava={zoneColor === '#450a0a' || zoneColor === '#7f1d1d' || zoneColor === '#991b1b'}
+            />
+
             <GameVFXOverlay />
             <BorderWalls limit={borderLimit} />
             {decorations.map(d => (<DecorationMesh key={d.id} id={d.id} type={d.type} pos={d.pos} scale={d.scale} color={d.color} rotation={d.rotation} onClick={handleGather} />))}
@@ -2314,6 +2340,22 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
     // Visual Effects
     const [particles, setParticles] = useState<any[]>([]);
+
+    // 🎮 BOSS PHASE VISUAL FEEDBACK HOOK
+    const { currentPhase: bossPhase, auraColor: bossAuraColor, isShaking } = useBossPhaseFX({
+        onPhaseChange: (phase, config) => {
+            // Log phase change
+            console.log(`[BossPhase] Boss entered phase ${phase}`, config);
+            // Show visual feedback
+            if (phase === 2) {
+                addFloatingText('⚠️ BOSS PHASE 2!', playerPosRef.current?.x || 0, 5, playerPosRef.current?.y || 0, 'text-orange-500 font-bold text-xl animate-pulse');
+            } else if (phase === 3) {
+                addFloatingText('🔥 BOSS ENRAGED!', playerPosRef.current?.x || 0, 5, playerPosRef.current?.y || 0, 'text-red-600 font-extrabold text-2xl animate-bounce');
+            }
+        },
+        enableScreenShake: true,
+        enableAura: true
+    });
 
     // --- VFX IDENTITY SYSTEM (FUTURE-PROOF) ---
     const trackedKeysRef = useRef<Set<string>>(new Set());

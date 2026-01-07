@@ -346,6 +346,7 @@ export const GameVFXOverlay: React.FC<{
                 activeEffects.current.push({
                     id: req.id,
                     preset: req.preset,
+                    type: 'STATUS', // Required property
                     active: true,
                     startTime: now,
                     duration: req.duration || 3.0,

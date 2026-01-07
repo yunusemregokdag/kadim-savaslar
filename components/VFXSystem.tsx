@@ -333,9 +333,26 @@ export const GameVFXOverlay: React.FC<{
         }
     };
 
+    const isInitialized = useRef(false);
+
     useFrame((state, delta) => {
         if (!meshRef.current) return;
         const now = state.clock.elapsedTime;
+
+        // 🔧 FIRST-FRAME INITIALIZATION: Hide all particles far offscreen
+        if (!isInitialized.current) {
+            isInitialized.current = true;
+            for (let i = 0; i < MAX_PARTICLES; i++) {
+                DUMMY_OBJ.position.set(-9999, -9999, -9999);
+                DUMMY_OBJ.scale.set(0, 0, 0);
+                DUMMY_OBJ.updateMatrix();
+                meshRef.current.setMatrixAt(i, DUMMY_OBJ.matrix);
+                DUMMY_COLOR.setRGB(0, 0, 0);
+                meshRef.current.setColorAt(i, DUMMY_COLOR);
+            }
+            meshRef.current.instanceMatrix.needsUpdate = true;
+            if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
+        }
 
         // 1. Process Queue
         while (queueRef.current.length > 0) {

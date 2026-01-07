@@ -4,7 +4,8 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 import { useEffect, useCallback, useState, useRef } from 'react';
-import { BossPhaseEvent, BossPhaseNumber } from '../core/types';
+import { BossPhaseNumber } from '../core/types';
+import { BossPhaseEvent } from '../core/BossPhaseController';
 import * as THREE from 'three';
 
 // ═══════════════════════════════════════════════════════════════════════════

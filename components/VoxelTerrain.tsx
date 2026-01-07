@@ -1,14 +1,14 @@
 // ═══════════════════════════════════════════════════════════════════════════
 // VOXEL TERRAIN - Kadim Savaşlar
 // Minecraft Legends tarzı voxel/pixel harita elemanları
+// 🔧 OPTIMIZED VERSION - Daha az nesne, statik render
 // ═══════════════════════════════════════════════════════════════════════════
 
-import React, { useMemo, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
+import React, { useMemo } from 'react';
 import * as THREE from 'three';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 🌿 PIXEL GRASS - Rastgele çim parçacıkları
+// 🌿 PIXEL GRASS - Rastgele çim parçacıkları (OPTIMIZED - no animation)
 // ═══════════════════════════════════════════════════════════════════════════
 export interface PixelGrassProps {
     count?: number;
@@ -20,44 +20,27 @@ export interface PixelGrassProps {
 }
 
 export const PixelGrass: React.FC<PixelGrassProps> = ({
-    count = 500,
+    count = 150, // REDUCED from 500
     radius = 50,
     centerPosition = [0, 0, 0],
     minHeight = 0.1,
-    maxHeight = 0.4,
-    colors = ['#22c55e', '#16a34a', '#15803d', '#166534', '#4ade80', '#86efac']
+    maxHeight = 0.3,
+    colors = ['#22c55e', '#16a34a', '#15803d']
 }) => {
     const grassData = useMemo(() => {
         return Array.from({ length: count }).map(() => ({
             x: centerPosition[0] + (Math.random() - 0.5) * radius * 2,
             z: centerPosition[2] + (Math.random() - 0.5) * radius * 2,
             height: minHeight + Math.random() * (maxHeight - minHeight),
-            width: 0.03 + Math.random() * 0.04,
+            width: 0.05 + Math.random() * 0.03,
             color: colors[Math.floor(Math.random() * colors.length)],
             rotation: Math.random() * Math.PI,
-            swayOffset: Math.random() * Math.PI * 2,
         }));
     }, [count, radius, centerPosition, minHeight, maxHeight, colors]);
 
-    const groupRef = useRef<THREE.Group>(null);
-
-    // Çim sallanma animasyonu
-    useFrame(({ clock }) => {
-        if (!groupRef.current) return;
-        const time = clock.getElapsedTime();
-
-        groupRef.current.children.forEach((child, i) => {
-            if (child instanceof THREE.Mesh) {
-                const data = grassData[i];
-                if (data) {
-                    child.rotation.x = Math.sin(time * 2 + data.swayOffset) * 0.1;
-                }
-            }
-        });
-    });
-
+    // No useFrame - static grass for performance
     return (
-        <group ref={groupRef}>
+        <group>
             {grassData.map((grass, i) => (
                 <mesh
                     key={i}
@@ -73,7 +56,7 @@ export const PixelGrass: React.FC<PixelGrassProps> = ({
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 🧱 TERRAIN BLOCKS - Toprak/kaya blokları
+// 🧱 TERRAIN BLOCKS - Toprak/kaya blokları (OPTIMIZED)
 // ═══════════════════════════════════════════════════════════════════════════
 export interface TerrainBlocksProps {
     count?: number;
@@ -84,21 +67,21 @@ export interface TerrainBlocksProps {
     type?: 'grass' | 'dirt' | 'stone' | 'sand' | 'snow' | 'lava';
 }
 
-const BLOCK_COLORS: Record<string, { top: string; side: string; bottom: string }> = {
-    grass: { top: '#4ade80', side: '#854d0e', bottom: '#713f12' },
-    dirt: { top: '#854d0e', side: '#78350f', bottom: '#713f12' },
-    stone: { top: '#6b7280', side: '#4b5563', bottom: '#374151' },
-    sand: { top: '#fcd34d', side: '#fbbf24', bottom: '#f59e0b' },
-    snow: { top: '#f0f9ff', side: '#e0f2fe', bottom: '#bae6fd' },
-    lava: { top: '#f97316', side: '#ea580c', bottom: '#c2410c' },
+const BLOCK_COLORS: Record<string, { top: string; side: string }> = {
+    grass: { top: '#4ade80', side: '#854d0e' },
+    dirt: { top: '#854d0e', side: '#78350f' },
+    stone: { top: '#6b7280', side: '#4b5563' },
+    sand: { top: '#fcd34d', side: '#fbbf24' },
+    snow: { top: '#f0f9ff', side: '#e0f2fe' },
+    lava: { top: '#f97316', side: '#ea580c' },
 };
 
 export const TerrainBlocks: React.FC<TerrainBlocksProps> = ({
-    count = 30,
+    count = 15, // REDUCED from 30
     radius = 40,
     centerPosition = [0, 0, 0],
-    blockSize = 1,
-    maxHeight = 3,
+    blockSize = 1.2,
+    maxHeight = 2, // REDUCED from 3
     type = 'grass'
 }) => {
     const colors = BLOCK_COLORS[type] || BLOCK_COLORS.grass;
@@ -110,7 +93,7 @@ export const TerrainBlocks: React.FC<TerrainBlocksProps> = ({
                 x: centerPosition[0] + (Math.random() - 0.5) * radius * 2,
                 z: centerPosition[2] + (Math.random() - 0.5) * radius * 2,
                 layers,
-                size: blockSize * (0.8 + Math.random() * 0.4),
+                size: blockSize,
             };
         });
     }, [count, radius, centerPosition, blockSize, maxHeight]);
@@ -125,9 +108,8 @@ export const TerrainBlocks: React.FC<TerrainBlocksProps> = ({
                             position={[0, layer * block.size + block.size / 2, 0]}
                         >
                             <boxGeometry args={[block.size, block.size, block.size]} />
-                            <meshStandardMaterial
+                            <meshBasicMaterial
                                 color={layer === block.layers - 1 ? colors.top : colors.side}
-                                roughness={0.9}
                             />
                         </mesh>
                     ))}
@@ -138,7 +120,7 @@ export const TerrainBlocks: React.FC<TerrainBlocksProps> = ({
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 🌲 VOXEL TREES - Basit voxel ağaçlar
+// 🌲 VOXEL TREES - Basit voxel ağaçlar (OPTIMIZED - simpler)
 // ═══════════════════════════════════════════════════════════════════════════
 export interface VoxelTreesProps {
     count?: number;
@@ -147,16 +129,16 @@ export interface VoxelTreesProps {
     treeType?: 'oak' | 'pine' | 'birch' | 'cherry' | 'dead';
 }
 
-const TREE_COLORS: Record<string, { trunk: string; leaves: string[] }> = {
-    oak: { trunk: '#78350f', leaves: ['#22c55e', '#16a34a', '#15803d'] },
-    pine: { trunk: '#713f12', leaves: ['#14532d', '#166534', '#15803d'] },
-    birch: { trunk: '#fafafa', leaves: ['#4ade80', '#86efac', '#bbf7d0'] },
-    cherry: { trunk: '#854d0e', leaves: ['#f472b6', '#ec4899', '#db2777'] },
-    dead: { trunk: '#57534e', leaves: [] },
+const TREE_COLORS: Record<string, { trunk: string; leaves: string }> = {
+    oak: { trunk: '#78350f', leaves: '#22c55e' },
+    pine: { trunk: '#713f12', leaves: '#14532d' },
+    birch: { trunk: '#fafafa', leaves: '#4ade80' },
+    cherry: { trunk: '#854d0e', leaves: '#f472b6' },
+    dead: { trunk: '#57534e', leaves: '' },
 };
 
 export const VoxelTrees: React.FC<VoxelTreesProps> = ({
-    count = 15,
+    count = 8, // REDUCED from 15
     radius = 50,
     centerPosition = [0, 0, 0],
     treeType = 'oak'
@@ -167,61 +149,27 @@ export const VoxelTrees: React.FC<VoxelTreesProps> = ({
         return Array.from({ length: count }).map(() => ({
             x: centerPosition[0] + (Math.random() - 0.5) * radius * 2,
             z: centerPosition[2] + (Math.random() - 0.5) * radius * 2,
-            trunkHeight: 2 + Math.floor(Math.random() * 3),
-            leavesSize: 2 + Math.floor(Math.random() * 2),
-            rotation: Math.random() * Math.PI * 2,
+            trunkHeight: 3,
+            leavesSize: 2,
         }));
     }, [count, radius, centerPosition]);
 
     return (
         <group>
             {trees.map((tree, i) => (
-                <group key={i} position={[tree.x, 0, tree.z]} rotation={[0, tree.rotation, 0]}>
-                    {/* Trunk */}
-                    {Array.from({ length: tree.trunkHeight }).map((_, h) => (
-                        <mesh key={`trunk-${h}`} position={[0, h * 0.5 + 0.25, 0]}>
-                            <boxGeometry args={[0.4, 0.5, 0.4]} />
-                            <meshStandardMaterial color={colors.trunk} roughness={0.9} />
-                        </mesh>
-                    ))}
+                <group key={i} position={[tree.x, 0, tree.z]}>
+                    {/* Trunk - single block */}
+                    <mesh position={[0, tree.trunkHeight / 2, 0]}>
+                        <boxGeometry args={[0.5, tree.trunkHeight, 0.5]} />
+                        <meshBasicMaterial color={colors.trunk} />
+                    </mesh>
 
-                    {/* Leaves (if not dead tree) */}
-                    {colors.leaves.length > 0 && (
-                        <group position={[0, tree.trunkHeight * 0.5, 0]}>
-                            {/* Center leaves */}
-                            <mesh position={[0, 0.5, 0]}>
-                                <boxGeometry args={[tree.leavesSize, tree.leavesSize, tree.leavesSize]} />
-                                <meshStandardMaterial
-                                    color={colors.leaves[0]}
-                                    roughness={0.8}
-                                />
-                            </mesh>
-                            {/* Top leaves */}
-                            <mesh position={[0, tree.leavesSize * 0.5 + 0.5, 0]}>
-                                <boxGeometry args={[tree.leavesSize * 0.6, tree.leavesSize * 0.6, tree.leavesSize * 0.6]} />
-                                <meshStandardMaterial
-                                    color={colors.leaves[1] || colors.leaves[0]}
-                                    roughness={0.8}
-                                />
-                            </mesh>
-                            {/* Random leaf blocks */}
-                            {[...Array(6)].map((_, j) => (
-                                <mesh
-                                    key={`leaf-${j}`}
-                                    position={[
-                                        (Math.random() - 0.5) * tree.leavesSize * 1.2,
-                                        Math.random() * tree.leavesSize * 0.5,
-                                        (Math.random() - 0.5) * tree.leavesSize * 1.2
-                                    ]}
-                                >
-                                    <boxGeometry args={[0.5, 0.5, 0.5]} />
-                                    <meshStandardMaterial
-                                        color={colors.leaves[Math.floor(Math.random() * colors.leaves.length)]}
-                                        roughness={0.8}
-                                    />
-                                </mesh>
-                            ))}
-                        </group>
+                    {/* Leaves (if not dead tree) - single block */}
+                    {colors.leaves && (
+                        <mesh position={[0, tree.trunkHeight + tree.leavesSize / 2, 0]}>
+                            <boxGeometry args={[tree.leavesSize, tree.leavesSize, tree.leavesSize]} />
+                            <meshBasicMaterial color={colors.leaves} />
+                        </mesh>
                     )}
                 </group>
             ))}
@@ -230,7 +178,7 @@ export const VoxelTrees: React.FC<VoxelTreesProps> = ({
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 🌸 TERRAIN FLOWERS - Renkli çiçekler
+// 🌸 TERRAIN FLOWERS - Renkli çiçekler (OPTIMIZED - static)
 // ═══════════════════════════════════════════════════════════════════════════
 export interface TerrainFlowersProps {
     count?: number;
@@ -239,232 +187,101 @@ export interface TerrainFlowersProps {
     flowerTypes?: ('red' | 'yellow' | 'blue' | 'pink' | 'white' | 'purple')[];
 }
 
-const FLOWER_COLORS: Record<string, { petal: string; center: string; stem: string }> = {
-    red: { petal: '#ef4444', center: '#fbbf24', stem: '#22c55e' },
-    yellow: { petal: '#facc15', center: '#f97316', stem: '#16a34a' },
-    blue: { petal: '#3b82f6', center: '#fbbf24', stem: '#15803d' },
-    pink: { petal: '#ec4899', center: '#fbbf24', stem: '#22c55e' },
-    white: { petal: '#f8fafc', center: '#fbbf24', stem: '#16a34a' },
-    purple: { petal: '#a855f7', center: '#fbbf24', stem: '#15803d' },
+const FLOWER_COLORS: Record<string, string> = {
+    red: '#ef4444',
+    yellow: '#facc15',
+    blue: '#3b82f6',
+    pink: '#ec4899',
+    white: '#f8fafc',
+    purple: '#a855f7',
 };
 
 export const TerrainFlowers: React.FC<TerrainFlowersProps> = ({
-    count = 100,
+    count = 30, // REDUCED from 100
     radius = 40,
     centerPosition = [0, 0, 0],
-    flowerTypes = ['red', 'yellow', 'blue', 'pink', 'white', 'purple']
+    flowerTypes = ['red', 'yellow', 'blue', 'pink']
 }) => {
     const flowers = useMemo(() => {
         return Array.from({ length: count }).map(() => {
             const type = flowerTypes[Math.floor(Math.random() * flowerTypes.length)];
-            const colors = FLOWER_COLORS[type];
             return {
                 x: centerPosition[0] + (Math.random() - 0.5) * radius * 2,
                 z: centerPosition[2] + (Math.random() - 0.5) * radius * 2,
-                stemHeight: 0.15 + Math.random() * 0.2,
-                ...colors,
+                color: FLOWER_COLORS[type] || '#ef4444',
             };
         });
     }, [count, radius, centerPosition, flowerTypes]);
 
-    const groupRef = useRef<THREE.Group>(null);
-
-    // Çiçek sallanma
-    useFrame(({ clock }) => {
-        if (!groupRef.current) return;
-        const time = clock.getElapsedTime();
-
-        groupRef.current.children.forEach((child, i) => {
-            if (child instanceof THREE.Group) {
-                child.rotation.x = Math.sin(time * 1.5 + i * 0.1) * 0.05;
-                child.rotation.z = Math.cos(time * 1.5 + i * 0.1) * 0.05;
-            }
-        });
-    });
-
+    // No animation - static flowers
     return (
-        <group ref={groupRef}>
+        <group>
             {flowers.map((flower, i) => (
-                <group key={i} position={[flower.x, 0, flower.z]}>
-                    {/* Stem */}
-                    <mesh position={[0, flower.stemHeight / 2, 0]}>
-                        <boxGeometry args={[0.03, flower.stemHeight, 0.03]} />
-                        <meshBasicMaterial color={flower.stem} />
-                    </mesh>
-                    {/* Flower head */}
-                    <mesh position={[0, flower.stemHeight + 0.04, 0]}>
-                        <boxGeometry args={[0.08, 0.08, 0.08]} />
-                        <meshBasicMaterial color={flower.petal} />
-                    </mesh>
-                    {/* Center */}
-                    <mesh position={[0, flower.stemHeight + 0.06, 0]}>
-                        <boxGeometry args={[0.04, 0.04, 0.04]} />
-                        <meshBasicMaterial color={flower.center} />
-                    </mesh>
-                </group>
+                <mesh key={i} position={[flower.x, 0.15, flower.z]}>
+                    <boxGeometry args={[0.1, 0.3, 0.1]} />
+                    <meshBasicMaterial color={flower.color} />
+                </mesh>
             ))}
         </group>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 🌊 WATER POOL - Su gölcüğü
+// 🌊 WATER POOL - Su gölcüğü (OPTIMIZED - no animation)
 // ═══════════════════════════════════════════════════════════════════════════
 export interface WaterPoolProps {
     position?: [number, number, number];
     size?: [number, number];
-    depth?: number;
 }
 
 export const WaterPool: React.FC<WaterPoolProps> = ({
     position = [0, 0, 0],
-    size = [5, 5],
-    depth = 0.3
+    size = [5, 5]
 }) => {
-    const meshRef = useRef<THREE.Mesh>(null);
-
-    useFrame(({ clock }) => {
-        if (!meshRef.current) return;
-        const material = meshRef.current.material as THREE.MeshBasicMaterial;
-        material.opacity = 0.6 + Math.sin(clock.getElapsedTime() * 2) * 0.1;
-    });
-
     return (
         <group position={position}>
             {/* Water surface */}
-            <mesh ref={meshRef} position={[0, -depth / 2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <mesh position={[0, -0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
                 <planeGeometry args={size} />
                 <meshBasicMaterial
                     color="#38bdf8"
                     transparent
-                    opacity={0.7}
+                    opacity={0.6}
                     blending={THREE.AdditiveBlending}
                 />
             </mesh>
-            {/* Pool edges */}
-            {[
-                [0, 0, size[1] / 2],
-                [0, 0, -size[1] / 2],
-                [size[0] / 2, 0, 0],
-                [-size[0] / 2, 0, 0],
-            ].map((pos, i) => (
-                <mesh
-                    key={i}
-                    position={[pos[0] as number, -0.1, pos[2] as number]}
-                >
-                    <boxGeometry args={[
-                        i < 2 ? size[0] + 0.4 : 0.4,
-                        0.3,
-                        i < 2 ? 0.4 : size[1] + 0.4
-                    ]} />
-                    <meshStandardMaterial color="#0284c7" roughness={0.7} />
-                </mesh>
-            ))}
         </group>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 🔥 LAVA POOL - Lav gölcüğü
+// 🔥 LAVA POOL - Lav gölcüğü (OPTIMIZED - no animation)
 // ═══════════════════════════════════════════════════════════════════════════
 export interface LavaPoolProps {
     position?: [number, number, number];
     size?: [number, number];
-    depth?: number;
 }
 
 export const LavaPool: React.FC<LavaPoolProps> = ({
     position = [0, 0, 0],
-    size = [4, 4],
-    depth = 0.4
+    size = [4, 4]
 }) => {
-    const meshRef = useRef<THREE.Mesh>(null);
-    const bubblesRef = useRef<THREE.Group>(null);
-
-    useFrame(({ clock }) => {
-        if (!meshRef.current) return;
-        const material = meshRef.current.material as THREE.MeshBasicMaterial;
-        material.color.setHSL(
-            0.05 + Math.sin(clock.getElapsedTime()) * 0.02,
-            1,
-            0.5
-        );
-
-        // Bubble animation
-        if (bubblesRef.current) {
-            bubblesRef.current.children.forEach((bubble, i) => {
-                if (bubble instanceof THREE.Mesh) {
-                    bubble.position.y = Math.sin(clock.getElapsedTime() * 2 + i) * 0.1;
-                    bubble.scale.setScalar(0.8 + Math.sin(clock.getElapsedTime() * 3 + i * 0.5) * 0.2);
-                }
-            });
-        }
-    });
-
-    const bubblePositions = useMemo(() => {
-        return Array.from({ length: 8 }).map(() => ({
-            x: (Math.random() - 0.5) * (size[0] - 0.5),
-            z: (Math.random() - 0.5) * (size[1] - 0.5),
-        }));
-    }, [size]);
-
     return (
         <group position={position}>
             {/* Lava surface */}
-            <mesh ref={meshRef} position={[0, -depth / 2, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <mesh position={[0, -0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
                 <planeGeometry args={size} />
-                <meshBasicMaterial
-                    color="#f97316"
-                    blending={THREE.AdditiveBlending}
-                />
+                <meshBasicMaterial color="#f97316" />
             </mesh>
-
-            {/* Lava bubbles */}
-            <group ref={bubblesRef}>
-                {bubblePositions.map((pos, i) => (
-                    <mesh key={i} position={[pos.x, -depth / 4, pos.z]}>
-                        <sphereGeometry args={[0.15, 8, 8]} />
-                        <meshBasicMaterial
-                            color="#fbbf24"
-                            transparent
-                            opacity={0.8}
-                        />
-                    </mesh>
-                ))}
-            </group>
-
-            {/* Pool edges (obsidian-like) */}
-            {[
-                [0, 0, size[1] / 2],
-                [0, 0, -size[1] / 2],
-                [size[0] / 2, 0, 0],
-                [-size[0] / 2, 0, 0],
-            ].map((pos, i) => (
-                <mesh
-                    key={i}
-                    position={[pos[0] as number, -0.1, pos[2] as number]}
-                >
-                    <boxGeometry args={[
-                        i < 2 ? size[0] + 0.6 : 0.6,
-                        0.4,
-                        i < 2 ? 0.6 : size[1] + 0.6
-                    ]} />
-                    <meshStandardMaterial
-                        color="#1c1917"
-                        roughness={0.3}
-                        metalness={0.5}
-                    />
-                </mesh>
-            ))}
-
             {/* Glow light */}
-            <pointLight position={[0, 0.5, 0]} color="#ff6600" intensity={2} distance={8} />
+            <pointLight position={[0, 0.5, 0]} color="#ff6600" intensity={1} distance={5} />
         </group>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🏔️ COMPLETE VOXEL TERRAIN - Tüm elemanları birleştiren ana component
+// OPTIMIZED: Daha az nesne, statik render, performans odaklı
 // ═══════════════════════════════════════════════════════════════════════════
 export interface VoxelTerrainProps {
     zoneType?: 'forest' | 'desert' | 'snow' | 'lava' | 'void';
@@ -477,53 +294,54 @@ export interface VoxelTerrainProps {
 export const VoxelTerrain: React.FC<VoxelTerrainProps> = ({
     zoneType = 'forest',
     radius = 50,
-    density = 'medium',
-    includeWater = true,
+    density = 'low', // DEFAULT TO LOW for performance
+    includeWater = false, // DEFAULT TO FALSE
     includeLava = false
 }) => {
-    const densityMultiplier = density === 'low' ? 0.5 : density === 'high' ? 1.5 : 1;
+    // Much lower multipliers
+    const densityMultiplier = density === 'low' ? 0.3 : density === 'high' ? 0.8 : 0.5;
 
     const config = useMemo(() => {
         switch (zoneType) {
             case 'forest':
                 return {
-                    grassCount: Math.floor(500 * densityMultiplier),
-                    treeCount: Math.floor(20 * densityMultiplier),
-                    flowerCount: Math.floor(100 * densityMultiplier),
-                    blockCount: Math.floor(25 * densityMultiplier),
+                    grassCount: Math.floor(100 * densityMultiplier),
+                    treeCount: Math.floor(6 * densityMultiplier),
+                    flowerCount: Math.floor(20 * densityMultiplier),
+                    blockCount: Math.floor(10 * densityMultiplier),
                     treeType: 'oak' as const,
                     blockType: 'grass' as const,
-                    grassColors: ['#22c55e', '#16a34a', '#15803d', '#166534'],
-                    flowerTypes: ['red', 'yellow', 'blue', 'pink'] as const,
+                    grassColors: ['#22c55e', '#16a34a', '#15803d'],
+                    flowerTypes: ['red', 'yellow', 'blue'] as const,
                 };
             case 'desert':
                 return {
-                    grassCount: Math.floor(50 * densityMultiplier),
-                    treeCount: Math.floor(5 * densityMultiplier),
-                    flowerCount: Math.floor(20 * densityMultiplier),
-                    blockCount: Math.floor(40 * densityMultiplier),
+                    grassCount: Math.floor(20 * densityMultiplier),
+                    treeCount: Math.floor(2 * densityMultiplier),
+                    flowerCount: Math.floor(10 * densityMultiplier),
+                    blockCount: Math.floor(15 * densityMultiplier),
                     treeType: 'dead' as const,
                     blockType: 'sand' as const,
-                    grassColors: ['#fcd34d', '#fbbf24', '#f59e0b'],
-                    flowerTypes: ['yellow', 'red'] as const,
+                    grassColors: ['#fcd34d', '#fbbf24'],
+                    flowerTypes: ['yellow'] as const,
                 };
             case 'snow':
                 return {
-                    grassCount: Math.floor(200 * densityMultiplier),
-                    treeCount: Math.floor(15 * densityMultiplier),
-                    flowerCount: Math.floor(30 * densityMultiplier),
-                    blockCount: Math.floor(30 * densityMultiplier),
+                    grassCount: Math.floor(80 * densityMultiplier),
+                    treeCount: Math.floor(5 * densityMultiplier),
+                    flowerCount: Math.floor(15 * densityMultiplier),
+                    blockCount: Math.floor(12 * densityMultiplier),
                     treeType: 'pine' as const,
                     blockType: 'snow' as const,
-                    grassColors: ['#e0f2fe', '#bae6fd', '#7dd3fc'],
+                    grassColors: ['#e0f2fe', '#bae6fd'],
                     flowerTypes: ['white', 'blue'] as const,
                 };
             case 'lava':
                 return {
                     grassCount: 0,
-                    treeCount: Math.floor(5 * densityMultiplier),
+                    treeCount: Math.floor(2 * densityMultiplier),
                     flowerCount: 0,
-                    blockCount: Math.floor(50 * densityMultiplier),
+                    blockCount: Math.floor(20 * densityMultiplier),
                     treeType: 'dead' as const,
                     blockType: 'lava' as const,
                     grassColors: [],
@@ -531,21 +349,21 @@ export const VoxelTerrain: React.FC<VoxelTerrainProps> = ({
                 };
             case 'void':
                 return {
-                    grassCount: Math.floor(100 * densityMultiplier),
-                    treeCount: Math.floor(8 * densityMultiplier),
-                    flowerCount: Math.floor(50 * densityMultiplier),
-                    blockCount: Math.floor(20 * densityMultiplier),
+                    grassCount: Math.floor(50 * densityMultiplier),
+                    treeCount: Math.floor(4 * densityMultiplier),
+                    flowerCount: Math.floor(25 * densityMultiplier),
+                    blockCount: Math.floor(8 * densityMultiplier),
                     treeType: 'cherry' as const,
                     blockType: 'stone' as const,
-                    grassColors: ['#a855f7', '#9333ea', '#7c3aed'],
+                    grassColors: ['#a855f7', '#9333ea'],
                     flowerTypes: ['purple', 'pink'] as const,
                 };
             default:
                 return {
-                    grassCount: 500,
-                    treeCount: 15,
-                    flowerCount: 100,
-                    blockCount: 25,
+                    grassCount: 50,
+                    treeCount: 5,
+                    flowerCount: 20,
+                    blockCount: 10,
                     treeType: 'oak' as const,
                     blockType: 'grass' as const,
                     grassColors: ['#22c55e', '#16a34a'],
@@ -566,11 +384,13 @@ export const VoxelTerrain: React.FC<VoxelTerrainProps> = ({
             )}
 
             {/* Terrain Blocks */}
-            <TerrainBlocks
-                count={config.blockCount}
-                radius={radius}
-                type={config.blockType}
-            />
+            {config.blockCount > 0 && (
+                <TerrainBlocks
+                    count={config.blockCount}
+                    radius={radius}
+                    type={config.blockType}
+                />
+            )}
 
             {/* Trees */}
             {config.treeCount > 0 && (
@@ -590,25 +410,19 @@ export const VoxelTerrain: React.FC<VoxelTerrainProps> = ({
                 />
             )}
 
-            {/* Water pools */}
+            {/* Water pools - only if explicitly enabled */}
             {includeWater && zoneType !== 'lava' && (
                 <>
-                    <WaterPool position={[15, 0, 10]} size={[6, 4]} />
-                    <WaterPool position={[-20, 0, -15]} size={[4, 6]} />
+                    <WaterPool position={[15, 0, 10]} size={[5, 4]} />
                 </>
             )}
 
-            {/* Lava pools */}
+            {/* Lava pools - only if explicitly enabled or lava zone */}
             {(includeLava || zoneType === 'lava') && (
                 <>
-                    <LavaPool position={[10, 0, -10]} size={[5, 5]} />
-                    <LavaPool position={[-15, 0, 20]} size={[4, 3]} />
+                    <LavaPool position={[10, 0, -10]} size={[4, 4]} />
                     {zoneType === 'lava' && (
-                        <>
-                            <LavaPool position={[0, 0, 0]} size={[8, 8]} />
-                            <LavaPool position={[25, 0, 5]} size={[6, 4]} />
-                            <LavaPool position={[-25, 0, -5]} size={[5, 6]} />
-                        </>
+                        <LavaPool position={[-15, 0, 15]} size={[5, 5]} />
                     )}
                 </>
             )}

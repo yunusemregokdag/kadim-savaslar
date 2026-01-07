@@ -35,7 +35,7 @@ import { SKILL_ASSETS } from './SkillAssetRegistry';
 import { CharacterClass } from '../types';
 import ChatSystem from './ChatSystem';
 import { Ground } from './ZoneEnvironment';
-import { VoxelTerrain } from './VoxelTerrain';
+// import { VoxelTerrain } from './VoxelTerrain'; // DISABLED - causing floating objects
 import SchematicMap from './SchematicMap';
 import { GameGuideModal } from './GameGuideModal';
 import { NPCInteractionModal, NPC_REGISTRY } from './NPCInteractionModal';
@@ -1756,28 +1756,7 @@ const GameScene: React.FC<GameSceneProps> = ({
 
             <Ground color={zoneColor} zoneId={zoneId} showGrid={false} />
 
-            {/* 🌲 VOXEL TERRAIN - Minecraft Legends Style (TEMPORARILY DISABLED - will optimize) */}
-            {/* 
-            <VoxelTerrain
-                zoneType={
-                    // Fire zones (Marsu)
-                    (zoneColor === '#450a0a' || zoneColor === '#7f1d1d' || zoneColor === '#991b1b') ? 'lava' :
-                        // Ice zones (Terya)
-                        (zoneColor === '#172554' || zoneColor === '#1e3a8a' || zoneColor === '#1e40af') ? 'snow' :
-                            // Nature zones (Venu)
-                            (zoneColor === '#14532d' || zoneColor === '#166534' || zoneColor === '#15803d') ? 'forest' :
-                                // Void zones
-                                (zoneColor === '#3b0764' || zoneColor === '#581c87') ? 'void' :
-                                    // Default
-                                    'forest'
-                }
-                radius={borderLimit - 10}
-                density="medium"
-                includeWater={zoneColor !== '#450a0a' && zoneColor !== '#7f1d1d'}
-                includeLava={zoneColor === '#450a0a' || zoneColor === '#7f1d1d' || zoneColor === '#991b1b'}
-            />
-            */}
-
+            {/* 🌲 VOXEL TERRAIN - DISABLED (causing floating objects bug) */}
 
             <GameVFXOverlay />
             <BorderWalls limit={borderLimit} />

@@ -1756,7 +1756,8 @@ const GameScene: React.FC<GameSceneProps> = ({
 
             <Ground color={zoneColor} zoneId={zoneId} showGrid={false} />
 
-            {/* 🌲 VOXEL TERRAIN - Minecraft Legends Style */}
+            {/* 🌲 VOXEL TERRAIN - Minecraft Legends Style (TEMPORARILY DISABLED - will optimize) */}
+            {/* 
             <VoxelTerrain
                 zoneType={
                     // Fire zones (Marsu)
@@ -1775,6 +1776,8 @@ const GameScene: React.FC<GameSceneProps> = ({
                 includeWater={zoneColor !== '#450a0a' && zoneColor !== '#7f1d1d'}
                 includeLava={zoneColor === '#450a0a' || zoneColor === '#7f1d1d' || zoneColor === '#991b1b'}
             />
+            */}
+
 
             <GameVFXOverlay />
             <BorderWalls limit={borderLimit} />

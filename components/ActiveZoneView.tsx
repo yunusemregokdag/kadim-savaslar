@@ -1089,17 +1089,27 @@ const GameScene: React.FC<GameSceneProps> = ({
         return () => clearTimeout(t);
     }, [zoneId]);
 
+    // Decoration generation - ONLY on zoneId change (stable)
     useEffect(() => {
+        // Seeded random for stable positions
+        const seededRandom = (seed: number) => {
+            const x = Math.sin(seed) * 10000;
+            return x - Math.floor(x);
+        };
+
         const items: any[] = [];
-        const count = 200; // INCREASED for richer, fuller environment
+        const count = 150; // Reduced for better performance
+
+        // Zone border based on zoneId
+        const zoneBorderLimit = 50; // Fixed value to prevent flickering
 
         // Define zone-specific decoration sets
         type DecorationType = 'tree' | 'rock' | 'crystal' | 'lava_pool' | 'mushroom' | 'small_rock' | 'ice_spike' | 'bush';
 
         let decorationTypes: { type: DecorationType, color: string, weight: number }[] = [];
 
-        // FIRE ZONES (Red colors) - Marsu
-        if (zoneColor === '#450a0a' || zoneColor === '#7f1d1d' || zoneColor === '#991b1b') {
+        // FIRE ZONES (Zone 12-18) - Marsu
+        if (zoneId >= 12 && zoneId <= 18) {
             decorationTypes = [
                 { type: 'rock', color: '#78350f', weight: 30 },
                 { type: 'lava_pool', color: '#ff4500', weight: 15 },
@@ -1107,8 +1117,8 @@ const GameScene: React.FC<GameSceneProps> = ({
                 { type: 'mushroom', color: '#ef4444', weight: 15 }
             ];
         }
-        // ICE/WATER ZONES (Blue colors) - Terya
-        else if (zoneColor === '#172554' || zoneColor === '#1e3a8a' || zoneColor === '#1e40af') {
+        // ICE/WATER ZONES (Zone 22-28) - Terya
+        else if (zoneId >= 22 && zoneId <= 28) {
             decorationTypes = [
                 { type: 'crystal', color: '#3b82f6', weight: 25 },
                 { type: 'ice_spike', color: '#a5f3fc', weight: 30 },
@@ -1116,8 +1126,8 @@ const GameScene: React.FC<GameSceneProps> = ({
                 { type: 'rock', color: '#334155', weight: 20 }
             ];
         }
-        // NATURE ZONES (Green colors) - Venu
-        else if (zoneColor === '#14532d' || zoneColor === '#166534' || zoneColor === '#15803d') {
+        // NATURE ZONES (Zone 32-38) - Venu
+        else if (zoneId >= 32 && zoneId <= 38) {
             decorationTypes = [
                 { type: 'tree', color: '#15803d', weight: 30 },
                 { type: 'bush', color: '#22c55e', weight: 25 },
@@ -1126,8 +1136,8 @@ const GameScene: React.FC<GameSceneProps> = ({
                 { type: 'rock', color: '#44403c', weight: 10 }
             ];
         }
-        // NEUTRAL/MIXED ZONES
-        else {
+        // BASE ZONES (11, 21, 31) - Safe zones
+        else if (zoneId === 11 || zoneId === 21 || zoneId === 31) {
             decorationTypes = [
                 { type: 'rock', color: '#57534e', weight: 25 },
                 { type: 'tree', color: '#3f2e18', weight: 20 },
@@ -1136,50 +1146,66 @@ const GameScene: React.FC<GameSceneProps> = ({
                 { type: 'mushroom', color: '#a16207', weight: 15 }
             ];
         }
-
-        // CZ Zone (44) - War zone with rocks and fire
-        if (zoneId === 44) {
+        // CZ Zone (44) - War zone
+        else if (zoneId === 44) {
             decorationTypes = [
                 { type: 'rock', color: '#78350f', weight: 35 },
                 { type: 'small_rock', color: '#451a03', weight: 30 },
                 { type: 'lava_pool', color: '#ff4500', weight: 10 },
-                { type: 'crystal', color: '#a855f7', weight: 25 } // Mystic crystals
+                { type: 'crystal', color: '#a855f7', weight: 25 }
+            ];
+        }
+        // Default
+        else {
+            decorationTypes = [
+                { type: 'rock', color: '#57534e', weight: 30 },
+                { type: 'small_rock', color: '#44403c', weight: 30 },
+                { type: 'bush', color: '#65a30d', weight: 20 },
+                { type: 'mushroom', color: '#a16207', weight: 20 }
             ];
         }
 
         // Calculate total weight for random selection
         const totalWeight = decorationTypes.reduce((sum, d) => sum + d.weight, 0);
 
-        // Helper function to pick random decoration type
-        const pickDecorationType = () => {
-            let random = Math.random() * totalWeight;
-            for (const deco of decorationTypes) {
-                random -= deco.weight;
-                if (random <= 0) return deco;
-            }
-            return decorationTypes[0];
-        };
-
         for (let i = 0; i < count; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const radius = 15 + Math.random() * (borderLimit - 20);
+            // Use seeded random based on zoneId and index for consistent positions
+            const seed = zoneId * 10000 + i;
+            const rand1 = seededRandom(seed);
+            const rand2 = seededRandom(seed + 1);
+            const rand3 = seededRandom(seed + 2);
+            const rand4 = seededRandom(seed + 3);
+            const rand5 = seededRandom(seed + 4);
+
+            const angle = rand1 * Math.PI * 2;
+            const radius = 15 + rand2 * (zoneBorderLimit - 20);
             const x = Math.cos(angle) * radius;
             const z = Math.sin(angle) * radius;
-            const scale = 0.6 + Math.random() * 1.0;
-            const rotation: [number, number, number] = [Math.random() * 0.2, Math.random() * Math.PI * 2, 0];
+            const scale = 0.6 + rand3 * 1.0;
+            const rotation: [number, number, number] = [rand4 * 0.2, rand5 * Math.PI * 2, 0];
 
-            const deco = pickDecorationType();
+            // Pick decoration type based on seeded random
+            let randomWeight = seededRandom(seed + 5) * totalWeight;
+            let selectedDeco = decorationTypes[0];
+            for (const deco of decorationTypes) {
+                randomWeight -= deco.weight;
+                if (randomWeight <= 0) {
+                    selectedDeco = deco;
+                    break;
+                }
+            }
+
             items.push({
-                id: `deco_${i}`,
-                type: deco.type,
+                id: `deco_${zoneId}_${i}`, // Include zoneId in key for stability
+                type: selectedDeco.type,
                 pos: [x, 0, z] as [number, number, number],
                 scale,
-                color: deco.color,
+                color: selectedDeco.color,
                 rotation
             });
         }
         setDecorations(items);
-    }, [zoneId, zoneColor, borderLimit]);
+    }, [zoneId]); // ONLY zoneId - no zoneColor or borderLimit
 
     const handleGather = (id: any, type: string, pos: any) => {
         if (!playerGroupRef.current) return;

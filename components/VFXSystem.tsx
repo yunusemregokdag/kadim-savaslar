@@ -347,7 +347,6 @@ export const GameVFXOverlay: React.FC<{
             }
         }
 
-        const matrix = new THREE.Matrix4();
         let particleRenderIdx = 0;
 
         // 2. Render PHYSICS Particles
@@ -389,8 +388,11 @@ export const GameVFXOverlay: React.FC<{
                 DUMMY_COLOR.setRGB(p.r, p.g, p.b);
                 meshRef.current.setColorAt(particleRenderIdx, DUMMY_COLOR);
             } else {
-                matrix.makeScale(0, 0, 0);
-                meshRef.current.setMatrixAt(particleRenderIdx, matrix);
+                // Move inactive particles FAR offscreen (scale 0 alone can still render as black dots)
+                DUMMY_OBJ.position.set(-9999, -9999, -9999);
+                DUMMY_OBJ.scale.set(0, 0, 0);
+                DUMMY_OBJ.updateMatrix();
+                meshRef.current.setMatrixAt(particleRenderIdx, DUMMY_OBJ.matrix);
             }
             particleRenderIdx++;
         }
@@ -456,15 +458,13 @@ export const GameVFXOverlay: React.FC<{
         });
 
         // Clear remaining slots (if any active last frame but not now)
-        // Not strictly necessary if we rely on next frame overwriting, but good for cleanup.
-        // Actually, InstancedMesh keeps old matrices if we don't overwrite them.
-        // So we must clear from particleRenderIdx to MAX_PARTICLES.
-        // Optimization: Just clear a reasonable buffer amount or track previous count. 
-        // For now, let's clear 100 slots ahead to be safe/lazy
+        // Move them far offscreen to prevent black pixel artifacts
         for (let k = 0; k < 100; k++) {
             if (particleRenderIdx + k < MAX_PARTICLES) {
-                matrix.makeScale(0, 0, 0);
-                meshRef.current.setMatrixAt(particleRenderIdx + k, matrix);
+                DUMMY_OBJ.position.set(-9999, -9999, -9999);
+                DUMMY_OBJ.scale.set(0, 0, 0);
+                DUMMY_OBJ.updateMatrix();
+                meshRef.current.setMatrixAt(particleRenderIdx + k, DUMMY_OBJ.matrix);
             }
         }
 

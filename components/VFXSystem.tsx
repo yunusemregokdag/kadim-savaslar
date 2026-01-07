@@ -187,14 +187,14 @@ export const GameVFXOverlay: React.FC<{
 
     const meshRef = useRef<THREE.InstancedMesh>(null);
 
-    // 1. Particle Pool (Physics)
+    // 1. Particle Pool (Physics) - Start ALL particles far offscreen
     const particles = useMemo<Particle[]>(() => {
         return new Array(MAX_PARTICLES).fill(0).map(() => ({
             active: false,
-            x: 0, y: 0, z: 0,
+            x: -9999, y: -9999, z: -9999, // Start offscreen to prevent black artifacts
             vx: 0, vy: 0, vz: 0,
             r: 1, g: 1, b: 1,
-            scale: 1,
+            scale: 0, // Start with 0 scale
             maxLife: 1,
             life: 0,
             type: 'cube'
@@ -221,6 +221,20 @@ export const GameVFXOverlay: React.FC<{
             }
         });
         return () => { unsub1(); unsub2(); };
+    }, []);
+
+    // 🔧 FIX: Initialize all particles FAR offscreen to prevent black pixel artifacts
+    useEffect(() => {
+        if (!meshRef.current) return;
+
+        const matrix = new THREE.Matrix4();
+        matrix.makeTranslation(-9999, -9999, -9999);
+        matrix.scale(new THREE.Vector3(0, 0, 0));
+
+        for (let i = 0; i < MAX_PARTICLES; i++) {
+            meshRef.current.setMatrixAt(i, matrix);
+        }
+        meshRef.current.instanceMatrix.needsUpdate = true;
     }, []);
 
     // --- LOGIC: SPAWN IMPACT ---

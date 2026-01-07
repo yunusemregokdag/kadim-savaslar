@@ -35,7 +35,7 @@ import { SKILL_ASSETS } from './SkillAssetRegistry';
 import { CharacterClass } from '../types';
 import ChatSystem from './ChatSystem';
 import { Ground } from './ZoneEnvironment';
-// import { VoxelTerrain } from './VoxelTerrain'; // DISABLED - causing floating objects
+import { VoxelTerrain } from './VoxelTerrain';
 import SchematicMap from './SchematicMap';
 import { GameGuideModal } from './GameGuideModal';
 import { NPCInteractionModal, NPC_REGISTRY } from './NPCInteractionModal';
@@ -1782,7 +1782,17 @@ const GameScene: React.FC<GameSceneProps> = ({
 
             <Ground color={zoneColor} zoneId={zoneId} showGrid={false} />
 
-            {/* 🌲 VOXEL TERRAIN - DISABLED (causing floating objects bug) */}
+            {/* 🌲 VOXEL TERRAIN - Minecraft Legends Style */}
+            <VoxelTerrain
+                zoneType={
+                    (zoneId >= 12 && zoneId <= 18) ? 'marsu' :    // Ateş Lejyonları
+                        (zoneId >= 22 && zoneId <= 28) ? 'terya' :    // Su Muhafızları  
+                            (zoneId >= 32 && zoneId <= 38) ? 'venu' :     // Doğa Bekçileri
+                                'neutral'                                      // Diğer
+                }
+                zoneId={zoneId}
+                radius={35}
+            />
 
             <GameVFXOverlay />
             <BorderWalls limit={borderLimit} />

@@ -3755,12 +3755,29 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
                 attachId
             );
 
-            if (!isPlayerCenteredSkill && targetPos) {
+            // Determine spawn position based on skill type
+            // PROJECTILE SKILLS (arrows, fireballs, etc.) should START at player
+            // BUFF/HEAL skills spawn on player
+            // IMPACT/AOE skills spawn at target
+            const isProjectileSkill = skill.type === 'damage' &&
+                (skill.visual?.includes('arrow') ||
+                    skill.visual?.includes('shot') ||
+                    skill.visual?.includes('javelin') ||
+                    skill.visual?.includes('fireball') ||
+                    skill.visual?.includes('bolt') ||
+                    skill.visual?.includes('dragon'));
 
-                console.log("DEBUG: Spawning at TargetPos (Enemy)", targetPos);
-                effectPos = targetPos;
-            } else {
+            if (isPlayerCenteredSkill) {
+                // Buff/Heal: spawn at player
                 console.log("DEBUG: Spawning at Player (Buff/Shield)", effectPos);
+            } else if (isProjectileSkill) {
+                // Projectile: start at player, will travel to target
+                effectPos = [px, 0.5, pz];
+                console.log("DEBUG: Projectile from Player to Target", effectPos, "->", targetPos);
+            } else if (targetPos) {
+                // Impact/AOE: spawn at target
+                console.log("DEBUG: Spawning at Target (Impact)", targetPos);
+                effectPos = targetPos;
             }
 
             console.log("DEBUG Skill Spawn:", { id: skill.id, visual: skill.visual, pos: effectPos, target: effectiveTarget?.id });

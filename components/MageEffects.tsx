@@ -9,6 +9,279 @@ import { useFrame } from '@react-three/fiber';
 import { Instances, Instance } from '@react-three/drei';
 
 // ═══════════════════════════════════════════════════════════════════════════
+// 🎨 PIXEL FX MASTER SHADER - Parçalı ve dağılan pixel efekti
+// ═══════════════════════════════════════════════════════════════════════════
+const PixelFXMaterial = {
+    uniforms: {
+        uTime: { value: 0 },
+        uColor: { value: new THREE.Color("#bc13fe") },
+        uSize: { value: 15.0 },
+    },
+    vertexShader: `
+        uniform float uTime;
+        uniform float uSize;
+        varying float vOpacity;
+        
+        float hash(float n) { return fract(sin(n) * 43758.5453123); }
+
+        void main() {
+            vec3 pos = position;
+            float id = hash(float(gl_VertexID));
+            
+            pos.x += sin(uTime * 2.0 + id * 10.0) * 0.1;
+            pos.y += cos(uTime * 3.0 + id * 5.0) * 0.1;
+            
+            vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+            gl_PointSize = uSize * (1.0 / -mvPosition.z) * (0.5 + id); 
+            gl_Position = projectionMatrix * mvPosition;
+            vOpacity = 0.5 + 0.5 * sin(uTime * 5.0 + id * 10.0);
+        }
+    `,
+    fragmentShader: `
+        uniform vec3 uColor;
+        varying float vOpacity;
+        void main() {
+            vec2 cxy = 2.0 * gl_PointCoord - 1.0;
+            float r = max(abs(cxy.x), abs(cxy.y));
+            if (r > 1.0) discard;
+            
+            gl_FragColor = vec4(uColor * 2.5, vOpacity);
+        }
+    `
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🔮 ARCANE ORB FX - Mor pixel parçacıkları (500 adet)
+// ═══════════════════════════════════════════════════════════════════════════
+export const ArcaneOrbFXEffect: React.FC<{
+    position: [number, number, number];
+    targetPosition?: [number, number, number];
+    onComplete: () => void;
+}> = ({ position, targetPosition, onComplete }) => {
+    const pointsRef = useRef<THREE.Points>(null);
+    const startTime = useRef(Date.now());
+    const duration = 1200;
+    const progressRef = useRef(0);
+    const count = 500;
+
+    const direction = useMemo(() => {
+        if (targetPosition) {
+            return new THREE.Vector3(targetPosition[0] - position[0], 0, targetPosition[2] - position[2]).normalize();
+        }
+        return new THREE.Vector3(0, 0, 1);
+    }, [position, targetPosition]);
+
+    const particles = useMemo(() => {
+        const p = new Float32Array(count * 3);
+        for (let i = 0; i < count; i++) {
+            const r = Math.random() * 0.5;
+            const theta = Math.random() * Math.PI * 2;
+            p[i * 3] = r * Math.cos(theta);
+            p[i * 3 + 1] = r * Math.sin(theta);
+            p[i * 3 + 2] = (Math.random() - 0.5) * 0.2;
+        }
+        return p;
+    }, []);
+
+    const shaderMaterial = useMemo(() => new THREE.ShaderMaterial({
+        uniforms: {
+            uTime: { value: 0 },
+            uColor: { value: new THREE.Color("#bc13fe") },
+            uSize: { value: 15.0 },
+        },
+        vertexShader: PixelFXMaterial.vertexShader,
+        fragmentShader: PixelFXMaterial.fragmentShader,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+    }), []);
+
+    useFrame((state) => {
+        if (!pointsRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        shaderMaterial.uniforms.uTime.value = state.clock.elapsedTime;
+
+        // Hedefe doğru hareket
+        const distance = progress * 20;
+        pointsRef.current.position.set(
+            position[0] + direction.x * distance,
+            position[1] + 0.8,
+            position[2] + direction.z * distance
+        );
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <points ref={pointsRef} position={position}>
+            <bufferGeometry>
+                <bufferAttribute attach="attributes-position" count={count} array={particles} itemSize={3} />
+            </bufferGeometry>
+            <primitive object={shaderMaterial} attach="material" />
+        </points>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ⏳ ZAMAN BÜKÜM FX - Altın sarısı dönen saat çarkları
+// ═══════════════════════════════════════════════════════════════════════════
+export const ZamanBukumFXEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
+    followPlayer?: boolean;
+}> = ({ position, onComplete, playerGroupRef, followPlayer = false }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const ringRefs = useRef<THREE.Mesh[]>([]);
+    const startTime = useRef(Date.now());
+    const duration = 3000;
+    const progressRef = useRef(0);
+
+    const shaderMaterials = useMemo(() => {
+        return [0, 1, 2].map(() => new THREE.ShaderMaterial({
+            uniforms: {
+                uTime: { value: 0 },
+                uColor: { value: new THREE.Color("#f1c40f") },
+                uSize: { value: 5.0 },
+            },
+            vertexShader: PixelFXMaterial.vertexShader,
+            fragmentShader: PixelFXMaterial.fragmentShader,
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+        }));
+    }, []);
+
+    useFrame((state) => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        groupRef.current.rotation.y += 0.02;
+
+        // Follow player
+        if (followPlayer && playerGroupRef?.current) {
+            const playerWorldPos = new THREE.Vector3();
+            playerGroupRef.current.getWorldPosition(playerWorldPos);
+            groupRef.current.position.copy(playerWorldPos);
+        }
+
+        shaderMaterials.forEach(mat => {
+            mat.uniforms.uTime.value = state.clock.elapsedTime;
+        });
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={position}>
+            {[0, 1, 2].map((i) => (
+                <mesh key={i} ref={(el) => { if (el) ringRefs.current[i] = el; }} rotation={[Math.PI / 2, 0, i]}>
+                    <ringGeometry args={[1.2 + i * 0.1, 1.25 + i * 0.1, 4, 1]} />
+                    <primitive object={shaderMaterials[i]} attach="material" />
+                </mesh>
+            ))}
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ☄️ KIYAMET ULTI FX - Dev mor girdap + meteorlar
+// ═══════════════════════════════════════════════════════════════════════════
+export const KiyametUltiFXEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
+    followPlayer?: boolean;
+}> = ({ position, onComplete }) => {
+    const meshRef = useRef<THREE.Mesh>(null);
+    const groupRef = useRef<THREE.Group>(null);
+    const startTime = useRef(Date.now());
+    const duration = 5000;
+    const progressRef = useRef(0);
+
+    const vortexMaterial = useMemo(() => new THREE.ShaderMaterial({
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+        uniforms: {
+            uTime: { value: 0 },
+            uColor: { value: new THREE.Color("#6200ff") }
+        },
+        vertexShader: `
+            varying vec2 vUv;
+            void main() {
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `,
+        fragmentShader: `
+            varying vec2 vUv;
+            uniform float uTime;
+            uniform vec3 uColor;
+            void main() {
+                vec2 uv = vUv - 0.5;
+                float d = length(uv);
+                float spiral = sin(d * 50.0 - uTime * 10.0);
+                float mask = smoothstep(0.5, 0.2, d);
+                gl_FragColor = vec4(uColor * 3.0, step(0.8, spiral) * mask * (1.0 - d));
+            }
+        `
+    }), []);
+
+    useFrame((state) => {
+        if (!meshRef.current || !groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        vortexMaterial.uniforms.uTime.value = state.clock.elapsedTime;
+        meshRef.current.rotation.z -= 0.01;
+
+        // Kamera sarsıntısı
+        if (progress < 0.5) {
+            const shake = (1 - progress * 2) * 0.15;
+            state.camera.position.x += Math.sin(elapsed * 0.02) * shake;
+            state.camera.position.y += Math.sin(elapsed * 0.015) * shake;
+        }
+
+        if (progress >= 1) onComplete();
+    });
+
+    // Meteor pozisyonları
+    const meteorPositions = useMemo(() => [
+        [2, 10, 0] as [number, number, number],
+        [-3, 12, 2] as [number, number, number],
+        [4, 11, -1] as [number, number, number],
+    ], []);
+
+    return (
+        <group ref={groupRef} position={[position[0], 0.1, position[2]]}>
+            {/* Yerdeki Girdap */}
+            <mesh ref={meshRef} rotation={[-Math.PI / 2, 0, 0]}>
+                <planeGeometry args={[15, 15]} />
+                <primitive object={vortexMaterial} attach="material" />
+            </mesh>
+
+            {/* Düşen Meteorlar */}
+            {meteorPositions.map((pos, i) => (
+                <mesh key={i} position={[pos[0], pos[1] - progressRef.current * 12, pos[2]]}>
+                    <sphereGeometry args={[0.4, 8, 8]} />
+                    <meshStandardMaterial color="#ff4400" emissive="#ff2200" emissiveIntensity={2} />
+                </mesh>
+            ))}
+
+            <pointLight position={[0, 3, 0]} color="#6200ff" intensity={10} distance={20} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
 // SHADER NOISE FUNCTION
 // ═══════════════════════════════════════════════════════════════════════════
 const noiseFunction = `
@@ -1079,13 +1352,18 @@ export const ApocalypseEffect: React.FC<{
 // MAGE SKILL MAP
 // ═══════════════════════════════════════════════════════════════════════════
 export const MAGE_EFFECTS: Record<string, React.FC<any>> = {
-    // ✅ CONSTANTS.TS VISUAL KEYS (GERÇEK KEY'LER) - SHADER VERSİYONLARI
-    archmage_bolt: ArcaneOrbShaderEffect,      // am1 - Arcane Küresi (Shader)
-    archmage_impact: TimeWarpEffect,           // am2 - Zaman Bükülmesi
-    archmage_void: PolymorphShaderEffect,      // am3 - Polimorf (Shader)
+    // ✅ CONSTANTS.TS VISUAL KEYS - YENİ PIXEL FX VERSİYONLARI
+    archmage_bolt: ArcaneOrbFXEffect,          // am1 - Arcane Küresi (500 Pixel Particles)
+    archmage_impact: ZamanBukumFXEffect,       // am2 - Zaman Bükülmesi (Altın Halkalar)
+    archmage_void: PolymorphShaderEffect,      // am3 - Polimorf (Gökkuşağı)
     archmage_meteor: StarfallEffect,           // am5 - Yıldız Yağmuru
-    archmage_blizzard: ManaZapShaderEffect,    // am6 - Mana Patlaması (Shader)
-    archmage_apocalypse: DoomShaderEffect,     // am7 - Kıyamet (Shader)
+    archmage_blizzard: ManaZapShaderEffect,    // am6 - Mana Patlaması (Yıldırım)
+    archmage_apocalypse: KiyametUltiFXEffect,  // am7 - Kıyamet (Girdap + Meteorlar)
+
+    // Yeni FX efektleri
+    arcane_orb_fx: ArcaneOrbFXEffect,
+    zaman_bukum_fx: ZamanBukumFXEffect,
+    kiyamet_fx: KiyametUltiFXEffect,
 
     // Yeni pixel element efektleri
     fireball_effect: FireballEffect,
@@ -1102,14 +1380,14 @@ export const MAGE_EFFECTS: Record<string, React.FC<any>> = {
     mana_zap_shader: ManaZapShaderEffect,
 
     // Eski key'ler (backward compat)
-    arcane_orb: ArcaneOrbShaderEffect,
+    arcane_orb: ArcaneOrbFXEffect,
     frost_shard: FrostShardEffect,
     magic_missile: MagicMissileEffect,
-    time_warp: TimeWarpEffect,
+    time_warp: ZamanBukumFXEffect,
     polymorph: PolymorphShaderEffect,
     starfall: StarfallEffect,
     mana_blast: ManaZapShaderEffect,
-    apocalypse: DoomShaderEffect,
+    apocalypse: KiyametUltiFXEffect,
 
     // Components/constants.ts keys
     fireball: FireballEffect,
@@ -1122,7 +1400,7 @@ export const MAGE_EFFECTS: Record<string, React.FC<any>> = {
     // Root constants.ts visual keys
     mage_fireball: FireballEffect,
     mage_ice: IceBlockEffect,
-    mage_arcane: ArcaneOrbShaderEffect,
+    mage_arcane: ArcaneOrbFXEffect,
     mage_blink: TeleportEffect,
     mage_storm: ArcaneStormEffect,
 
@@ -1131,10 +1409,10 @@ export const MAGE_EFFECTS: Record<string, React.FC<any>> = {
     ice: IceBlockEffect,
     blink: TeleportEffect,
     bolt: LightningEffect,
-    arcane: ArcaneOrbShaderEffect,
+    arcane: ArcaneOrbFXEffect,
     storm: ArcaneStormEffect,
-    missile: ArcaneOrbShaderEffect,
-    doom: DoomShaderEffect,
+    missile: ArcaneOrbFXEffect,
+    doom: KiyametUltiFXEffect,
     zap: ManaZapShaderEffect,
 };
 

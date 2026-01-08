@@ -3692,21 +3692,34 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         }
 
         // MELEE vs RANGED skill range check
-        const isMeleeClass = ['warrior', 'martial_artist', 'reaper', 'arctic_knight'].includes(playerState.classId || '');
+        const isMeleeClass = ['warrior', 'martial_artist', 'reaper', 'arctic_knight', 'gale_glaive'].includes(playerState.class || '');
+        const isRangedClass = ['archer', 'archmage', 'healer', 'bard', 'monk'].includes(playerState.class || '');
+
         const isMeleeSkill = skill.type === 'damage' && !skill.visual?.includes('range') &&
             !skill.visual?.includes('arrow') && !skill.visual?.includes('bolt') &&
             !skill.visual?.includes('fireball') && !skill.visual?.includes('dragon') &&
             isMeleeClass;
 
-        if (isMeleeSkill && effectiveTarget) {
-            const meleeRange = 3; // Melee attack range
+        // Menzil limitleri
+        const MELEE_RANGE = 3;   // Yakın dövüş menzili
+        const RANGED_RANGE = 12; // Uzak saldırı menzili
+
+        if (effectiveTarget) {
             const dist = Math.sqrt(
                 Math.pow(effectiveTarget.x / 15 - playerPosRef.current.x, 2) +
                 Math.pow(effectiveTarget.y / 15 - playerPosRef.current.y, 2)
             );
-            if (dist > meleeRange) {
+
+            // Melee skill menzil kontrolü
+            if (isMeleeSkill && dist > MELEE_RANGE) {
                 addFloatingText("Hedef çok uzak!", playerPosRef.current.x, 2, playerPosRef.current.y, "text-yellow-400");
-                return; // Don't execute melee skill if target is too far
+                return;
+            }
+
+            // Ranged skill menzil kontrolü
+            if (!isMeleeSkill && isRangedClass && dist > RANGED_RANGE) {
+                addFloatingText("Menzil dışında!", playerPosRef.current.x, 2, playerPosRef.current.y, "text-orange-400");
+                return;
             }
         }
 

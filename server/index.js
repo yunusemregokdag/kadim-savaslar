@@ -9,6 +9,7 @@ import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 // ES Module fix for __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -26,11 +27,24 @@ app.get('/api/health', (req, res) => {
 
 // STATİK DOSYA SUNUMU CONFIG
 const DIST_PATH = path.join(__dirname, '../dist');
+
+// Dist klasörü var mı kontrol et
+let isDistAvailable = false;
+try {
+    if (fs.existsSync(DIST_PATH)) {
+        isDistAvailable = true;
+    }
+} catch (e) {
+    console.error('Dist check error:', e);
+}
+
 console.log('📂 Static Files Path:', DIST_PATH);
 console.log('🌍 Environment:', process.env.NODE_ENV);
+console.log('📦 Dist Available:', isDistAvailable);
 
-if (process.env.NODE_ENV === 'production') {
-    console.log('🚀 Production Mode: Serving static files from dist...');
+// EĞER DIST KLASÖRÜ VARSA OYUNU SUN (NODE_ENV ne olursa olsun!)
+if (process.env.NODE_ENV === 'production' || isDistAvailable) {
+    console.log('🚀 Serving Game Client (Frontend)...');
 
     app.use(express.static(DIST_PATH));
 
@@ -41,9 +55,9 @@ if (process.env.NODE_ENV === 'production') {
         res.sendFile(path.join(DIST_PATH, 'index.html'));
     });
 } else {
-    console.log('🔧 Development Mode: Backend API active');
+    console.log('🔧 Development Mode: Backend API active (No dist folder found)');
     app.get('/', (req, res) => {
-        res.send('Kadim Savaslar Backend is Running! 🚀 (Dev Mode)');
+        res.send('Kadim Savaslar Backend is Running! 🚀 (Dev Mode - Dist folder not found)');
     });
 }
 

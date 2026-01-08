@@ -1,42 +1,49 @@
 
-const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const { v4: uuidv4 } = require('uuid');
-const jwt = require('jsonwebtoken'); // Kullanıcı yetkilendirme için
-const { OAuth2Client } = require('google-auth-library'); // Google Auth
-const path = require('path'); // Path modülü eklendi
+import express from 'express';
+import http from 'http';
+import { Server } from 'socket.io';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
+import jwt from 'jsonwebtoken';
+import { OAuth2Client } from 'google-auth-library';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// ES Module fix for __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const server = http.createServer(app); // http server'ı express uygulamasıyla oluştur
+const server = http.createServer(app);
 app.use(cors());
 app.use(express.json());
 
-// Railway Healthcheck için root endpoint (API)
+// Railway/Render Healthcheck
 app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'ok', uptime: process.uptime() });
 });
 
-// STATİK DOSYA SUNUMU (FRONTEND İÇİN)
-// Production ortamında frontend build dosyalarını sun
-if (process.env.NODE_ENV === 'production') {
-    // Dist klasörünü statik olarak sun
-    app.use(express.static(path.join(__dirname, '../dist')));
+// STATİK DOSYA SUNUMU CONFIG
+const DIST_PATH = path.join(__dirname, '../dist');
+console.log('📂 Static Files Path:', DIST_PATH);
+console.log('🌍 Environment:', process.env.NODE_ENV);
 
-    // Diğer tüm istekleri index.html'e yönlendir (SPA support)
+if (process.env.NODE_ENV === 'production') {
+    console.log('🚀 Production Mode: Serving static files from dist...');
+
+    app.use(express.static(DIST_PATH));
+
     app.get('*', (req, res) => {
-        // API isteklerini engelleme
         if (req.path.startsWith('/api')) {
             return res.status(404).json({ error: 'Endpoint not found' });
         }
-        res.sendFile(path.join(__dirname, '../dist', 'index.html'));
+        res.sendFile(path.join(DIST_PATH, 'index.html'));
     });
 } else {
-    // Dev modunda basit mesaj
+    console.log('🔧 Development Mode: Backend API active');
     app.get('/', (req, res) => {
-        res.send('Kadim Savaslar Backend is Running! 🚀 (Dev Mode - Use Vite for Frontend)');
+        res.send('Kadim Savaslar Backend is Running! 🚀 (Dev Mode)');
     });
 }
 
@@ -490,4 +497,5 @@ if (process.env.PORT || !process.env.VERCEL) {
 }
 
 // Vercel için Express uygulamasını dışa aktar
-module.exports = app;
+// Vercel için Express uygulamasını dışa aktar
+export default app;

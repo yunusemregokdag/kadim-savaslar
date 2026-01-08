@@ -3671,12 +3671,42 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
         }
 
         // --- AUTO TARGET LOGIC (Z-Targeting) ---
+        // Always refresh to nearest target when using skill
         let effectiveTarget = target;
-        if (!effectiveTarget) {
-            const nearest = findTarget();
-            if (nearest) {
+        const nearest = findTarget();
+
+        // If current target exists, check if it's still in range
+        if (effectiveTarget) {
+            const targetDist = Math.sqrt(
+                Math.pow(effectiveTarget.x / 15 - playerPosRef.current.x, 2) +
+                Math.pow(effectiveTarget.y / 15 - playerPosRef.current.y, 2)
+            );
+            // If target is too far (>15 units), switch to nearest
+            if (targetDist > 15 && nearest) {
                 setTarget(nearest);
                 effectiveTarget = nearest;
+            }
+        } else if (nearest) {
+            setTarget(nearest);
+            effectiveTarget = nearest;
+        }
+
+        // MELEE vs RANGED skill range check
+        const isMeleeClass = ['warrior', 'martial_artist', 'reaper', 'arctic_knight'].includes(playerState.classId || '');
+        const isMeleeSkill = skill.type === 'damage' && !skill.visual?.includes('range') &&
+            !skill.visual?.includes('arrow') && !skill.visual?.includes('bolt') &&
+            !skill.visual?.includes('fireball') && !skill.visual?.includes('dragon') &&
+            isMeleeClass;
+
+        if (isMeleeSkill && effectiveTarget) {
+            const meleeRange = 3; // Melee attack range
+            const dist = Math.sqrt(
+                Math.pow(effectiveTarget.x / 15 - playerPosRef.current.x, 2) +
+                Math.pow(effectiveTarget.y / 15 - playerPosRef.current.y, 2)
+            );
+            if (dist > meleeRange) {
+                addFloatingText("Hedef çok uzak!", playerPosRef.current.x, 2, playerPosRef.current.y, "text-yellow-400");
+                return; // Don't execute melee skill if target is too far
             }
         }
 

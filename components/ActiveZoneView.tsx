@@ -3702,7 +3702,7 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
 
         // Menzil limitleri
         const MELEE_RANGE = 3;   // Yakın dövüş menzili
-        const RANGED_RANGE = 12; // Uzak saldırı menzili
+        const RANGED_RANGE = 8;  // Uzak saldırı menzili
 
         if (effectiveTarget) {
             const dist = Math.sqrt(

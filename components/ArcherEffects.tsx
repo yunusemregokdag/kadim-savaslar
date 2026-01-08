@@ -364,7 +364,7 @@ export const BackstepEffect: React.FC<{
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 5️⃣ WIND SLASH - 3 ok AYNI ANDA hedefe gidiyor
+// 5️⃣ WIND SLASH - 3 ok AYNI ANDA (1. skill ile aynı ok tasarımı x3)
 // ═══════════════════════════════════════════════════════════════════════════
 export const WindSlashEffect: React.FC<{
     position: [number, number, number];
@@ -373,7 +373,7 @@ export const WindSlashEffect: React.FC<{
 }> = ({ position, targetPosition, onComplete }) => {
     const groupRef = useRef<THREE.Group>(null);
     const startTime = useRef(Date.now());
-    const duration = 1200; // Biraz daha hızlı
+    const duration = 1200;
     const progressRef = useRef(0);
 
     const direction = useMemo(() => {
@@ -391,7 +391,6 @@ export const WindSlashEffect: React.FC<{
         const progress = Math.min(elapsed / duration, 1);
         progressRef.current = progress;
 
-        // 3 ok birlikte hedefe gidiyor
         const distance = progress * 25;
         groupRef.current.position.set(
             position[0] + direction.x * distance,
@@ -402,27 +401,33 @@ export const WindSlashEffect: React.FC<{
         if (progress >= 1) onComplete();
     });
 
-    // Ok bileşeni - hepsi aynı yöne gidiyor
-    const Arrow = ({ yOffset }: { yOffset: number }) => (
+    // 1. skill ile AYNI ok tasarımı
+    const SingleArrow = ({ yOffset }: { yOffset: number }) => (
         <group position={[0, yOffset, 0]}>
-            {/* Ok gövdesi */}
-            {[0, 0.12, 0.24, 0.36, 0.48].map((z, i) => (
-                <PixelBlock key={i} position={[0, 0, z]} color={i < 2 ? '#88ff44' : '#66dd22'} size={0.07} />
+            {/* OK GÖVDESİ - Uzun sarı-yeşil bloklar */}
+            {[0, 0.12, 0.24, 0.36, 0.48, 0.6].map((z, i) => (
+                <PixelBlock key={i} position={[0, 0, z]} color={i < 2 ? '#88ff44' : '#66dd22'} size={0.08} />
             ))}
-            {/* Ok ucu */}
-            <PixelBlock position={[0, 0, 0.6]} color="#aaff66" size={0.09} />
-            <PixelBlock position={[0, 0.04, 0.55]} color="#88ff44" size={0.05} />
-            <PixelBlock position={[0, -0.04, 0.55]} color="#88ff44" size={0.05} />
+            {/* OK UCU - Sivri */}
+            <PixelBlock position={[0, 0, 0.75]} color="#ccff66" size={0.1} />
+            <PixelBlock position={[0, 0.05, 0.7]} color="#aaff44" size={0.06} />
+            <PixelBlock position={[0, -0.05, 0.7]} color="#aaff44" size={0.06} />
+            {/* KUYRUK TÜYLERİ */}
+            <PixelBlock position={[0.08, 0.08, -0.1]} color="#44aa22" size={0.06} />
+            <PixelBlock position={[-0.08, 0.08, -0.1]} color="#44aa22" size={0.06} />
+            <PixelBlock position={[0.08, -0.08, -0.1]} color="#44aa22" size={0.06} />
+            <PixelBlock position={[-0.08, -0.08, -0.1]} color="#44aa22" size={0.06} />
         </group>
     );
 
     return (
         <group ref={groupRef} rotation={[0, rotationY, 0]}>
-            {/* 3 ok paralel - hepsi aynı hedefe */}
-            <Arrow yOffset={0.15} />
-            <Arrow yOffset={0} />
-            <Arrow yOffset={-0.15} />
-            <Sparkles position={[0, 0, 0.3]} color="#88ff44" count={18} spread={0.6} progress={progressRef.current} />
+            {/* 3 OK - Üst üste dizili */}
+            <SingleArrow yOffset={0.25} />
+            <SingleArrow yOffset={0} />
+            <SingleArrow yOffset={-0.25} />
+
+            <Sparkles position={[0, 0, 0.4]} color="#88ff44" count={15} spread={0.6} progress={progressRef.current} />
             <pointLight color="#88ff44" intensity={2.5} distance={4} />
         </group>
     );

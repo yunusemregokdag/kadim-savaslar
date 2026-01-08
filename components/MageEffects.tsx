@@ -9,6 +9,288 @@ import { useFrame } from '@react-three/fiber';
 import { Instances, Instance } from '@react-three/drei';
 
 // ═══════════════════════════════════════════════════════════════════════════
+// SHADER NOISE FUNCTION
+// ═══════════════════════════════════════════════════════════════════════════
+const noiseFunction = `
+  float hash(float n) { return fract(sin(n) * 43758.5453123); }
+  float noise(vec2 p) {
+    vec2 i = floor(p); vec2 f = fract(p);
+    f = f*f*(3.0-2.0*f);
+    float n = i.x + i.y*57.0;
+    return mix(mix(hash(n+0.0), hash(n+1.0),f.x), mix(hash(n+57.0), hash(n+58.0),f.x),f.y);
+  }
+`;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🔮 ARCANE ORB SHADER - Pixel Glow Efekt
+// ═══════════════════════════════════════════════════════════════════════════
+export const ArcaneOrbShaderEffect: React.FC<{
+    position: [number, number, number];
+    targetPosition?: [number, number, number];
+    onComplete: () => void;
+}> = ({ position, targetPosition, onComplete }) => {
+    const meshRef = useRef<THREE.Mesh>(null);
+    const startTime = useRef(Date.now());
+    const duration = 1000;
+    const progressRef = useRef(0);
+
+    const direction = useMemo(() => {
+        if (targetPosition) {
+            return new THREE.Vector3(targetPosition[0] - position[0], 0, targetPosition[2] - position[2]).normalize();
+        }
+        return new THREE.Vector3(0, 0, 1);
+    }, [position, targetPosition]);
+
+    const shaderMaterial = useMemo(() => new THREE.ShaderMaterial({
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        uniforms: {
+            uTime: { value: 0 },
+            uColor: { value: new THREE.Color("#d000ff") }
+        },
+        vertexShader: `
+            varying vec2 vUv;
+            void main() {
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `,
+        fragmentShader: `
+            varying vec2 vUv;
+            uniform float uTime;
+            uniform vec3 uColor;
+            ${noiseFunction}
+            void main() {
+                vec2 uv = vUv - 0.5;
+                float dist = length(uv);
+                float n = noise(uv * 10.0 + uTime * 5.0);
+                
+                // Pixelated Glow Core
+                float core = smoothstep(0.2, 0.15, dist);
+                float aura = smoothstep(0.5, 0.2, dist) * n;
+                
+                // Posterize colors for pixel-art feel
+                vec3 finalColor = uColor * (core + aura * 0.5);
+                finalColor = floor(finalColor * 5.0) / 5.0; 
+                
+                gl_FragColor = vec4(finalColor, core + (aura * 0.3));
+            }
+        `
+    }), []);
+
+    useFrame((state) => {
+        if (!meshRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        // Hareket
+        const distance = progress * 18;
+        meshRef.current.position.set(
+            position[0] + direction.x * distance,
+            position[1] + 0.8,
+            position[2] + direction.z * distance
+        );
+
+        shaderMaterial.uniforms.uTime.value = state.clock.elapsedTime;
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <mesh ref={meshRef} position={position}>
+            <planeGeometry args={[1.5, 1.5]} />
+            <primitive object={shaderMaterial} attach="material" />
+        </mesh>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🐑 POLİMORF SHADER - Gökkuşağı Trail
+// ═══════════════════════════════════════════════════════════════════════════
+export const PolymorphShaderEffect: React.FC<{
+    position: [number, number, number];
+    targetPosition?: [number, number, number];
+    onComplete: () => void;
+}> = ({ position, targetPosition, onComplete }) => {
+    const pointsRef = useRef<THREE.Points>(null);
+    const startTime = useRef(Date.now());
+    const duration = 1200;
+    const progressRef = useRef(0);
+    const spawnPos = targetPosition || position;
+
+    const particleCount = 40;
+    const [positions, colors] = useMemo(() => {
+        const pos = new Float32Array(particleCount * 3);
+        const cols = new Float32Array(particleCount * 3);
+        for (let i = 0; i < particleCount; i++) {
+            pos[i * 3] = (Math.random() - 0.5) * 0.5;
+            pos[i * 3 + 1] = (Math.random() - 0.5) * 0.5;
+            pos[i * 3 + 2] = (Math.random() - 0.5) * 0.5;
+            const color = new THREE.Color().setHSL(i / particleCount, 1.0, 0.5);
+            cols[i * 3] = color.r;
+            cols[i * 3 + 1] = color.g;
+            cols[i * 3 + 2] = color.b;
+        }
+        return [pos, cols];
+    }, []);
+
+    useFrame((state) => {
+        if (!pointsRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        pointsRef.current.rotation.z += 0.05;
+        const s = Math.sin(state.clock.elapsedTime * 10.0) * 0.2 + 1.0;
+        pointsRef.current.scale.set(s * (1 + progress), s * (1 + progress), s * (1 + progress));
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <points ref={pointsRef} position={[spawnPos[0], 0.5, spawnPos[2]]}>
+            <bufferGeometry>
+                <bufferAttribute attach="attributes-position" count={particleCount} array={positions} itemSize={3} />
+                <bufferAttribute attach="attributes-color" count={particleCount} array={colors} itemSize={3} />
+            </bufferGeometry>
+            <pointsMaterial size={0.15} vertexColors transparent blending={THREE.AdditiveBlending} opacity={1 - progressRef.current} />
+        </points>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ☄️ DOOM SHADER - Yer Sarsıntılı Ultimate
+// ═══════════════════════════════════════════════════════════════════════════
+export const DoomShaderEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
+    followPlayer?: boolean;
+}> = ({ position, onComplete }) => {
+    const meshRef = useRef<THREE.Mesh>(null);
+    const startTime = useRef(Date.now());
+    const duration = 4000;
+    const progressRef = useRef(0);
+
+    const shaderMaterial = useMemo(() => new THREE.ShaderMaterial({
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+        uniforms: {
+            uTime: { value: 0 },
+            uColor: { value: new THREE.Color("#4a0080") }
+        },
+        vertexShader: `
+            varying vec2 vUv;
+            uniform float uTime;
+            void main() {
+                vUv = uv;
+                vec3 pos = position;
+                // Subtle wave shake
+                pos.y += sin(uTime * 20.0 + pos.x * 10.0) * 0.02;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+            }
+        `,
+        fragmentShader: `
+            varying vec2 vUv;
+            uniform float uTime;
+            uniform vec3 uColor;
+            ${noiseFunction}
+            void main() {
+                vec2 uv = (vUv - 0.5) * 2.0;
+                float dist = length(uv);
+                
+                // Expanding ring ripples
+                float ripple = sin(dist * 20.0 - uTime * 10.0);
+                ripple = step(0.8, ripple); // Hard edge for pixel look
+                
+                float mask = smoothstep(1.0, 0.8, dist); // Circle mask
+                float finalAlpha = ripple * mask * (1.0 - dist);
+                
+                gl_FragColor = vec4(uColor * 2.0, finalAlpha);
+            }
+        `
+    }), []);
+
+    useFrame((state) => {
+        if (!meshRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        shaderMaterial.uniforms.uTime.value = state.clock.elapsedTime;
+
+        // Kamera sarsıntısı
+        if (progress < 0.5) {
+            const shake = (1 - progress * 2) * 0.1;
+            state.camera.position.x += Math.sin(elapsed * 0.02) * shake;
+            state.camera.position.y += Math.sin(elapsed * 0.015) * shake;
+        }
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <mesh ref={meshRef} rotation={[-Math.PI / 2, 0, 0]} position={[position[0], 0.05, position[2]]}>
+            <planeGeometry args={[10, 10]} />
+            <primitive object={shaderMaterial} attach="material" />
+        </mesh>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ⚡ MANA ZAP SHADER - Yıldırım Çakması
+// ═══════════════════════════════════════════════════════════════════════════
+export const ManaZapShaderEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
+    followPlayer?: boolean;
+}> = ({ position, onComplete }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const lineRefs = useRef<THREE.Mesh[]>([]);
+    const startTime = useRef(Date.now());
+    const duration = 700;
+    const progressRef = useRef(0);
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        // Flicker efekti
+        lineRefs.current.forEach((child) => {
+            if (child) {
+                child.scale.y = Math.random() * 2.0;
+                child.visible = Math.random() > 0.7;
+            }
+        });
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={[position[0], 0, position[2]]}>
+            {[...Array(12)].map((_, i) => (
+                <mesh
+                    key={i}
+                    ref={(el) => { if (el) lineRefs.current[i] = el; }}
+                    rotation={[0, (i / 12) * Math.PI * 2, 0]}
+                    position={[0, 1, 0]}
+                >
+                    <planeGeometry args={[0.05, 2]} />
+                    <meshBasicMaterial color="#00ffff" transparent blending={THREE.AdditiveBlending} opacity={1 - progressRef.current} />
+                </mesh>
+            ))}
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
 // 🔮 PIXEL ORB - Yeniden kullanılabilir element küpü
 // ═══════════════════════════════════════════════════════════════════════════
 const PixelOrb: React.FC<{
@@ -797,13 +1079,13 @@ export const ApocalypseEffect: React.FC<{
 // MAGE SKILL MAP
 // ═══════════════════════════════════════════════════════════════════════════
 export const MAGE_EFFECTS: Record<string, React.FC<any>> = {
-    // ✅ CONSTANTS.TS VISUAL KEYS (GERÇEK KEY'LER)
-    archmage_bolt: ArcaneOrbEffect,        // am1 - Arcane Küresi
-    archmage_impact: TimeWarpEffect,       // am2 - Zaman Bükülmesi
-    archmage_void: PolymorphEffect,        // am3 - Polimorf
-    archmage_meteor: StarfallEffect,       // am5 - Yıldız Yağmuru
-    archmage_blizzard: ManaBlastEffect,    // am6 - Mana Patlaması
-    archmage_apocalypse: ApocalypseEffect, // am7 - Kıyamet (Ulti)
+    // ✅ CONSTANTS.TS VISUAL KEYS (GERÇEK KEY'LER) - SHADER VERSİYONLARI
+    archmage_bolt: ArcaneOrbShaderEffect,      // am1 - Arcane Küresi (Shader)
+    archmage_impact: TimeWarpEffect,           // am2 - Zaman Bükülmesi
+    archmage_void: PolymorphShaderEffect,      // am3 - Polimorf (Shader)
+    archmage_meteor: StarfallEffect,           // am5 - Yıldız Yağmuru
+    archmage_blizzard: ManaZapShaderEffect,    // am6 - Mana Patlaması (Shader)
+    archmage_apocalypse: DoomShaderEffect,     // am7 - Kıyamet (Shader)
 
     // Yeni pixel element efektleri
     fireball_effect: FireballEffect,
@@ -813,15 +1095,21 @@ export const MAGE_EFFECTS: Record<string, React.FC<any>> = {
     drain_effect: DrainEffect,
     arcane_storm: ArcaneStormEffect,
 
+    // Shader efektler
+    arcane_orb_shader: ArcaneOrbShaderEffect,
+    polymorph_shader: PolymorphShaderEffect,
+    doom_shader: DoomShaderEffect,
+    mana_zap_shader: ManaZapShaderEffect,
+
     // Eski key'ler (backward compat)
-    arcane_orb: ArcaneOrbEffect,
+    arcane_orb: ArcaneOrbShaderEffect,
     frost_shard: FrostShardEffect,
     magic_missile: MagicMissileEffect,
     time_warp: TimeWarpEffect,
-    polymorph: PolymorphEffect,
+    polymorph: PolymorphShaderEffect,
     starfall: StarfallEffect,
-    mana_blast: ManaBlastEffect,
-    apocalypse: ApocalypseEffect,
+    mana_blast: ManaZapShaderEffect,
+    apocalypse: DoomShaderEffect,
 
     // Components/constants.ts keys
     fireball: FireballEffect,
@@ -834,7 +1122,7 @@ export const MAGE_EFFECTS: Record<string, React.FC<any>> = {
     // Root constants.ts visual keys
     mage_fireball: FireballEffect,
     mage_ice: IceBlockEffect,
-    mage_arcane: ArcaneOrbEffect,
+    mage_arcane: ArcaneOrbShaderEffect,
     mage_blink: TeleportEffect,
     mage_storm: ArcaneStormEffect,
 
@@ -843,10 +1131,11 @@ export const MAGE_EFFECTS: Record<string, React.FC<any>> = {
     ice: IceBlockEffect,
     blink: TeleportEffect,
     bolt: LightningEffect,
-    arcane: ArcaneOrbEffect,
+    arcane: ArcaneOrbShaderEffect,
     storm: ArcaneStormEffect,
-    missile: ArcaneOrbEffect,
+    missile: ArcaneOrbShaderEffect,
+    doom: DoomShaderEffect,
+    zap: ManaZapShaderEffect,
 };
 
 export default MAGE_EFFECTS;
-

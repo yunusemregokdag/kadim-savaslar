@@ -52,11 +52,21 @@ const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 // ============================================
 // MONGODB BAĞLANTISI
 // ============================================
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://yunusemregokdag_db_user:cmhmshp2gyegg@cluster0.lpw3x3g.mongodb.net/kadim-savaslar?retryWrites=true&w=majority';
+// GÜVENLİK NOTU: MONGODB_URI asla buraya açıkça yazılmamalıdır!
+// Render/Railway gibi platformlarda Environment Variables kullanın.
+const MONGODB_URI = process.env.MONGODB_URI;
 
-mongoose.connect(MONGODB_URI)
-    .then(() => console.log('✅ MongoDB bağlantısı başarılı!'))
-    .catch(err => console.error('❌ MongoDB bağlantı hatası:', err));
+if (!MONGODB_URI) {
+    console.error('❌ HATA: MONGODB_URI environment variable tanımlanmamış!');
+    // Production'da uygulamanın çökmesi istenebilir, development için uyarı yeterli
+    if (process.env.NODE_ENV === 'production') {
+        process.exit(1);
+    }
+} else {
+    mongoose.connect(MONGODB_URI)
+        .then(() => console.log('✅ MongoDB bağlantısı başarılı!'))
+        .catch(err => console.error('❌ MongoDB bağlantı hatası:', err));
+}
 
 // ============================================
 // MONGOOSE ŞEMALARI

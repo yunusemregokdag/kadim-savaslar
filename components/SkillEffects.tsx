@@ -286,7 +286,22 @@ const SkillTypePool: React.FC<{
 // ═══════════════════════════════════════════════════════════════════════════
 export const SkillEffects: React.FC<SkillEffectsProps> = ({ activeSkills, onEffectComplete, playerGroupRef }) => {
     // Oyuncuyu takip eden efektler (hem yeni hem eski key'ler)
-    const PLAYER_ATTACHED_EFFECTS = ['warrior_shield', 'warrior_charge', 'shield', 'rage', 'ice_armor', 'time_warp', 'iceblock', 'teleport', 'time', 'march', 'speed', 'anthem', 'speed_song', 'blessing', 'buff_aura', 'revive', 'flow', 'meditate', 'tiger', 'focus', 'iron_body', 'shroud', 'passage', 'dark_passage'];
+    const PLAYER_ATTACHED_EFFECTS = [
+        // Warrior
+        'warrior_shield', 'warrior_charge', 'shield', 'rage',
+        // Arctic Knight
+        'ice_armor', 'frost_armor', 'arctic_storm', 'iceblock',
+        // Mage
+        'teleport', 'time_warp', 'time',
+        // Bard
+        'march', 'speed', 'anthem', 'speed_song', 'rhythm_flow', 'choir_symphony',
+        // Healer
+        'blessing', 'buff_aura', 'revive', 'holy_circle', 'holy_shield', 'sanctuary', 'light_rain',
+        // Martial Artist
+        'flow', 'meditate', 'tiger', 'focus', 'iron_body', 'iron_stance', 'dragon_fist',
+        // Reaper
+        'shroud', 'passage', 'dark_passage', 'apocalypse_call'
+    ];
 
     return (
         <group>

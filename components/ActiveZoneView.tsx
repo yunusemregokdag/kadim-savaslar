@@ -1794,7 +1794,8 @@ const GameScene: React.FC<GameSceneProps> = ({
                 radius={35}
             />
 
-            <GameVFXOverlay />
+            {/* 🔧 DISABLED: GameVFXOverlay causes black pixel artifacts */}
+            {/* <GameVFXOverlay /> */}
             <BorderWalls limit={borderLimit} />
             {decorations.map(d => (<DecorationMesh key={d.id} id={d.id} type={d.type} pos={d.pos} scale={d.scale} color={d.color} rotation={d.rotation} onClick={handleGather} />))}
 

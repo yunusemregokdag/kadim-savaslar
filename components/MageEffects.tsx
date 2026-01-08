@@ -483,16 +483,327 @@ export const FrostShardEffect = IceBlockEffect;
 export const MagicMissileEffect = ArcaneOrbEffect;
 
 // ═══════════════════════════════════════════════════════════════════════════
+// ⏳ ZAMAN BÜKÜLMESİ - 3 dönen halka (HTML'den)
+// ═══════════════════════════════════════════════════════════════════════════
+export const TimeWarpEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
+    followPlayer?: boolean;
+}> = ({ position, onComplete, playerGroupRef, followPlayer = false }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const ring1Ref = useRef<THREE.Mesh>(null);
+    const ring2Ref = useRef<THREE.Mesh>(null);
+    const ring3Ref = useRef<THREE.Mesh>(null);
+    const startTime = useRef(Date.now());
+    const duration = 3000;
+    const progressRef = useRef(0);
+
+    useFrame((state) => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+        const time = state.clock.elapsedTime;
+
+        // Follow player
+        if (followPlayer && playerGroupRef?.current) {
+            const playerWorldPos = new THREE.Vector3();
+            playerGroupRef.current.getWorldPosition(playerWorldPos);
+            groupRef.current.position.copy(playerWorldPos);
+        }
+
+        // Dönen halkalar
+        if (ring1Ref.current) ring1Ref.current.rotation.z = time * 0.8;
+        if (ring2Ref.current) ring2Ref.current.rotation.z = -time * 1.0;
+        if (ring3Ref.current) ring3Ref.current.rotation.z = time * 1.2;
+
+        if (progress >= 1) onComplete();
+    });
+
+    const RingMesh = ({ innerRadius, outerRadius, refProp }: { innerRadius: number; outerRadius: number; refProp: React.RefObject<THREE.Mesh> }) => (
+        <mesh ref={refProp} rotation={[-Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[innerRadius, 0.05, 8, 40]} />
+            <meshStandardMaterial
+                color="#66ccff"
+                emissive="#66ccff"
+                emissiveIntensity={0.6}
+                transparent
+                opacity={0.8 * (1 - progressRef.current)}
+            />
+        </mesh>
+    );
+
+    return (
+        <group ref={groupRef} position={position}>
+            <RingMesh innerRadius={1.0} outerRadius={1.05} refProp={ring1Ref} />
+            <RingMesh innerRadius={1.2} outerRadius={1.25} refProp={ring2Ref} />
+            <RingMesh innerRadius={1.4} outerRadius={1.45} refProp={ring3Ref} />
+            <ArcanePixels position={[0, 0.5, 0]} color="#88aaff" count={20} spread={1.5} progress={progressRef.current} />
+            <pointLight color="#66ccff" intensity={4} distance={5} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🐑 POLİMORF - Genişleyen mor dalga
+// ═══════════════════════════════════════════════════════════════════════════
+export const PolymorphEffect: React.FC<{
+    position: [number, number, number];
+    targetPosition?: [number, number, number];
+    onComplete: () => void;
+}> = ({ position, targetPosition, onComplete }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const startTime = useRef(Date.now());
+    const duration = 800;
+    const progressRef = useRef(0);
+    const spawnPos = targetPosition || position;
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        // Genişleyen dalga
+        groupRef.current.scale.setScalar(1 + progress * 2);
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={[spawnPos[0], 0.1, spawnPos[2]]}>
+            <mesh rotation={[-Math.PI / 2, 0, 0]}>
+                <ringGeometry args={[0.5, 1.5, 32]} />
+                <meshStandardMaterial
+                    color="#aa66ff"
+                    emissive="#aa66ff"
+                    emissiveIntensity={0.7}
+                    transparent
+                    opacity={0.8 * (1 - progressRef.current)}
+                    side={THREE.DoubleSide}
+                />
+            </mesh>
+            <ArcanePixels position={[0, 0.3, 0]} color="#cc88ff" count={15} spread={1} progress={progressRef.current} />
+            <pointLight color="#aa66ff" intensity={3} distance={4} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ⭐ YILDIZ YAĞMURU - Düşen buz konileri
+// ═══════════════════════════════════════════════════════════════════════════
+export const StarfallEffect: React.FC<{
+    position: [number, number, number];
+    targetPosition?: [number, number, number];
+    onComplete: () => void;
+}> = ({ position, targetPosition, onComplete }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const iceRefs = useRef<THREE.Mesh[]>([]);
+    const startTime = useRef(Date.now());
+    const duration = 2500;
+    const progressRef = useRef(0);
+    const spawnPos = targetPosition || position;
+
+    const iceData = useMemo(() => {
+        return Array.from({ length: 25 }).map(() => ({
+            x: (Math.random() - 0.5) * 5,
+            z: (Math.random() - 0.5) * 4,
+            startY: 6 + Math.random() * 4,
+            delay: Math.random() * 0.5,
+        }));
+    }, []);
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        // Buz konileri düşüyor
+        iceRefs.current.forEach((ice, i) => {
+            if (!ice) return;
+            const iceProgress = Math.max(0, Math.min(1, (progress - iceData[i].delay) / 0.4));
+            ice.position.y = iceData[i].startY - iceProgress * iceData[i].startY;
+            ice.visible = iceProgress > 0 && ice.position.y > 0.1;
+        });
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={spawnPos}>
+            {iceData.map((ice, i) => (
+                <mesh
+                    key={i}
+                    ref={(el) => { if (el) iceRefs.current[i] = el; }}
+                    position={[ice.x, ice.startY, ice.z]}
+                    rotation={[Math.PI, 0, 0]}
+                >
+                    <coneGeometry args={[0.12, 0.6, 8]} />
+                    <meshStandardMaterial
+                        color="#aaddff"
+                        emissive="#88ccff"
+                        emissiveIntensity={0.5}
+                    />
+                </mesh>
+            ))}
+            <ArcanePixels position={[0, 1, 0]} color="#88ccff" count={30} spread={3} progress={progressRef.current} />
+            <pointLight color="#88ccff" intensity={4} distance={6} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 💥 MANA PATLAMASI - Genişleyen halka
+// ═══════════════════════════════════════════════════════════════════════════
+export const ManaBlastEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
+    followPlayer?: boolean;
+}> = ({ position, onComplete }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const startTime = useRef(Date.now());
+    const duration = 700;
+    const progressRef = useRef(0);
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        // Genişleyen halka
+        groupRef.current.scale.setScalar(1 + progress * 3);
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={[position[0], 0.15, position[2]]}>
+            <mesh rotation={[-Math.PI / 2, 0, 0]}>
+                <ringGeometry args={[0.3, 2.8, 64]} />
+                <meshStandardMaterial
+                    color="#99ccff"
+                    emissive="#99ccff"
+                    emissiveIntensity={0.8}
+                    transparent
+                    opacity={0.9 * (1 - progressRef.current)}
+                    side={THREE.DoubleSide}
+                />
+            </mesh>
+            <ArcanePixels position={[0, 0.5, 0]} color="#aaddff" count={25} spread={2} progress={progressRef.current} />
+            <pointLight color="#99ccff" intensity={6} distance={8} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ☄️ KIYAMET (ULTI) - Mor gökyüzü + kamera sallama
+// ═══════════════════════════════════════════════════════════════════════════
+export const ApocalypseEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
+    followPlayer?: boolean;
+}> = ({ position, onComplete }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const skyRef = useRef<THREE.Mesh>(null);
+    const startTime = useRef(Date.now());
+    const duration = 4000;
+    const progressRef = useRef(0);
+
+    useFrame((state) => {
+        if (!groupRef.current || !skyRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        // Gökyüzü pulse
+        const skyMat = skyRef.current.material as THREE.MeshStandardMaterial;
+        skyMat.opacity = 0.4 * (1 - progress) * (0.8 + Math.sin(elapsed * 0.01) * 0.2);
+
+        // Kamera sarsıntısı (ilk 2 saniye)
+        if (progress < 0.5) {
+            const shake = (1 - progress * 2) * 0.15;
+            state.camera.position.x += Math.sin(elapsed * 0.02) * shake;
+            state.camera.position.y += Math.sin(elapsed * 0.015) * shake;
+        }
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={position}>
+            {/* Mor gökyüzü dome */}
+            <mesh ref={skyRef} scale={[-1, 1, 1]}>
+                <sphereGeometry args={[15, 32, 32]} />
+                <meshStandardMaterial
+                    color="#6633ff"
+                    emissive="#6633ff"
+                    emissiveIntensity={0.5}
+                    transparent
+                    opacity={0.4}
+                    side={THREE.BackSide}
+                />
+            </mesh>
+
+            {/* Merkez patlama */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.1, 0]}>
+                <ringGeometry args={[0.5, 4, 64]} />
+                <meshStandardMaterial
+                    color="#aa55ff"
+                    emissive="#aa55ff"
+                    emissiveIntensity={1}
+                    transparent
+                    opacity={0.7 * (1 - progressRef.current)}
+                    side={THREE.DoubleSide}
+                />
+            </mesh>
+
+            {/* Düşen meteorlar */}
+            {Array.from({ length: 15 }).map((_, i) => {
+                const angle = (i / 15) * Math.PI * 2;
+                const radius = 2 + Math.random() * 4;
+                return (
+                    <mesh
+                        key={i}
+                        position={[
+                            Math.cos(angle) * radius,
+                            4 - progressRef.current * 5,
+                            Math.sin(angle) * radius
+                        ]}
+                        rotation={[Math.PI, 0, 0]}
+                    >
+                        <coneGeometry args={[0.2, 0.8, 8]} />
+                        <meshStandardMaterial
+                            color="#ff6644"
+                            emissive="#ff4422"
+                            emissiveIntensity={0.8}
+                        />
+                    </mesh>
+                );
+            })}
+
+            <ArcanePixels position={[0, 2, 0]} color="#8855ff" count={40} spread={5} progress={progressRef.current} />
+            <pointLight position={[0, 3, 0]} color="#6633ff" intensity={10} distance={20} />
+            <pointLight position={[0, 0.5, 0]} color="#ff4422" intensity={5} distance={8} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
 // MAGE SKILL MAP
 // ═══════════════════════════════════════════════════════════════════════════
 export const MAGE_EFFECTS: Record<string, React.FC<any>> = {
     // ✅ CONSTANTS.TS VISUAL KEYS (GERÇEK KEY'LER)
-    archmage_bolt: ArcaneOrbEffect,
-    archmage_impact: IceBlockEffect,
-    archmage_void: TeleportEffect,
-    archmage_meteor: ArcaneStormEffect,
-    archmage_blizzard: DrainEffect,
-    archmage_apocalypse: ArcaneStormEffect,
+    archmage_bolt: ArcaneOrbEffect,        // am1 - Arcane Küresi
+    archmage_impact: TimeWarpEffect,       // am2 - Zaman Bükülmesi
+    archmage_void: PolymorphEffect,        // am3 - Polimorf
+    archmage_meteor: StarfallEffect,       // am5 - Yıldız Yağmuru
+    archmage_blizzard: ManaBlastEffect,    // am6 - Mana Patlaması
+    archmage_apocalypse: ApocalypseEffect, // am7 - Kıyamet (Ulti)
 
     // Yeni pixel element efektleri
     fireball_effect: FireballEffect,
@@ -506,6 +817,11 @@ export const MAGE_EFFECTS: Record<string, React.FC<any>> = {
     arcane_orb: ArcaneOrbEffect,
     frost_shard: FrostShardEffect,
     magic_missile: MagicMissileEffect,
+    time_warp: TimeWarpEffect,
+    polymorph: PolymorphEffect,
+    starfall: StarfallEffect,
+    mana_blast: ManaBlastEffect,
+    apocalypse: ApocalypseEffect,
 
     // Components/constants.ts keys
     fireball: FireballEffect,
@@ -513,7 +829,7 @@ export const MAGE_EFFECTS: Record<string, React.FC<any>> = {
     teleport: TeleportEffect,
     lightning: LightningEffect,
     drain: DrainEffect,
-    meteor: ArcaneStormEffect,
+    meteor: StarfallEffect,
 
     // Root constants.ts visual keys
     mage_fireball: FireballEffect,
@@ -533,3 +849,4 @@ export const MAGE_EFFECTS: Record<string, React.FC<any>> = {
 };
 
 export default MAGE_EFFECTS;
+

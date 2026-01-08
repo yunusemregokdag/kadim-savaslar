@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// ARCHER (OKÇU) SKILL EFFECTS - 2D PİXEL ART STİLİ
-// Düz plane geometri, pixel shader, YAVAŞ hareketler
+// ARCHER (OKÇU) SKILL EFFECTS - RESİMLERE UYGUN GERÇEK PİXEL TASARIM
+// Voxel bloklar ile oluşturulmuş efektler
 // ═══════════════════════════════════════════════════════════════════════════
 
 import React, { useRef, useMemo } from 'react';
@@ -8,59 +8,31 @@ import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 🎨 2D PIXEL SHADER - Düz yüzeyde pixel grid çizimi
+// PIXEL BLOCK - Tek voxel blok
 // ═══════════════════════════════════════════════════════════════════════════
-const createPixelMaterial = (mainColor: string, secondaryColor: string, pixelSize: number = 16) => {
-    const c1 = new THREE.Color(mainColor);
-    const c2 = new THREE.Color(secondaryColor);
-
-    return new THREE.ShaderMaterial({
-        transparent: true,
-        side: THREE.DoubleSide,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        uniforms: {
-            time: { value: 0 },
-            color1: { value: new THREE.Vector3(c1.r, c1.g, c1.b) },
-            color2: { value: new THREE.Vector3(c2.r, c2.g, c2.b) },
-            pixelSize: { value: pixelSize }
-        },
-        vertexShader: `
-            varying vec2 vUv;
-            void main() {
-                vUv = uv;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-        `,
-        fragmentShader: `
-            uniform float time;
-            uniform vec3 color1;
-            uniform vec3 color2;
-            uniform float pixelSize;
-            varying vec2 vUv;
-
-            void main() {
-                // Pixelate UV
-                vec2 pUv = floor(vUv * pixelSize) / pixelSize;
-                
-                // Arrow shape - pointed tip
-                float arrow = 1.0 - smoothstep(0.3, 0.7, abs(pUv.y - 0.5) * 2.0);
-                arrow *= smoothstep(0.0, 0.3, pUv.x);
-                
-                // Color mix with time
-                vec3 col = mix(color1, color2, sin(time * 3.0) * 0.5 + 0.5);
-                
-                // Glow
-                float glow = arrow * (0.8 + sin(time * 5.0) * 0.2);
-                
-                gl_FragColor = vec4(col, glow);
-            }
-        `
-    });
+const PixelBlock: React.FC<{
+    position: [number, number, number];
+    color: string;
+    size?: number;
+    opacity?: number;
+    emissive?: boolean;
+}> = ({ position, color, size = 0.1, opacity = 1, emissive = true }) => {
+    return (
+        <mesh position={position}>
+            <boxGeometry args={[size, size, size]} />
+            <meshStandardMaterial
+                color={color}
+                emissive={emissive ? color : '#000000'}
+                emissiveIntensity={emissive ? 0.5 : 0}
+                transparent={opacity < 1}
+                opacity={opacity}
+            />
+        </mesh>
+    );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 🌟 SHINY SPARKLES - Parıldayan pixel yıldızlar
+// SPARKLE YILDIZLAR - Parlayan yıldız parçacıkları
 // ═══════════════════════════════════════════════════════════════════════════
 const Sparkles: React.FC<{
     position: [number, number, number];
@@ -68,7 +40,7 @@ const Sparkles: React.FC<{
     count?: number;
     spread?: number;
     progress: number;
-}> = ({ position, color, count = 15, spread = 1.5, progress }) => {
+}> = ({ position, color, count = 20, spread = 2, progress }) => {
     const groupRef = useRef<THREE.Group>(null);
     const meshRefs = useRef<THREE.Mesh[]>([]);
 
@@ -76,10 +48,11 @@ const Sparkles: React.FC<{
         return Array.from({ length: count }).map(() => ({
             x: (Math.random() - 0.5) * spread,
             y: (Math.random() - 0.5) * spread,
-            z: (Math.random() - 0.5) * spread * 0.3,
-            size: 0.03 + Math.random() * 0.04,
-            twinkleSpeed: 3 + Math.random() * 5,
+            z: (Math.random() - 0.5) * spread,
+            size: 0.04 + Math.random() * 0.06,
+            twinkleSpeed: 4 + Math.random() * 6,
             twinkleOffset: Math.random() * Math.PI * 2,
+            isWhite: Math.random() > 0.6,
         }));
     }, [count, spread]);
 
@@ -89,8 +62,9 @@ const Sparkles: React.FC<{
             if (!mesh) return;
             const s = sparkleData[i];
             const twinkle = Math.sin(time * s.twinkleSpeed + s.twinkleOffset);
-            (mesh.material as THREE.MeshBasicMaterial).opacity = Math.max(0, (1 - progress) * (0.5 + twinkle * 0.5));
-            mesh.scale.setScalar(s.size * (1 + twinkle * 0.3));
+            const mat = mesh.material as THREE.MeshStandardMaterial;
+            mat.opacity = Math.max(0, (1 - progress) * (0.5 + twinkle * 0.5));
+            mesh.scale.setScalar(s.size * (1 + twinkle * 0.4));
         });
     });
 
@@ -98,17 +72,23 @@ const Sparkles: React.FC<{
         <group ref={groupRef} position={position}>
             {sparkleData.map((s, i) => (
                 <mesh key={i} ref={(el) => { if (el) meshRefs.current[i] = el; }} position={[s.x, s.y, s.z]}>
-                    <planeGeometry args={[0.1, 0.1]} />
-                    <meshBasicMaterial color={color} transparent opacity={1} blending={THREE.AdditiveBlending} side={THREE.DoubleSide} />
+                    <boxGeometry args={[1, 1, 1]} />
+                    <meshStandardMaterial
+                        color={s.isWhite ? '#ffffff' : color}
+                        emissive={s.isWhite ? '#ffffff' : color}
+                        emissiveIntensity={0.8}
+                        transparent
+                        opacity={1}
+                    />
                 </mesh>
             ))}
-            <pointLight color={color} intensity={1.5 * (1 - progress)} distance={spread} />
+            <pointLight color={color} intensity={2 * (1 - progress)} distance={spread * 1.5} />
         </group>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 1️⃣ QUICK SHOT - Basit yeşil ok (YAVAŞ)
+// 1️⃣ QUICK SHOT - Basit sarı-yeşil ok (Resim 4 gibi)
 // ═══════════════════════════════════════════════════════════════════════════
 export const RapidShotEffect: React.FC<{
     position: [number, number, number];
@@ -117,7 +97,7 @@ export const RapidShotEffect: React.FC<{
 }> = ({ position, targetPosition, onComplete }) => {
     const groupRef = useRef<THREE.Group>(null);
     const startTime = useRef(Date.now());
-    const duration = 1500; // YAVAŞ - 1.5 saniye
+    const duration = 1500; // YAVAŞ
     const progressRef = useRef(0);
 
     const direction = useMemo(() => {
@@ -127,7 +107,7 @@ export const RapidShotEffect: React.FC<{
         return new THREE.Vector3(0, 0, 1);
     }, [position, targetPosition]);
 
-    const material = useMemo(() => createPixelMaterial('#66ff66', '#aaff88', 12), []);
+    const rotationY = Math.atan2(direction.x, direction.z);
 
     useFrame(() => {
         if (!groupRef.current) return;
@@ -135,7 +115,6 @@ export const RapidShotEffect: React.FC<{
         const progress = Math.min(elapsed / duration, 1);
         progressRef.current = progress;
 
-        // YAVAŞ hareket
         const distance = progress * 20;
         groupRef.current.position.set(
             position[0] + direction.x * distance,
@@ -143,27 +122,33 @@ export const RapidShotEffect: React.FC<{
             position[2] + direction.z * distance
         );
 
-        material.uniforms.time.value += 0.02;
-
         if (progress >= 1) onComplete();
     });
 
-    // Ok yönünü hesapla
-    const rotationY = Math.atan2(direction.x, direction.z);
-
     return (
-        <group ref={groupRef}>
-            {/* 2D Pixel Ok - Billboard */}
-            <mesh rotation={[0, rotationY, 0]} material={material}>
-                <planeGeometry args={[1.2, 0.3]} />
-            </mesh>
-            <Sparkles position={[0, 0, 0]} color="#66ff66" count={8} spread={0.5} progress={progressRef.current} />
+        <group ref={groupRef} rotation={[0, rotationY, 0]}>
+            {/* OK GÖVDESİ - Uzun sarı-yeşil bloklar */}
+            {[0, 0.12, 0.24, 0.36, 0.48, 0.6].map((z, i) => (
+                <PixelBlock key={i} position={[0, 0, z]} color={i < 2 ? '#88ff44' : '#66dd22'} size={0.08} />
+            ))}
+            {/* OK UCU - Sivri */}
+            <PixelBlock position={[0, 0, 0.75]} color="#ccff66" size={0.1} />
+            <PixelBlock position={[0, 0.05, 0.7]} color="#aaff44" size={0.06} />
+            <PixelBlock position={[0, -0.05, 0.7]} color="#aaff44" size={0.06} />
+            {/* KUYRUK TÜYLERİ */}
+            <PixelBlock position={[0.08, 0.08, -0.1]} color="#44aa22" size={0.06} />
+            <PixelBlock position={[-0.08, 0.08, -0.1]} color="#44aa22" size={0.06} />
+            <PixelBlock position={[0.08, -0.08, -0.1]} color="#44aa22" size={0.06} />
+            <PixelBlock position={[-0.08, -0.08, -0.1]} color="#44aa22" size={0.06} />
+
+            <Sparkles position={[0, 0, 0.3]} color="#88ff44" count={8} spread={0.4} progress={progressRef.current} />
+            <pointLight color="#88ff44" intensity={1.5} distance={2} />
         </group>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 2️⃣ DEADLY JAVELIN - Büyük kırmızı/turuncu ok (YAVAŞ)
+// 2️⃣ DEADLY JAVELIN - Büyük turuncu-kırmızı ok
 // ═══════════════════════════════════════════════════════════════════════════
 export const DeadlyJavelinEffect: React.FC<{
     position: [number, number, number];
@@ -172,7 +157,7 @@ export const DeadlyJavelinEffect: React.FC<{
 }> = ({ position, targetPosition, onComplete }) => {
     const groupRef = useRef<THREE.Group>(null);
     const startTime = useRef(Date.now());
-    const duration = 1800; // YAVAŞ - 1.8 saniye
+    const duration = 1800; // YAVAŞ
     const progressRef = useRef(0);
 
     const direction = useMemo(() => {
@@ -182,7 +167,7 @@ export const DeadlyJavelinEffect: React.FC<{
         return new THREE.Vector3(0, 0, 1);
     }, [position, targetPosition]);
 
-    const material = useMemo(() => createPixelMaterial('#ff6633', '#ffaa44', 14), []);
+    const rotationY = Math.atan2(direction.x, direction.z);
 
     useFrame(() => {
         if (!groupRef.current) return;
@@ -190,7 +175,6 @@ export const DeadlyJavelinEffect: React.FC<{
         const progress = Math.min(elapsed / duration, 1);
         progressRef.current = progress;
 
-        // YAVAŞ hareket
         const distance = progress * 25;
         groupRef.current.position.set(
             position[0] + direction.x * distance,
@@ -198,27 +182,33 @@ export const DeadlyJavelinEffect: React.FC<{
             position[2] + direction.z * distance
         );
 
-        material.uniforms.time.value += 0.025;
-
         if (progress >= 1) onComplete();
     });
 
-    const rotationY = Math.atan2(direction.x, direction.z);
-
     return (
-        <group ref={groupRef}>
-            {/* Daha büyük ok */}
-            <mesh rotation={[0, rotationY, 0]} material={material}>
-                <planeGeometry args={[1.6, 0.4]} />
-            </mesh>
-            <Sparkles position={[0, 0, 0]} color="#ff6633" count={12} spread={0.6} progress={progressRef.current} />
-            <pointLight color="#ff6633" intensity={2} distance={3} />
+        <group ref={groupRef} rotation={[0, rotationY, 0]}>
+            {/* BÜYÜK OK GÖVDESİ */}
+            {[0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9].map((z, i) => (
+                <PixelBlock key={i} position={[0, 0, z]} color={i < 3 ? '#ff6600' : '#ff8833'} size={0.12} />
+            ))}
+            {/* OK UCU */}
+            <PixelBlock position={[0, 0, 1.1]} color="#ffaa00" size={0.15} />
+            <PixelBlock position={[0, 0.08, 1.0]} color="#ff8800" size={0.08} />
+            <PixelBlock position={[0, -0.08, 1.0]} color="#ff8800" size={0.08} />
+            {/* KUYRUK */}
+            <PixelBlock position={[0.1, 0.1, -0.15]} color="#cc4400" size={0.08} />
+            <PixelBlock position={[-0.1, 0.1, -0.15]} color="#cc4400" size={0.08} />
+            <PixelBlock position={[0.1, -0.1, -0.15]} color="#cc4400" size={0.08} />
+            <PixelBlock position={[-0.1, -0.1, -0.15]} color="#cc4400" size={0.08} />
+
+            <Sparkles position={[0, 0, 0.5]} color="#ff6600" count={12} spread={0.5} progress={progressRef.current} />
+            <pointLight color="#ff6600" intensity={2} distance={3} />
         </group>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 3️⃣ HUNTER'S FOCUS - Düşmanın etrafında dönen pençeler
+// 3️⃣ HUNTER'S FOCUS - Oyuncuda pençeler + düşmanda halka (Resim 3 gibi)
 // ═══════════════════════════════════════════════════════════════════════════
 export const HunterFocusEffect: React.FC<{
     position: [number, number, number];
@@ -228,19 +218,12 @@ export const HunterFocusEffect: React.FC<{
     followPlayer?: boolean;
 }> = ({ position, targetPosition, onComplete }) => {
     const groupRef = useRef<THREE.Group>(null);
-    const clawRefs = useRef<THREE.Group[]>([]);
+    const clawGroupRef = useRef<THREE.Group>(null);
     const startTime = useRef(Date.now());
-    const duration = 3000; // 3 saniye
+    const duration = 4000;
     const progressRef = useRef(0);
 
-    // Hedef pozisyonu
     const spawnPos = targetPosition || position;
-
-    // 4 pençe pozisyonu
-    const claws = useMemo(() => [0, 1, 2, 3].map(i => ({
-        angle: (i / 4) * Math.PI * 2,
-        radius: 1.2,
-    })), []);
 
     useFrame((state) => {
         if (!groupRef.current) return;
@@ -250,70 +233,138 @@ export const HunterFocusEffect: React.FC<{
         const time = state.clock.elapsedTime;
 
         // Pençeleri döndür
-        clawRefs.current.forEach((claw, i) => {
-            if (!claw) return;
-            const baseAngle = claws[i].angle;
-            const currentAngle = baseAngle + time * 2; // Dönen
-            claw.position.x = Math.cos(currentAngle) * claws[i].radius;
-            claw.position.z = Math.sin(currentAngle) * claws[i].radius;
-            claw.rotation.y = currentAngle + Math.PI / 2;
-
-            // Fade out
-            claw.traverse((child) => {
-                if ((child as THREE.Mesh).isMesh) {
-                    ((child as THREE.Mesh).material as THREE.MeshBasicMaterial).opacity = (1 - progress) * 0.9;
-                }
-            });
-        });
+        if (clawGroupRef.current) {
+            clawGroupRef.current.rotation.y = time * 2;
+        }
 
         if (progress >= 1) onComplete();
     });
 
+    // Pençe şekli - 3 parmak
+    const Claw = ({ rotation }: { rotation: number }) => (
+        <group rotation={[0, rotation, 0]} position={[0, 0.5, 0]}>
+            <group position={[1.0, 0, 0]}>
+                {/* 3 parmak */}
+                {[-0.12, 0, 0.12].map((offset, i) => (
+                    <group key={i} position={[0, 0, offset]} rotation={[0, 0, (i - 1) * 0.2]}>
+                        <PixelBlock position={[0, 0, 0]} color="#66ff44" size={0.08} />
+                        <PixelBlock position={[0, 0.1, 0]} color="#88ff66" size={0.07} />
+                        <PixelBlock position={[0, 0.2, 0]} color="#aaff88" size={0.06} />
+                        <PixelBlock position={[0, 0.28, 0]} color="#ccffaa" size={0.05} />
+                    </group>
+                ))}
+            </group>
+        </group>
+    );
+
     return (
         <group ref={groupRef} position={spawnPos}>
             {/* 4 Dönen Pençe */}
-            {claws.map((claw, i) => (
-                <group
-                    key={i}
-                    ref={(el) => { if (el) clawRefs.current[i] = el; }}
-                    position={[Math.cos(claw.angle) * claw.radius, 0.5, Math.sin(claw.angle) * claw.radius]}
-                >
-                    {/* Pençe - 3 çizgi */}
-                    {[-0.15, 0, 0.15].map((offset, j) => (
-                        <mesh key={j} position={[offset, 0, 0]} rotation={[0, 0, (j - 1) * 0.3]}>
-                            <planeGeometry args={[0.08, 0.5]} />
-                            <meshBasicMaterial
-                                color="#44ff44"
-                                transparent
-                                opacity={0.9}
-                                blending={THREE.AdditiveBlending}
-                                side={THREE.DoubleSide}
-                            />
-                        </mesh>
-                    ))}
-                </group>
-            ))}
+            <group ref={clawGroupRef}>
+                <Claw rotation={0} />
+                <Claw rotation={Math.PI / 2} />
+                <Claw rotation={Math.PI} />
+                <Claw rotation={Math.PI * 1.5} />
+            </group>
 
-            {/* Zemin halkası */}
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
-                <ringGeometry args={[0.9, 1.3, 16]} />
-                <meshBasicMaterial
+            {/* Zemin halkası - yeşil */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+                <ringGeometry args={[0.8, 1.0, 16]} />
+                <meshStandardMaterial
                     color="#44ff44"
+                    emissive="#44ff44"
+                    emissiveIntensity={0.5}
                     transparent
-                    opacity={0.4 * (1 - progressRef.current)}
-                    blending={THREE.AdditiveBlending}
+                    opacity={0.6 * (1 - progressRef.current)}
                     side={THREE.DoubleSide}
                 />
             </mesh>
 
-            <Sparkles position={[0, 0.5, 0]} color="#44ff44" count={20} spread={1.5} progress={progressRef.current} />
+            <Sparkles position={[0, 0.5, 0]} color="#66ff44" count={15} spread={1.5} progress={progressRef.current} />
             <pointLight color="#44ff44" intensity={2} distance={3} />
         </group>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 4️⃣ WIND SLASH - 3 ok yayılarak (YAVAŞ)
+// 4️⃣ BACKSTEP - Dönen halkalar (Resim 5 gibi)
+// ═══════════════════════════════════════════════════════════════════════════
+export const BackstepEffect: React.FC<{
+    position: [number, number, number];
+    targetPosition?: [number, number, number];
+    onComplete: () => void;
+}> = ({ position, onComplete }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    const ring1Ref = useRef<THREE.Mesh>(null);
+    const ring2Ref = useRef<THREE.Mesh>(null);
+    const startTime = useRef(Date.now());
+    const duration = 800;
+    const progressRef = useRef(0);
+
+    useFrame((state) => {
+        if (!groupRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+        const time = state.clock.elapsedTime;
+
+        // Halkaları döndür
+        if (ring1Ref.current) ring1Ref.current.rotation.z = time * 3;
+        if (ring2Ref.current) ring2Ref.current.rotation.z = -time * 2;
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group ref={groupRef} position={[position[0], 0.05, position[2]]}>
+            {/* İç halka - sarı */}
+            <mesh ref={ring1Ref} rotation={[-Math.PI / 2, 0, 0]}>
+                <ringGeometry args={[0.5, 0.65, 16]} />
+                <meshStandardMaterial
+                    color="#ffff44"
+                    emissive="#ffff44"
+                    emissiveIntensity={0.7}
+                    transparent
+                    opacity={0.8 * (1 - progressRef.current)}
+                    side={THREE.DoubleSide}
+                />
+            </mesh>
+
+            {/* Dış halka - yeşil */}
+            <mesh ref={ring2Ref} rotation={[-Math.PI / 2, 0, 0]}>
+                <ringGeometry args={[0.9, 1.1, 16]} />
+                <meshStandardMaterial
+                    color="#88ff44"
+                    emissive="#88ff44"
+                    emissiveIntensity={0.5}
+                    transparent
+                    opacity={0.6 * (1 - progressRef.current)}
+                    side={THREE.DoubleSide}
+                />
+            </mesh>
+
+            {/* Parçacıklar */}
+            {Array.from({ length: 8 }).map((_, i) => {
+                const angle = (i / 8) * Math.PI * 2;
+                return (
+                    <PixelBlock
+                        key={i}
+                        position={[Math.cos(angle) * 0.7, 0.1, Math.sin(angle) * 0.7]}
+                        color="#88ff66"
+                        size={0.08}
+                        opacity={1 - progressRef.current}
+                    />
+                );
+            })}
+
+            <Sparkles position={[0, 0.3, 0]} color="#88ff44" count={12} spread={1} progress={progressRef.current} />
+            <pointLight color="#ffff44" intensity={2} distance={2} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 5️⃣ WIND SLASH - 3 ok yayılarak
 // ═══════════════════════════════════════════════════════════════════════════
 export const WindSlashEffect: React.FC<{
     position: [number, number, number];
@@ -322,7 +373,7 @@ export const WindSlashEffect: React.FC<{
 }> = ({ position, targetPosition, onComplete }) => {
     const groupRef = useRef<THREE.Group>(null);
     const startTime = useRef(Date.now());
-    const duration = 1400; // YAVAŞ
+    const duration = 1400;
     const progressRef = useRef(0);
 
     const direction = useMemo(() => {
@@ -332,11 +383,7 @@ export const WindSlashEffect: React.FC<{
         return new THREE.Vector3(0, 0, 1);
     }, [position, targetPosition]);
 
-    const materials = useMemo(() => [
-        createPixelMaterial('#33ccff', '#88ddff', 10),
-        createPixelMaterial('#33ccff', '#88ddff', 10),
-        createPixelMaterial('#33ccff', '#88ddff', 10),
-    ], []);
+    const rotationY = Math.atan2(direction.x, direction.z);
 
     useFrame(() => {
         if (!groupRef.current) return;
@@ -351,80 +398,32 @@ export const WindSlashEffect: React.FC<{
             position[2] + direction.z * distance
         );
 
-        materials.forEach(m => m.uniforms.time.value += 0.02);
-
         if (progress >= 1) onComplete();
     });
 
-    const rotationY = Math.atan2(direction.x, direction.z);
-
-    return (
-        <group ref={groupRef}>
-            {[-0.3, 0, 0.3].map((offset, i) => (
-                <mesh key={i} position={[offset * (1 + progressRef.current), 0, 0]} rotation={[0, rotationY + offset * 0.2, 0]} material={materials[i]}>
-                    <planeGeometry args={[1.0, 0.25]} />
-                </mesh>
+    // Mini ok bileşeni
+    const MiniArrow = ({ offset }: { offset: number }) => (
+        <group position={[offset * (1 + progressRef.current), 0, 0]} rotation={[0, offset * 0.15, 0]}>
+            {[0, 0.1, 0.2, 0.3, 0.4].map((z, i) => (
+                <PixelBlock key={i} position={[0, 0, z]} color={i < 2 ? '#66ddff' : '#44bbdd'} size={0.06} />
             ))}
-            <Sparkles position={[0, 0, 0]} color="#33ccff" count={15} spread={0.8} progress={progressRef.current} />
+            <PixelBlock position={[0, 0, 0.52]} color="#88eeff" size={0.08} />
         </group>
     );
-};
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 5️⃣ BACKSTEP - Karakteri geri zıplatır (basit efekt)
-// ═══════════════════════════════════════════════════════════════════════════
-export const BackstepEffect: React.FC<{
-    position: [number, number, number];
-    targetPosition?: [number, number, number];
-    onComplete: () => void;
-}> = ({ position, onComplete }) => {
-    const groupRef = useRef<THREE.Group>(null);
-    const startTime = useRef(Date.now());
-    const duration = 500;
-    const progressRef = useRef(0);
-
-    useFrame(() => {
-        if (!groupRef.current) return;
-        const elapsed = Date.now() - startTime.current;
-        const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
-
-        // Fade out
-        groupRef.current.traverse((child) => {
-            if ((child as THREE.Mesh).isMesh) {
-                ((child as THREE.Mesh).material as THREE.MeshBasicMaterial).opacity = (1 - progress) * 0.7;
-            }
-        });
-
-        if (progress >= 1) onComplete();
-    });
 
     return (
-        <group ref={groupRef} position={[position[0], 0.1, position[2]]}>
-            {/* Basit toz bulutu efekti */}
-            {Array.from({ length: 8 }).map((_, i) => {
-                const angle = (i / 8) * Math.PI * 2;
-                const r = 0.5 + Math.random() * 0.3;
-                return (
-                    <mesh key={i} position={[Math.cos(angle) * r, 0.1 + Math.random() * 0.2, Math.sin(angle) * r]}>
-                        <planeGeometry args={[0.15, 0.15]} />
-                        <meshBasicMaterial
-                            color="#aaaaaa"
-                            transparent
-                            opacity={0.6}
-                            blending={THREE.AdditiveBlending}
-                            side={THREE.DoubleSide}
-                        />
-                    </mesh>
-                );
-            })}
-            <Sparkles position={[0, 0.2, 0]} color="#ffffff" count={10} spread={0.8} progress={progressRef.current} />
+        <group ref={groupRef} rotation={[0, rotationY, 0]}>
+            <MiniArrow offset={-0.3} />
+            <MiniArrow offset={0} />
+            <MiniArrow offset={0.3} />
+            <Sparkles position={[0, 0, 0.2]} color="#66ddff" count={15} spread={0.8} progress={progressRef.current} />
+            <pointLight color="#66ddff" intensity={2} distance={3} />
         </group>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 6️⃣ DRAGON ARROW - 2D PIXEL ART EJDERHA (YAVAŞ)
+// 6️⃣ DRAGON ARROW - GERÇEK VOXEL EJDERHA (Resim 2 gibi) 🐉
 // ═══════════════════════════════════════════════════════════════════════════
 export const DragonArrowEffect: React.FC<{
     position: [number, number, number];
@@ -434,7 +433,7 @@ export const DragonArrowEffect: React.FC<{
     const groupRef = useRef<THREE.Group>(null);
     const dragonRef = useRef<THREE.Group>(null);
     const startTime = useRef(Date.now());
-    const duration = 3000; // YAVAŞ - 3 saniye
+    const duration = 3500; // YAVAŞ
     const progressRef = useRef(0);
 
     const direction = useMemo(() => {
@@ -446,72 +445,6 @@ export const DragonArrowEffect: React.FC<{
 
     const rotationY = Math.atan2(direction.x, direction.z);
 
-    // 2D Pixel ejderha shader
-    const dragonMaterial = useMemo(() => {
-        return new THREE.ShaderMaterial({
-            transparent: true,
-            side: THREE.DoubleSide,
-            depthWrite: false,
-            blending: THREE.AdditiveBlending,
-            uniforms: { time: { value: 0 } },
-            vertexShader: `
-                varying vec2 vUv;
-                void main() {
-                    vUv = uv;
-                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                }
-            `,
-            fragmentShader: `
-                uniform float time;
-                varying vec2 vUv;
-
-                void main() {
-                    vec2 uv = vUv;
-                    
-                    // Pixelate
-                    vec2 pUv = floor(uv * 24.0) / 24.0;
-                    
-                    // Dragon head shape
-                    float head = step(0.6, pUv.x) * step(0.25, pUv.y) * step(pUv.y, 0.75);
-                    
-                    // Snout
-                    float snout = step(0.75, pUv.x) * step(0.35, pUv.y) * step(pUv.y, 0.65);
-                    
-                    // Body
-                    float body = step(0.2, pUv.x) * step(pUv.x, 0.65) * step(0.3, pUv.y) * step(pUv.y, 0.7);
-                    
-                    // Tail
-                    float tail = step(0.0, pUv.x) * step(pUv.x, 0.25) * step(0.4, pUv.y) * step(pUv.y, 0.6);
-                    
-                    // Wing (top)
-                    float wing = step(0.3, pUv.x) * step(pUv.x, 0.6) * step(0.65, pUv.y) * step(pUv.y, 0.9);
-                    wing += step(0.35, pUv.x) * step(pUv.x, 0.55) * step(0.1, pUv.y) * step(pUv.y, 0.35);
-                    
-                    // Eyes
-                    float eye = step(0.68, pUv.x) * step(pUv.x, 0.73) * step(0.55, pUv.y) * step(pUv.y, 0.62);
-                    
-                    // Combined shape
-                    float dragon = head + snout + body + tail + wing;
-                    dragon = clamp(dragon, 0.0, 1.0);
-                    
-                    // Colors - orange/red with fire
-                    vec3 bodyColor = vec3(1.0, 0.4, 0.1);
-                    vec3 hotColor = vec3(1.0, 0.7, 0.2);
-                    float fire = sin(time * 5.0 + pUv.x * 10.0) * 0.2 + 0.8;
-                    
-                    vec3 col = mix(bodyColor, hotColor, fire);
-                    
-                    // Eye is white/yellow
-                    if (eye > 0.5) col = vec3(1.0, 1.0, 0.5);
-                    
-                    float alpha = dragon * 0.95;
-                    
-                    gl_FragColor = vec4(col, alpha);
-                }
-            `
-        });
-    }, []);
-
     useFrame((state) => {
         if (!groupRef.current || !dragonRef.current) return;
         const elapsed = Date.now() - startTime.current;
@@ -519,53 +452,177 @@ export const DragonArrowEffect: React.FC<{
         progressRef.current = progress;
         const time = state.clock.elapsedTime;
 
-        // YAVAŞ hareket
-        const distance = progress * 40;
+        const distance = progress * 45;
         groupRef.current.position.set(
             position[0] + direction.x * distance,
-            position[1] + 1,
+            position[1] + 1.2,
             position[2] + direction.z * distance
         );
 
         // Hafif sallanma
-        dragonRef.current.rotation.z = Math.sin(time * 4) * 0.05;
-        dragonRef.current.position.y = Math.sin(time * 3) * 0.1;
-
-        dragonMaterial.uniforms.time.value = time;
+        dragonRef.current.rotation.z = Math.sin(time * 4) * 0.08;
+        dragonRef.current.position.y = Math.sin(time * 3) * 0.15;
 
         if (progress >= 1) onComplete();
     });
 
+    // EJDERHA KAFASI - Resim 2'deki gibi büyük turuncu kafa
+    const DragonHead = () => (
+        <group position={[0, 0, 2]}>
+            {/* Ana kafa - geniş */}
+            {[-0.3, -0.15, 0, 0.15, 0.3].map((x) =>
+                [-0.2, -0.1, 0, 0.1, 0.2].map((y) => (
+                    <PixelBlock
+                        key={`head-${x}-${y}`}
+                        position={[x, y, 0]}
+                        color={Math.abs(x) > 0.2 || Math.abs(y) > 0.15 ? '#ff8844' : '#ffaa66'}
+                        size={0.15}
+                    />
+                ))
+            )}
+            {/* Burun/Ağız - Uzun */}
+            {[0.2, 0.35, 0.5, 0.65].map((z, i) => (
+                <group key={`snout-${z}`}>
+                    <PixelBlock position={[0, 0.05, z]} color="#ffaa55" size={0.12} />
+                    <PixelBlock position={[0, -0.08, z]} color="#ff9944" size={0.1} />
+                    <PixelBlock position={[-0.1, 0, z]} color="#ff8833" size={0.1} />
+                    <PixelBlock position={[0.1, 0, z]} color="#ff8833" size={0.1} />
+                </group>
+            ))}
+            {/* Gözler - Parlak sarı */}
+            <PixelBlock position={[-0.15, 0.12, 0.15]} color="#ffff44" size={0.1} />
+            <PixelBlock position={[0.15, 0.12, 0.15]} color="#ffff44" size={0.1} />
+            {/* Boynuzlar */}
+            <PixelBlock position={[-0.25, 0.3, -0.1]} color="#ff6622" size={0.08} />
+            <PixelBlock position={[-0.25, 0.4, -0.15]} color="#ff5511" size={0.06} />
+            <PixelBlock position={[0.25, 0.3, -0.1]} color="#ff6622" size={0.08} />
+            <PixelBlock position={[0.25, 0.4, -0.15]} color="#ff5511" size={0.06} />
+            {/* Dişler - Alt */}
+            {[-0.1, 0, 0.1].map((x) => (
+                <PixelBlock key={`tooth-${x}`} position={[x, -0.2, 0.4]} color="#ffffff" size={0.06} />
+            ))}
+        </group>
+    );
+
+    // EJDERHA GÖVDESİ
+    const DragonBody = () => (
+        <group>
+            {/* Gövde segmentleri */}
+            {[0, -0.4, -0.8, -1.2, -1.6, -2].map((z, i) => {
+                const scale = 1 - i * 0.1;
+                return (
+                    <group key={`body-${z}`} position={[0, 0, z]}>
+                        {[-0.2, -0.1, 0, 0.1, 0.2].filter((_, j) => j !== 0 && j !== 4 || i < 3).map((x) =>
+                            [-0.15, 0, 0.15].filter((_, k) => k !== 0 && k !== 2 || i < 2).map((y) => (
+                                <PixelBlock
+                                    key={`seg-${z}-${x}-${y}`}
+                                    position={[x * scale, y * scale, 0]}
+                                    color={i % 2 === 0 ? '#ff7733' : '#ff8844'}
+                                    size={0.12 * scale}
+                                />
+                            ))
+                        )}
+                    </group>
+                );
+            })}
+            {/* Kuyruk */}
+            {[-2.3, -2.5, -2.7, -2.9].map((z, i) => (
+                <PixelBlock
+                    key={`tail-${z}`}
+                    position={[0, 0, z]}
+                    color={i % 2 === 0 ? '#ff6622' : '#ff5511'}
+                    size={0.08 - i * 0.01}
+                />
+            ))}
+        </group>
+    );
+
+    // EJDERHA KANATLARI
+    const DragonWings = () => (
+        <group>
+            {/* Sol kanat */}
+            <group position={[-0.3, 0.2, 0.5]}>
+                {[0, -0.2, -0.4, -0.6, -0.8].map((x, i) => (
+                    <PixelBlock
+                        key={`lwing-${x}`}
+                        position={[x, 0.1 - i * 0.05, 0]}
+                        color={i % 2 === 0 ? '#ff9944' : '#ffaa55'}
+                        size={0.1}
+                    />
+                ))}
+                {[-0.15, -0.35, -0.55].map((x, i) => (
+                    <PixelBlock
+                        key={`lwing2-${x}`}
+                        position={[x, -0.05, 0]}
+                        color="#ff8833"
+                        size={0.08}
+                    />
+                ))}
+            </group>
+            {/* Sağ kanat */}
+            <group position={[0.3, 0.2, 0.5]}>
+                {[0, 0.2, 0.4, 0.6, 0.8].map((x, i) => (
+                    <PixelBlock
+                        key={`rwing-${x}`}
+                        position={[x, 0.1 - i * 0.05, 0]}
+                        color={i % 2 === 0 ? '#ff9944' : '#ffaa55'}
+                        size={0.1}
+                    />
+                ))}
+                {[0.15, 0.35, 0.55].map((x, i) => (
+                    <PixelBlock
+                        key={`rwing2-${x}`}
+                        position={[x, -0.05, 0]}
+                        color="#ff8833"
+                        size={0.08}
+                    />
+                ))}
+            </group>
+        </group>
+    );
+
+    // ALEV TRAİL
+    const FlameTrail = () => {
+        const flames = useMemo(() => {
+            return Array.from({ length: 20 }).map((_, i) => ({
+                x: (Math.random() - 0.5) * 0.4,
+                y: (Math.random() - 0.5) * 0.4,
+                z: -3 - i * 0.2,
+                size: 0.08 + Math.random() * 0.06,
+                colorIndex: Math.floor(Math.random() * 3),
+            }));
+        }, []);
+
+        const colors = ['#ffff44', '#ff8800', '#ff4400'];
+
+        return (
+            <group>
+                {flames.map((f, i) => (
+                    <PixelBlock
+                        key={`flame-${i}`}
+                        position={[f.x, f.y, f.z]}
+                        color={colors[f.colorIndex]}
+                        size={f.size}
+                        opacity={0.9 - i * 0.03}
+                    />
+                ))}
+            </group>
+        );
+    };
+
     return (
         <group ref={groupRef}>
             <group ref={dragonRef} rotation={[0, rotationY, 0]}>
-                {/* 2D Pixel Ejderha */}
-                <mesh material={dragonMaterial}>
-                    <planeGeometry args={[4, 2]} />
-                </mesh>
-
-                {/* Alev parçacıkları */}
-                {Array.from({ length: 15 }).map((_, i) => {
-                    const x = -1.5 - i * 0.15;
-                    const y = (Math.random() - 0.5) * 0.5;
-                    return (
-                        <mesh key={i} position={[x, y, 0]}>
-                            <planeGeometry args={[0.15 + Math.random() * 0.1, 0.15 + Math.random() * 0.1]} />
-                            <meshBasicMaterial
-                                color={i % 3 === 0 ? '#ffff44' : i % 3 === 1 ? '#ff8800' : '#ff4400'}
-                                transparent
-                                opacity={0.9 - i * 0.04}
-                                blending={THREE.AdditiveBlending}
-                                side={THREE.DoubleSide}
-                            />
-                        </mesh>
-                    );
-                })}
+                <DragonHead />
+                <DragonBody />
+                <DragonWings />
+                <FlameTrail />
             </group>
 
-            <Sparkles position={[0, 0, 0]} color="#ff6600" count={30} spread={2} progress={progressRef.current} />
-            <Sparkles position={[-1, 0, 0]} color="#ffaa00" count={20} spread={1.5} progress={progressRef.current} />
-            <pointLight color="#ff4400" intensity={5} distance={6} />
+            <Sparkles position={[0, 0, -1]} color="#ff6600" count={30} spread={2.5} progress={progressRef.current} />
+            <Sparkles position={[0, 0, 1]} color="#ffaa00" count={20} spread={1.5} progress={progressRef.current} />
+            <pointLight position={[0, 0, 2]} color="#ff4400" intensity={5} distance={6} />
+            <pointLight position={[0, 0, -2]} color="#ffaa00" intensity={3} distance={4} />
         </group>
     );
 };
@@ -592,7 +649,6 @@ export const MultishotEffect: React.FC<{
     }, [position, targetPosition]);
 
     const rotationY = Math.atan2(direction.x, direction.z);
-    const materials = useMemo(() => Array.from({ length: 5 }).map(() => createPixelMaterial('#88ff88', '#aaffaa', 10)), []);
 
     useFrame(() => {
         if (!groupRef.current) return;
@@ -603,19 +659,24 @@ export const MultishotEffect: React.FC<{
         const distance = progress * 20;
         groupRef.current.position.set(position[0] + direction.x * distance, position[1] + 0.8, position[2] + direction.z * distance);
 
-        materials.forEach(m => m.uniforms.time.value += 0.02);
-
         if (progress >= 1) onComplete();
     });
 
-    return (
-        <group ref={groupRef}>
-            {[-0.4, -0.2, 0, 0.2, 0.4].map((offset, i) => (
-                <mesh key={i} position={[offset * (1 + progressRef.current), 0, 0]} rotation={[0, rotationY + offset * 0.15, 0]} material={materials[i]}>
-                    <planeGeometry args={[0.8, 0.2]} />
-                </mesh>
+    const MiniArrow = ({ offset }: { offset: number }) => (
+        <group position={[offset * (1 + progressRef.current * 1.5), 0, 0]} rotation={[0, offset * 0.12, 0]}>
+            {[0, 0.08, 0.16, 0.24, 0.32].map((z, i) => (
+                <PixelBlock key={i} position={[0, 0, z]} color={i < 2 ? '#66ff44' : '#88ff66'} size={0.05} />
             ))}
-            <Sparkles position={[0, 0, 0]} color="#88ff88" count={20} spread={1} progress={progressRef.current} />
+            <PixelBlock position={[0, 0, 0.4]} color="#aaff88" size={0.06} />
+        </group>
+    );
+
+    return (
+        <group ref={groupRef} rotation={[0, rotationY, 0]}>
+            {[-0.4, -0.2, 0, 0.2, 0.4].map((offset, i) => (
+                <MiniArrow key={i} offset={offset} />
+            ))}
+            <Sparkles position={[0, 0, 0.2]} color="#88ff66" count={20} spread={1} progress={progressRef.current} />
         </group>
     );
 };
@@ -648,8 +709,8 @@ export const StealthEffect: React.FC<{
     return (
         <group ref={groupRef} position={position}>
             <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
-                <ringGeometry args={[0.4, 0.8, 8]} />
-                <meshBasicMaterial color="#555555" transparent opacity={0.3 * (1 - progressRef.current)} blending={THREE.AdditiveBlending} side={THREE.DoubleSide} />
+                <ringGeometry args={[0.4, 0.7, 8]} />
+                <meshStandardMaterial color="#444444" emissive="#222222" transparent opacity={0.4 * (1 - progressRef.current)} side={THREE.DoubleSide} />
             </mesh>
         </group>
     );
@@ -680,8 +741,8 @@ export const TrapEffect: React.FC<{
     return (
         <group ref={groupRef} position={[spawnPos[0], 0.1, spawnPos[2]]}>
             <mesh rotation={[-Math.PI / 2, 0, 0]}>
-                <ringGeometry args={[0.3, 0.6, 6]} />
-                <meshBasicMaterial color="#ff4444" transparent opacity={0.6 * (1 - progressRef.current)} blending={THREE.AdditiveBlending} side={THREE.DoubleSide} />
+                <ringGeometry args={[0.3, 0.5, 6]} />
+                <meshStandardMaterial color="#ff4444" emissive="#ff2222" transparent opacity={0.6 * (1 - progressRef.current)} side={THREE.DoubleSide} />
             </mesh>
             <Sparkles position={[0, 0.2, 0]} color="#ff4444" count={8} spread={0.5} progress={progressRef.current} />
         </group>
@@ -694,6 +755,7 @@ export const ArrowRainEffect: React.FC<{
     onComplete: () => void;
 }> = ({ position, targetPosition, onComplete }) => {
     const groupRef = useRef<THREE.Group>(null);
+    const arrowRefs = useRef<THREE.Group[]>([]);
     const startTime = useRef(Date.now());
     const duration = 2500;
     const progressRef = useRef(0);
@@ -705,28 +767,31 @@ export const ArrowRainEffect: React.FC<{
         delay: Math.random() * 0.5,
     })), []);
 
-    const material = useMemo(() => createPixelMaterial('#ffff66', '#ffaa44', 8), []);
-
     useFrame(() => {
         if (!groupRef.current) return;
         const elapsed = Date.now() - startTime.current;
         progressRef.current = Math.min(elapsed / duration, 1);
-        material.uniforms.time.value += 0.02;
+
+        arrowRefs.current.forEach((arrow, i) => {
+            if (!arrow) return;
+            const arrowProgress = Math.max(0, Math.min(1, (progressRef.current - arrows[i].delay) / 0.4));
+            arrow.position.y = 5 - arrowProgress * 5;
+            arrow.visible = arrowProgress > 0 && arrow.position.y > 0.1;
+        });
+
         if (progressRef.current >= 1) onComplete();
     });
 
     return (
         <group ref={groupRef} position={spawnPos}>
-            {arrows.map((arrow, i) => {
-                const arrowProgress = Math.max(0, Math.min(1, (progressRef.current - arrow.delay) / 0.4));
-                const y = 5 - arrowProgress * 5;
-                if (arrowProgress <= 0 || y < 0.1) return null;
-                return (
-                    <mesh key={i} position={[arrow.x, y, arrow.z]} rotation={[Math.PI / 2, 0, 0]} material={material}>
-                        <planeGeometry args={[0.2, 0.6]} />
-                    </mesh>
-                );
-            })}
+            {arrows.map((arrow, i) => (
+                <group key={i} ref={(el) => { if (el) arrowRefs.current[i] = el; }} position={[arrow.x, 5, arrow.z]} rotation={[Math.PI / 2, 0, 0]}>
+                    {[0, 0.08, 0.16, 0.24].map((z, j) => (
+                        <PixelBlock key={j} position={[0, 0, z]} color={j < 2 ? '#ffff66' : '#ffdd44'} size={0.05} />
+                    ))}
+                    <PixelBlock position={[0, 0, 0.32]} color="#ffffff" size={0.06} />
+                </group>
+            ))}
             <Sparkles position={[0, 0.5, 0]} color="#ffff66" count={25} spread={2.5} progress={progressRef.current} />
         </group>
     );
@@ -736,26 +801,19 @@ export const ArrowRainEffect: React.FC<{
 // ARCHER SKILL MAP
 // ═══════════════════════════════════════════════════════════════════════════
 export const ARCHER_EFFECTS: Record<string, React.FC<any>> = {
-    // CONSTANTS.TS VISUAL KEYS
     archer_shot: RapidShotEffect,
     javelin: DeadlyJavelinEffect,
     hunters_focus: HunterFocusEffect,
     archer_volley: MultishotEffect,
     backstep: BackstepEffect,
     dragon_arrow: DragonArrowEffect,
-
-    // Style keys
     arrow_shot: RapidShotEffect,
     focus: HunterFocusEffect,
     wind_slash: WindSlashEffect,
-
-    // Ek efektler
     multishot_effect: MultishotEffect,
     stealth_effect: StealthEffect,
     trap_effect: TrapEffect,
     arrow_rain_effect: ArrowRainEffect,
-
-    // Alias
     arrow: RapidShotEffect,
     multishot: MultishotEffect,
     stealth: StealthEffect,

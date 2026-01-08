@@ -1,24 +1,29 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// ARCHER (OKÇU) SKILL EFFECTS - SHADER TABANLI
-// Pixel/Shiny yeşil temalı ok ve rüzgar efektleri
+// ARCHER (OKÇU) SKILL EFFECTS - PİXEL SHADER TABANLI
+// Pixelated glow efektli oklar
 // ═══════════════════════════════════════════════════════════════════════════
 
 import React, { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
-import { Instances, Instance } from '@react-three/drei';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 🎨 SHADER OK MATERYALİ - Tüm oklar için ortak glow shader
+// 🎨 PİXEL SHADER CORE - Tüm oklar için ortak pixelated glow shader
 // ═══════════════════════════════════════════════════════════════════════════
-const createArrowShaderMaterial = (color: string) => {
+const createPixelShaderMaterial = (color1: string, color2: string) => {
+    // RGB değerlerini parse et
+    const c1 = new THREE.Color(color1);
+    const c2 = new THREE.Color(color2);
+
     return new THREE.ShaderMaterial({
         transparent: true,
         blending: THREE.AdditiveBlending,
         depthWrite: false,
+        side: THREE.DoubleSide,
         uniforms: {
             time: { value: 0 },
-            glowColor: { value: new THREE.Color(color) }
+            color1: { value: new THREE.Vector3(c1.r, c1.g, c1.b) },
+            color2: { value: new THREE.Vector3(c2.r, c2.g, c2.b) }
         },
         vertexShader: `
             varying vec2 vUv;
@@ -29,100 +34,79 @@ const createArrowShaderMaterial = (color: string) => {
         `,
         fragmentShader: `
             uniform float time;
-            uniform vec3 glowColor;
+            uniform vec3 color1;
+            uniform vec3 color2;
             varying vec2 vUv;
 
+            float pixel(vec2 uv) {
+                uv = floor(uv * 32.0) / 32.0;
+                return length(uv - 0.5);
+            }
+
             void main() {
-                float core = smoothstep(0.4, 0.0, abs(vUv.x - 0.5));
-                float pulse = 0.6 + sin(time * 8.0) * 0.2;
-                float fade = 1.0 - vUv.y * 0.3;
-                gl_FragColor = vec4(glowColor, core * pulse * fade);
+                float d = pixel(vUv);
+                float glow = smoothstep(0.6, 0.25, d);
+                vec3 col = mix(color1, color2, sin(time * 4.0) * 0.5 + 0.5);
+                gl_FragColor = vec4(col, glow);
             }
         `
     });
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// ARROW PIXELS - Ok parıltıları  
+// 🐉 EJDERHA SHADER - Ulti için özel dragon shader
 // ═══════════════════════════════════════════════════════════════════════════
-const ArrowPixels: React.FC<{
-    position: [number, number, number];
-    color?: string;
-    count?: number;
-    spread?: number;
-    progress: number;
-}> = ({ position, color = '#66ff66', count = 15, spread = 0.5, progress }) => {
-    const pixels = useMemo(() => {
-        return Array.from({ length: count }).map(() => ({
-            x: (Math.random() - 0.5) * spread,
-            y: (Math.random() - 0.5) * spread,
-            z: (Math.random() - 0.5) * spread * 2,
-            size: 0.04 + Math.random() * 0.04,
-            isGold: Math.random() > 0.7,
-        }));
-    }, [count, spread]);
+const createDragonShaderMaterial = () => {
+    return new THREE.ShaderMaterial({
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+        uniforms: {
+            time: { value: 0 }
+        },
+        vertexShader: `
+            varying vec2 vUv;
+            void main() {
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `,
+        fragmentShader: `
+            uniform float time;
+            varying vec2 vUv;
 
-    return (
-        <group position={position}>
-            <Instances range={count}>
-                <boxGeometry args={[1, 1, 1]} />
-                <meshBasicMaterial
-                    color="#ffffff"
-                    transparent
-                    opacity={0.8 * (1 - progress)}
-                    blending={THREE.AdditiveBlending}
-                />
-                {pixels.map((px, i) => (
-                    <Instance
-                        key={i}
-                        position={[px.x, px.y, px.z]}
-                        scale={[px.size, px.size, px.size]}
-                        color={px.isGold ? '#ffdd44' : color}
-                    />
-                ))}
-            </Instances>
-        </group>
-    );
-};
+            float head(vec2 uv) {
+                return smoothstep(0.4, 0.0, length(uv - vec2(0.2, 0.5)));
+            }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// 🏹 SHADER OK BİLEŞENİ - Yeniden kullanılabilir
-// ═══════════════════════════════════════════════════════════════════════════
-const ShaderArrow: React.FC<{
-    position: [number, number, number];
-    rotation?: [number, number, number];
-    scale?: [number, number, number];
-    color: string;
-    timeOffset?: number;
-}> = ({ position, rotation = [0, 0, 0], scale = [0.1, 1.2, 1], color, timeOffset = 0 }) => {
-    const meshRef = useRef<THREE.Mesh>(null);
-    const material = useMemo(() => createArrowShaderMaterial(color), [color]);
+            float body(vec2 uv) {
+                return smoothstep(0.3, 0.05, abs(uv.y - 0.5)) * (1.0 - uv.x);
+            }
 
-    useFrame((state) => {
-        if (meshRef.current && material.uniforms) {
-            material.uniforms.time.value = state.clock.elapsedTime + timeOffset;
-        }
+            void main() {
+                float h = head(vUv);
+                float b = body(vUv);
+                float fire = sin((vUv.x + time) * 12.0) * 0.2;
+
+                vec3 col = vec3(1.0, 0.4, 0.1) + fire;
+                gl_FragColor = vec4(col, h + b);
+            }
+        `
     });
-
-    return (
-        <mesh ref={meshRef} position={position} rotation={rotation} scale={scale} material={material}>
-            <planeGeometry args={[1, 1]} />
-        </mesh>
-    );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 1️⃣ HIZLI ATIŞ (Quick Shot) - Normal Renkli Ok + Shader
+// 1️⃣ HIZLI ATIŞ (Rapid Shot) - Normal Sarı/Turuncu Ok
 // ═══════════════════════════════════════════════════════════════════════════
 export const RapidShotEffect: React.FC<{
     position: [number, number, number];
     targetPosition?: [number, number, number];
     onComplete: () => void;
 }> = ({ position, targetPosition, onComplete }) => {
-    const groupRef = useRef<THREE.Group>(null);
+    const meshRef = useRef<THREE.Mesh>(null);
     const startTime = useRef(Date.now());
-    const duration = 400;
-    const progressRef = useRef(0);
+    const duration = 600;
 
     const direction = useMemo(() => {
         if (targetPosition) {
@@ -136,55 +120,43 @@ export const RapidShotEffect: React.FC<{
     }, [position, targetPosition]);
 
     const rotationY = Math.atan2(direction.x, direction.z);
+    const material = useMemo(() => createPixelShaderMaterial('#ffee66', '#ff9933'), []);
 
     useFrame(() => {
-        if (!groupRef.current) return;
+        if (!meshRef.current) return;
         const elapsed = Date.now() - startTime.current;
         const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
 
-        const distance = progress * 25;
-        groupRef.current.position.set(
+        const distance = progress * 40;
+        meshRef.current.position.set(
             position[0] + direction.x * distance,
             position[1] + 0.8,
             position[2] + direction.z * distance
         );
 
+        material.uniforms.time.value += 0.1;
+
         if (progress >= 1) onComplete();
     });
 
     return (
-        <group ref={groupRef} rotation={[Math.PI / 2, rotationY, 0]}>
-            <ShaderArrow position={[0, 0, 0]} color="#66ff66" scale={[0.1, 1.2, 1]} />
-            {/* Trail particles */}
-            {Array.from({ length: 6 }).map((_, i) => (
-                <mesh key={i} position={[0, -0.2 * (i + 1), 0]}>
-                    <boxGeometry args={[0.06, 0.06, 0.06]} />
-                    <meshBasicMaterial
-                        color="#00ffaa"
-                        transparent
-                        opacity={0.8 - i * 0.1}
-                        blending={THREE.AdditiveBlending}
-                    />
-                </mesh>
-            ))}
-            <pointLight color="#66ff66" intensity={2} distance={3} />
-        </group>
+        <mesh ref={meshRef} rotation={[0, rotationY, 0]} material={material}>
+            <planeGeometry args={[1.2, 0.25]} />
+        </mesh>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 2️⃣ ÖLÜMCÜL CİRİT (Deadly Javelin) - Daha Parlak Kritik Ok
+// 2️⃣ ÖLÜMCÜL CİRİT (Deadly Javelin) - Elemental Mavi/Mor Ok
 // ═══════════════════════════════════════════════════════════════════════════
 export const DeadlyJavelinEffect: React.FC<{
     position: [number, number, number];
     targetPosition?: [number, number, number];
     onComplete: () => void;
 }> = ({ position, targetPosition, onComplete }) => {
-    const groupRef = useRef<THREE.Group>(null);
+    const meshRef = useRef<THREE.Mesh>(null);
     const startTime = useRef(Date.now());
-    const duration = 500;
-    const progressRef = useRef(0);
+    const duration = 700;
 
     const direction = useMemo(() => {
         if (targetPosition) {
@@ -198,52 +170,34 @@ export const DeadlyJavelinEffect: React.FC<{
     }, [position, targetPosition]);
 
     const rotationY = Math.atan2(direction.x, direction.z);
+    const material = useMemo(() => createPixelShaderMaterial('#66ccff', '#cc66ff'), []);
 
-    useFrame((state) => {
-        if (!groupRef.current) return;
+    useFrame(() => {
+        if (!meshRef.current) return;
         const elapsed = Date.now() - startTime.current;
         const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
 
-        const distance = progress * 30;
-        groupRef.current.position.set(
+        const distance = progress * 45;
+        meshRef.current.position.set(
             position[0] + direction.x * distance,
             position[1] + 0.8,
             position[2] + direction.z * distance
         );
 
-        // Büyüyen efekt
-        const scale = 1 + progress * 0.3;
-        groupRef.current.scale.setScalar(scale);
+        material.uniforms.time.value += 0.15;
 
         if (progress >= 1) onComplete();
     });
 
     return (
-        <group ref={groupRef} rotation={[Math.PI / 2, rotationY, 0]}>
-            <ShaderArrow position={[0, 0, 0]} color="#ffaa00" scale={[0.15, 1.5, 1]} />
-            {/* Aura particles */}
-            {Array.from({ length: 12 }).map((_, i) => {
-                const angle = (i / 12) * Math.PI * 2;
-                return (
-                    <mesh key={i} position={[Math.cos(angle) * 0.3, 0, Math.sin(angle) * 0.3]}>
-                        <boxGeometry args={[0.08, 0.08, 0.08]} />
-                        <meshBasicMaterial
-                            color="#ff5500"
-                            transparent
-                            opacity={0.9}
-                            blending={THREE.AdditiveBlending}
-                        />
-                    </mesh>
-                );
-            })}
-            <pointLight color="#ffaa00" intensity={4} distance={4} />
-        </group>
+        <mesh ref={meshRef} rotation={[0, rotationY, 0]} material={material}>
+            <planeGeometry args={[1.4, 0.3]} />
+        </mesh>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 3️⃣ AVCI ODAĞI (Hunter Focus) - Vücuda Yapışan Buff Aurası
+// 3️⃣ AVCI ODAĞI (Hunter Focus) - Buff Aurası (Oyuncuya Yapışık Döner)
 // ═══════════════════════════════════════════════════════════════════════════
 export const HunterFocusEffect: React.FC<{
     position: [number, number, number];
@@ -251,93 +205,46 @@ export const HunterFocusEffect: React.FC<{
     playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
     followPlayer?: boolean;
 }> = ({ position, onComplete, playerGroupRef, followPlayer = false }) => {
-    const groupRef = useRef<THREE.Group>(null);
+    const meshRef = useRef<THREE.Mesh>(null);
     const startTime = useRef(Date.now());
     const duration = 10000; // 10 saniye buff
-    const progressRef = useRef(0);
 
-    // Ring shader material
-    const ringMaterial = useMemo(() => {
-        return new THREE.ShaderMaterial({
-            transparent: true,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false,
-            side: THREE.DoubleSide,
-            uniforms: { time: { value: 0 } },
-            vertexShader: `
-                varying vec2 vUv;
-                void main() {
-                    vUv = uv;
-                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                }
-            `,
-            fragmentShader: `
-                uniform float time;
-                varying vec2 vUv;
-                void main() {
-                    float ring = sin((length(vUv - 0.5) * 12.0) - time * 6.0);
-                    float alpha = ring * 0.4;
-                    gl_FragColor = vec4(0.2, 1.0, 0.3, alpha);
-                }
-            `
-        });
-    }, []);
+    const material = useMemo(() => createPixelShaderMaterial('#66ff99', '#339966'), []);
 
-    useFrame((state) => {
-        if (!groupRef.current) return;
+    useFrame(() => {
+        if (!meshRef.current) return;
         const elapsed = Date.now() - startTime.current;
         const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
 
         // Oyuncuyu takip et
         if (followPlayer && playerGroupRef?.current) {
             const playerWorldPos = new THREE.Vector3();
             playerGroupRef.current.getWorldPosition(playerWorldPos);
-            groupRef.current.position.copy(playerWorldPos);
+            meshRef.current.position.set(playerWorldPos.x, playerWorldPos.y + 1.2, playerWorldPos.z);
         }
 
-        // Shader time update
-        ringMaterial.uniforms.time.value = state.clock.elapsedTime;
+        // Döndür
+        meshRef.current.rotation.z += 0.03;
+        material.uniforms.time.value += 0.08;
 
-        // Fade out son %15'te
+        // Fade out
         if (progress > 0.85) {
-            const fadeProgress = (progress - 0.85) / 0.15;
-            ringMaterial.opacity = 1 - fadeProgress;
+            const fade = 1 - (progress - 0.85) / 0.15;
+            material.opacity = fade;
         }
 
         if (progress >= 1) onComplete();
     });
 
     return (
-        <group ref={groupRef} position={position}>
-            {/* Ana ring aurası */}
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.1, 0]} material={ringMaterial}>
-                <planeGeometry args={[2.2, 2.2]} />
-            </mesh>
-
-            {/* Dönen parçacıklar */}
-            {Array.from({ length: 8 }).map((_, i) => {
-                const angle = (i / 8) * Math.PI * 2;
-                return (
-                    <mesh key={i} position={[Math.cos(angle) * 0.5, 1 + Math.sin(angle) * 0.2, Math.sin(angle) * 0.5]}>
-                        <boxGeometry args={[0.1, 0.1, 0.1]} />
-                        <meshBasicMaterial
-                            color="#55ff55"
-                            transparent
-                            opacity={0.9}
-                            blending={THREE.AdditiveBlending}
-                        />
-                    </mesh>
-                );
-            })}
-
-            <pointLight color="#55ff55" intensity={2} distance={3} />
-        </group>
+        <mesh ref={meshRef} position={position} rotation={[-Math.PI / 2, 0, 0]} material={material}>
+            <planeGeometry args={[2, 2]} />
+        </mesh>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 4️⃣ RÜZGAR KESİĞİ (Wind Slash) - 3 Ok + Yay Effect
+// 4️⃣ RÜZGAR KESİĞİ (Wind Slash) - 3 Ok Salvo
 // ═══════════════════════════════════════════════════════════════════════════
 export const WindSlashEffect: React.FC<{
     position: [number, number, number];
@@ -346,8 +253,7 @@ export const WindSlashEffect: React.FC<{
 }> = ({ position, targetPosition, onComplete }) => {
     const groupRef = useRef<THREE.Group>(null);
     const startTime = useRef(Date.now());
-    const duration = 500;
-    const progressRef = useRef(0);
+    const duration = 600;
 
     const direction = useMemo(() => {
         if (targetPosition) {
@@ -362,57 +268,51 @@ export const WindSlashEffect: React.FC<{
 
     const rotationY = Math.atan2(direction.x, direction.z);
 
+    const materials = useMemo(() => [
+        createPixelShaderMaterial('#ffbb66', '#ff6633'),
+        createPixelShaderMaterial('#ffbb66', '#ff6633'),
+        createPixelShaderMaterial('#ffbb66', '#ff6633'),
+    ], []);
+
     useFrame(() => {
         if (!groupRef.current) return;
         const elapsed = Date.now() - startTime.current;
         const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
 
-        const distance = progress * 25;
+        const distance = progress * 40;
         groupRef.current.position.set(
             position[0] + direction.x * distance,
             position[1] + 0.8,
             position[2] + direction.z * distance
         );
 
+        materials.forEach(m => m.uniforms.time.value += 0.12);
+
         if (progress >= 1) onComplete();
     });
 
     return (
-        <group ref={groupRef} rotation={[Math.PI / 2, rotationY, 0]}>
-            {/* 3 yay ok */}
-            {[-0.3, 0, 0.3].map((offset, i) => (
-                <group key={i} position={[offset, 0, 0]} rotation={[0, 0, offset * 0.6]}>
-                    <ShaderArrow position={[0, 0, 0]} color="#33ffcc" scale={[0.12, 1.3, 1]} timeOffset={i * 0.2} />
-                </group>
+        <group ref={groupRef} rotation={[0, rotationY, 0]}>
+            {[-0.2, 0, 0.2].map((offset, i) => (
+                <mesh key={i} position={[offset, 0, 0]} material={materials[i]}>
+                    <planeGeometry args={[1.3, 0.25]} />
+                </mesh>
             ))}
-            {/* Yay glow */}
-            <mesh position={[0, -0.5, 0]}>
-                <boxGeometry args={[0.8, 0.15, 0.15]} />
-                <meshBasicMaterial
-                    color="#ffffff"
-                    transparent
-                    opacity={0.8 * (1 - progressRef.current)}
-                    blending={THREE.AdditiveBlending}
-                />
-            </mesh>
-            <pointLight color="#33ffcc" intensity={3} distance={4} />
         </group>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 5️⃣ GERİ ADIM (Backstep) - Geri İten Ok
+// 5️⃣ GERİ ADIM (Backstep) - Geri İtici Ok/Dalga
 // ═══════════════════════════════════════════════════════════════════════════
 export const BackstepEffect: React.FC<{
     position: [number, number, number];
     targetPosition?: [number, number, number];
     onComplete: () => void;
 }> = ({ position, targetPosition, onComplete }) => {
-    const groupRef = useRef<THREE.Group>(null);
+    const meshRef = useRef<THREE.Mesh>(null);
     const startTime = useRef(Date.now());
-    const duration = 400;
-    const progressRef = useRef(0);
+    const duration = 500;
 
     const direction = useMemo(() => {
         if (targetPosition) {
@@ -426,58 +326,45 @@ export const BackstepEffect: React.FC<{
     }, [position, targetPosition]);
 
     const rotationY = Math.atan2(direction.x, direction.z);
+    const material = useMemo(() => createPixelShaderMaterial('#ff6666', '#ff9933'), []);
 
     useFrame(() => {
-        if (!groupRef.current) return;
+        if (!meshRef.current) return;
         const elapsed = Date.now() - startTime.current;
         const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
 
-        const distance = progress * 15;
-        groupRef.current.position.set(
+        const distance = progress * 35;
+        meshRef.current.position.set(
             position[0] + direction.x * distance,
             position[1] + 0.8,
             position[2] + direction.z * distance
         );
 
-        // Genişleyen efekt
-        const scaleX = 1 + progress * 0.5;
-        groupRef.current.scale.x = scaleX;
+        // Genişleyen dalga
+        meshRef.current.scale.x = 1 + progress * 0.5;
+        material.uniforms.time.value += 0.1;
 
         if (progress >= 1) onComplete();
     });
 
     return (
-        <group ref={groupRef} rotation={[Math.PI / 2, rotationY, 0]}>
-            <ShaderArrow position={[0, 0, 0]} color="#66ccff" scale={[0.18, 1.6, 1]} />
-            {/* Knockback wave */}
-            <mesh position={[0, 0.5, 0]}>
-                <ringGeometry args={[0.3, 0.5, 16]} />
-                <meshBasicMaterial
-                    color="#66ccff"
-                    transparent
-                    opacity={0.6}
-                    blending={THREE.AdditiveBlending}
-                    side={THREE.DoubleSide}
-                />
-            </mesh>
-            <pointLight color="#66ccff" intensity={3} distance={4} />
-        </group>
+        <mesh ref={meshRef} rotation={[0, rotationY, 0]} material={material}>
+            <planeGeometry args={[2.5, 0.6]} />
+        </mesh>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 6️⃣ EJDER OKU (Dragon Arrow) - Dev Ejderha Formlu Ok (ULTİ)
+// 6️⃣ EJDER OKU (Dragon Arrow) - Dev Ejderha Oku (ULTİ) 🔥🐉
 // ═══════════════════════════════════════════════════════════════════════════
 export const DragonArrowEffect: React.FC<{
     position: [number, number, number];
     targetPosition?: [number, number, number];
     onComplete: () => void;
 }> = ({ position, targetPosition, onComplete }) => {
-    const groupRef = useRef<THREE.Group>(null);
+    const meshRef = useRef<THREE.Mesh>(null);
     const startTime = useRef(Date.now());
-    const duration = 1200; // Ulti daha uzun
-    const progressRef = useRef(0);
+    const duration = 1500; // Ulti daha uzun
 
     const direction = useMemo(() => {
         if (targetPosition) {
@@ -491,77 +378,36 @@ export const DragonArrowEffect: React.FC<{
     }, [position, targetPosition]);
 
     const rotationY = Math.atan2(direction.x, direction.z);
-
-    // Alev parçacıkları
-    const flames = useMemo(() => {
-        return Array.from({ length: 20 }).map((_, i) => ({
-            offset: i * 0.15,
-            angle: (i / 20) * Math.PI * 2,
-            size: 0.12 + Math.random() * 0.08,
-        }));
-    }, []);
+    const material = useMemo(() => createDragonShaderMaterial(), []);
 
     useFrame((state) => {
-        if (!groupRef.current) return;
+        if (!meshRef.current) return;
         const elapsed = Date.now() - startTime.current;
         const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
 
-        const distance = progress * 50;
-        groupRef.current.position.set(
+        const distance = progress * 60;
+        meshRef.current.position.set(
             position[0] + direction.x * distance,
             position[1] + 0.8,
             position[2] + direction.z * distance
         );
 
         // Sallanma efekti
-        groupRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 6) * 0.05;
+        meshRef.current.scale.y = 1 + Math.sin(state.clock.elapsedTime * 6) * 0.1;
+        material.uniforms.time.value += 0.08;
 
         if (progress >= 1) onComplete();
     });
 
     return (
-        <group ref={groupRef} rotation={[Math.PI / 2, rotationY, 0]}>
-            {/* Dev ejderha ok */}
-            <ShaderArrow position={[0, 0, 0]} color="#ff3300" scale={[0.6, 3.5, 1]} />
-
-            {/* Alev trail */}
-            {flames.map((flame, i) => {
-                const x = Math.cos(flame.angle + progressRef.current * 3) * 0.4;
-                const y = -flame.offset;
-                const z = Math.sin(flame.angle + progressRef.current * 3) * 0.4;
-                return (
-                    <mesh key={i} position={[x, y, z]}>
-                        <boxGeometry args={[flame.size, flame.size, flame.size]} />
-                        <meshBasicMaterial
-                            color="#ffaa00"
-                            transparent
-                            opacity={0.9 - i * 0.03}
-                            blending={THREE.AdditiveBlending}
-                        />
-                    </mesh>
-                );
-            })}
-
-            {/* Ejderha başı hissi */}
-            <mesh position={[0, 1.8, 0]}>
-                <coneGeometry args={[0.3, 0.6, 4]} />
-                <meshBasicMaterial
-                    color="#ff6600"
-                    transparent
-                    opacity={0.8}
-                    blending={THREE.AdditiveBlending}
-                />
-            </mesh>
-
-            <pointLight color="#ff3300" intensity={8} distance={8} />
-            <pointLight position={[0, 1, 0]} color="#ffaa00" intensity={5} distance={5} />
-        </group>
+        <mesh ref={meshRef} rotation={[0, rotationY, 0]} material={material}>
+            <planeGeometry args={[4, 2]} />
+        </mesh>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// MULTISHOT EFEKTİ - Çoklu ok
+// MULTISHOT EFEKTİ - 5 Ok Yayılarak
 // ═══════════════════════════════════════════════════════════════════════════
 export const MultishotEffect: React.FC<{
     position: [number, number, number];
@@ -570,8 +416,7 @@ export const MultishotEffect: React.FC<{
 }> = ({ position, targetPosition, onComplete }) => {
     const groupRef = useRef<THREE.Group>(null);
     const startTime = useRef(Date.now());
-    const duration = 500;
-    const progressRef = useRef(0);
+    const duration = 600;
 
     const direction = useMemo(() => {
         if (targetPosition) {
@@ -586,31 +431,34 @@ export const MultishotEffect: React.FC<{
 
     const rotationY = Math.atan2(direction.x, direction.z);
 
+    const materials = useMemo(() =>
+        Array.from({ length: 5 }).map(() => createPixelShaderMaterial('#88ff88', '#44cc44'))
+        , []);
+
     useFrame(() => {
         if (!groupRef.current) return;
         const elapsed = Date.now() - startTime.current;
         const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
 
-        const distance = progress * 25;
+        const distance = progress * 40;
         groupRef.current.position.set(
             position[0] + direction.x * distance,
             position[1] + 0.8,
             position[2] + direction.z * distance
         );
 
+        materials.forEach(m => m.uniforms.time.value += 0.1);
+
         if (progress >= 1) onComplete();
     });
 
     return (
-        <group ref={groupRef} rotation={[Math.PI / 2, rotationY, 0]}>
-            {/* 5 ok yayılarak */}
+        <group ref={groupRef} rotation={[0, rotationY, 0]}>
             {[-0.4, -0.2, 0, 0.2, 0.4].map((offset, i) => (
-                <group key={i} position={[offset * progressRef.current * 2, 0, 0]} rotation={[0, 0, offset * 0.4]}>
-                    <ShaderArrow position={[0, 0, 0]} color="#88ff88" scale={[0.08, 1.0, 1]} timeOffset={i * 0.1} />
-                </group>
+                <mesh key={i} position={[offset * (1 + groupRef.current ? 0.5 : 0), 0, 0]} material={materials[i]}>
+                    <planeGeometry args={[1.0, 0.2]} />
+                </mesh>
             ))}
-            <pointLight color="#88ff88" intensity={3} distance={4} />
         </group>
     );
 };
@@ -624,39 +472,33 @@ export const StealthEffect: React.FC<{
     playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
     followPlayer?: boolean;
 }> = ({ position, onComplete, playerGroupRef, followPlayer = false }) => {
-    const groupRef = useRef<THREE.Group>(null);
+    const meshRef = useRef<THREE.Mesh>(null);
     const startTime = useRef(Date.now());
     const duration = 5000;
-    const progressRef = useRef(0);
+
+    const material = useMemo(() => createPixelShaderMaterial('#666666', '#333333'), []);
 
     useFrame(() => {
-        if (!groupRef.current) return;
+        if (!meshRef.current) return;
         const elapsed = Date.now() - startTime.current;
         const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
 
         if (followPlayer && playerGroupRef?.current) {
             const playerWorldPos = new THREE.Vector3();
             playerGroupRef.current.getWorldPosition(playerWorldPos);
-            groupRef.current.position.copy(playerWorldPos);
+            meshRef.current.position.set(playerWorldPos.x, playerWorldPos.y + 0.1, playerWorldPos.z);
         }
+
+        meshRef.current.rotation.z += 0.02;
+        material.uniforms.time.value += 0.05;
 
         if (progress >= 1) onComplete();
     });
 
     return (
-        <group ref={groupRef} position={position}>
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
-                <ringGeometry args={[0.8, 1.2, 16]} />
-                <meshBasicMaterial
-                    color="#333333"
-                    transparent
-                    opacity={0.5 * (1 - progressRef.current)}
-                    blending={THREE.AdditiveBlending}
-                    side={THREE.DoubleSide}
-                />
-            </mesh>
-        </group>
+        <mesh ref={meshRef} position={position} rotation={[-Math.PI / 2, 0, 0]} material={material}>
+            <planeGeometry args={[1.5, 1.5]} />
+        </mesh>
     );
 };
 
@@ -668,50 +510,32 @@ export const TrapEffect: React.FC<{
     targetPosition?: [number, number, number];
     onComplete: () => void;
 }> = ({ position, targetPosition, onComplete }) => {
-    const groupRef = useRef<THREE.Group>(null);
+    const meshRef = useRef<THREE.Mesh>(null);
     const startTime = useRef(Date.now());
     const duration = 3000;
-    const progressRef = useRef(0);
 
     const spawnPos = targetPosition || position;
+    const material = useMemo(() => createPixelShaderMaterial('#ff4444', '#cc2222'), []);
 
     useFrame((state) => {
-        if (!groupRef.current) return;
+        if (!meshRef.current) return;
         const elapsed = Date.now() - startTime.current;
         const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
 
-        // Pulse efekti
+        // Pulse
         const pulse = 1 + Math.sin(state.clock.elapsedTime * 4) * 0.1;
-        groupRef.current.scale.setScalar(pulse);
+        meshRef.current.scale.setScalar(pulse);
+
+        meshRef.current.rotation.z += 0.02;
+        material.uniforms.time.value += 0.08;
 
         if (progress >= 1) onComplete();
     });
 
     return (
-        <group ref={groupRef} position={spawnPos}>
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
-                <ringGeometry args={[0.5, 0.8, 6]} />
-                <meshBasicMaterial
-                    color="#ff4444"
-                    transparent
-                    opacity={0.7 * (1 - progressRef.current)}
-                    blending={THREE.AdditiveBlending}
-                    side={THREE.DoubleSide}
-                />
-            </mesh>
-            {/* Dikenler */}
-            {Array.from({ length: 6 }).map((_, i) => {
-                const angle = (i / 6) * Math.PI * 2;
-                return (
-                    <mesh key={i} position={[Math.cos(angle) * 0.6, 0.2, Math.sin(angle) * 0.6]} rotation={[0, angle, 0]}>
-                        <coneGeometry args={[0.05, 0.3, 4]} />
-                        <meshBasicMaterial color="#ff6666" />
-                    </mesh>
-                );
-            })}
-            <pointLight color="#ff4444" intensity={2} distance={3} />
-        </group>
+        <mesh ref={meshRef} position={[spawnPos[0], 0.1, spawnPos[2]]} rotation={[-Math.PI / 2, 0, 0]} material={material}>
+            <planeGeometry args={[1.5, 1.5]} />
+        </mesh>
     );
 };
 
@@ -726,16 +550,15 @@ export const ArrowRainEffect: React.FC<{
     const groupRef = useRef<THREE.Group>(null);
     const startTime = useRef(Date.now());
     const duration = 2000;
-    const progressRef = useRef(0);
 
     const spawnPos = targetPosition || position;
 
     const arrows = useMemo(() => {
-        return Array.from({ length: 30 }).map(() => ({
+        return Array.from({ length: 20 }).map(() => ({
             x: (Math.random() - 0.5) * 4,
             z: (Math.random() - 0.5) * 4,
             delay: Math.random() * 0.5,
-            speed: 0.8 + Math.random() * 0.4,
+            material: createPixelShaderMaterial('#ffff88', '#ffaa44'),
         }));
     }, []);
 
@@ -743,7 +566,10 @@ export const ArrowRainEffect: React.FC<{
         if (!groupRef.current) return;
         const elapsed = Date.now() - startTime.current;
         const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
+
+        arrows.forEach(arrow => {
+            arrow.material.uniforms.time.value += 0.1;
+        });
 
         if (progress >= 1) onComplete();
     });
@@ -751,22 +577,22 @@ export const ArrowRainEffect: React.FC<{
     return (
         <group ref={groupRef} position={spawnPos}>
             {arrows.map((arrow, i) => {
-                const arrowProgress = Math.max(0, Math.min(1, (progressRef.current - arrow.delay) / 0.5));
-                const y = 5 - arrowProgress * 5 * arrow.speed;
+                const elapsed = (Date.now() - startTime.current) / duration;
+                const arrowProgress = Math.max(0, Math.min(1, (elapsed - arrow.delay) / 0.5));
+                const y = 5 - arrowProgress * 5;
+
                 return (
-                    <mesh key={i} position={[arrow.x, Math.max(0.1, y), arrow.z]} rotation={[0, 0, 0]}>
-                        <boxGeometry args={[0.05, 0.4, 0.05]} />
-                        <meshBasicMaterial
-                            color="#ffff88"
-                            transparent
-                            opacity={arrowProgress > 0 && y > 0 ? 0.9 : 0}
-                            blending={THREE.AdditiveBlending}
-                        />
+                    <mesh
+                        key={i}
+                        position={[arrow.x, Math.max(0.1, y), arrow.z]}
+                        rotation={[Math.PI / 2, 0, 0]}
+                        material={arrow.material}
+                        visible={arrowProgress > 0 && y > 0}
+                    >
+                        <planeGeometry args={[0.15, 0.8]} />
                     </mesh>
                 );
             })}
-            <ArrowPixels position={[0, 0.5, 0]} color="#ffff88" count={35} spread={3} progress={progressRef.current} />
-            <pointLight color="#ffaa00" intensity={3 * progressRef.current} distance={5} />
         </group>
     );
 };
@@ -794,7 +620,7 @@ export const ARCHER_EFFECTS: Record<string, React.FC<any>> = {
     trap_effect: TrapEffect,
     arrow_rain_effect: ArrowRainEffect,
 
-    // Components/constants.ts keys - DOĞRU MAPPING
+    // Components/constants.ts keys
     arrow: RapidShotEffect,
     multishot: MultishotEffect,
     stealth: StealthEffect,

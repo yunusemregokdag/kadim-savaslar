@@ -28,32 +28,70 @@ app.get('/api/health', (req, res) => {
 // STATİK DOSYA SUNUMU CONFIG
 const DIST_PATH = path.join(__dirname, '../dist');
 
-// Dist klasörü var mı kontrol et
+// DEBUG: Render Dosya Yapısını Görelim
+console.log('📍 Current Directory (__dirname):', __dirname);
+console.log('📍 Target Dist Path (Attempt 1):', DIST_PATH);
+
+// Alternatif yollar
+const ALT_DIST_PATH_1 = path.join(process.cwd(), 'dist');
+const ALT_DIST_PATH_2 = path.join(__dirname, 'dist'); // Belki server'ın içindedir?
+
+console.log('📍 Alt Path 1 (process.cwd/dist):', ALT_DIST_PATH_1);
+
+try {
+    console.log('📂 Root Directory Contents:', fs.readdirSync(path.join(__dirname, '../')));
+} catch (e) { console.log('Cannot list root dir'); }
+
+try {
+    console.log('📂 CWD Directory Contents:', fs.readdirSync(process.cwd()));
+} catch (e) { console.log('Cannot list CWD dir'); }
+
+
+// Dist klasörü var mı kontrol et ve doğru yolu bul
 let isDistAvailable = false;
+let finalDistPath = DIST_PATH;
+
 try {
     if (fs.existsSync(DIST_PATH)) {
         isDistAvailable = true;
+        finalDistPath = DIST_PATH;
+        console.log('✅ Found at default path!');
+    } else if (fs.existsSync(ALT_DIST_PATH_1)) {
+        isDistAvailable = true;
+        finalDistPath = ALT_DIST_PATH_1;
+        console.log('✅ Found at Alt Path 1!');
+    } else if (fs.existsSync(ALT_DIST_PATH_2)) {
+        isDistAvailable = true;
+        finalDistPath = ALT_DIST_PATH_2;
+        console.log('✅ Found at Alt Path 2!');
+    } else {
+        console.error('❌ DIST FOLDER NOT FOUND ANYWHERE!');
     }
 } catch (e) {
     console.error('Dist check error:', e);
 }
 
-console.log('📂 Static Files Path:', DIST_PATH);
+console.log('📂 Static Files Path Using:', finalDistPath);
 console.log('🌍 Environment:', process.env.NODE_ENV);
 console.log('📦 Dist Available:', isDistAvailable);
 
 // EĞER DIST KLASÖRÜ VARSA OYUNU SUN (NODE_ENV ne olursa olsun!)
 if (process.env.NODE_ENV === 'production' || isDistAvailable) {
-    console.log('🚀 Serving Game Client (Frontend)...');
+    if (isDistAvailable) {
+        console.log('🚀 Serving Game Client (Frontend) from:', finalDistPath);
 
-    app.use(express.static(DIST_PATH));
+        app.use(express.static(finalDistPath));
 
-    app.get('*', (req, res) => {
-        if (req.path.startsWith('/api')) {
-            return res.status(404).json({ error: 'Endpoint not found' });
-        }
-        res.sendFile(path.join(DIST_PATH, 'index.html'));
-    });
+        app.get('*', (req, res) => {
+            if (req.path.startsWith('/api')) {
+                return res.status(404).json({ error: 'Endpoint not found' });
+            }
+            res.sendFile(path.join(finalDistPath, 'index.html'));
+        });
+    } else {
+        console.error('❌ Production mode but DIST not found!');
+        app.get('/', (req, res) => res.send('Error: Game files not found on server. Check logs.'));
+    }
 } else {
     console.log('🔧 Development Mode: Backend API active (No dist folder found)');
     app.get('/', (req, res) => {

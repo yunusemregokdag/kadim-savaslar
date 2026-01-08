@@ -282,6 +282,265 @@ export const KiyametUltiFXEffect: React.FC<{
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
+// 🔥 PIXEL BASE SHADER - Master Shader Chunk
+// ═══════════════════════════════════════════════════════════════════════════
+const pixelBaseShader = {
+    vertex: `
+        varying vec2 vUv;
+        varying float vNoise;
+        uniform float uTime;
+        
+        float hash(float n) { return fract(sin(n) * 43758.5453123); }
+        
+        void main() {
+            vUv = uv;
+            vNoise = hash(float(gl_VertexID) / 100.0);
+            vec3 pos = position;
+            pos.x += sin(uTime * 10.0 + vNoise) * 0.02;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+        }
+    `
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ⭐ YILDIZ YAĞMURU GOD FX - Cehennem Ateşi AAA Style
+// ═══════════════════════════════════════════════════════════════════════════
+export const YildizYagmuruGodFXEffect: React.FC<{
+    position: [number, number, number];
+    targetPosition?: [number, number, number];
+    onComplete: () => void;
+}> = ({ position, targetPosition, onComplete }) => {
+    const meshRefs = useRef<THREE.Mesh[]>([]);
+    const startTime = useRef(Date.now());
+    const duration = 3000;
+    const progressRef = useRef(0);
+    const spawnPos = targetPosition || position;
+
+    const shaderMaterial = useMemo(() => new THREE.ShaderMaterial({
+        uniforms: {
+            uTime: { value: 0 },
+            uColor: { value: new THREE.Color("#ff4500") }
+        },
+        vertexShader: pixelBaseShader.vertex,
+        fragmentShader: `
+            varying vec2 vUv;
+            varying float vNoise;
+            uniform float uTime;
+            uniform vec3 uColor;
+
+            void main() {
+                vec2 uv = vUv;
+                float flow = sin(uv.y * 10.0 - uTime * 15.0 + vNoise) * 0.5;
+                float intensity = smoothstep(0.0, 0.5, uv.y) * step(0.5 + flow, uv.x) * step(uv.x, 0.6 + flow);
+                
+                vec3 color = mix(uColor, vec3(1.0, 0.8, 0.0), uv.y);
+                color = mix(color, vec3(2.0), intensity);
+                
+                float dither = step(fract(gl_FragCoord.x * 0.5) + fract(gl_FragCoord.y * 0.5), 0.5);
+                
+                gl_FragColor = vec4(color, intensity * dither);
+            }
+        `,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+    }), []);
+
+    // Meteor pozisyonları
+    const meteorData = useMemo(() => {
+        return Array.from({ length: 15 }).map(() => ({
+            x: (Math.random() - 0.5) * 10,
+            startY: 5 + Math.random() * 5,
+            z: (Math.random() - 0.5) * 10,
+        }));
+    }, []);
+
+    useFrame((state) => {
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        shaderMaterial.uniforms.uTime.value = state.clock.elapsedTime;
+
+        // Meteorları düşür
+        meshRefs.current.forEach((mesh, i) => {
+            if (mesh) {
+                mesh.position.y = meteorData[i].startY - progress * 10;
+            }
+        });
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group position={spawnPos}>
+            {meteorData.map((data, i) => (
+                <mesh
+                    key={i}
+                    ref={(el) => { if (el) meshRefs.current[i] = el; }}
+                    position={[data.x, data.startY, data.z]}
+                >
+                    <planeGeometry args={[0.5, 2]} />
+                    <primitive object={shaderMaterial} attach="material" />
+                </mesh>
+            ))}
+            <pointLight color="#ff4500" intensity={8} distance={15} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ❄️ MANA BUZ GOD FX - Gökten İnen Buz Sütunları
+// ═══════════════════════════════════════════════════════════════════════════
+export const ManaBuzGodFXEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
+    followPlayer?: boolean;
+}> = ({ position, onComplete }) => {
+    const meshRefs = useRef<THREE.Mesh[]>([]);
+    const startTime = useRef(Date.now());
+    const duration = 2000;
+    const progressRef = useRef(0);
+
+    const shaderMaterial = useMemo(() => new THREE.ShaderMaterial({
+        uniforms: {
+            uTime: { value: 0 },
+            uColor: { value: new THREE.Color("#00f2ff") }
+        },
+        vertexShader: pixelBaseShader.vertex,
+        fragmentShader: `
+            varying vec2 vUv;
+            uniform float uTime;
+            uniform vec3 uColor;
+
+            void main() {
+                float border = step(0.4, vUv.x) * step(vUv.x, 0.6);
+                float pulse = sin(uTime * 20.0) * 0.5 + 0.5;
+                
+                float shimmer = step(0.8, fract(vUv.y * 5.0 + uTime * 10.0));
+                vec3 finalColor = mix(uColor, vec3(1.0), shimmer);
+                
+                gl_FragColor = vec4(finalColor * 1.5, border * pulse);
+            }
+        `,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+    }), []);
+
+    const pillarData = useMemo(() => {
+        return Array.from({ length: 8 }).map(() => ({
+            x: (Math.random() - 0.5) * 5,
+            z: (Math.random() - 0.5) * 5,
+        }));
+    }, []);
+
+    useFrame((state) => {
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        shaderMaterial.uniforms.uTime.value = state.clock.elapsedTime;
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group position={position}>
+            {pillarData.map((data, i) => (
+                <mesh
+                    key={i}
+                    ref={(el) => { if (el) meshRefs.current[i] = el; }}
+                    position={[data.x, 2, data.z]}
+                >
+                    <planeGeometry args={[2, 4]} />
+                    <primitive object={shaderMaterial} attach="material" />
+                </mesh>
+            ))}
+            <pointLight color="#00f2ff" intensity={6} distance={10} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ☄️ KIYAMET GOD FX - Ekranı Titreten Devasa Mor Kaos
+// ═══════════════════════════════════════════════════════════════════════════
+export const KiyametGodFXEffect: React.FC<{
+    position: [number, number, number];
+    onComplete: () => void;
+    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
+    followPlayer?: boolean;
+}> = ({ position, onComplete }) => {
+    const meshRef = useRef<THREE.Mesh>(null);
+    const startTime = useRef(Date.now());
+    const duration = 5000;
+    const progressRef = useRef(0);
+
+    const vortexMaterial = useMemo(() => new THREE.ShaderMaterial({
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+        uniforms: {
+            uTime: { value: 0 },
+            uColor: { value: new THREE.Color("#bc13fe") }
+        },
+        vertexShader: pixelBaseShader.vertex,
+        fragmentShader: `
+            varying vec2 vUv;
+            uniform float uTime;
+            uniform vec3 uColor;
+            void main() {
+                vec2 uv = vUv - 0.5;
+                float d = length(uv);
+                
+                float angle = atan(uv.y, uv.x);
+                float spiral = sin(d * 100.0 - uTime * 20.0 + angle * 5.0);
+                float pxl = step(0.7, spiral);
+                
+                float mask = smoothstep(0.5, 0.0, d);
+                vec3 color = uColor * (pxl * 5.0);
+                
+                gl_FragColor = vec4(color, pxl * mask * (1.0 - d * 0.5));
+            }
+        `
+    }), []);
+
+    useFrame((state) => {
+        if (!meshRef.current) return;
+        const elapsed = Date.now() - startTime.current;
+        const progress = Math.min(elapsed / duration, 1);
+        progressRef.current = progress;
+
+        vortexMaterial.uniforms.uTime.value = state.clock.elapsedTime;
+
+        // Ekran sarsıntısı + scale pulse
+        meshRef.current.scale.setScalar(1 + Math.sin(state.clock.elapsedTime * 20.0) * 0.05);
+
+        // Kamera sarsıntısı
+        if (progress < 0.6) {
+            const shake = (1 - progress * 1.5) * 0.2;
+            state.camera.position.x += Math.sin(elapsed * 0.025) * shake;
+            state.camera.position.y += Math.sin(elapsed * 0.02) * shake;
+        }
+
+        if (progress >= 1) onComplete();
+    });
+
+    return (
+        <group position={[position[0], 0.02, position[2]]}>
+            <mesh ref={meshRef} rotation={[-Math.PI / 2, 0, 0]}>
+                <planeGeometry args={[20, 20]} />
+                <primitive object={vortexMaterial} attach="material" />
+            </mesh>
+            <pointLight position={[0, 2, 0]} color="#bc13fe" intensity={15} distance={25} />
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
 // SHADER NOISE FUNCTION
 // ═══════════════════════════════════════════════════════════════════════════
 const noiseFunction = `
@@ -1352,18 +1611,21 @@ export const ApocalypseEffect: React.FC<{
 // MAGE SKILL MAP
 // ═══════════════════════════════════════════════════════════════════════════
 export const MAGE_EFFECTS: Record<string, React.FC<any>> = {
-    // ✅ CONSTANTS.TS VISUAL KEYS - YENİ PIXEL FX VERSİYONLARI
-    archmage_bolt: ArcaneOrbFXEffect,          // am1 - Arcane Küresi (500 Pixel Particles)
-    archmage_impact: ZamanBukumFXEffect,       // am2 - Zaman Bükülmesi (Altın Halkalar)
-    archmage_void: PolymorphShaderEffect,      // am3 - Polimorf (Gökkuşağı)
-    archmage_meteor: StarfallEffect,           // am5 - Yıldız Yağmuru
-    archmage_blizzard: ManaZapShaderEffect,    // am6 - Mana Patlaması (Yıldırım)
-    archmage_apocalypse: KiyametUltiFXEffect,  // am7 - Kıyamet (Girdap + Meteorlar)
+    // ✅ CONSTANTS.TS VISUAL KEYS - GOD MODE FX VERSİYONLARI
+    archmage_bolt: ArcaneOrbFXEffect,              // am1 - Arcane Küresi (500 Pixel Particles)
+    archmage_impact: ZamanBukumFXEffect,           // am2 - Zaman Bükülmesi (Altın Halkalar)
+    archmage_void: PolymorphShaderEffect,          // am3 - Polimorf (Gökkuşağı)
+    archmage_meteor: YildizYagmuruGodFXEffect,     // am5 - Yıldız Yağmuru (Cehennem Ateşi)
+    archmage_blizzard: ManaBuzGodFXEffect,         // am6 - Mana Patlaması (Buz Sütunları)
+    archmage_apocalypse: KiyametGodFXEffect,       // am7 - Kıyamet (20m Girdap)
 
-    // Yeni FX efektleri
+    // GOD MODE FX efektleri
     arcane_orb_fx: ArcaneOrbFXEffect,
     zaman_bukum_fx: ZamanBukumFXEffect,
     kiyamet_fx: KiyametUltiFXEffect,
+    yildiz_yagmuru_god: YildizYagmuruGodFXEffect,
+    mana_buz_god: ManaBuzGodFXEffect,
+    kiyamet_god: KiyametGodFXEffect,
 
     // Yeni pixel element efektleri
     fireball_effect: FireballEffect,

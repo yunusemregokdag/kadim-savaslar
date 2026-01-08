@@ -26,52 +26,51 @@ app.get('/api/health', (req, res) => {
 });
 
 // STATİK DOSYA SUNUMU CONFIG
-const DIST_PATH = path.join(__dirname, '../dist');
+// STATİK DOSYA SUNUMU CONFIG
+// Render bazen path'leri karıştırabiliyor, o yüzden kök dizine kadar dist arayacağız
+const searchPaths = [
+    path.join(__dirname, '../dist'),           // Normal yapı
+    path.join(process.cwd(), 'dist'),          // Process root
+    path.join(__dirname, '../../dist'),        // Bir üst
+    path.join('/opt/render/project/src/dist'), // Render absolute path
+    path.join(__dirname, 'dist')               // Server içi (zayıf ihtimal)
+];
 
-// DEBUG: Render Dosya Yapısını Görelim
-console.log('📍 Current Directory (__dirname):', __dirname);
-console.log('📍 Target Dist Path (Attempt 1):', DIST_PATH);
-
-// Alternatif yollar
-const ALT_DIST_PATH_1 = path.join(process.cwd(), 'dist');
-const ALT_DIST_PATH_2 = path.join(__dirname, 'dist'); // Belki server'ın içindedir?
-
-console.log('📍 Alt Path 1 (process.cwd/dist):', ALT_DIST_PATH_1);
-
-try {
-    console.log('📂 Root Directory Contents:', fs.readdirSync(path.join(__dirname, '../')));
-} catch (e) { console.log('Cannot list root dir'); }
-
-try {
-    console.log('📂 CWD Directory Contents:', fs.readdirSync(process.cwd()));
-} catch (e) { console.log('Cannot list CWD dir'); }
-
-
-// Dist klasörü var mı kontrol et ve doğru yolu bul
+let finalDistPath = null;
 let isDistAvailable = false;
-let finalDistPath = DIST_PATH;
 
-try {
-    if (fs.existsSync(DIST_PATH)) {
-        isDistAvailable = true;
-        finalDistPath = DIST_PATH;
-        console.log('✅ Found at default path!');
-    } else if (fs.existsSync(ALT_DIST_PATH_1)) {
-        isDistAvailable = true;
-        finalDistPath = ALT_DIST_PATH_1;
-        console.log('✅ Found at Alt Path 1!');
-    } else if (fs.existsSync(ALT_DIST_PATH_2)) {
-        isDistAvailable = true;
-        finalDistPath = ALT_DIST_PATH_2;
-        console.log('✅ Found at Alt Path 2!');
-    } else {
-        console.error('❌ DIST FOLDER NOT FOUND ANYWHERE!');
+// DEBUG: Arama yapılıyor
+console.log('🔍 Searching for dist folder in:', searchPaths);
+
+// Tüm olası yolları dene
+for (const p of searchPaths) {
+    try {
+        if (fs.existsSync(p)) {
+            console.log(`✅ DIST FOUND AT: ${p}`);
+            // İçeriği kontrol et (index.html var mı?)
+            if (fs.existsSync(path.join(p, 'index.html'))) {
+                console.log('✅ Valid index.html found inside!');
+                finalDistPath = p;
+                isDistAvailable = true;
+                break; // Bulduk!
+            } else {
+                console.log('⚠️ Folder exists but no index.html found, skipping...');
+            }
+        }
+    } catch (e) {
+        // Hata varsa geç
     }
-} catch (e) {
-    console.error('Dist check error:', e);
 }
 
-console.log('📂 Static Files Path Using:', finalDistPath);
+if (!isDistAvailable) {
+    console.error('❌ DIST FOLDER NOT FOUND IN ANY KNOWN LOCATION!');
+    // Son çare: Root'u debug için listele
+    try {
+        console.log('📂 Root Listing (__dirname/../):', fs.readdirSync(path.join(__dirname, '../')));
+        console.log('📂 CWD Listing:', fs.readdirSync(process.cwd()));
+    } catch (e) { }
+}
+
 console.log('🌍 Environment:', process.env.NODE_ENV);
 console.log('📦 Dist Available:', isDistAvailable);
 

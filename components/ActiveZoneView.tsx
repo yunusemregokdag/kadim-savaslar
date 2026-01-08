@@ -3718,10 +3718,12 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             }
 
             // Determine Target Type & Key
-            const isPlayerCenteredSkill = skill.type === 'buff' || skill.type === 'heal' ||
+            // Note: hunters_focus is a DEBUFF on enemy, not a buff on player
+            const isPlayerCenteredSkill = (skill.type === 'buff' || skill.type === 'heal' ||
                 skill.visual.includes('shield') || skill.visual.includes('barrier') ||
-                skill.visual.includes('meditation') || skill.visual.includes('focus') ||
-                (skill.visual.includes('storm') && !skill.visual.includes('meteor'));
+                skill.visual.includes('meditation') ||
+                (skill.visual.includes('storm') && !skill.visual.includes('meteor')))
+                && !skill.visual.includes('hunters_focus'); // hunters_focus goes to ENEMY
 
             // Calculate Self Key
             const selfKey = playerState.userId
@@ -3870,8 +3872,35 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             // For now just visual message
         }
 
-        // 5. ARCHER (r)
-        if (skill.id === 'r3') { // Görünmezlik
+        // 5. ARCHER (ar)
+        if (skill.id === 'ar3') { // Avcı Odağı - +%30 Kritik Şansı
+            addFloatingText("+%30 KRİTİK ŞANSI!", playerPosRef.current.x, 3, playerPosRef.current.y, "text-green-400 font-bold");
+            // Note: critChance stat would be modified here if we had it
+            // For now, apply a temporary damage boost as simulation
+            const originalDmg = playerState.damage;
+            const critBoost = Math.floor(originalDmg * 0.3);
+            handleUpdatePlayerSafe({ damage: originalDmg + critBoost });
+            setTimeout(() => {
+                handleUpdatePlayerSafe({ damage: originalDmg });
+                addFloatingText("Kritik Buff Bitti", playerPosRef.current.x, 3, playerPosRef.current.y, "text-slate-400");
+            }, 10000);
+        }
+        if (skill.id === 'ar5') { // Geri Adım - Karakteri geriye zıplat
+            const rot = playerGroupRef.current?.rotation.y || 0;
+            const jumpDist = 4; // 4 birim geri
+            // Geriye zıpla (rotation'un tersine)
+            const newX = playerPosRef.current.x - Math.sin(rot) * jumpDist;
+            const newZ = playerPosRef.current.y - Math.cos(rot) * jumpDist;
+
+            // Collision check
+            if (newX > -50 && newX < 50 && newZ > -50 && newZ < 50) {
+                playerGroupRef.current?.position.set(newX, 0, newZ);
+                playerPosRef.current = { x: newX, y: newZ };
+                addFloatingText("GERİ ADIM!", newX, 2, newZ, "text-yellow-400");
+                spawnVisualEffect(newX, newZ, '#88ff44');
+            }
+        }
+        if (skill.id === 'r3') { // Görünmezlik (eski archer ID)
             addFloatingText("Görünmezlik Aktif", playerPosRef.current.x, 3, playerPosRef.current.y, "text-green-300");
             // Logic would go here
         }

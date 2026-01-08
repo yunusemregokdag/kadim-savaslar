@@ -644,13 +644,18 @@ export const ArrowRainEffect: React.FC<{
 // ARCHER SKILL MAP
 // ═══════════════════════════════════════════════════════════════════════════
 export const ARCHER_EFFECTS: Record<string, React.FC<any>> = {
-    // Yeni style keys
-    arrow_shot: RapidShotEffect,
+    // ✅ CONSTANTS.TS VISUAL KEYS (GERÇEK KEY'LER)
+    archer_shot: RapidShotEffect,
     javelin: DeadlyJavelinEffect,
-    focus: HunterFocusEffect,
-    wind_slash: WindSlashEffect,
+    hunters_focus: HunterFocusEffect,
+    archer_volley: MultishotEffect,
     backstep: BackstepEffect,
     dragon_arrow: DragonArrowEffect,
+
+    // Yeni style keys
+    arrow_shot: RapidShotEffect,
+    focus: HunterFocusEffect,
+    wind_slash: WindSlashEffect,
 
     // Yeni efektler
     multishot_effect: MultishotEffect,
@@ -666,11 +671,6 @@ export const ARCHER_EFFECTS: Record<string, React.FC<any>> = {
     dash_back: BackstepEffect,
     poison_arrow: DeadlyJavelinEffect,
     arrow_rain: ArrowRainEffect,
-
-    // Root constants.ts visual keys (yeni)
-    archer_shot: RapidShotEffect,
-    hunters_focus: HunterFocusEffect,
-    archer_volley: MultishotEffect,
 
     // Ek alias'lar
     rapid_shot: RapidShotEffect,

@@ -597,6 +597,13 @@ export const DoomEffect = DeathTouchEffect;
 // REAPER SKILL MAP
 // ═══════════════════════════════════════════════════════════════════════════
 export const REAPER_EFFECTS: Record<string, React.FC<any>> = {
+    // ✅ CONSTANTS.TS VISUAL KEYS (GERÇEK KEY'LER)
+    reaper_slice: ScytheSweepEffect,
+    reaper_soul_slice: DeathTouchEffect,
+    reaper_wave: SoulReapEffect,
+    reaper_spin: DarkPassageEffect,
+    reaper_cross: FearEffect,
+
     // Yeni pixel death efektleri
     scythe_sweep: ScytheSweepEffect,
     death_touch: DeathTouchEffect,

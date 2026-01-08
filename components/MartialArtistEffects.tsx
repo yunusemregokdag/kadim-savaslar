@@ -461,6 +461,13 @@ export const UltimateStrikeEffect = DragonFistEffect;
 // MARTIAL ARTIST SKILL MAP
 // ═══════════════════════════════════════════════════════════════════════════
 export const MARTIAL_ARTIST_EFFECTS: Record<string, React.FC<any>> = {
+    // ✅ CONSTANTS.TS VISUAL KEYS (GERÇEK KEY'LER)
+    martial_hit: RapidPunchEffect,
+    martial_uppercut: SpinKickEffect,
+    martial_evasion: IronStanceEffect,
+    martial_multi: DragonFistEffect,
+    martial_slash: KiBurstEffect,
+
     // Yeni Ki enerji efektleri
     rapid_punch: RapidPunchEffect,
     spin_kick: SpinKickEffect,

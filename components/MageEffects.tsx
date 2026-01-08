@@ -486,6 +486,14 @@ export const MagicMissileEffect = ArcaneOrbEffect;
 // MAGE SKILL MAP
 // ═══════════════════════════════════════════════════════════════════════════
 export const MAGE_EFFECTS: Record<string, React.FC<any>> = {
+    // ✅ CONSTANTS.TS VISUAL KEYS (GERÇEK KEY'LER)
+    archmage_bolt: ArcaneOrbEffect,
+    archmage_impact: IceBlockEffect,
+    archmage_void: TeleportEffect,
+    archmage_meteor: ArcaneStormEffect,
+    archmage_blizzard: DrainEffect,
+    archmage_apocalypse: ArcaneStormEffect,
+
     // Yeni pixel element efektleri
     fireball_effect: FireballEffect,
     iceblock_effect: IceBlockEffect,

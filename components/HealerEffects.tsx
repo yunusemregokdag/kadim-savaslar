@@ -496,6 +496,12 @@ export const ResurrectEffect: React.FC<{
 // HEALER SKILL MAP
 // ═══════════════════════════════════════════════════════════════════════════
 export const HEALER_EFFECTS: Record<string, React.FC<any>> = {
+    // ✅ CONSTANTS.TS VISUAL KEYS (GERÇEK KEY'LER)
+    cleric_impact: LightStrikeEffect,
+    cleric_immolation: HolyCircleEffect,
+    cleric_wave: HolyShieldEffect,
+    cleric_tear: SanctuaryEffect,
+
     // Yeni pixel ışık efektleri
     light_strike: LightStrikeEffect,
     holy_circle: HolyCircleEffect,

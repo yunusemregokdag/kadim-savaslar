@@ -7,21 +7,38 @@ const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken'); // Kullanıcı yetkilendirme için
 const { OAuth2Client } = require('google-auth-library'); // Google Auth
+const path = require('path'); // Path modülü eklendi
 
 const app = express();
 const server = http.createServer(app); // http server'ı express uygulamasıyla oluştur
 app.use(cors());
 app.use(express.json());
 
-// Railway Healthcheck için root endpoint
-app.get('/', (req, res) => {
-    res.send('Kadim Savaslar Backend is Running! 🚀');
-});
-
-// Veya özel health check endpoint
-app.get('/health', (req, res) => {
+// Railway Healthcheck için root endpoint (API)
+app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'ok', uptime: process.uptime() });
 });
+
+// STATİK DOSYA SUNUMU (FRONTEND İÇİN)
+// Production ortamında frontend build dosyalarını sun
+if (process.env.NODE_ENV === 'production') {
+    // Dist klasörünü statik olarak sun
+    app.use(express.static(path.join(__dirname, '../dist')));
+
+    // Diğer tüm istekleri index.html'e yönlendir (SPA support)
+    app.get('*', (req, res) => {
+        // API isteklerini engelleme
+        if (req.path.startsWith('/api')) {
+            return res.status(404).json({ error: 'Endpoint not found' });
+        }
+        res.sendFile(path.join(__dirname, '../dist', 'index.html'));
+    });
+} else {
+    // Dev modunda basit mesaj
+    app.get('/', (req, res) => {
+        res.send('Kadim Savaslar Backend is Running! 🚀 (Dev Mode - Use Vite for Frontend)');
+    });
+}
 
 // Railway/Heroku uyumlu PORT
 const PORT = process.env.PORT || 3001;

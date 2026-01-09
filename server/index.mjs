@@ -25,51 +25,8 @@ app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'ok', uptime: process.uptime() });
 });
 
-// STATİK DOSYA SUNUMU CONFIG
-// process.cwd() = Projenin ana dizini. Build komutu dosyaları 'server/public' altına kopyaladı.
-const STATIC_PATH = path.join(process.cwd(), 'server/public');
-
-console.log('📍 PROJECT ROOT (CWD):', process.cwd());
-console.log('📂 LOOKING FOR STATIC FILES AT:', STATIC_PATH); // Hedef yol
-
-// DEBUG: Klasör içeriğini gör (Hata ayıklama için kritik)
-try {
-    if (fs.existsSync(STATIC_PATH)) {
-        console.log('✅ FOUND PUBLIC FOLDER CONTENTS:', fs.readdirSync(STATIC_PATH));
-    } else {
-        console.error('❌ PUBLIC FOLDER DOES NOT EXIST!');
-        // Server klasörüne bakalım
-        const serverDir = path.join(process.cwd(), 'server');
-        if (fs.existsSync(serverDir)) {
-            console.log('📂 SERVER DIR CONTENTS:', fs.readdirSync(serverDir));
-        }
-    }
-} catch (e) { console.error('Debug log error:', e); }
-
-// Public klasörü varsa sun
-if (process.env.NODE_ENV === 'production' || fs.existsSync(STATIC_PATH)) {
-    if (fs.existsSync(STATIC_PATH)) {
-        console.log('🚀 SYSTEM: Serving Game Client (Frontend)...');
-        app.use(express.static(STATIC_PATH));
-        app.get(/(.*)/, (req, res) => {
-            if (req.path.startsWith('/api')) {
-                return res.status(404).json({ error: 'Endpoint not found' });
-            }
-            res.sendFile(path.join(STATIC_PATH, 'index.html'));
-        });
-    } else {
-        console.error('❌ CRITICAL: Frontend files missing in production!');
-        app.get('/', (req, res) => {
-            res.send('<h1>Deployment Error</h1><p>Frontend files (public) missing. Check build logs.</p>');
-        });
-    }
-} else {
-    // Development Mode
-    console.log('🔧 Development Mode: Backend API active');
-    app.get('/', (req, res) => {
-        res.send('Kadim Savaslar Backend is Running! 🚀 (Dev Mode)');
-    });
-}
+// STATİK DOSYA SUNUMU (EN AŞAĞIYA TAŞINDI)
+// API Rotaları öncelikli olmalı, yoksa frontend her şeyi yutar.
 // GLOBAL VARIABLES (Moved out of else block)
 const PORT = process.env.PORT || 3001;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key';
@@ -537,6 +494,37 @@ io.on('connection', (socket) => {
         }
     });
 });
+
+// ============================================
+// SERVER START
+// ============================================
+// STATİK DOSYA SUNUMU (SON ÇARE - FALLBACK)
+// ============================================
+
+// process.cwd() = Projenin ana dizini. Build komutu dosyaları 'server/public' altına kopyaladı.
+const STATIC_PATH = path.join(process.cwd(), 'server/public');
+
+console.log('📍 STATIC PATH CHECK:', STATIC_PATH);
+
+if (process.env.NODE_ENV === 'production' || fs.existsSync(STATIC_PATH)) {
+    if (fs.existsSync(STATIC_PATH)) {
+        console.log('🚀 SYSTEM: Serving Game Client (Fallback)...');
+        app.use(express.static(STATIC_PATH));
+
+        // SPA Fallback: API olmayan her şeyi index.html'e yönlendir
+        app.get(/(.*)/, (req, res) => {
+            if (req.path.startsWith('/api')) {
+                return res.status(404).json({ error: 'Endpoint not found' });
+            }
+            res.sendFile(path.join(STATIC_PATH, 'index.html'));
+        });
+    } else {
+        console.error('❌ CRITICAL: Frontend files missing in production!');
+        app.get('/', (req, res) => res.send('<h1>Error</h1><p>Frontend missing.</p>'));
+    }
+} else {
+    app.get('/', (req, res) => res.send('Kadim Savaşlar API (Dev Mode)'));
+}
 
 // ============================================
 // SERVER START

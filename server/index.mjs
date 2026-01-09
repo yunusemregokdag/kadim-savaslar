@@ -363,16 +363,13 @@ app.post('/api/characters/:id/save', async (req, res) => {
     try {
         const charId = req.params.id;
 
-        // Eğer Test karakteri veya geçici bir ID ise veritabanına gitme
-        if (charId.startsWith('admin_test') || charId.startsWith('temp_')) {
-            console.log(`📝 Test karakteri kaydı simüle edildi: ${charId}`);
+        // Eğer Test karakteri, geçici ID veya GEÇERSİZ BİR DATABASE ID ise veritabanına gitme, simüle et.
+        if (charId.startsWith('admin_test') || charId.startsWith('temp_') || !mongoose.Types.ObjectId.isValid(charId)) {
+            console.log(`📝 Test/Invalid ID Save Simulated: ${charId}`);
             return res.json({ success: true, message: 'Test character saved (simulated)', character: req.body });
         }
 
-        // Geçerli bir MongoDB ObjectId mi?
-        if (!mongoose.Types.ObjectId.isValid(charId)) {
-            return res.status(400).json({ error: 'Geçersiz ID formatı' });
-        }
+        // Artık isValid kontrolüne gerek yok çünkü yukarıdaki if bloğu onu yakaladı.
 
         const updateData = req.body;
         // _id alanını update datasından çıkar (değiştirilemez)

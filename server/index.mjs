@@ -27,74 +27,32 @@ app.get('/api/health', (req, res) => {
 
 // STATİK DOSYA SUNUMU CONFIG
 // STATİK DOSYA SUNUMU CONFIG
-// Render bazen path'leri karıştırabiliyor, o yüzden kök dizine kadar dist arayacağız
-const searchPaths = [
-    path.join(__dirname, '../dist'),           // Normal yapı
-    path.join(process.cwd(), 'dist'),          // Process root
-    path.join(__dirname, '../../dist'),        // Bir üst
-    path.join('/opt/render/project/src/dist'), // Render absolute path
-    path.join(__dirname, 'dist')               // Server içi (zayıf ihtimal)
-];
+// Kesin ve net yol: Server dosyasının bir üstünde 'dist' olmalı
+const DIST_PATH = path.join(__dirname, '../dist');
 
-let finalDistPath = null;
-let isDistAvailable = false;
-
-// DEBUG: Arama yapılıyor
-console.log('🔍 Searching for dist folder in:', searchPaths);
-
-// Tüm olası yolları dene
-for (const p of searchPaths) {
-    try {
-        if (fs.existsSync(p)) {
-            console.log(`✅ DIST FOUND AT: ${p}`);
-            // İçeriği kontrol et (index.html var mı?)
-            if (fs.existsSync(path.join(p, 'index.html'))) {
-                console.log('✅ Valid index.html found inside!');
-                finalDistPath = p;
-                isDistAvailable = true;
-                break; // Bulduk!
-            } else {
-                console.log('⚠️ Folder exists but no index.html found, skipping...');
-            }
-        }
-    } catch (e) {
-        // Hata varsa geç
-    }
-}
-
-if (!isDistAvailable) {
-    console.error('❌ DIST FOLDER NOT FOUND IN ANY KNOWN LOCATION!');
-    // Son çare: Root'u debug için listele
-    try {
-        console.log('📂 Root Listing (__dirname/../):', fs.readdirSync(path.join(__dirname, '../')));
-        console.log('📂 CWD Listing:', fs.readdirSync(process.cwd()));
-    } catch (e) { }
-}
-
+console.log('📂 Static Files Path:', DIST_PATH);
 console.log('🌍 Environment:', process.env.NODE_ENV);
-console.log('📦 Dist Available:', isDistAvailable);
 
-// EĞER DIST KLASÖRÜ VARSA OYUNU SUN (NODE_ENV ne olursa olsun!)
-if (process.env.NODE_ENV === 'production' || isDistAvailable) {
-    if (isDistAvailable) {
-        console.log('🚀 Serving Game Client (Frontend) from:', finalDistPath);
-
-        app.use(express.static(finalDistPath));
-
-        app.get('*', (req, res) => {
-            if (req.path.startsWith('/api')) {
-                return res.status(404).json({ error: 'Endpoint not found' });
-            }
-            res.sendFile(path.join(finalDistPath, 'index.html'));
-        });
-    } else {
-        console.error('❌ Production mode but DIST not found!');
-        app.get('/', (req, res) => res.send('Error: Game files not found on server. Check logs.'));
-    }
+// Basit kontrol: Dist klasörü varsa sun, yoksa hata ver
+if (fs.existsSync(DIST_PATH) && fs.existsSync(path.join(DIST_PATH, 'index.html'))) {
+    console.log('🚀 Serving Game Client (Frontend)...');
+    app.use(express.static(DIST_PATH));
+    app.get('*', (req, res) => {
+        if (req.path.startsWith('/api')) {
+            return res.status(404).json({ error: 'Endpoint not found' });
+        }
+        res.sendFile(path.join(DIST_PATH, 'index.html'));
+    });
 } else {
-    console.log('🔧 Development Mode: Backend API active (No dist folder found)');
+    console.error('❌ DIST FOLDER NOT FOUND AT:', DIST_PATH);
+    console.log('🔧 Running in API-Only Mode');
     app.get('/', (req, res) => {
-        res.send('Kadim Savaslar Backend is Running! 🚀 (Dev Mode - Dist folder not found)');
+        res.send(`
+            <h1>Kadim Savaşlar API Server</h1>
+            <p>Backend is running.</p>
+            <p>Error: Game client files (dist) not found.</p>
+            <p>Path checked: ${DIST_PATH}</p>
+        `);
     });
 }
 

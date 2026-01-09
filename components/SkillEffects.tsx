@@ -298,9 +298,9 @@ export const SkillEffects: React.FC<SkillEffectsProps> = ({ activeSkills, onEffe
         // Healer
         'blessing', 'buff_aura', 'revive', 'holy_circle', 'holy_shield', 'sanctuary', 'light_rain',
         // Martial Artist
-        'flow', 'meditate', 'tiger', 'focus', 'iron_body', 'iron_stance', 'dragon_fist',
+        'focus', 'iron_skin', 'meditation',
         // Reaper
-        'shroud', 'passage', 'dark_passage', 'apocalypse_call'
+        'soul_trap', 'ghost_form', 'shadow_step', 'death_mark'
     ];
 
     return (

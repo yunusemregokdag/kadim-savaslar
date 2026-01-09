@@ -140,11 +140,16 @@ const Leaderboard = mongoose.model('Leaderboard', leaderboardSchema);
 // ============================================
 
 // Health check
-app.get('/', (req, res) => {
+// Health check (Moved to /api/status to avoid conflict with frontend)
+app.get('/api/status', (req, res) => {
+    // players değişkeni undefined olabilir (hoisting meselesi), try-catch ile saralım
+    let playerCount = 0;
+    try { playerCount = Object.keys(players).length; } catch (e) { }
+
     res.json({
         status: 'ok',
         message: 'Kadim Savaşlar Game Server',
-        players: Object.keys(players).length,
+        players: playerCount,
         mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
     });
 });

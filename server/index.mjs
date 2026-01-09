@@ -514,6 +514,4 @@ if (process.env.NODE_ENV === 'production' || fs.existsSync(STATIC_PATH)) {
         });
     }
 
-    // Vercel için Express uygulamasını dışa aktar
-    // Vercel için Express uygulamasını dışa aktar
-    export default app;
+// export default app; // REMOVED FOR RENDER COMPATIBILITY

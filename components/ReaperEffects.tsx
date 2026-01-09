@@ -150,122 +150,223 @@ const SoulTrap = ({ position }: { position: [number, number, number] }) => {
     );
 };
 
-import { JsonFrameAnimation } from './JsonFrameAnimation';
-
-// 2. TIRPAN KESİŞİ (Scythe Slash - JSON Frame Animation)
-const ScytheSlash = ({ position }: { position: [number, number, number] }) => {
-    const [completed, setCompleted] = useState(false);
-
-    if (completed) return null;
-
-    return (
-        <JsonFrameAnimation
-            basePath="/models/Character/reaper_model/models/reaper_model/"
-            framePrefix="death_slice_"
-            frameCount={8}
-            extension=".json"
-            speed={20} // Biraz hızlı olsun
-            loop={false}
-            scale={0.05} // Model boyutuna göre ayarlamak gerekebilir, deneme yanılma ile bulacağız.
-            position={position}
-            rotation={[0, Math.PI, 0]} // Karaktere göre yön
-            onComplete={() => setCompleted(true)}
-        />
-    );
-};
-
-// 3. ÖLÜMÜN SESİ (ULTI - Ekranı Karartan Kaos)
-const DoomUlti = ({ position }: { position: [number, number, number] }) => {
+// ═══════════════════════════════════════════════════════════════════════════
+// 1. SCYTHE SLASH (TIRPAN) - Pixel Art Shader
+// ═══════════════════════════════════════════════════════════════════════════
+const ScytheSlash = ({ position, delay = 0 }: { position: [number, number, number], delay?: number }) => {
     const meshRef = useRef<THREE.Mesh>(null);
-    useFrame((state) => {
-        if (meshRef.current) {
-            (meshRef.current.material as THREE.ShaderMaterial).uniforms.uTime.value = state.clock.elapsedTime;
-            meshRef.current.scale.setScalar(1 + Math.sin(state.clock.elapsedTime * 25.0) * 0.02);
+    const [started, setStarted] = useState(false);
+
+    useFrame((state, delta) => {
+        if (!meshRef.current) return;
+
+        // Gecikme Kontrolü
+        if (!started) {
+            if (state.clock.elapsedTime > (meshRef.current.userData.startTime || 0) + delay) {
+                setStarted(true);
+                meshRef.current.visible = true;
+            } else {
+                meshRef.current.visible = false;
+                if (!meshRef.current.userData.startTime) meshRef.current.userData.startTime = state.clock.elapsedTime;
+                return;
+            }
+        }
+
+        const mat = meshRef.current.material as THREE.ShaderMaterial;
+        mat.uniforms.uTime.value += delta;
+
+        // Tırpanın savrulma hareketi
+        meshRef.current.rotation.y -= delta * 12.0;
+
+        // Yok Olma
+        if (mat.uniforms.uTime.value > 0.5) {
+            mat.uniforms.uOpacity.value -= delta * 3.0;
+        }
+        if (mat.uniforms.uOpacity.value <= 0) {
+            // Eğer tek seferlikse gizle, değilse parent yönetir
+            // meshRef.current.visible = false; 
         }
     });
 
     return (
-        <mesh ref={meshRef} position={[position[0], position[1] + 0.1, position[2]]} rotation={[-Math.PI / 2, 0, 0]}>
-            <circleGeometry args={[10, 64]} />
-            <shaderMaterial
-                transparent
-                blending={THREE.MultiplyBlending} // Etrafı karartmak için Multiply kullanıyoruz
-                uniforms={{ uTime: { value: 0 }, uColor: { value: new THREE.Color("#110022") } }}
-                vertexShader={DarkSoulShader.vertexShader}
-                fragmentShader={`
-          varying vec2 vUv;
-          uniform float uTime;
-          void main() {
-            vec2 uv = vUv - 0.5;
-            float d = length(uv);
-            float noise = sin(d * 100.0 - uTime * 30.0);
-            gl_FragColor = vec4(0.0, 0.0, 0.0, smoothstep(0.0, 0.5, d) * step(0.5, noise));
-          }
-        `}
-            />
-        </mesh>
-    );
-};
+        <group position={position} rotation={[0, Math.PI / 2, 0]}>
+            <mesh ref={meshRef} position={[0, 1.5, 0]} rotation={[-Math.PI / 4, 0, 0]} visible={false}>
+                <planeGeometry args={[5, 5]} />
+                <shaderMaterial
+                    transparent
+                    side={THREE.DoubleSide}
+                    uniforms={{
+                        uTime: { value: 0 },
+                        uOpacity: { value: 1.0 },
+                        uColor: { value: COLOR_PRIMARY },
+                        uColorDark: { value: COLOR_DARK }
+                    }}
+                    vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`}
+                    fragmentShader={`
+            varying vec2 vUv;
+            uniform float uTime;
+            uniform float uOpacity;
+            uniform vec3 uColor;
+            uniform vec3 uColorDark;
 
-// Export Component
-export const ReaperEffects = ({ skillKey, position }: { skillKey: string, position: [number, number, number] }) => {
-    return (
-        <group>
-            {skillKey === '1' && <ScytheSlash position={[position[0], position[1] + 1.0, position[2]]} />}
-            {skillKey === '2' && <SoulTrap position={[position[0], 0.2, position[2]]} />}
-            {skillKey === 'ultimate' && <DoomUlti position={position} />}
+            void main() {
+              vec2 uv = vUv;
+              float resolution = 24.0;
+              vec2 p = floor(uv * resolution) / resolution;
+              
+              // Tırpan Şekli
+              float dist = length(p - vec2(0.5, 0.5));
+              float outer = step(dist, 0.45);
+              float inner = step(length(p - vec2(0.4, 0.4)), 0.35);
+              float blade = outer - inner;
+              float handle = step(abs(p.x - p.y), 0.05) * step(p.x, 0.5) * step(p.y, 0.5);
+              float shape = max(blade, handle);
+
+              if (shape < 0.1) discard;
+              vec3 finalColor = mix(uColorDark, uColor, p.y + p.x);
+              gl_FragColor = vec4(finalColor, uOpacity);
+            }
+          `}
+                />
+            </mesh>
         </group>
     );
 };
 
-// 4. KARANLIK GEÇİŞ (Dark Transition - Shadow Step/Dash)
+// ═══════════════════════════════════════════════════════════════════════════
+// 2. DEATH'S TOUCH (ÖLÜM DOKUNUŞU) - Claw/Pençe
+// ═══════════════════════════════════════════════════════════════════════════
+const DeathTouchFX = ({ position }: { position: [number, number, number] }) => {
+    const groupRef = useRef<THREE.Group>(null);
+
+    useFrame((state, delta) => {
+        if (!groupRef.current) return;
+        groupRef.current.position.y -= delta * 3; // Daha hızlı in
+        groupRef.current.position.z += delta * 3; // İleri atıl
+
+        groupRef.current.children.forEach((child) => {
+            const mat = (child as THREE.Mesh).material as THREE.ShaderMaterial;
+            mat.uniforms.uOpacity.value -= delta * 1.5;
+        });
+    });
+
+    return (
+        <group ref={groupRef} position={[position[0], position[1] + 3, position[2] - 1]}>
+            {[-0.8, 0, 0.8].map((offset, i) => ( // Daha geniş pençe
+                <mesh key={i} position={[offset, 0, 0]} rotation={[0, 0, 0.3 * (i - 1)]}>
+                    <planeGeometry args={[0.8, 3]} /> {/* Daha büyük pençeler */}
+                    <shaderMaterial
+                        transparent
+                        side={THREE.DoubleSide}
+                        uniforms={{
+                            uOpacity: { value: 1.0 },
+                            uColor: { value: COLOR_PRIMARY }
+                        }}
+                        vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`}
+                        fragmentShader={`
+                            varying vec2 vUv;
+                            uniform float uOpacity;
+                            uniform vec3 uColor;
+                            void main() {
+                                vec2 p = floor(vUv * 16.0) / 16.0;
+                                // Sivri Tırnak Şekli
+                                float w = 0.5 - abs(p.x - 0.5); 
+                                float shape = step(0.15, w * p.y * 1.5); 
+                                if (shape < 0.1) discard;
+                                gl_FragColor = vec4(uColor, uOpacity);
+                            }
+                        `}
+                    />
+                </mesh>
+            ))}
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 3. SOUL HARVEST (RUH HASADI) - Uçan Ruhlar
+// ═══════════════════════════════════════════════════════════════════════════
+const SoulProjectile = ({ position, offset, delay }: { position: [number, number, number], offset: number, delay: number }) => {
+    const meshRef = useRef<THREE.Mesh>(null);
+    const [active, setActive] = useState(false);
+    const [startTime, setStartTime] = useState(0);
+
+    useFrame((state, delta) => {
+        if (!meshRef.current) return;
+        const time = state.clock.elapsedTime;
+
+        if (!active) {
+            if (startTime === 0) setStartTime(time);
+            if (time - startTime > delay) setActive(true);
+            return;
+        }
+
+        meshRef.current.visible = true;
+        meshRef.current.position.z += delta * 6.0; // Orta hız
+        meshRef.current.position.x += Math.sin(time * 15.0 + offset) * 0.15; // Daha geniş zigzag
+
+        const mat = meshRef.current.material as THREE.ShaderMaterial;
+        mat.uniforms.uTime.value = time;
+
+        // Uzaklaşınca gizle
+        if (meshRef.current.position.z > (position[2] + 15)) {
+            meshRef.current.visible = false;
+        }
+    });
+
+    return (
+        <mesh ref={meshRef} position={[position[0] + offset, position[1] + 1.2, position[2]]} visible={false}>
+            <planeGeometry args={[1.5, 1.5]} /> {/* Ruhlar büyüdü */}
+            <shaderMaterial
+                transparent
+                uniforms={{
+                    uTime: { value: 0 },
+                    uColor: { value: COLOR_PRIMARY },
+                    uCore: { value: COLOR_CORE }
+                }}
+                vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`}
+                fragmentShader={`
                     varying vec2 vUv;
                     uniform float uTime;
                     uniform vec3 uColor;
                     uniform vec3 uCore;
 
-void main() {
-                        // Pixelate (16x16 Ghost Sprite)
+                    void main() {
                         vec2 p = floor(vUv * 16.0) / 16.0;
-
-                        // Hayalet Şekli (Kafa yuvarlak, alt taraf dalgalı)
+                        // Hayalet Sprite
                         float dist = length(p - vec2(0.5, 0.6));
-                        float head = step(dist, 0.3);
-                        float tail = step(abs(p.x - 0.5), 0.3) * step(p.y, 0.6) * step(0.1 + sin(p.x * 10.0 + uTime * 5.0) * 0.1, p.y);
-                        
+                        float head = step(dist, 0.35);
+                        float tail = step(abs(p.x - 0.5), 0.35) * step(p.y, 0.6) * step(0.1 + sin(p.x*10.0 + uTime*8.0)*0.1, p.y);
                         float shape = max(head, tail);
-
+                        
                         // Gözler
                         float eyeL = step(length(p - vec2(0.35, 0.65)), 0.05);
                         float eyeR = step(length(p - vec2(0.65, 0.65)), 0.05);
-    shape -= (eyeL + eyeR);
+                        shape -= (eyeL + eyeR);
 
-    if (shape < 0.1) discard;
-
-    gl_FragColor = vec4(uColor, 1.0);
-}
-`}
-             />
+                        if (shape < 0.1) discard;
+                        gl_FragColor = vec4(mix(uColor, uCore, 0.3), 1.0);
+                    }
+                `}
+            />
         </mesh>
     );
 };
 
 const SoulHarvestFX = ({ position }: { position: [number, number, number] }) => (
     <group>
-        <SoulProjectile position={position} offset={-0.5} delay={0} />
-        <SoulProjectile position={position} offset={0.5} delay={0.2} />
+        <SoulProjectile position={position} offset={-0.6} delay={0} />
+        <SoulProjectile position={position} offset={0.6} delay={0.2} />
     </group>
 );
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 4. DARK PASSAGE/SHADOW STEP (KARANLIK GEÇİT) - Girdap
-// "Savaşçının 1. skiline benzer 3 tane" -> 3 lü Ruh Saldırısı?
-// İkonu Girdap ama sen "3 tane" dedin. O yüzden 3'lü Girdap/Ruh yapıyorum.
+// 4. DARK PASSAGE (KARANLIK GEÇİT) - 3'lü Ruh
 // ═══════════════════════════════════════════════════════════════════════════
 const DarkPassageFX = ({ position }: { position: [number, number, number] }) => (
     <group>
-        {[-1, 0, 1].map((offset, i) => (
-             <SoulProjectile key={i} position={[position[0], position[1], position[2] - 0.5]} offset={offset * 1.0} delay={i * 0.1} />
+        {[-1.2, 0, 1.2].map((offset, i) => (
+            <SoulProjectile key={i} position={position} offset={offset} delay={i * 0.15} />
         ))}
     </group>
 );
@@ -276,64 +377,79 @@ const DarkPassageFX = ({ position }: { position: [number, number, number] }) => 
 const FearFX = ({ position }: { position: [number, number, number] }) => {
     const groupRef = useRef<THREE.Group>(null);
     useFrame((state) => {
-         if (groupRef.current) {
-             groupRef.current.position.y += 0.02; // Yükselme
-             groupRef.current.rotation.y += 0.05; // Dönme
-         }
+        if (groupRef.current) {
+            groupRef.current.position.y += 0.02;
+            groupRef.current.rotation.y += 0.04;
+            groupRef.current.scale.addScalar(0.01); // Büyüyerek yayılma
+        }
     });
 
     return (
         <group ref={groupRef} position={[position[0], position[1], position[2]]}>
-            {[...Array(5)].map((_, i) => (
-                 <mesh key={i} position={[Math.cos(i)*2, 1, Math.sin(i)*2]}>
-                    <planeGeometry args={[1, 1]} />
+            {[...Array(6)].map((_, i) => (
+                <mesh key={i} position={[Math.cos(i) * 2.5, 1, Math.sin(i) * 2.5]} rotation={[0, -i, 0]}> {/* Dışa dönük */}
+                    <planeGeometry args={[1.5, 1.5]} />
                     <shaderMaterial
                         transparent
                         side={THREE.DoubleSide}
                         uniforms={{ uColor: { value: COLOR_PRIMARY } }}
-                        vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); } `}
+                        vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`}
                         fragmentShader={`
                             varying vec2 vUv;
                             uniform vec3 uColor;
-void main() {
+                            void main() {
                                 vec2 p = floor(vUv * 16.0) / 16.0;
-                                // Basit Kuru Kafa / Korkunç Surat
-                                float shape = step(length(p - 0.5), 0.4);
-                                float eyes = step(length(p - vec2(0.3, 0.6)), 0.1) + step(length(p - vec2(0.7, 0.6)), 0.1);
-                                float mouth = step(length(p - vec2(0.5, 0.3)), 0.15);
-    shape -= (eyes + mouth);
-    if (shape < 0.1) discard;
-    gl_FragColor = vec4(uColor, 1.0);
-}
-`}
+                                // Kuru Kafa Sprite
+                                float shape = step(length(p - 0.5), 0.42);
+                                float eyes = step(length(p - vec2(0.32, 0.55)), 0.1) + step(length(p - vec2(0.68, 0.55)), 0.1);
+                                float mouth = step(length(p - vec2(0.5, 0.25)), 0.12);
+                                shape -= (eyes + mouth);
+                                if (shape < 0.1) discard;
+                                gl_FragColor = vec4(uColor, 1.0);
+                            }
+                        `}
                     />
-                 </mesh>
+                </mesh>
             ))}
         </group>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 6. ULTIMATE (KIYAMET ÇAĞRISI) - 6 Vuruş
-// "Savaşçının 1. skiline benzer 6 vuruş yapsın (Yan çapraz sağ sol)"
+// 6. ULTIMATE (KIYAMET ÇAĞRISI) - 6'lı Seri Vuruş
 // ═══════════════════════════════════════════════════════════════════════════
 const DoomUlti = ({ position }: { position: [number, number, number] }) => {
-     // 6 Farklı Tırpan darbesi aynı anda veya sırayla çıkacak
-     return (
-         <group>
-             {/* Sağ Çaprazlar */}
-             <group position={[2, 0, 2]} rotation={[0, -Math.PI/4, 0]}> <ScytheSlash position={[0,0,0]} /> </group>
-             <group position={[2, 0, -2]} rotation={[0, -Math.PI/2, 0]}> <ScytheSlash position={[0,0,0]} /> </group>
-             
-             {/* Sol Çaprazlar */}
-             <group position={[-2, 0, 2]} rotation={[0, Math.PI/4, 0]}> <ScytheSlash position={[0,0,0]} /> </group>
-             <group position={[-2, 0, -2]} rotation={[0, Math.PI/2, 0]}> <ScytheSlash position={[0,0,0]} /> </group>
-             
-             {/* Merkez */}
-             <group position={[0, 0, 4]} rotation={[0, 0, 0]}> <ScytheSlash position={[0,0,0]} /> </group>
-             <group position={[0, 0, -4]} rotation={[0, Math.PI, 0]}> <ScytheSlash position={[0,0,0]} /> </group>
-         </group>
-     );
+    return (
+        <group>
+            {/* 1. Vuruş (Hemen) */}
+            <group position={[2, 0, 2]} rotation={[0, -Math.PI / 4, 0]}>
+                <ScytheSlash position={[0, 0, 0]} delay={0.0} />
+            </group>
+
+            {/* 2. Vuruş */}
+            <group position={[-2, 0, 2]} rotation={[0, Math.PI / 4, 0]}>
+                <ScytheSlash position={[0, 0, 0]} delay={0.2} />
+            </group>
+
+            {/* 3. Vuruş */}
+            <group position={[2, 0, -2]} rotation={[0, -Math.PI / 2, 0]}>
+                <ScytheSlash position={[0, 0, 0]} delay={0.4} />
+            </group>
+
+            {/* 4. Vuruş */}
+            <group position={[-2, 0, -2]} rotation={[0, Math.PI / 2, 0]}>
+                <ScytheSlash position={[0, 0, 0]} delay={0.6} />
+            </group>
+
+            {/* 5 & 6. Vuruş (Çifte Final) */}
+            <group position={[0, 0, 4]} rotation={[0, 0, 0]}>
+                <ScytheSlash position={[0, 0, 0]} delay={0.8} />
+            </group>
+            <group position={[0, 0, -4]} rotation={[0, Math.PI, 0]}>
+                <ScytheSlash position={[0, 0, 0]} delay={0.8} />
+            </group>
+        </group>
+    );
 };
 
 
@@ -358,7 +474,7 @@ export const REAPER_EFFECTS: { [key: string]: React.FC<any> } = {
     'reaper_5': FearFX,
     'reaper_6': DoomUlti,
     'reaper_ultimate': DoomUlti,
-    
+
     // Descriptive Names
     'scythe_slash': ScytheSlash,
     'soul_trap': DeathTouchFX,
@@ -366,7 +482,7 @@ export const REAPER_EFFECTS: { [key: string]: React.FC<any> } = {
     'shadow_step': DarkPassageFX,
     'fear': FearFX,
     'doom': DoomUlti,
-    
+
     // Fallbacks
     'ghost_form': DarkPassageFX,
     'execution': DoomUlti,

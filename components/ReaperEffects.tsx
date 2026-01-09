@@ -569,6 +569,79 @@ const FearSkillFX = ({ position }: { position: [number, number, number] }) => {
     );
 };
 
+// 6. ÖLÜMCÜL DARBE ULTİSİ (Ultimate Death Smash - Ground Crack + Shockwave)
+const UltimateDeathSmash = ({ position }: { position: [number, number, number] }) => {
+    const meshRef = useRef<THREE.Mesh>(null);
+    const shockwaveRef = useRef<THREE.Mesh>(null);
+
+    useFrame((state, delta) => {
+        const time = state.clock.elapsedTime;
+
+        // 1. Ulti Darbe Efekti (Büyüme ve Kaybolma)
+        if (meshRef.current) {
+            (meshRef.current.material as THREE.ShaderMaterial).uniforms.uTime.value = time;
+            meshRef.current.scale.lerp(new THREE.Vector3(15, 15, 1), 0.1);
+        }
+
+        // 2. Şok Dalgası Hızı
+        if (shockwaveRef.current) {
+            shockwaveRef.current.scale.addScalar(delta * 20);
+            (shockwaveRef.current.material as THREE.Material).opacity -= delta * 0.5;
+            if ((shockwaveRef.current.material as THREE.Material).opacity <= 0) {
+                shockwaveRef.current.visible = false;
+            }
+        }
+    });
+
+    return (
+        <group position={position}>
+            {/* ANA ETKİ: MOR ÖLÜM YARIĞI */}
+            <mesh ref={meshRef} rotation={[-Math.PI / 2, 0, 0]}>
+                <planeGeometry args={[1, 1]} />
+                <shaderMaterial
+                    transparent
+                    blending={THREE.AdditiveBlending}
+                    uniforms={{
+                        uTime: { value: 0 },
+                        uColor: { value: new THREE.Color("#6a0dad") }, // Koyu Mor
+                        uCore: { value: new THREE.Color("#ffffff") }  // Parlayan Merkez
+                    }}
+                    vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`}
+                    fragmentShader={`
+            varying vec2 vUv;
+            uniform float uTime;
+            uniform vec3 uColor;
+            uniform vec3 uCore;
+
+            void main() {
+              vec2 uv = vUv - 0.5;
+              float dist = length(uv);
+              
+              // 1. Yıldırım ve Çatlak Matematiği
+              float angle = atan(uv.y, uv.x);
+              float noise = sin(angle * 12.0 + uTime * 20.0) * 0.1;
+              float crack = step(0.4 + noise, 0.5 - dist);
+              
+              // 2. Pixel Dither (Retro AAA Görünüm)
+              float dither = step(0.5, fract(gl_FragCoord.x * 0.5 + gl_FragCoord.y * 0.5));
+              
+              // 3. Renk Karışımı
+              vec3 finalColor = mix(uColor, uCore, crack);
+              gl_FragColor = vec4(finalColor, crack * dither * (1.0 - dist * 2.0));
+            }
+          `}
+                />
+            </mesh>
+
+            {/* DIŞ ŞOK DALGASI */}
+            <mesh ref={shockwaveRef} rotation={[-Math.PI / 2, 0, 0]}>
+                <ringGeometry args={[0.9, 1.0, 32]} />
+                <meshBasicMaterial color="#bc13fe" transparent opacity={0.8} />
+            </mesh>
+        </group>
+    );
+};
+
 // Export Configuration for Skill System
 // Supports various key formats (1, 2, ultimate, reaper_1, etc.)
 export const REAPER_EFFECTS: { [key: string]: React.FC<any> } = {
@@ -577,7 +650,8 @@ export const REAPER_EFFECTS: { [key: string]: React.FC<any> } = {
     '3': SoulReapFX,
     '4': DarkTransitionFX,
     '5': FearSkillFX,
-    'ultimate': DoomUlti,
+    '6': UltimateDeathSmash,
+    'ultimate': UltimateDeathSmash,
 
     // Skill Visual IDs
     'reaper_1': ScytheSlash,
@@ -585,7 +659,8 @@ export const REAPER_EFFECTS: { [key: string]: React.FC<any> } = {
     'reaper_3': SoulReapFX,
     'reaper_4': DarkTransitionFX,
     'reaper_5': FearSkillFX,
-    'reaper_ultimate': DoomUlti,
+    'reaper_6': UltimateDeathSmash,
+    'reaper_ultimate': UltimateDeathSmash,
 
     // Descriptive Names
     'scythe_slash': ScytheSlash,
@@ -595,13 +670,13 @@ export const REAPER_EFFECTS: { [key: string]: React.FC<any> } = {
     'grim_fear': FearSkillFX,
     'death_mark': DeathsGripFX,
     'ghost_form': DarkTransitionFX,
-    'execution': DoomUlti,
+    'execution': UltimateDeathSmash,
 
     // New Additions
     'shadow_dash': DarkTransitionFX,
     'soul_burst': SoulBurstFX,
     'deaths_grip': DeathsGripFX,
     'fear': FearSkillFX,
-    'doom': DoomUlti,
-    'doom_ulti': DoomUlti,
+    'doom': UltimateDeathSmash,
+    'doom_ulti': UltimateDeathSmash,
 };

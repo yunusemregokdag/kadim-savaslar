@@ -81,26 +81,36 @@ class SoundManager {
         console.log('🔊 SoundManager Initialized with Volume:', this.volume);
     }
 
+    private failedUrls: Set<string> = new Set(); // Hata veren URL'leri hatırla ve tekrar deneme
+
     public playSFX(key: string) {
         if (!this.initialized) this.init();
         const audio = this.sounds.get(key);
         if (audio) {
+            if (this.failedUrls.has(audio.src)) return; // Daha önce patladıysa deneme
+
             // Clone to allow overlapping sounds
             const clone = audio.cloneNode() as HTMLAudioElement;
             clone.volume = this.volume.sfx;
-            clone.play().catch(e => console.warn('Audio play failed', e));
-        } else {
-            // console.warn(`Sound not found: ${key}`);
+            clone.play().catch(e => {
+                // console.warn('Audio play failed', e); // Sessizce geç
+                this.failedUrls.add(audio.src);
+            });
         }
     }
 
     public playUrl(url: string, volumeScale: number = 1.0) {
+        if (this.failedUrls.has(url)) return; // Daha önce patladıysa deneme
+
         try {
             const audio = new Audio(url);
             audio.volume = Math.min(1, Math.max(0, this.volume.sfx * volumeScale));
-            audio.play().catch(e => console.warn(`Failed to play sound: ${url}`, e));
+            audio.play().catch(e => {
+                // console.warn(`Failed to play sound: ${url}`, e);
+                this.failedUrls.add(url);
+            });
         } catch (err) {
-            console.warn(`Error creating audio for: ${url}`, err);
+            this.failedUrls.add(url);
         }
     }
 

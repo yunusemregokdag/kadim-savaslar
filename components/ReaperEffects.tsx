@@ -219,12 +219,166 @@ export const ReaperEffects = ({ skillKey, position }: { skillKey: string, positi
 };
 
 // 4. KARANLIK GEÇİŞ (Dark Transition - Shadow Step/Dash)
+                    varying vec2 vUv;
+                    uniform float uTime;
+                    uniform vec3 uColor;
+                    uniform vec3 uCore;
+
+void main() {
+                        // Pixelate (16x16 Ghost Sprite)
+                        vec2 p = floor(vUv * 16.0) / 16.0;
+
+                        // Hayalet Şekli (Kafa yuvarlak, alt taraf dalgalı)
+                        float dist = length(p - vec2(0.5, 0.6));
+                        float head = step(dist, 0.3);
+                        float tail = step(abs(p.x - 0.5), 0.3) * step(p.y, 0.6) * step(0.1 + sin(p.x * 10.0 + uTime * 5.0) * 0.1, p.y);
+                        
+                        float shape = max(head, tail);
+
+                        // Gözler
+                        float eyeL = step(length(p - vec2(0.35, 0.65)), 0.05);
+                        float eyeR = step(length(p - vec2(0.65, 0.65)), 0.05);
+    shape -= (eyeL + eyeR);
+
+    if (shape < 0.1) discard;
+
+    gl_FragColor = vec4(uColor, 1.0);
+}
+`}
+             />
+        </mesh>
+    );
+};
+
+const SoulHarvestFX = ({ position }: { position: [number, number, number] }) => (
+    <group>
+        <SoulProjectile position={position} offset={-0.5} delay={0} />
+        <SoulProjectile position={position} offset={0.5} delay={0.2} />
+    </group>
+);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 4. DARK PASSAGE/SHADOW STEP (KARANLIK GEÇİT) - Girdap
+// "Savaşçının 1. skiline benzer 3 tane" -> 3 lü Ruh Saldırısı?
+// İkonu Girdap ama sen "3 tane" dedin. O yüzden 3'lü Girdap/Ruh yapıyorum.
+// ═══════════════════════════════════════════════════════════════════════════
+const DarkPassageFX = ({ position }: { position: [number, number, number] }) => (
+    <group>
+        {[-1, 0, 1].map((offset, i) => (
+             <SoulProjectile key={i} position={[position[0], position[1], position[2] - 0.5]} offset={offset * 1.0} delay={i * 0.1} />
+        ))}
+    </group>
+);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 5. FEAR (KORKU) - Hayalet Suratlar
+// ═══════════════════════════════════════════════════════════════════════════
+const FearFX = ({ position }: { position: [number, number, number] }) => {
+    const groupRef = useRef<THREE.Group>(null);
+    useFrame((state) => {
+         if (groupRef.current) {
+             groupRef.current.position.y += 0.02; // Yükselme
+             groupRef.current.rotation.y += 0.05; // Dönme
+         }
+    });
+
+    return (
+        <group ref={groupRef} position={[position[0], position[1], position[2]]}>
+            {[...Array(5)].map((_, i) => (
+                 <mesh key={i} position={[Math.cos(i)*2, 1, Math.sin(i)*2]}>
+                    <planeGeometry args={[1, 1]} />
+                    <shaderMaterial
+                        transparent
+                        side={THREE.DoubleSide}
+                        uniforms={{ uColor: { value: COLOR_PRIMARY } }}
+                        vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); } `}
+                        fragmentShader={`
+                            varying vec2 vUv;
+                            uniform vec3 uColor;
+void main() {
+                                vec2 p = floor(vUv * 16.0) / 16.0;
+                                // Basit Kuru Kafa / Korkunç Surat
+                                float shape = step(length(p - 0.5), 0.4);
+                                float eyes = step(length(p - vec2(0.3, 0.6)), 0.1) + step(length(p - vec2(0.7, 0.6)), 0.1);
+                                float mouth = step(length(p - vec2(0.5, 0.3)), 0.15);
+    shape -= (eyes + mouth);
+    if (shape < 0.1) discard;
+    gl_FragColor = vec4(uColor, 1.0);
+}
+`}
+                    />
+                 </mesh>
+            ))}
+        </group>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 6. ULTIMATE (KIYAMET ÇAĞRISI) - 6 Vuruş
+// "Savaşçının 1. skiline benzer 6 vuruş yapsın (Yan çapraz sağ sol)"
+// ═══════════════════════════════════════════════════════════════════════════
+const DoomUlti = ({ position }: { position: [number, number, number] }) => {
+     // 6 Farklı Tırpan darbesi aynı anda veya sırayla çıkacak
+     return (
+         <group>
+             {/* Sağ Çaprazlar */}
+             <group position={[2, 0, 2]} rotation={[0, -Math.PI/4, 0]}> <ScytheSlash position={[0,0,0]} /> </group>
+             <group position={[2, 0, -2]} rotation={[0, -Math.PI/2, 0]}> <ScytheSlash position={[0,0,0]} /> </group>
+             
+             {/* Sol Çaprazlar */}
+             <group position={[-2, 0, 2]} rotation={[0, Math.PI/4, 0]}> <ScytheSlash position={[0,0,0]} /> </group>
+             <group position={[-2, 0, -2]} rotation={[0, Math.PI/2, 0]}> <ScytheSlash position={[0,0,0]} /> </group>
+             
+             {/* Merkez */}
+             <group position={[0, 0, 4]} rotation={[0, 0, 0]}> <ScytheSlash position={[0,0,0]} /> </group>
+             <group position={[0, 0, -4]} rotation={[0, Math.PI, 0]}> <ScytheSlash position={[0,0,0]} /> </group>
+         </group>
+     );
+};
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// EXPORT MAPPING
+// ═══════════════════════════════════════════════════════════════════════════
+export const REAPER_EFFECTS: { [key: string]: React.FC<any> } = {
+    // Skills
+    '1': ScytheSlash,
+    '2': DeathTouchFX,
+    '3': SoulHarvestFX,
+    '4': DarkPassageFX,
+    '5': FearFX,
+    '6': DoomUlti,
+    'ultimate': DoomUlti,
+
+    // Aliases
+    'reaper_1': ScytheSlash,
+    'reaper_2': DeathTouchFX,
+    'reaper_3': SoulHarvestFX,
+    'reaper_4': DarkPassageFX,
+    'reaper_5': FearFX,
+    'reaper_6': DoomUlti,
+    'reaper_ultimate': DoomUlti,
+    
+    // Descriptive Names
+    'scythe_slash': ScytheSlash,
+    'soul_trap': DeathTouchFX,
+    'soul_reap': SoulHarvestFX,
+    'shadow_step': DarkPassageFX,
+    'fear': FearFX,
+    'doom': DoomUlti,
+    
+    // Fallbacks
+    'ghost_form': DarkPassageFX,
+    'execution': DoomUlti,
+    'soul_burst': SoulHarvestFX,
+    'deaths_grip': DeathTouchFX,
+    'doom_ulti': DoomUlti,
+};
 const DarkTransitionFX = ({ position }: { position: [number, number, number] }) => {
     const meshRef = useRef<THREE.Mesh>(null);
     const trailRef = useRef<THREE.Group>(null);
 
     // Simüle edilmiş Start/End (Dikey dash efekti için)
-    // Karakterin şu anki pozisyonunu start, 5 birim ilerisini end kabul edelim
     const startPos = useMemo(() => new THREE.Vector3(position[0], position[1], position[2]), [position]);
     const endPos = useMemo(() => new THREE.Vector3(position[0], position[1], position[2] - 5), [position]);
 
@@ -266,11 +420,11 @@ const DarkTransitionFX = ({ position }: { position: [number, number, number] }) 
                     }}
                     vertexShader={`
             varying vec2 vUv;
-            void main() {
-              vUv = uv;
-              gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-          `}
+void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+`}
                     fragmentShader={`
             varying vec2 vUv;
             uniform float uTime;
@@ -278,18 +432,18 @@ const DarkTransitionFX = ({ position }: { position: [number, number, number] }) 
             uniform vec3 uColor;
             uniform vec3 uGlow;
 
-            void main() {
+void main() {
               // Pixel Dither efekti (Noktalı geçiş)
               float dither = step(0.5, fract(gl_FragCoord.x * 0.5 + gl_FragCoord.y * 0.5));
-              
+
               // Akış efekti
               float flow = step(0.7, sin(vUv.y * 10.0 - uTime * 30.0));
               float edge = smoothstep(0.0, 0.2, vUv.x) * smoothstep(1.0, 0.8, vUv.x);
               
               vec3 color = mix(uColor, uGlow, flow);
-              gl_FragColor = vec4(color, uOpacity * edge * dither);
-            }
-          `}
+    gl_FragColor = vec4(color, uOpacity * edge * dither);
+}
+`}
                 />
             </mesh>
 
@@ -333,12 +487,12 @@ const SoulBurstFX = ({ position }: { position: [number, number, number] }) => {
                 blending={THREE.AdditiveBlending}
                 depthWrite={false}
                 uniforms={{ uOpacity: { value: 1.0 }, uColor: { value: new THREE.Color("#9400d3") } }}
-                vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`}
+                vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); } `}
                 fragmentShader={`varying vec2 vUv; uniform float uOpacity; uniform vec3 uColor; void main() { 
           float d = length(vUv - 0.5);
           float ring = smoothstep(0.4, 0.5, d) - smoothstep(0.5, 0.52, d);
-          gl_FragColor = vec4(uColor, ring * uOpacity); 
-        }`}
+    gl_FragColor = vec4(uColor, ring * uOpacity);
+} `}
             />
         </mesh>
     );
@@ -362,13 +516,13 @@ const DeathsGripFX = ({ position }: { position: [number, number, number] }) => {
                 side={THREE.DoubleSide}
                 blending={THREE.AdditiveBlending}
                 uniforms={{ uTime: { value: 0 }, uColor: { value: new THREE.Color("#4b0082") } }}
-                vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`}
+                vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); } `}
                 fragmentShader={`varying vec2 vUv; uniform float uTime; uniform vec3 uColor; void main() {
           float wave = step(0.5, sin(vUv.y * 20.0 - uTime * 40.0));
           vec3 finalColor = uColor * 2.0;
           float alpha = wave * step(0.2, vUv.x) * step(vUv.x, 0.8);
-          gl_FragColor = vec4(finalColor, alpha);
-        }`}
+    gl_FragColor = vec4(finalColor, alpha);
+} `}
             />
         </mesh>
     );
@@ -417,24 +571,24 @@ const SoulReapFX = ({ position }: { position: [number, number, number] }) => {
                         uTime: { value: 0 },
                         uColor: { value: new THREE.Color("#9d00ff") } // Resimdeki parlak mor
                     }}
-                    vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`}
+                    vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); } `}
                     fragmentShader={`
             varying vec2 vUv;
             uniform float uTime;
             uniform vec3 uColor;
-            void main() {
+void main() {
               vec2 uv = vUv - 0.5;
               // Resimdeki X şeklindeki kesiş izi matematiği
               float line1 = step(0.02, abs(uv.x - uv.y)) * step(abs(uv.x - uv.y), 0.15);
               float line2 = step(0.02, abs(uv.x + uv.y)) * step(abs(uv.x + uv.y), 0.15);
-              
+
               // Pixel Dither (AAA Görünüm)
               float dither = step(0.5, fract(gl_FragCoord.x * 0.5 + gl_FragCoord.y * 0.5));
               float alpha = (line1 + line2) * dither * smoothstep(0.5, 0.2, length(uv));
-              
-              gl_FragColor = vec4(uColor * 3.0, alpha);
-            }
-          `}
+
+    gl_FragColor = vec4(uColor * 3.0, alpha);
+}
+`}
                 />
             </mesh>
 
@@ -492,21 +646,21 @@ const FearSkillFX = ({ position }: { position: [number, number, number] }) => {
                         uOpacity: { value: 1.0 },
                         uColor: { value: new THREE.Color("#483d8b") } // Dark Slate Blue / Mor
                     }}
-                    vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`}
+                    vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); } `}
                     fragmentShader={`
             varying vec2 vUv;
             uniform float uTime;
             uniform float uOpacity;
             uniform vec3 uColor;
-            void main() {
+void main() {
               vec2 uv = vUv - 0.5;
               float d = length(uv);
               // Pixel Dither (Retro Görünüm)
               float dither = step(0.5, fract(gl_FragCoord.x * 0.5 + gl_FragCoord.y * 0.5));
               float ring = smoothstep(0.4, 0.5, d) * dither;
-              gl_FragColor = vec4(uColor * 2.0, ring * uOpacity);
-            }
-          `}
+    gl_FragColor = vec4(uColor * 2.0, ring * uOpacity);
+}
+`}
                 />
             </mesh>
 
@@ -566,30 +720,30 @@ const UltimateDeathSmash = ({ position }: { position: [number, number, number] }
                         uColor: { value: new THREE.Color("#6a0dad") }, // Koyu Mor
                         uCore: { value: new THREE.Color("#ffffff") }  // Parlayan Merkez
                     }}
-                    vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`}
+                    vertexShader={`varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); } `}
                     fragmentShader={`
             varying vec2 vUv;
             uniform float uTime;
             uniform vec3 uColor;
             uniform vec3 uCore;
 
-            void main() {
+void main() {
               vec2 uv = vUv - 0.5;
               float dist = length(uv);
-              
+
               // 1. Yıldırım ve Çatlak Matematiği
               float angle = atan(uv.y, uv.x);
               float noise = sin(angle * 12.0 + uTime * 20.0) * 0.1;
               float crack = step(0.4 + noise, 0.5 - dist);
-              
+
               // 2. Pixel Dither (Retro AAA Görünüm)
               float dither = step(0.5, fract(gl_FragCoord.x * 0.5 + gl_FragCoord.y * 0.5));
-              
+
               // 3. Renk Karışımı
               vec3 finalColor = mix(uColor, uCore, crack);
-              gl_FragColor = vec4(finalColor, crack * dither * (1.0 - dist * 2.0));
-            }
-          `}
+    gl_FragColor = vec4(finalColor, crack * dither * (1.0 - dist * 2.0));
+}
+`}
                 />
             </mesh>
 

@@ -150,67 +150,27 @@ const SoulTrap = ({ position }: { position: [number, number, number] }) => {
     );
 };
 
-// 2. TIRPAN KESİŞİ (Scythe Slash - Enhanced Shader)
+import { JsonFrameAnimation } from './JsonFrameAnimation';
+
+// 2. TIRPAN KESİŞİ (Scythe Slash - JSON Frame Animation)
 const ScytheSlash = ({ position }: { position: [number, number, number] }) => {
-    const meshRef = useRef<THREE.Mesh>(null);
+    const [completed, setCompleted] = useState(false);
 
-    useFrame((state, delta) => {
-        if (meshRef.current) {
-            // 1. Tırpanın savrulma animasyonu
-            meshRef.current.rotation.z += delta * 15.0;
-
-            // 2. Zamanlayıcıyı shader'a gönderiyoruz
-            const mat = meshRef.current.material as THREE.ShaderMaterial;
-            mat.uniforms.uTime.value = state.clock.elapsedTime;
-
-            // 3. Efekt bittiğinde yavaşça yok olma
-            mat.uniforms.uOpacity.value -= delta * 1.5;
-            if (mat.uniforms.uOpacity.value <= 0) {
-                meshRef.current.visible = false;
-            }
-        }
-    });
+    if (completed) return null;
 
     return (
-        <mesh ref={meshRef} position={position} rotation={[Math.PI / 2, 0, 0]}>
-            {/* 2.5D Etkisi için geniş bir Ring (Halka) dilimi kullanıyoruz */}
-            <ringGeometry args={[1.8, 2.5, 64, 1, 0, Math.PI * 0.8]} />
-            <shaderMaterial
-                transparent
-                blending={THREE.AdditiveBlending}
-                side={THREE.DoubleSide}
-                uniforms={{
-                    uTime: { value: 0 },
-                    uOpacity: { value: 1.0 },
-                    uColor: { value: new THREE.Color("#8a2be2") } // Resimdeki o derin mor
-                }}
-                vertexShader={`
-          varying vec2 vUv;
-          void main() {
-            vUv = uv;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-          }
-        `}
-                fragmentShader={`
-          varying vec2 vUv;
-          uniform float uTime;
-          uniform float uOpacity;
-          uniform vec3 uColor;
-
-          void main() {
-            // PIXEL DITHER: Resimdeki o noktalı geçiş efekti
-            float dither = step(0.5, fract(gl_FragCoord.x * 0.5 + gl_FragCoord.y * 0.5));
-            
-            // Kavisli enerji izi matematiği
-            float intensity = smoothstep(0.0, 0.2, vUv.x) * smoothstep(1.0, 0.8, vUv.x);
-            float glow = sin(vUv.x * 10.0 - uTime * 20.0) * 0.5 + 0.5;
-            
-            // Sonuç: Mor parlayan, dithered pixel efekti
-            gl_FragColor = vec4(uColor * 2.0, intensity * uOpacity * dither * glow);
-          }
-        `}
-            />
-        </mesh>
+        <JsonFrameAnimation
+            basePath="/models/Character/reaper_model/models/reaper_model/"
+            framePrefix="death_slice_"
+            frameCount={8}
+            extension=".json"
+            speed={20} // Biraz hızlı olsun
+            loop={false}
+            scale={0.05} // Model boyutuna göre ayarlamak gerekebilir, deneme yanılma ile bulacağız.
+            position={position}
+            rotation={[0, Math.PI, 0]} // Karaktere göre yön
+            onComplete={() => setCompleted(true)}
+        />
     );
 };
 

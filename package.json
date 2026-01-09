@@ -6,7 +6,7 @@
   "main": "electron/main.js",
   "scripts": {
     "dev": "vite --host",
-    "build": "node scripts/validate-assets.js --production && vite build && node scripts/copy-dist.js",
+    "build": "node scripts/validate-assets.js --production && vite build && mkdir -p server/public && cp -r dist/* server/public/",
     "build:dev": "vite build",
     "build:skip-validation": "vite build",
     "preview": "vite preview",

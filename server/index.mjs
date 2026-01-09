@@ -26,17 +26,30 @@ app.get('/api/health', (req, res) => {
 });
 
 // STATİK DOSYA SUNUMU CONFIG
-// STATİK DOSYA SUNUMU CONFIG
-// Frontend build işlemi sonrası dosyalar server/public klasörüne kopyalanıyor.
-const STATIC_PATH = path.join(__dirname, 'public');
+// process.cwd() = Projenin ana dizini. Build komutu dosyaları 'server/public' altına kopyaladı.
+const STATIC_PATH = path.join(process.cwd(), 'server/public');
 
-console.log('📂 Serving Static Files from:', STATIC_PATH);
-console.log('🌍 Environment:', process.env.NODE_ENV);
+console.log('📍 PROJECT ROOT (CWD):', process.cwd());
+console.log('📂 LOOKING FOR STATIC FILES AT:', STATIC_PATH); // Hedef yol
+
+// DEBUG: Klasör içeriğini gör (Hata ayıklama için kritik)
+try {
+    if (fs.existsSync(STATIC_PATH)) {
+        console.log('✅ FOUND PUBLIC FOLDER CONTENTS:', fs.readdirSync(STATIC_PATH));
+    } else {
+        console.error('❌ PUBLIC FOLDER DOES NOT EXIST!');
+        // Server klasörüne bakalım
+        const serverDir = path.join(process.cwd(), 'server');
+        if (fs.existsSync(serverDir)) {
+            console.log('📂 SERVER DIR CONTENTS:', fs.readdirSync(serverDir));
+        }
+    }
+} catch (e) { console.error('Debug log error:', e); }
 
 // Public klasörü varsa sun
 if (process.env.NODE_ENV === 'production' || fs.existsSync(STATIC_PATH)) {
     if (fs.existsSync(STATIC_PATH)) {
-        console.log('🚀 Serving Game Client (Frontend)...');
+        console.log('🚀 SYSTEM: Serving Game Client (Frontend)...');
         app.use(express.static(STATIC_PATH));
         app.get('*', (req, res) => {
             if (req.path.startsWith('/api')) {
@@ -45,9 +58,9 @@ if (process.env.NODE_ENV === 'production' || fs.existsSync(STATIC_PATH)) {
             res.sendFile(path.join(STATIC_PATH, 'index.html'));
         });
     } else {
-        console.error('❌ PUBLIC FOLDER NOT FOUND AT:', STATIC_PATH);
+        console.error('❌ CRITICAL: Frontend files missing in production!');
         app.get('/', (req, res) => {
-            res.send('<h1>Error</h1><p>Frontend files not found in server/public.</p>');
+            res.send('<h1>Deployment Error</h1><p>Frontend files (public) missing. Check build logs.</p>');
         });
     }
 } else {

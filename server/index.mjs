@@ -51,7 +51,7 @@ if (process.env.NODE_ENV === 'production' || fs.existsSync(STATIC_PATH)) {
     if (fs.existsSync(STATIC_PATH)) {
         console.log('🚀 SYSTEM: Serving Game Client (Frontend)...');
         app.use(express.static(STATIC_PATH));
-        app.get('*', (req, res) => {
+        app.get(/(.*)/, (req, res) => {
             if (req.path.startsWith('/api')) {
                 return res.status(404).json({ error: 'Endpoint not found' });
             }

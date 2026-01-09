@@ -319,12 +319,67 @@ app.get('/api/characters/:id', async (req, res) => {
     }
 });
 
-// Karakter kaydet
+// Guild'e katıl
+app.post('/api/guilds/:id/join', async (req, res) => {
+    try {
+        const { characterId } = req.body;
+        const guild = await Guild.findById(req.params.id);
+        if (!guild) {
+            return res.status(404).json({ error: 'Guild bulunamadı' });
+        }
+        if (guild.members.length >= 50) {
+            return res.status(400).json({ error: 'Guild dolu' });
+        }
+        guild.members.push(characterId);
+        await guild.save();
+        await Character.findByIdAndUpdate(characterId, { guildId: guild._id });
+        res.json({ success: true, guild });
+    } catch (err) {
+        res.status(500).json({ error: 'Guild katılma hatası' });
+    }
+});
+
+// ============================================
+// EKSİK ENDPOINTLER (404 FIX)
+// ============================================
+
+// Ticaret (Şimdilik boş)
+app.get('/api/trade/my', (req, res) => {
+    res.json({ success: true, trades: [] });
+});
+
+// Eventler (Aktif event yok)
+app.get('/api/events/active', (req, res) => {
+    res.json({ success: true, events: [] });
+});
+
+// Event Bonusları
+app.get('/api/events/bonuses', (req, res) => {
+    res.json({ success: true, bonuses: { exp: 1, gold: 1, drop: 1 } });
+});
+
+// Karakter Kaydetme (500 Error Fix)
 app.post('/api/characters/:id/save', async (req, res) => {
     try {
+        const charId = req.params.id;
+
+        // Eğer Test karakteri veya geçici bir ID ise veritabanına gitme
+        if (charId.startsWith('admin_test') || charId.startsWith('temp_')) {
+            console.log(`📝 Test karakteri kaydı simüle edildi: ${charId}`);
+            return res.json({ success: true, message: 'Test character saved (simulated)', character: req.body });
+        }
+
+        // Geçerli bir MongoDB ObjectId mi?
+        if (!mongoose.Types.ObjectId.isValid(charId)) {
+            return res.status(400).json({ error: 'Geçersiz ID formatı' });
+        }
+
         const updateData = req.body;
+        // _id alanını update datasından çıkar (değiştirilemez)
+        delete updateData._id;
+
         const character = await Character.findByIdAndUpdate(
-            req.params.id,
+            charId,
             { ...updateData, lastLogin: new Date() },
             { new: true }
         );
@@ -333,7 +388,8 @@ app.post('/api/characters/:id/save', async (req, res) => {
         }
         res.json({ success: true, character });
     } catch (err) {
-        res.status(500).json({ error: 'Kaydetme hatası' });
+        console.error('Save Error:', err);
+        res.status(500).json({ error: 'Kaydetme hatası: ' + err.message });
     }
 });
 
@@ -406,25 +462,7 @@ app.post('/api/guilds/create', async (req, res) => {
     }
 });
 
-// Guild'e katıl
-app.post('/api/guilds/:id/join', async (req, res) => {
-    try {
-        const { characterId } = req.body;
-        const guild = await Guild.findById(req.params.id);
-        if (!guild) {
-            return res.status(404).json({ error: 'Guild bulunamadı' });
-        }
-        if (guild.members.length >= 50) {
-            return res.status(400).json({ error: 'Guild dolu' });
-        }
-        guild.members.push(characterId);
-        await guild.save();
-        await Character.findByIdAndUpdate(characterId, { guildId: guild._id });
-        res.json({ success: true, guild });
-    } catch (err) {
-        res.status(500).json({ error: 'Guild katılma hatası' });
-    }
-});
+
 
 // ============================================
 // SOCKET.IO SERVER

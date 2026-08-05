@@ -164,9 +164,6 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onAdminLogin }) => {
 
               {showDevLogin && (
                 <div className="mt-4 p-4 bg-red-900/20 border border-red-800/50 rounded-lg space-y-3">
-                  <div className="text-xs text-red-400/70 text-center mb-2 font-mono">
-                    👤 yunusemregokdag · 🔑 cmhmshp2gyegg
-                  </div>
                   <input
                     type="text"
                     placeholder="Kullanıcı Adı"

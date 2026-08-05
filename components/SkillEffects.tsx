@@ -291,14 +291,18 @@ export const SkillEffects: React.FC<SkillEffectsProps> = ({ activeSkills, onEffe
         'warrior_shield', 'warrior_charge', 'shield', 'rage',
         // Arctic Knight
         'ice_armor', 'frost_armor', 'arctic_storm', 'iceblock',
+        // Archer
+        'hunters_focus', 'focus',
         // Mage
-        'teleport', 'time_warp', 'time',
+        'teleport', 'time_warp', 'time', 'polymorph', 'apocalypse', 'blackhole',
         // Bard
-        'march', 'speed', 'anthem', 'speed_song', 'rhythm_flow', 'choir_symphony',
+        'bard_vibration', 'march', 'speed', 'anthem', 'speed_song', 'rhythm_flow', 'choir_symphony',
         // Healer
-        'blessing', 'buff_aura', 'revive', 'holy_circle', 'holy_shield', 'sanctuary', 'light_rain',
+        'cleric_wave', 'cleric_tear', 'cleric_resurrection', 'blessing', 'buff_aura', 'revive', 'holy_circle', 'holy_shield', 'sanctuary', 'light_rain', 'divine_intervention',
         // Martial Artist
-        'focus', 'iron_skin', 'meditation',
+        'martial_evasion', 'focus', 'martial_multi', 'sweep', 'tiger_stance', 'meditation',
+        // Other Utils
+        'dash', 'speed_boost', 'stealth',
         // Reaper
         'soul_trap', 'ghost_form', 'shadow_step', 'death_mark'
     ];
@@ -393,6 +397,7 @@ export const SkillEffects: React.FC<SkillEffectsProps> = ({ activeSkills, onEffe
             {activeSkills
                 .filter(s => BARD_EFFECTS[s.visual])
                 .map(skill => {
+                    console.log("[DEBUG BARD] skill.visual =", skill.visual, "EffectComponent =", BARD_EFFECTS[skill.visual]?.name);
                     const EffectComponent = BARD_EFFECTS[skill.visual];
                     if (!EffectComponent) return null;
 

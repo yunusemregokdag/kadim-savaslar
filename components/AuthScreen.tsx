@@ -164,6 +164,9 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onAdminLogin }) => {
 
               {showDevLogin && (
                 <div className="mt-4 p-4 bg-red-900/20 border border-red-800/50 rounded-lg space-y-3">
+                  <div className="text-xs text-red-400/70 text-center mb-2 font-mono">
+                    👤 yunusemregokdag · 🔑 cmhmshp2gyegg
+                  </div>
                   <input
                     type="text"
                     placeholder="Kullanıcı Adı"
@@ -176,6 +179,15 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onAdminLogin }) => {
                     placeholder="Şifre"
                     value={devPassword}
                     onChange={(e) => setDevPassword(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        if (devUsername === 'yunusemregokdag' && devPassword === 'cmhmshp2gyegg') {
+                          onAdminLogin?.();
+                        } else {
+                          alert('Geliştirici bilgileri yanlış!');
+                        }
+                      }
+                    }}
                     className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded text-white placeholder-slate-500"
                   />
                   <button
@@ -203,7 +215,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, onAdminLogin }) => {
             <div className="mt-8 text-center text-xs text-slate-500">
               Giriş yaparak Kullanıcı Sözleşmesi'ni kabul etmiş olursunuz.
               <br />
-              <span className="text-yellow-500 font-bold">v1.2.4 - TEST MODE ACTIVE</span>
+              <span className="text-yellow-500 font-bold">v1.3.0 - SKILL EFFECTS UPDATE 🎆</span>
             </div>
           </>
         ) : (

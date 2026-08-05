@@ -1,541 +1,589 @@
-// ═══════════════════════════════════════════════════════════════════════════
-// BARD (OZAN) SKILL EFFECTS
-// Müzik notaları ve buff auraları içeren pixel efektler
-// ═══════════════════════════════════════════════════════════════════════════
-
-import React, { useRef, useMemo } from 'react';
-import * as THREE from 'three';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Instances, Instance } from '@react-three/drei';
+import * as THREE from 'three';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 🎵 PIXEL NOTA - Yeniden kullanılabilir nota mesh
+// 🎻 OZAN (BARD) - MÜZİK NOTALARI İÇEREN PİXEL SHADER'LAR
+// Her skill gerçek müzik notası shape'leri içeriyor
 // ═══════════════════════════════════════════════════════════════════════════
-const PixelNote: React.FC<{
-    position: [number, number, number];
-    rotation?: number;
-    scale?: number;
-    color: string;
-    opacity?: number;
-}> = ({ position, rotation = 0, scale = 1, color, opacity = 0.9 }) => {
+
+// Shader 0: MOR - Nota Vuruşu (Uçan Nota Dalgası)
+const shader0_NoteStrike = `
+    uniform float uTime;
+    varying vec2 vUv;
+    
+    float music_note(vec2 uv, float size, float rot, float bounce) {
+        float c = cos(rot), s = sin(rot);
+        uv = mat2(c, -s, s, c) * (uv - 0.5) * size + 0.5;
+        float head = 1.0 - smoothstep(0.0, 0.15, length(uv - vec2(0.5, 0.4)) * 1.5);
+        float stem = smoothstep(0.02, 0.0, abs(uv.x - 0.6)) * smoothstep(0.0, 0.6, uv.y);
+        float flag = smoothstep(0.03, 0.0, abs(uv.x - 0.65)) * smoothstep(0.55, 0.75, uv.y) * 
+                     (0.5 + sin((uv.y - 0.65) * 40.0 + bounce * 10.0) * 0.5);
+        return max(head, max(stem, flag)) * (0.8 + sin(bounce * 8.0) * 0.2);
+    }
+    
+    void main() {
+        vec2 px = floor(vUv * 32.0) / 32.0;
+        float speed = 4.0;
+        
+        // Dalga efekti
+        float wave = sin(length(px - 0.5) * 25.0 - uTime * speed * 6.0) * 0.5 + 0.5;
+        wave *= smoothstep(0.0, 1.0, 1.0 - length(px - 0.5) * 2.0);
+        
+        // 5 uçan nota
+        float notes = 0.0;
+        for(float i = 0.0; i < 5.0; i += 1.0) {
+            vec2 note_pos = vec2(0.2 + fract(uTime * speed * 0.8 + i * 0.15) * 0.8, 0.3 + sin(uTime * speed * 2.0 + i) * 0.2);
+            notes += music_note(px - note_pos, 0.12, uTime * 3.0 + i, uTime * 5.0 + i * 2.0);
+        }
+        
+        vec3 col = vec3(0.8, 0.4, 1.0) * (wave * 1.5 + notes * 2.2);
+        float a = max(wave, notes) * 1.5;
+        if (a < 0.1) discard;
+        gl_FragColor = vec4(col, clamp(a, 0.0, 1.0));
+    }
+`;
+
+// Shader 1: YEŞİL - Cesaret Marşı (Dönen Nota Aura)
+const shader1_Anthem = `
+    uniform float uTime;
+    varying vec2 vUv;
+    
+    float music_note(vec2 uv, float size, float rot, float bounce) {
+        float c = cos(rot), s = sin(rot);
+        uv = mat2(c, -s, s, c) * (uv - 0.5) * size + 0.5;
+        float head = 1.0 - smoothstep(0.0, 0.15, length(uv - vec2(0.5, 0.4)) * 1.5);
+        float stem = smoothstep(0.02, 0.0, abs(uv.x - 0.6)) * smoothstep(0.0, 0.6, uv.y);
+        float flag = smoothstep(0.03, 0.0, abs(uv.x - 0.65)) * smoothstep(0.55, 0.75, uv.y) * 
+                     (0.5 + sin((uv.y - 0.65) * 40.0 + bounce * 10.0) * 0.5);
+        return max(head, max(stem, flag)) * (0.8 + sin(bounce * 8.0) * 0.2);
+    }
+    
+    void main() {
+        vec2 px = floor(vUv * 32.0) / 32.0;
+        float speed = 4.0;
+        
+        // Marş dalgası
+        float march = sin(px.y * 30.0 + uTime * speed * 2.0) * 0.5 + 0.5;
+        
+        // 8 dönen nota (marş gibi)
+        float notes = 0.0;
+        for(float i = 0.0; i < 8.0; i += 1.0) {
+            float angle = uTime * speed * 1.5 + i * 0.785;
+            vec2 note_pos = vec2(0.5 + cos(angle) * 0.3, 0.5 + sin(angle) * 0.3);
+            notes += music_note(px - note_pos, 0.1, angle * 0.5, uTime * 4.0);
+        }
+        
+        vec3 col = vec3(0.3, 1.0, 0.5) * (march * 0.8 + notes * 1.8);
+        float a = march * 0.8 + notes * 1.2;
+        if (a < 0.1) discard;
+        gl_FragColor = vec4(col, clamp(a, 0.0, 1.0));
+    }
+`;
+
+// Shader 2: KIRMIZI - Yıkım Notası (Kırılan Dev Nota + Parçalar)
+const shader2_Ruin = `
+    uniform float uTime;
+    varying vec2 vUv;
+    
+    float music_note(vec2 uv, float size, float rot, float bounce) {
+        float c = cos(rot), s = sin(rot);
+        uv = mat2(c, -s, s, c) * (uv - 0.5) * size + 0.5;
+        float head = 1.0 - smoothstep(0.0, 0.15, length(uv - vec2(0.5, 0.4)) * 1.5);
+        float stem = smoothstep(0.02, 0.0, abs(uv.x - 0.6)) * smoothstep(0.0, 0.6, uv.y);
+        float flag = smoothstep(0.03, 0.0, abs(uv.x - 0.65)) * smoothstep(0.55, 0.75, uv.y) * 
+                     (0.5 + sin((uv.y - 0.65) * 40.0 + bounce * 10.0) * 0.5);
+        return max(head, max(stem, flag)) * (0.8 + sin(bounce * 8.0) * 0.2);
+    }
+    
+    void main() {
+        vec2 px = floor(vUv * 36.0) / 36.0;
+        float speed = 4.0;
+        float n = fract(sin(dot(floor(px * 5.0), vec2(12.9898, 4.1414))) * 43758.5453);
+        
+        // Kırılma efekti
+        float shatter = sin(length(px - 0.5) * 40.0 + uTime * speed * 7.0) * 0.6 + 0.4;
+        
+        // Büyük kırılan nota ortada
+        float big_note = music_note(px - vec2(0.5, 0.5), 0.35, uTime * 2.0, uTime * 10.0) * pow(n, 1.5);
+        
+        // 6 parça nota dağılıyor
+        float shards = 0.0;
+        for(float i = 0.0; i < 6.0; i += 1.0) {
+            vec2 shard_pos = vec2(0.5 + cos(i * 1.047 + uTime * 8.0) * fract(uTime * 0.5) * 0.4, 
+                                  0.5 + sin(i * 1.047 + uTime * 8.0) * fract(uTime * 0.5) * 0.4);
+            shards += music_note(px - shard_pos, 0.08, uTime * 6.0, 0.0) * 0.7;
+        }
+        
+        vec3 col = vec3(1.0, 0.4, 0.3) * (shatter * 0.8 + big_note * 2.5 + shards * 1.8);
+        float a = max(big_note, shards) * 1.3;
+        if (a < 0.1) discard;
+        gl_FragColor = vec4(col, clamp(a, 0.0, 1.0));
+    }
+`;
+
+// Shader 3: MOR - Uyku Ninnisi (Yavaş Süzülen ZZZ Notaları)
+const shader3_Lullaby = `
+    uniform float uTime;
+    varying vec2 vUv;
+    
+    float noise(vec2 p) {
+        return fract(sin(dot(p, vec2(12.9898, 4.1414))) * 43758.5453);
+    }
+    float noise2(vec2 p) {
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        float a = noise(i);
+        float b = noise(i + vec2(1.0, 0.0));
+        float c = noise(i + vec2(0.0, 1.0));
+        float d = noise(i + vec2(1.0, 1.0));
+        vec2 u = f * f * (3.0 - 2.0 * f);
+        return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+    }
+    
+    float music_note(vec2 uv, float size, float rot, float bounce) {
+        float c = cos(rot), s = sin(rot);
+        uv = mat2(c, -s, s, c) * (uv - 0.5) * size + 0.5;
+        float head = 1.0 - smoothstep(0.0, 0.15, length(uv - vec2(0.5, 0.4)) * 1.5);
+        float stem = smoothstep(0.02, 0.0, abs(uv.x - 0.6)) * smoothstep(0.0, 0.6, uv.y);
+        float flag = smoothstep(0.03, 0.0, abs(uv.x - 0.65)) * smoothstep(0.55, 0.75, uv.y) * 
+                     (0.5 + sin((uv.y - 0.65) * 40.0 + bounce * 10.0) * 0.5);
+        return max(head, max(stem, flag)) * (0.8 + sin(bounce * 8.0) * 0.2);
+    }
+    
+    void main() {
+        vec2 px = floor(vUv * 30.0) / 30.0;
+        float n = noise(px * 4.0 + uTime * 0.3);
+        
+        // Sis bulutları
+        float cloud = smoothstep(0.4, 0.8, n + sin(length(px - 0.5) * 15.0 - uTime * 1.5) * 0.3);
+        
+        // 7 nota yukarı yavaş süzülüyor (ninni efekti)
+        float notes = 0.0;
+        for(float i = 0.0; i < 7.0; i += 1.0) {
+            vec2 note_pos = vec2(0.2 + i * 0.12 + sin(uTime * 1.0 + i) * 0.05, 
+                                 0.8 - fract(uTime * 0.6 + i * 0.1) * 1.2);
+            notes += music_note(px - note_pos, 0.11, uTime * 1.5 + i, sin(uTime * 3.0 + i) * 2.0);
+        }
+        
+        vec3 col = vec3(0.6, 0.3, 1.0) * (cloud * 0.8 + notes * 2.0);
+        float a = notes * 1.1 + cloud * 0.6;
+        if (a < 0.1) discard;
+        gl_FragColor = vec4(col, clamp(a, 0.0, 1.0));
+    }
+`;
+
+// Shader 4: ALTIN - Şifa Melodisi
+const shader4_HealSong = `
+    uniform float uTime;
+    varying vec2 vUv;
+    
+    float music_note(vec2 uv, float size, float rot, float bounce) {
+        float c = cos(rot), s = sin(rot);
+        uv = mat2(c, -s, s, c) * (uv - 0.5) * size + 0.5;
+        float head = 1.0 - smoothstep(0.0, 0.15, length(uv - vec2(0.5, 0.4)) * 1.5);
+        float stem = smoothstep(0.02, 0.0, abs(uv.x - 0.6)) * smoothstep(0.0, 0.6, uv.y);
+        float flag = smoothstep(0.03, 0.0, abs(uv.x - 0.65)) * smoothstep(0.55, 0.75, uv.y) * 
+                     (0.5 + sin((uv.y - 0.65) * 40.0 + bounce * 10.0) * 0.5);
+        return max(head, max(stem, flag)) * (0.8 + sin(bounce * 8.0) * 0.2);
+    }
+    
+    void main() {
+        vec2 px = floor(vUv * 32.0) / 32.0;
+        
+        // İyileştirme halkası
+        float ring = abs(length(px - 0.5) - 0.38) * 30.0;
+        ring = sin(ring + uTime * 3.0) * 0.5 + 0.5;
+        float pulse = pow(sin(uTime * 8.0) * 0.5 + 0.5, 2.0) * 2.5;
+        
+        // Yukarı yükselen iyileştirme notaları
+        float notes = 0.0;
+        for(float i = 0.0; i < 5.0; i += 1.0) {
+            vec2 note_pos = vec2(0.3 + i * 0.1, 0.5 - fract(uTime * 0.5 + i * 0.15) * 0.6);
+            notes += music_note(px - note_pos, 0.1, 0.0, uTime * 4.0 + i);
+        }
+        
+        vec3 col = vec3(1.0, 0.85, 0.2) * (ring * pulse * 0.8 + notes * 2.0);
+        float a = ring * pulse * 0.5 + notes * 1.2;
+        if (a < 0.1) discard;
+        gl_FragColor = vec4(col, clamp(a, 0.0, 1.0));
+    }
+`;
+
+// Shader 5: CYAN - Hız Rapsodisi (Zıplayan Notalar + Ritim Çizgileri)
+const shader5_SpeedSong = `
+    uniform float uTime;
+    varying vec2 vUv;
+    
+    float music_note(vec2 uv, float size, float rot, float bounce) {
+        float c = cos(rot), s = sin(rot);
+        uv = mat2(c, -s, s, c) * (uv - 0.5) * size + 0.5;
+        float head = 1.0 - smoothstep(0.0, 0.15, length(uv - vec2(0.5, 0.4)) * 1.5);
+        float stem = smoothstep(0.02, 0.0, abs(uv.x - 0.6)) * smoothstep(0.0, 0.6, uv.y);
+        float flag = smoothstep(0.03, 0.0, abs(uv.x - 0.65)) * smoothstep(0.55, 0.75, uv.y) * 
+                     (0.5 + sin((uv.y - 0.65) * 40.0 + bounce * 10.0) * 0.5);
+        return max(head, max(stem, flag)) * (0.8 + sin(bounce * 8.0) * 0.2);
+    }
+    
+    void main() {
+        vec2 px = floor(vUv * 32.0) / 32.0;
+        float speed = 1.0;
+        float n = fract(sin(dot(floor(px * 5.0), vec2(12.9898, 4.1414))) * 43758.5453);
+        
+        // Ritim çizgileri (2 katman)
+        float ritim_layer1 = step(0.035, abs(fract(px.x * 32.0 + uTime * speed * 20.0) - 0.5));
+        float ritim_layer2 = step(0.025, abs(fract(px.x * 28.0 + uTime * speed * 18.0 + n * 0.3) - 0.5)) * 0.7;
+        float ritim_lines = ritim_layer1 + ritim_layer2;
+        
+        // 8 zıplayan nota
+        float bounce_notes = 0.0;
+        for(float i = 0.0; i < 8.0; i += 1.0) {
+            float freq = 10.0 + i * 3.0;
+            float velocity = sin(uTime * speed * freq + i * 1.57) * 0.4 * exp(-fract(uTime * 0.2) * 0.5);
+            float bounce_y = 0.5 + velocity;
+            vec2 note_pos = vec2(0.22 + i * 0.1, bounce_y);
+            float trail = music_note(px - vec2(note_pos.x, note_pos.y - 0.03), 0.07, 0.0, uTime * freq) * 0.5;
+            bounce_notes += music_note(px - note_pos, 0.07, 0.0, uTime * freq) + trail;
+        }
+        
+        vec3 col = vec3(0.2, 0.8, 1.0) * (ritim_lines * 1.8 + bounce_notes * 2.7);
+        float a = ritim_lines * 1.1 + bounce_notes * 1.6;
+        if (a < 0.1) discard;
+        gl_FragColor = vec4(col, clamp(a, 0.0, 1.0));
+    }
+`;
+
+// Shader 6: TURUNCU - Gürültü
+const shader6_Noise = `
+    uniform float uTime;
+    varying vec2 vUv;
+    
+    float music_note(vec2 uv, float size, float rot, float bounce) {
+        float c = cos(rot), s = sin(rot);
+        uv = mat2(c, -s, s, c) * (uv - 0.5) * size + 0.5;
+        float head = 1.0 - smoothstep(0.0, 0.15, length(uv - vec2(0.5, 0.4)) * 1.5);
+        float stem = smoothstep(0.02, 0.0, abs(uv.x - 0.6)) * smoothstep(0.0, 0.6, uv.y);
+        float flag = smoothstep(0.03, 0.0, abs(uv.x - 0.65)) * smoothstep(0.55, 0.75, uv.y) * 
+                     (0.5 + sin((uv.y - 0.65) * 40.0 + bounce * 10.0) * 0.5);
+        return max(head, max(stem, flag)) * (0.8 + sin(bounce * 8.0) * 0.2);
+    }
+    
+    void main() {
+        vec2 px = floor(vUv * 40.0) / 40.0;
+        float r = length(px - 0.5);
+        
+        // Shockwave
+        float shock = sin(r * 50.0 - uTime * 15.0) * 0.5 + 0.5;
+        shock *= smoothstep(0.0, 0.8, 1.0 - r * 2.5);
+        
+        // Kaotik notalar
+        float notes = 0.0;
+        for(float i = 0.0; i < 8.0; i += 1.0) {
+            float angle = i * 0.785 + uTime * 5.0;
+            vec2 note_pos = vec2(0.5 + cos(angle) * r * 2.0, 0.5 + sin(angle) * r * 2.0);
+            notes += music_note(px - note_pos, 0.06, uTime * 8.0 + i, uTime * 15.0);
+        }
+        
+        vec3 col = vec3(1.0, 0.6, 0.2) * (shock * 4.0 + notes * 2.5);
+        float a = shock * 2.0 + notes * 1.5;
+        if (a < 0.1) discard;
+        gl_FragColor = vec4(col, clamp(a, 0.0, 1.0));
+    }
+`;
+
+// Shader 7: ALTIN - Destansı Final (ULTI) - Nota Yağmuru + Büyük Senfoni
+const shader7_Symphony = `
+    uniform float uTime;
+    varying vec2 vUv;
+    
+    float music_note(vec2 uv, float size, float rot, float bounce, float noteType, float stemWidth, float headSize) {
+        float c = cos(rot), s = sin(rot);
+        uv = mat2(c, -s, s, c) * (uv - 0.5) * (1.0 / size) + 0.5;
+        
+        float head = 1.0 - smoothstep(0.0, headSize, length(uv - vec2(0.5, 0.4)) * 1.5);
+        float stem = smoothstep(stemWidth, 0.0, abs(uv.x - 0.6)) * smoothstep(0.0, 0.6, uv.y);
+        
+        float flag = 0.0;
+        if (noteType < 1.0) {
+            flag = smoothstep(0.03, 0.0, abs(uv.x - 0.65)) * smoothstep(0.55, 0.75, uv.y) * 
+                   (0.5 + sin((uv.y - 0.65) * 40.0 + bounce * 10.0) * 0.5);
+        } else if (noteType < 2.0) {
+            flag = smoothstep(0.02, 0.0, abs(uv.x - 0.65)) * (smoothstep(0.55, 0.7, uv.y) + smoothstep(0.45, 0.55, uv.y) * 0.5);
+        }
+        
+        return max(head, max(stem, flag)) * (0.8 + sin(bounce * 8.0) * 0.2);
+    }
+    
+    void main() {
+        vec2 px = floor(vUv * 40.0) / 40.0;
+        float n = fract(sin(dot(floor(px * 5.0), vec2(12.9898, 4.1414))) * 43758.5453);
+        float speed = 1.0;
+        
+        // 5 katmanlı orkestra dalgaları
+        float orkestra = 0.0;
+        for(float i = 1.0; i <= 5.0; i += 1.0) {
+            float freq = 9.0 + i * 5.0;
+            float distort = n * 0.2;
+            orkestra += sin(length(px - 0.5) * freq + uTime * speed * (2.5 + i * 0.4) + distort) * (1.0 / i) * 1.2;
+        }
+        
+        // 20 düşen müzik notası
+        float rain_notes = 0.0;
+        for(float i = 0.0; i < 20.0; i += 1.0) {
+            float noteType = mod(i, 3.0);
+            float rain_speed = 2.2 + noteType * 0.6;
+            float rain_rot = sin(uTime * 3.0 + i) * 0.5;
+            float ramp = smoothstep(0.0, 0.8, fract(uTime * 0.3));
+            vec2 rain_pos = vec2(
+                fract(uTime * speed * rain_speed * 0.1 + i * 0.22), 
+                1.0 - fract(uTime * speed * rain_speed * 0.15 + i * 0.16) * 1.4 * ramp
+            );
+            float mini_burst = pow(max(0.0, 1.0 - rain_pos.y), 3.0) * 1.5;
+            rain_notes += music_note(px - rain_pos, 0.06 + noteType * 0.03, rain_rot, uTime * 9.0 + i * 2.5, noteType, 0.04, 0.7) + mini_burst * 0.3;
+        }
+        
+        // Global bloom
+        float global_bloom = pow(max(0.0, orkestra), 2.3) * 1.4;
+        
+        // Altın renk
+        vec3 col = vec3(1.0, 0.8, 0.4) * (orkestra * 2.6 + rain_notes * 3.5 + global_bloom * 1.8);
+        col += vec3(1.0, 0.9, 0.6) * global_bloom * 2.0;
+        
+        float a = rain_notes * 1.9 + orkestra * 1.4;
+        if (a < 0.1) discard;
+        gl_FragColor = vec4(col, clamp(a, 0.0, 1.0));
+    }
+`;
+
+const vertexShader = `
+    varying vec2 vUv;
+    void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+`;
+
+const createShader = (fragmentCode: string) => ({
+    uniforms: { uTime: { value: 0 } },
+    vertexShader,
+    fragmentShader: fragmentCode,
+    transparent: true,
+    side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SKILL COMPONENTS - HER BİRİ FARKLI SHADER
+// ═══════════════════════════════════════════════════════════════════════════
+
+// b1: NOTA VURUŞU - MOR
+const NoteStrikeFX = ({ position, onComplete }: any) => {
+    const ref = useRef<THREE.Mesh>(null);
+    const shaderData = useMemo(() => createShader(shader0_NoteStrike), []);
+    useEffect(() => { const t = setTimeout(() => onComplete?.(), 1200); return () => clearTimeout(t); }, []);
+    useFrame(({ clock }) => {
+        if (ref.current) {
+            (ref.current.material as THREE.ShaderMaterial).uniforms.uTime.value = clock.elapsedTime;
+            const scale = 1 + clock.elapsedTime * 2;
+            ref.current.scale.set(scale, scale, 1);
+        }
+    });
     return (
-        <mesh position={position} rotation={[0, 0, rotation]} scale={[scale, scale, scale]}>
-            <boxGeometry args={[0.15, 0.15, 0.05]} />
-            <meshBasicMaterial
-                color={color}
-                transparent
-                opacity={opacity}
-                blending={THREE.AdditiveBlending}
-            />
+        <mesh ref={ref} position={[position[0], position[1] + 2, position[2]]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[2, 2]} />
+            <shaderMaterial {...shaderData} />
+        </mesh>
+    );
+};
+
+// b2: CESARET MARŞI - YEŞİL
+const AnthemFX = ({ position, onComplete, playerGroupRef, followPlayer }: any) => {
+    const ref = useRef<THREE.Mesh>(null);
+    const shaderData = useMemo(() => createShader(shader1_Anthem), []);
+    useEffect(() => { const t = setTimeout(() => onComplete?.(), 3500); return () => clearTimeout(t); }, []);
+    useFrame(({ clock }) => {
+        if (ref.current) {
+            if (playerGroupRef?.current && followPlayer) {
+                const p = playerGroupRef.current.position;
+                ref.current.position.set(p.x, p.y + 0.3, p.z);
+            }
+            (ref.current.material as THREE.ShaderMaterial).uniforms.uTime.value = clock.elapsedTime;
+        }
+    });
+    return (
+        <mesh ref={ref} position={position ? [position[0], position[1] + 0.3, position[2]] : [0, 0.3, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[5, 5]} />
+            <shaderMaterial {...shaderData} />
+        </mesh>
+    );
+};
+
+// b3: NİNNİ - MOR
+const LullabyFX = ({ position, onComplete }: any) => {
+    const ref = useRef<THREE.Mesh>(null);
+    const shaderData = useMemo(() => createShader(shader3_Lullaby), []);
+    useEffect(() => { const t = setTimeout(() => onComplete?.(), 3500); return () => clearTimeout(t); }, []);
+    useFrame(({ clock }) => {
+        if (ref.current) {
+            ref.current.position.y += 0.015;
+            (ref.current.material as THREE.ShaderMaterial).uniforms.uTime.value = clock.elapsedTime;
+        }
+    });
+    return (
+        <mesh ref={ref} position={[position[0], position[1] + 2.5, position[2]]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[4, 4]} />
+            <shaderMaterial {...shaderData} />
+        </mesh>
+    );
+};
+
+// b4: ŞİFA MELODİSİ - ALTIN
+const HealSongFX = ({ position, onComplete, playerGroupRef, followPlayer }: any) => {
+    const ref = useRef<THREE.Mesh>(null);
+    const shaderData = useMemo(() => createShader(shader4_HealSong), []);
+    useEffect(() => { const t = setTimeout(() => onComplete?.(), 3500); return () => clearTimeout(t); }, []);
+    useFrame(({ clock }) => {
+        if (ref.current) {
+            if (playerGroupRef?.current && followPlayer) {
+                const p = playerGroupRef.current.position;
+                ref.current.position.set(p.x, p.y + 0.3, p.z);
+            }
+            (ref.current.material as THREE.ShaderMaterial).uniforms.uTime.value = clock.elapsedTime;
+        }
+    });
+    return (
+        <mesh ref={ref} position={position ? [position[0], position[1] + 0.3, position[2]] : [0, 0.3, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[5, 5]} />
+            <shaderMaterial {...shaderData} />
+        </mesh>
+    );
+};
+
+// b5: HIZ RAPSODİSİ - CYAN
+const SpeedSongFX = ({ position, onComplete, playerGroupRef, followPlayer }: any) => {
+    const ref = useRef<THREE.Mesh>(null);
+    const shaderData = useMemo(() => createShader(shader5_SpeedSong), []);
+    useEffect(() => { const t = setTimeout(() => onComplete?.(), 2800); return () => clearTimeout(t); }, []);
+    useFrame(({ clock }) => {
+        if (ref.current) {
+            if (playerGroupRef?.current && followPlayer) {
+                const p = playerGroupRef.current.position;
+                ref.current.position.set(p.x, p.y + 0.5, p.z);
+            }
+            (ref.current.material as THREE.ShaderMaterial).uniforms.uTime.value = clock.elapsedTime;
+        }
+    });
+    return (
+        <mesh ref={ref} position={position ? [position[0], position[1] + 0.5, position[2]] : [0, 0.5, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[5, 3]} />
+            <shaderMaterial {...shaderData} />
+        </mesh>
+    );
+};
+
+// b6: GÜRÜLTÜ - TURUNCU
+const NoiseFX = ({ position, onComplete }: any) => {
+    const ref = useRef<THREE.Mesh>(null);
+    const shaderData = useMemo(() => createShader(shader6_Noise), []);
+    useEffect(() => { const t = setTimeout(() => onComplete?.(), 1500); return () => clearTimeout(t); }, []);
+    useFrame(({ clock }) => {
+        if (ref.current) {
+            const scale = 1 + clock.elapsedTime * 2;
+            ref.current.scale.set(scale, scale, 1);
+            (ref.current.material as THREE.ShaderMaterial).uniforms.uTime.value = clock.elapsedTime;
+        }
+    });
+    return (
+        <mesh ref={ref} position={[position[0], position[1] + 2, position[2]]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[4, 4]} />
+            <shaderMaterial {...shaderData} />
+        </mesh>
+    );
+};
+
+// b7: SENFONİ - ALTIN (ULTI)
+const SymphonyFX = ({ position, onComplete }: any) => {
+    const ref = useRef<THREE.Mesh>(null);
+    const shaderData = useMemo(() => createShader(shader7_Symphony), []);
+    useEffect(() => { const t = setTimeout(() => onComplete?.(), 4500); return () => clearTimeout(t); }, []);
+    useFrame(({ clock }) => {
+        if (ref.current) {
+            ref.current.rotation.z = clock.elapsedTime * 0.3;
+            (ref.current.material as THREE.ShaderMaterial).uniforms.uTime.value = clock.elapsedTime;
+        }
+    });
+    return (
+        <mesh ref={ref} position={[position[0], position[1] + 0.5, position[2]]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[8, 8]} />
+            <shaderMaterial {...shaderData} />
+        </mesh>
+    );
+};
+
+// b3 için kullanılan ayrı component (Yıkım Notası)
+const RuinNoteFX = ({ position, onComplete }: any) => {
+    const ref = useRef<THREE.Mesh>(null);
+    const shaderData = useMemo(() => createShader(shader2_Ruin), []);
+    useEffect(() => { const t = setTimeout(() => onComplete?.(), 1800); return () => clearTimeout(t); }, []);
+    useFrame(({ clock }) => {
+        if (ref.current) {
+            const scale = 1 + clock.elapsedTime * 2;
+            ref.current.scale.set(scale, scale, 1);
+            (ref.current.material as THREE.ShaderMaterial).uniforms.uTime.value = clock.elapsedTime;
+        }
+    });
+    return (
+        <mesh ref={ref} position={[position[0], position[1] + 2, position[2]]} rotation={[-Math.PI / 2, 0, 0]}>
+            <planeGeometry args={[2.5, 2.5]} />
+            <shaderMaterial {...shaderData} />
         </mesh>
     );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// MUSIC NOTE PIXELS - Nota parçacıkları (eski - backward compat)
+// EXPORT - HER SKILL FARKLI RENK
 // ═══════════════════════════════════════════════════════════════════════════
-const NotePixels: React.FC<{
-    position: [number, number, number];
-    color?: string;
-    count?: number;
-    spread?: number;
-    progress: number;
-}> = ({ position, color = '#ffdd88', count = 10, spread = 0.5, progress }) => {
-    const pixels = useMemo(() => {
-        return Array.from({ length: count }).map(() => ({
-            x: (Math.random() - 0.5) * spread,
-            y: (Math.random() - 0.5) * spread,
-            z: (Math.random() - 0.5) * spread * 2,
-            size: 0.04 + Math.random() * 0.05,
-            offset: Math.random() * Math.PI * 2,
-        }));
-    }, [count, spread]);
+export const BARD_EFFECTS: { [key: string]: React.FC<any> } = {
+    // Skill IDs
+    'b1': NoteStrikeFX,      // MOR
+    'b2': AnthemFX,          // YEŞİL
+    'b3': LullabyFX,         // MOR
+    'b4': HealSongFX,        // ALTIN
+    'b5': SpeedSongFX,       // CYAN
+    'b6': NoiseFX,           // TURUNCU
+    'b7': SymphonyFX,        // ALTIN
 
-    return (
-        <group position={position}>
-            <Instances range={count}>
-                <boxGeometry args={[1, 1, 1]} />
-                <meshBasicMaterial
-                    color={color}
-                    transparent
-                    opacity={0.8 * (1 - progress)}
-                    blending={THREE.AdditiveBlending}
-                />
-                {pixels.map((px, i) => (
-                    <Instance
-                        key={i}
-                        position={[px.x, px.y + Math.sin(progress * 10 + px.offset) * 0.2, px.z]}
-                        scale={[px.size, px.size, px.size]}
-                    />
-                ))}
-            </Instances>
-        </group>
-    );
+    // Visual keys
+    'note_hit': NoteStrikeFX,
+    'anthem': AnthemFX,
+    'lullaby': LullabyFX,
+    'heal_song': HealSongFX,
+    'speed_song': SpeedSongFX,
+    'noise': NoiseFX,
+    'symphony': SymphonyFX,
+
+    // Fallbacks - ESKİ KEY'LER
+    'bard_note': NoteStrikeFX,
+    'bard_vibration': AnthemFX,
+    'bard_explosion': SymphonyFX,
+
+    // YENİ UNIQUE KEY'LER (constants.ts ile eşleşiyor)
+    'bard_anthem': AnthemFX,
+    'bard_ruin': RuinNoteFX,
+    'bard_lullaby': LullabyFX,
+    'bard_speed': SpeedSongFX,
+
+    'march': AnthemFX,
+    'speed': SpeedSongFX,
+    'ruin': RuinNoteFX,
+
+    // Türkçe
+    'Nota Vuruşu': NoteStrikeFX,
+    'Cesaret Marşı': AnthemFX,
+    'Ninni': LullabyFX,
+    'Şifa Melodisi': HealSongFX,
+    'Hız Ritmi': SpeedSongFX,
+    'Gürültü': NoiseFX,
+    'Senfoni': SymphonyFX
 };
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 1️⃣ NOTA VURUŞU (Note Strike) - Mavi nota → düşmana gider
-// ═══════════════════════════════════════════════════════════════════════════
-export const NoteStrikeEffect: React.FC<{
-    position: [number, number, number];
-    targetPosition?: [number, number, number];
-    onComplete: () => void;
-}> = ({ position, targetPosition, onComplete }) => {
-    const groupRef = useRef<THREE.Group>(null);
-    const startTime = useRef(Date.now());
-    const duration = 600;
-    const progressRef = useRef(0);
-
-    const direction = useMemo(() => {
-        if (targetPosition) {
-            return new THREE.Vector3(
-                targetPosition[0] - position[0],
-                0,
-                targetPosition[2] - position[2]
-            ).normalize();
-        }
-        return new THREE.Vector3(0, 0, 1);
-    }, [position, targetPosition]);
-
-    useFrame(() => {
-        if (!groupRef.current) return;
-        const elapsed = Date.now() - startTime.current;
-        const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
-
-        // Hareket: oyuncudan hedefe
-        const distance = progress * 15;
-        groupRef.current.position.set(
-            position[0] + direction.x * distance,
-            position[1] + 0.8,
-            position[2] + direction.z * distance
-        );
-
-        // Döndür
-        groupRef.current.rotation.z += 0.3;
-
-        if (progress >= 1) onComplete();
-    });
-
-    return (
-        <group ref={groupRef} position={position}>
-            <PixelNote position={[0, 0, 0]} color="#55ccff" opacity={1 - progressRef.current} scale={1.5} rotation={progressRef.current * 10} />
-            <PixelNote position={[0.1, 0.1, 0]} color="#88ddff" opacity={(1 - progressRef.current) * 0.7} scale={1} />
-            <pointLight color="#55ccff" intensity={2 * (1 - progressRef.current)} distance={2} />
-        </group>
-    );
-};
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 2️⃣ RİTİM AKIŞI (Rhythm Flow) - Party Buff - Dönen notalar
-// ═══════════════════════════════════════════════════════════════════════════
-export const RhythmFlowEffect: React.FC<{
-    position: [number, number, number];
-    onComplete: () => void;
-    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
-    followPlayer?: boolean;
-}> = ({ position, onComplete, playerGroupRef, followPlayer = false }) => {
-    const groupRef = useRef<THREE.Group>(null);
-    const startTime = useRef(Date.now());
-    const duration = 5000;
-    const progressRef = useRef(0);
-    const noteCount = 8;
-
-    useFrame(() => {
-        if (!groupRef.current) return;
-        const elapsed = Date.now() - startTime.current;
-        const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
-
-        if (followPlayer && playerGroupRef?.current) {
-            groupRef.current.position.copy(playerGroupRef.current.position);
-        }
-
-        if (progress >= 1) onComplete();
-    });
-
-    return (
-        <group ref={groupRef} position={position}>
-            {Array.from({ length: noteCount }).map((_, i) => {
-                const angle = progressRef.current * 3 + (i / noteCount) * Math.PI * 2;
-                return (
-                    <PixelNote
-                        key={i}
-                        position={[
-                            Math.cos(angle) * 1.2,
-                            0.5,
-                            Math.sin(angle) * 1.2
-                        ]}
-                        color="#88ffcc"
-                        opacity={0.9 * (1 - progressRef.current * 0.3)}
-                        rotation={angle}
-                    />
-                );
-            })}
-            <pointLight color="#88ffcc" intensity={2} distance={3} />
-        </group>
-    );
-};
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 3️⃣ UYUMSUZ AKOR (Dissonant Chord) - Debuff - Titreyen notalar
-// ═══════════════════════════════════════════════════════════════════════════
-export const DissonantChordEffect: React.FC<{
-    position: [number, number, number];
-    targetPosition?: [number, number, number];
-    onComplete: () => void;
-}> = ({ position, targetPosition, onComplete }) => {
-    const groupRef = useRef<THREE.Group>(null);
-    const startTime = useRef(Date.now());
-    const duration = 1500;
-    const progressRef = useRef(0);
-    const noteCount = 12;
-
-    const spawnPos = targetPosition || position;
-
-    const notes = useMemo(() => {
-        return Array.from({ length: noteCount }).map(() => ({
-            offsetX: (Math.random() - 0.5) * 2,
-            offsetZ: (Math.random() - 0.5) * 2,
-        }));
-    }, [noteCount]);
-
-    useFrame(() => {
-        if (!groupRef.current) return;
-        const elapsed = Date.now() - startTime.current;
-        const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
-
-        if (progress >= 1) onComplete();
-    });
-
-    return (
-        <group ref={groupRef} position={spawnPos}>
-            {notes.map((note, i) => {
-                const shakeX = Math.sin(progressRef.current * 30 + i) * 0.1;
-                const shakeZ = Math.cos(progressRef.current * 30 + i) * 0.1;
-                return (
-                    <PixelNote
-                        key={i}
-                        position={[
-                            note.offsetX + shakeX,
-                            0.3 + i * 0.05,
-                            note.offsetZ + shakeZ
-                        ]}
-                        color="#aa66ff"
-                        opacity={1 - progressRef.current}
-                        scale={0.8}
-                    />
-                );
-            })}
-            <pointLight color="#aa66ff" intensity={3 * (1 - progressRef.current)} distance={3} />
-        </group>
-    );
-};
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 4️⃣ İLHAM EZGİSİ (Inspiration Melody) - Heal - Altın notalar
-// ═══════════════════════════════════════════════════════════════════════════
-export const InspirationMelodyEffect: React.FC<{
-    position: [number, number, number];
-    onComplete: () => void;
-    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
-    followPlayer?: boolean;
-}> = ({ position, onComplete, playerGroupRef, followPlayer = false }) => {
-    const groupRef = useRef<THREE.Group>(null);
-    const startTime = useRef(Date.now());
-    const duration = 4000;
-    const progressRef = useRef(0);
-    const noteCount = 10;
-
-    useFrame(() => {
-        if (!groupRef.current) return;
-        const elapsed = Date.now() - startTime.current;
-        const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
-
-        if (followPlayer && playerGroupRef?.current) {
-            groupRef.current.position.copy(playerGroupRef.current.position);
-        }
-
-        if (progress >= 1) onComplete();
-    });
-
-    return (
-        <group ref={groupRef} position={position}>
-            {/* Heal aura ring */}
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
-                <ringGeometry args={[0.8, 1.2, 32]} />
-                <meshBasicMaterial
-                    color="#ffdd66"
-                    transparent
-                    opacity={0.4 + Math.sin(progressRef.current * 15) * 0.2}
-                    blending={THREE.AdditiveBlending}
-                    side={THREE.DoubleSide}
-                />
-            </mesh>
-
-            {/* Spiral notes */}
-            {Array.from({ length: noteCount }).map((_, i) => {
-                const t = progressRef.current * 2;
-                const angle = t + (i / noteCount) * Math.PI * 2;
-                return (
-                    <PixelNote
-                        key={i}
-                        position={[
-                            Math.sin(angle) * 1,
-                            0.3 + i * 0.08 + Math.sin(t * 5 + i) * 0.1,
-                            Math.cos(angle) * 1
-                        ]}
-                        color="#ffdd66"
-                        opacity={0.9 * (1 - progressRef.current * 0.3)}
-                    />
-                );
-            })}
-            <pointLight color="#ffdd66" intensity={3} distance={4} />
-        </group>
-    );
-};
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 5️⃣ SES PATLAMASI (Sound Burst) - Alan hasarı - Patlayan notalar
-// ═══════════════════════════════════════════════════════════════════════════
-export const SoundBurstEffect: React.FC<{
-    position: [number, number, number];
-    targetPosition?: [number, number, number];
-    onComplete: () => void;
-}> = ({ position, targetPosition, onComplete }) => {
-    const groupRef = useRef<THREE.Group>(null);
-    const startTime = useRef(Date.now());
-    const duration = 800;
-    const progressRef = useRef(0);
-    const noteCount = 24;
-
-    const spawnPos = targetPosition || position;
-
-    const notes = useMemo(() => {
-        return Array.from({ length: noteCount }).map(() => ({
-            dir: new THREE.Vector3(
-                Math.random() - 0.5,
-                Math.random() * 0.5,
-                Math.random() - 0.5
-            ).normalize(),
-        }));
-    }, [noteCount]);
-
-    useFrame(() => {
-        if (!groupRef.current) return;
-        const elapsed = Date.now() - startTime.current;
-        const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
-
-        if (progress >= 1) onComplete();
-    });
-
-    return (
-        <group ref={groupRef} position={spawnPos}>
-            {notes.map((note, i) => {
-                const dist = progressRef.current * 4;
-                return (
-                    <PixelNote
-                        key={i}
-                        position={[
-                            note.dir.x * dist,
-                            note.dir.y * dist + 0.5,
-                            note.dir.z * dist
-                        ]}
-                        color="#ff5555"
-                        opacity={1 - progressRef.current}
-                        scale={1 - progressRef.current * 0.5}
-                    />
-                );
-            })}
-            <pointLight color="#ff5555" intensity={5 * (1 - progressRef.current)} distance={5} />
-        </group>
-    );
-};
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 6️⃣ KORO SENFONİSİ (Choir Symphony) - ULTİ - Katmanlı nota halkaları
-// ═══════════════════════════════════════════════════════════════════════════
-export const ChoirSymphonyEffect: React.FC<{
-    position: [number, number, number];
-    onComplete: () => void;
-    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
-    followPlayer?: boolean;
-}> = ({ position, onComplete, playerGroupRef, followPlayer = false }) => {
-    const groupRef = useRef<THREE.Group>(null);
-    const startTime = useRef(Date.now());
-    const duration = 8000;
-    const progressRef = useRef(0);
-    const ringCount = 3;
-    const notesPerRing = 12;
-
-    useFrame(() => {
-        if (!groupRef.current) return;
-        const elapsed = Date.now() - startTime.current;
-        const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
-
-        if (followPlayer && playerGroupRef?.current) {
-            groupRef.current.position.copy(playerGroupRef.current.position);
-        }
-
-        if (progress >= 1) onComplete();
-    });
-
-    return (
-        <group ref={groupRef} position={position}>
-            {/* Multiple rings of notes */}
-            {Array.from({ length: ringCount }).map((_, r) => (
-                <group key={r}>
-                    {Array.from({ length: notesPerRing }).map((_, i) => {
-                        const t = progressRef.current;
-                        const angle = t + (i / notesPerRing) * Math.PI * 2;
-                        const radius = 1.5 + r * 0.6;
-                        return (
-                            <PixelNote
-                                key={i}
-                                position={[
-                                    Math.cos(angle) * radius,
-                                    r * 0.4 + 0.3,
-                                    Math.sin(angle) * radius
-                                ]}
-                                color="#bb88ff"
-                                opacity={0.9 * (1 - progressRef.current * 0.2)}
-                                scale={1 + r * 0.1}
-                            />
-                        );
-                    })}
-                </group>
-            ))}
-
-            {/* Central glow */}
-            <mesh>
-                <sphereGeometry args={[0.5, 16, 16]} />
-                <meshBasicMaterial
-                    color="#bb88ff"
-                    transparent
-                    opacity={0.4}
-                    blending={THREE.AdditiveBlending}
-                />
-            </mesh>
-
-            <pointLight color="#bb88ff" intensity={5} distance={8} />
-        </group>
-    );
-};
-
-// ═══════════════════════════════════════════════════════════════════════════
-// ESKI EFEKTLER (backward compatibility)
-// ═══════════════════════════════════════════════════════════════════════════
-
-// CourageMarchEffect = RhythmFlowEffect alias
-export const CourageMarchEffect = RhythmFlowEffect;
-
-// DestructionNoteEffect = SoundBurstEffect alias
-export const DestructionNoteEffect = SoundBurstEffect;
-
-// LullabyEffect = DissonantChordEffect (uyku = debuff)
-export const LullabyEffect = DissonantChordEffect;
-
-// SpeedRhapsodyEffect = RhythmFlowEffect variant
-export const SpeedRhapsodyEffect: React.FC<{
-    position: [number, number, number];
-    onComplete: () => void;
-    playerGroupRef?: React.MutableRefObject<THREE.Group | null>;
-    followPlayer?: boolean;
-}> = ({ position, onComplete, playerGroupRef, followPlayer = false }) => {
-    const groupRef = useRef<THREE.Group>(null);
-    const startTime = useRef(Date.now());
-    const duration = 4000;
-    const progressRef = useRef(0);
-    const noteCount = 6;
-
-    useFrame(() => {
-        if (!groupRef.current) return;
-        const elapsed = Date.now() - startTime.current;
-        const progress = Math.min(elapsed / duration, 1);
-        progressRef.current = progress;
-
-        if (followPlayer && playerGroupRef?.current) {
-            groupRef.current.position.copy(playerGroupRef.current.position);
-        }
-
-        if (progress >= 1) onComplete();
-    });
-
-    return (
-        <group ref={groupRef} position={position}>
-            {Array.from({ length: noteCount }).map((_, i) => {
-                const angle = progressRef.current * 5 + (i / noteCount) * Math.PI * 2;
-                return (
-                    <PixelNote
-                        key={i}
-                        position={[
-                            Math.cos(angle) * 1,
-                            0.3 + Math.sin(progressRef.current * 10 + i) * 0.2,
-                            Math.sin(angle) * 1
-                        ]}
-                        color="#66ffff"
-                        opacity={0.9}
-                    />
-                );
-            })}
-            <pointLight color="#66ffff" intensity={2} distance={3} />
-        </group>
-    );
-};
-
-// EpicFinaleEffect = ChoirSymphonyEffect alias
-export const EpicFinaleEffect = ChoirSymphonyEffect;
-
-// HealSongEffect = InspirationMelodyEffect alias
-export const HealSongEffect = InspirationMelodyEffect;
-
-// ═══════════════════════════════════════════════════════════════════════════
-// BARD SKILL MAP
-// ═══════════════════════════════════════════════════════════════════════════
-export const BARD_EFFECTS: Record<string, React.FC<any>> = {
-    // Yeni pixel nota efektleri
-    note_strike: NoteStrikeEffect,
-    rhythm_flow: RhythmFlowEffect,
-    dissonant_chord: DissonantChordEffect,
-    inspiration_melody: InspirationMelodyEffect,
-    sound_burst: SoundBurstEffect,
-    choir_symphony: ChoirSymphonyEffect,
-
-    // Eski key'ler (backward compat)
-    courage_march: CourageMarchEffect,
-    destruction_note: DestructionNoteEffect,
-    lullaby: LullabyEffect,
-    speed_rhapsody: SpeedRhapsodyEffect,
-    epic_finale: EpicFinaleEffect,
-    heal_song: HealSongEffect,
-
-    // Components/constants.ts keys
-    note_hit: NoteStrikeEffect,
-    anthem: CourageMarchEffect,
-    lullaby_song: LullabyEffect,
-    noise: SoundBurstEffect,
-    speed_song: SpeedRhapsodyEffect,
-    symphony: ChoirSymphonyEffect,
-
-    // Root constants.ts visual keys
-    bard_note: NoteStrikeEffect,
-    bard_vibration: RhythmFlowEffect,
-    bard_explosion: SoundBurstEffect,
-
-    // Kısa key'ler
-    note: NoteStrikeEffect,
-    march: CourageMarchEffect,
-    break: SoundBurstEffect,
-    sleep: LullabyEffect,
-    speed: SpeedRhapsodyEffect,
-    final: ChoirSymphonyEffect,
-    heal: HealSongEffect,
-    burst: SoundBurstEffect,
-    choir: ChoirSymphonyEffect,
-};
-
-export default BARD_EFFECTS;

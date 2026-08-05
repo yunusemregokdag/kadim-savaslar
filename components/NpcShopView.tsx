@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, Suspense } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { Item, PlayerState, PetItem, WingItem } from '../types';
 import { ShoppingBasket, Shield, Sword, Box, DollarSign, X, Bird, Sparkles } from 'lucide-react';
 import { renderItemIcon, PixelWing, PixelBox, PixelShield, PixelBird } from './ui/ItemIcons';
 import { ItemTooltip } from './ui/ItemTooltip';
 import { v4 as uuidv4 } from 'uuid';
 import { POTIONS, PETS_DATA, WINGS_DATA, ARMOR_SETS } from '../constants';
+import { DynamicPet } from './DynamicPet';
+import * as THREE from 'three';
 
 interface NpcShopViewProps {
     playerState: PlayerState;
@@ -52,6 +55,54 @@ const SHOP_ITEMS: Item[] = [
     { id: 'scroll_t1', name: 'Kutsal Parşömen (T1)', tier: 1, type: 'upgrade_scroll', rarity: 'common', value: 2500, description: 'Sadece T1 ekipman yükseltir' },
     { id: 'scroll_t2', name: 'Kutsal Parşömen (T2)', tier: 2, type: 'upgrade_scroll', rarity: 'uncommon', value: 10000, description: 'Sadece T2 ekipman yükseltir' },
 ];
+
+// 🔄 AutoRotate: Canvas içindeki modeli yavaşça döndürür
+function AutoRotate({ children, speed = 0.6 }: { children: React.ReactNode; speed?: number }) {
+    const groupRef = useRef<THREE.Group>(null);
+    useFrame((_, delta) => {
+        if (groupRef.current) groupRef.current.rotation.y += delta * speed;
+    });
+    return <group ref={groupRef}>{children}</group>;
+}
+
+// 🪽 WingPreview3D: Kanat önizlemesi (3 geometri parça)
+function WingPreview3D({ color }: { color: string }) {
+    const groupRef = useRef<THREE.Group>(null);
+    useFrame((state) => {
+        if (groupRef.current) {
+            groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.6) * 0.4;
+            groupRef.current.children.forEach((child, i) => {
+                (child as THREE.Mesh).position.y = Math.sin(state.clock.elapsedTime * 2 + i) * 0.05;
+            });
+        }
+    });
+    const wingColor = new THREE.Color(color);
+    const mat = new THREE.MeshStandardMaterial({
+        color: wingColor,
+        emissive: wingColor,
+        emissiveIntensity: 0.4,
+        roughness: 0.3,
+        metalness: 0.5,
+        transparent: true,
+        opacity: 0.9,
+    });
+    return (
+        <group ref={groupRef}>
+            {/* Sol kanat */}
+            <mesh position={[-0.4, 0, 0]} rotation={[0.1, 0.3, 0.2]} material={mat}>
+                <planeGeometry args={[0.5, 0.9]} />
+            </mesh>
+            {/* Sağ kanat */}
+            <mesh position={[0.4, 0, 0]} rotation={[0.1, -0.3, -0.2]} material={mat}>
+                <planeGeometry args={[0.5, 0.9]} />
+            </mesh>
+            {/* Orta gövde */}
+            <mesh position={[0, -0.1, 0]} material={mat}>
+                <boxGeometry args={[0.15, 0.3, 0.1]} />
+            </mesh>
+        </group>
+    );
+}
 
 const NpcShopView: React.FC<NpcShopViewProps> = ({ playerState, onBuy, onBuyPet, onBuyWing, onClose }) => {
     const [filter, setFilter] = useState<'all' | 'consumable' | 'gear' | 'pets' | 'wings'>('all');
@@ -161,13 +212,49 @@ const NpcShopView: React.FC<NpcShopViewProps> = ({ playerState, onBuy, onBuyPet,
                             return (
                                 <div key={pet.id} className={`bg-[#291d18] border ${owned ? 'border-green-600' : 'border-[#4a3b32]'} p-3 rounded hover:border-amber-600 transition-colors group`}>
                                     <div className="flex gap-3">
-                                        <div className="w-14 h-14 bg-black/40 rounded-lg flex items-center justify-center border border-[#3f2e26]" style={{ borderColor: pet.color }}>
-                                            <Bird size={28} style={{ color: pet.color }} />
+                                        {/* 3D Pet Preview */}
+                                        <div
+                                            className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 relative"
+                                            style={{
+                                                background: `radial-gradient(circle at center, ${pet.color}22, #0a0a0a)`,
+                                                border: `1px solid ${pet.color}55`,
+                                            }}
+                                        >
+                                            {pet.modelPath ? (
+                                                <Canvas
+                                                    camera={{ position: [0, 1.2, 2.5], fov: 45 }}
+                                                    gl={{ antialias: false, powerPreference: 'low-power' }}
+                                                    dpr={1}
+                                                    style={{ width: '100%', height: '100%' }}
+                                                >
+                                                    <ambientLight intensity={0.7} />
+                                                    <pointLight position={[2, 2, 2]} intensity={1.5} color={pet.color} />
+                                                    <pointLight position={[-2, 1, -2]} intensity={0.5} color="#ffffff" />
+                                                    <Suspense fallback={null}>
+                                                        <AutoRotate>
+                                                            <DynamicPet
+                                                                modelPath={pet.modelPath}
+                                                                color={pet.color}
+                                                                scale={0.8}
+                                                            />
+                                                        </AutoRotate>
+                                                    </Suspense>
+                                                </Canvas>
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-2xl">🐾</div>
+                                            )}
+                                            {/* Tier Badge overlay */}
+                                            <div
+                                                className="absolute top-0.5 right-0.5 text-[8px] font-bold px-1 rounded"
+                                                style={{ background: '#000000aa', color: pet.color }}
+                                            >
+                                                T{pet.tier}
+                                            </div>
                                         </div>
+
                                         <div className="flex-1">
                                             <div className="flex items-center justify-between">
                                                 <div className={`text-sm font-bold ${getTierColor(pet.tier)}`}>{pet.name}</div>
-                                                <span className="text-[10px] px-2 py-0.5 rounded bg-slate-700" style={{ color: pet.color }}>T{pet.tier}</span>
                                             </div>
                                             <div className="text-[10px] text-slate-400 mt-1">
                                                 +{pet.bonusExpRate}% EXP • +{pet.bonusDefense} Zırh
@@ -213,13 +300,36 @@ const NpcShopView: React.FC<NpcShopViewProps> = ({ playerState, onBuy, onBuyPet,
                             return (
                                 <div key={wing.id} className={`bg-[#291d18] border ${owned ? 'border-purple-600' : 'border-[#4a3b32]'} p-3 rounded hover:border-amber-600 transition-colors group`}>
                                     <div className="flex gap-3">
-                                        <div className="w-14 h-14 bg-black/40 rounded-lg flex items-center justify-center border border-[#3f2e26]" style={{ borderColor: wing.color }}>
-                                            <div className="w-10 h-10"><PixelWing color={wing.color} /></div>
+                                        {/* 3D Wing Preview */}
+                                        <div
+                                            className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 relative"
+                                            style={{
+                                                background: `radial-gradient(circle at center, ${wing.color}22, #0a0a0a)`,
+                                                border: `1px solid ${wing.color}55`,
+                                            }}
+                                        >
+                                            <Canvas
+                                                camera={{ position: [0, 0, 2.2], fov: 50 }}
+                                                gl={{ antialias: false, powerPreference: 'low-power' }}
+                                                dpr={1}
+                                                style={{ width: '100%', height: '100%' }}
+                                            >
+                                                <ambientLight intensity={0.5} />
+                                                <pointLight position={[2, 2, 2]} intensity={2} color={wing.color} />
+                                                <WingPreview3D color={wing.color} />
+                                            </Canvas>
+                                            {/* Tier Badge */}
+                                            <div
+                                                className="absolute top-0.5 right-0.5 text-[8px] font-bold px-1 rounded"
+                                                style={{ background: '#000000aa', color: wing.color }}
+                                            >
+                                                T{wing.tier}
+                                            </div>
                                         </div>
+
                                         <div className="flex-1">
                                             <div className="flex items-center justify-between">
                                                 <div className={`text-sm font-bold ${getTierColor(wing.tier)}`}>{wing.name}</div>
-                                                <span className="text-[10px] px-2 py-0.5 rounded bg-slate-700" style={{ color: wing.color }}>T{wing.tier}</span>
                                             </div>
                                             <div className="text-[10px] text-slate-400 mt-1">
                                                 +{wing.bonusDamage} Hasar • +{wing.bonusHp} Can
@@ -251,6 +361,7 @@ const NpcShopView: React.FC<NpcShopViewProps> = ({ playerState, onBuy, onBuyPet,
                         })}
                     </div>
                 )}
+
 
                 {/* ITEMS (default view) */}
                 {filter !== 'pets' && filter !== 'wings' && (

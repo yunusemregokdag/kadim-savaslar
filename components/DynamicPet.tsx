@@ -102,20 +102,15 @@ function GltfPet({ modelPath, color, scale = 1 }: DynamicPetProps) {
         }
     }, [actions, animations]);
 
-    // Make pet look at camera
-    // DISABLED: Keep pet rotation relative to player owner, not camera
-    /*
+    // Make pet look at camera (Y axis only)
     useFrame((state) => {
         if (groupRef.current) {
-            // Get camera position
             const cam = state.camera.position;
-            // Only rotate on Y axis (horizontal)
             const petPos = groupRef.current.getWorldPosition(new THREE.Vector3());
             const angle = Math.atan2(cam.x - petPos.x, cam.z - petPos.z);
             groupRef.current.rotation.y = angle;
         }
     });
-    */
 
     return (
         <group ref={groupRef}>

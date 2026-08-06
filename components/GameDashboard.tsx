@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { ALL_MOUNTS, Mount } from './MountSystemView';
 import { GameGuideModal } from './GameGuideModal';
 import { AssetLoader } from '../utils/AssetLoader';
@@ -1386,7 +1386,7 @@ const GameDashboard: React.FC<GameDashboardProps> = ({ nickname, charClass, fact
 
                                         {/* 3D Character Preview */}
                                         <div className="w-full h-[260px] relative bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-950/30 to-slate-950">
-                                            <Canvas shadows camera={{ position: [0, 2, 5], fov: 45 }} dpr={Math.min(window.devicePixelRatio, 1.5)} gl={{ antialias: false, powerPreference: 'high-performance' }}>
+                                            <Canvas shadows camera={{ position: [0, 2, 5], fov: 45 }} dpr={[1, Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 1.5)]} gl={{ antialias: false, powerPreference: 'high-performance' }}>
                                                 <ambientLight intensity={0.6} />
                                                 <spotLight position={[5, 10, 5]} angle={0.5} penumbra={1} intensity={2} castShadow color="#ffedd5" />
                                                 <pointLight position={[-5, 5, -5]} intensity={0.5} color="#3b82f6" />

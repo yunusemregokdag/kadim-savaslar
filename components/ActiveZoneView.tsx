@@ -4361,16 +4361,17 @@ const ActiveZoneView: React.FC<ActiveZoneViewProps> = (props) => {
             <Canvas
                 camera={{ position: [0, 15, 15], fov: 50 }}
                 shadows={settings.showShadows}
-                dpr={Math.min(window.devicePixelRatio, 1.5)} // Limit pixel ratio for mobile performance
+                dpr={[1, Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 1.5)]}
                 gl={{
-                    antialias: false, // Disable antialiasing for mobile performance
-                    powerPreference: 'high-performance', // Use dedicated GPU if available
-                    preserveDrawingBuffer: true, // Help prevent context loss
-                    failIfMajorPerformanceCaveat: false // Don't fail on low-end devices
+                    antialias: false,
+                    powerPreference: 'high-performance',
+                    preserveDrawingBuffer: true,
+                    failIfMajorPerformanceCaveat: false
                 }}
                 onCreated={({ gl }) => {
-                    // Handle WebGL context loss/restore
-                    const canvas = gl.domElement;
+                    // Handle WebGL context loss/restore - null guard required
+                    const canvas = gl?.domElement;
+                    if (!canvas) return;
                     canvas.addEventListener('webglcontextlost', (e) => {
                         e.preventDefault();
                         console.warn('WebGL context lost, will try to restore...');
